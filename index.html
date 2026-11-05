@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.8</title>
+<title>LOLA V4.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.8</p>
+        <p class="sub version">LOLA V4.9</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -10215,16 +10215,33 @@ class Renderer {
   // -------------------------------------------------------- primitivas de píxel
   px(x, y, col) { this.g.fillStyle = col; this.g.fillRect(x, y, 1, 1); }
 
-  ring(cx, cy, r, col, densidad = 1, grosor = 1) {
-    const g = this.g;
-    g.fillStyle = col;
-    const pasos = Math.max(8, Math.ceil(TAU * r * 1.2));
-    for (let i = 0; i < pasos; i++) {
-      if (densidad < 1 && hash(i, r | 0, 7) > densidad) continue;
-      const a = (i / pasos) * TAU;
-      g.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r), grosor, grosor);
+  // Seba (05-11, V4.9): anillos y discos punteados se dibujan una vez en un lienzo aparte y se reusan (antes eran miles de puntos por cuadro)
+  forma(key, w, h, dibujar) {
+    const M = this._formas || (this._formas = new Map());
+    let c = M.get(key);
+    if (!c) {
+      if (M.size > 600 || (this._formasPx || 0) > 24e6) { M.clear(); this._formasPx = 0; }
+      c = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(w, h) : Object.assign(document.createElement('canvas'), { width: w, height: h });
+      dibujar(c.getContext('2d'));
+      M.set(key, c); this._formasPx = (this._formasPx || 0) + w * h;
     }
+    return c;
   }
+  ring(cx, cy, r, col, densidad = 1, grosor = 1) {
+    r = Math.max(0, Math.round(r)); if (!r) return;
+    const dq = densidad >= 1 ? 1 : Math.max(0, Math.round(densidad * 10) / 10), m = r + grosor + 1, lado = m * 2 + 1;
+    const c = this.forma(`r${r}|${col}|${dq}|${grosor}`, lado, lado, (cg) => {
+      cg.fillStyle = col;
+      const pasos = Math.max(8, Math.ceil(TAU * r * 1.2));
+      for (let i = 0; i < pasos; i++) {
+        if (dq < 1 && hash(i, r, 7) > dq) continue;
+        const a = (i / pasos) * TAU;
+        cg.fillRect(m + Math.round(Math.cos(a) * r), m + Math.round(Math.sin(a) * r), grosor, grosor);
+      }
+    });
+    this.g.drawImage(c, Math.round(cx) - m, Math.round(cy) - m);
+  }
+
 
   // Ash (Seba 31-10): medalla del fénix (minimalista) que flota sobre/atrás de la cabeza durante la ulti
   medallaFenix(x, y, k = 1) {
@@ -10587,15 +10604,20 @@ class Renderer {
   }
 
   discDither(cx, cy, r, col, patron = 2, offset = 0) {
-    const g = this.g;
-    g.fillStyle = col;
-    const r2 = r * r;
-    for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
-      if (x * x + y * y > r2) continue;
-      if (((x + y + offset) % patron + patron) % patron !== 0) continue;
-      g.fillRect(cx + x, cy + y, 1, 1);
-    }
+    r = Math.max(0, Math.round(r));
+    const o = ((Math.round(offset) % patron) + patron) % patron, lado = r * 2 + 1;
+    const c = this.forma(`d${r}|${col}|${patron}|${o}`, lado, lado, (cg) => {
+      cg.fillStyle = col;
+      const r2 = r * r;
+      for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+        if (x * x + y * y > r2) continue;
+        if (((x + y + o) % patron + patron) % patron !== 0) continue;
+        cg.fillRect(r + x, r + y, 1, 1);
+      }
+    });
+    this.g.drawImage(c, Math.round(cx) - r, Math.round(cy) - r);
   }
+
 
   linea(x0, y0, x1, y1, col, zig = 0, seed = 0, grosor = 1) {
     const g = this.g;
@@ -14194,6 +14216,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V4.9', f: '05-11-2026', n: [
+    'Rendimiento: los círculos y zonas punteadas (alcances, torreta de Jürgen, Chaos de Fatum, lámparas, fuegos) se dibujan una vez y se reusan. El juego corre mucho más liviano con estos efectos en pantalla.' ] },
   { v: 'V4.8', f: '05-11-2026', n: [
     '3v3: para ganar se necesitan 30 kills (1v1 y 2v2 siguen con 10).',
     'Victoria por objetivo: hay que controlar los dos círculos a la vez (tomar el rival y no tener el tuyo en manos del enemigo) junto con las kills.' ] },
