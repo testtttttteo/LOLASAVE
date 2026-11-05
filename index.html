@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.7</title>
+<title>LOLA V4.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.7</p>
+        <p class="sub version">LOLA V4.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1047,8 +1047,8 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
         <button class="btn" id="b-coleccion">Colección de héroes</button>
         <button class="btn" id="b-patch">Patch Notes</button>
         <button class="btn" id="b-sonido">Sonido: sí</button>
-        <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Gana quien tenga el círculo rival y 10 kills a la vez.</p>
-        <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Gana quien tenga el círculo rival y 10 kills a la vez.</p>
+        <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Gana quien controle los dos círculos (el rival y el suyo) y tenga 10 kills a la vez (30 en 3v3).</p>
+        <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Gana quien controle los dos círculos (el rival y el suyo) y tenga 10 kills a la vez (30 en 3v3).</p>
       </div>
       
     </div>
@@ -1257,7 +1257,7 @@ const CONFIG = {
   // Rojo captura el círculo azul y viceversa (el dueño del lado puede recuperarlo). Se abren a los 25 s; 5 s solo dentro.
   // Gana quien, a la vez, tenga capturado el círculo rival y lleve 10 kills. Tope de seguridad: 10 min (gana quien tenga más kills).
   OBJETIVOS: { puntos: [[0, -330, 'A'], [0, 330, 'B']],   // Seba (05-11, V4.7): azul al norte, rojo al sur
-                r: 70, apertura: 25, captura: 5, killsParaGanar: 10, duracionRonda: 600 },
+                r: 70, apertura: 25, captura: 5, killsParaGanar: 10, killsParaGanar3v3: 30, duracionRonda: 600 },   // Seba (05-11, V4.8): 3v3 pide 30 kills
   // The Cucko (Seba 28-10): ave del terror encerrada en una cámara de piedra al sur. Quien da el último golpe
   // lleva a su equipo el status «Cucko»: +10% de daño a todo enemigo y -10% de daño recibido por 60 s (se pierde al morir).
   CUCKO: { activo: false,   // Seba (05-11, V4.7): The Cucko y los muros de su cámara quitados (true lo devuelve)
@@ -4704,6 +4704,14 @@ class Game {
     return this.start();
   }
 
+  // Seba (05-11, V4.8): kills para ganar según el tamaño de los equipos (3v3: 30)
+  killsMeta() {
+    const O = CONFIG.OBJETIVOS;
+    if (this.modo !== 'equipos' || !this.equipos) return O.killsParaGanar;
+    const a = Object.values(this.equipos).filter(e => e === 'A').length, b = Object.values(this.equipos).filter(e => e === 'B').length;
+    return Math.max(a, b) >= 3 ? O.killsParaGanar3v3 : O.killsParaGanar;
+  }
+
   equiposVivos() {
     return new Set([...this.players.values()].filter(p => p.alive).map(p => this.teamOf(p.id)));
   }
@@ -8047,10 +8055,10 @@ class Game {
         if (o.prog === 0) o.equipo = null;
       }
     }
-    // Victoria: círculo rival en tu poder + 10 kills, al mismo tiempo
+    // Victoria: controlar los dos círculos (el rival en tu poder y el tuyo sin perder) + 10 kills (30 en 3v3), al mismo tiempo
     for (const eq of ['A', 'B']) {
-      const rival = this.objetivos.find(o => o.lado !== eq);
-      if (rival && rival.dueno === eq && this.marcador[eq] >= O.killsParaGanar) { this.objGanador = eq; break; }
+      const rival = this.objetivos.find(o => o.lado !== eq), mio = this.objetivos.find(o => o.lado === eq);
+      if (rival && rival.dueno === eq && !(mio && mio.dueno && mio.dueno !== eq) && this.marcador[eq] >= this.killsMeta()) { this.objGanador = eq; break; }
     }
   }
 
@@ -8158,7 +8166,7 @@ class Game {
     this.objAbiertos = false;
     const list = [...this.players.values()].sort((p, q) => (this.teamOf(p.id) === ganador ? -1 : 0) - (this.teamOf(q.id) === ganador ? -1 : 0) || (q.dmgRound || 0) - (p.dmgRound || 0))
       .map((p, i) => ({ id: p.id, place: i + 1, equipo: this.teamOf(p.id), kills: p.killsRound || 0, muertes: p.muertes || 0, dmg: Math.round(p.dmgRound || 0), cura: Math.round(p.curaHecha || 0), lost: 0 }));
-    this.results = { round: this.round, list, ganador, marcador: { ...this.marcador }, meta: CONFIG.OBJETIVOS.killsParaGanar, porObjetivos: !!this.objGanador };
+    this.results = { round: this.round, list, ganador, marcador: { ...this.marcador }, meta: this.killsMeta(), porObjetivos: !!this.objGanador };
     this.resumenFinal = list;
     for (const p of this.players.values()) { p.alive = false; p.hidden = false; }
     this.projectiles = []; this.units = []; this.zones = []; this.cucko = null;
@@ -8288,7 +8296,7 @@ class Game {
     return {
       t: 'm', phase: this.phase, round: this.round, hostId: this.hostId, timer: this.timer, modo: this.modo, pausa: !!this.pausa,
       draft: this.draft ? { turnos: this.draft.turnos, paso: this.draft.paso } : null, bans: this.bans || [],
-      equipos: this.modo === 'equipos' ? this.equipos : null, marcador: this.marcador || null, equipoGanador: this.equipoGanador || null,
+      equipos: this.modo === 'equipos' ? this.equipos : null, marcador: this.marcador || null, killsMeta: this.killsMeta(), equipoGanador: this.equipoGanador || null,
       pve: this.modo === 'pve' && this.pve ? this.pveMeta() : null,
       players: [...this.players.values()].map(p => ({
         id: p.id, name: p.name, bot: p.bot, colorIdx: p.colorIdx, lives: p.lives, puntos: p.puntos,
@@ -13186,7 +13194,7 @@ function startPve() {
 let bannerT = null;
 // Marcador compacto 1v1 / 2v2: kills de cada equipo con barra hacia 10, reloj, círculos y The Cucko
 function actualizarMarcador(latest) {
-  const K = CONFIG.OBJETIVOS.killsParaGanar, mk = S.meta.marcador, miEq = S.meta.equipos ? S.meta.equipos[S.myId] : null;
+  const K = S.meta.killsMeta || CONFIG.OBJETIVOS.killsParaGanar, mk = S.meta.marcador, miEq = S.meta.equipos ? S.meta.equipos[S.myId] : null;
   $('mc-a').textContent = mk.A; $('mc-b').textContent = mk.B;
   $('mc-ab').style.width = Math.min(100, mk.A / K * 100) + '%';
   $('mc-bb').style.width = Math.min(100, mk.B / K * 100) + '%';
@@ -13989,7 +13997,7 @@ function updateHud(latest, now) {
     $('marcador').classList.toggle('hidden', !eqs);
     $('hud-top').classList.toggle('hidden', !!eqs);
     if (eqs) actualizarMarcador(latest);
-    $('hud-round').textContent = eqs ? `Azul ${S.meta.marcador.A} – ${S.meta.marcador.B} Rojo /${CONFIG.OBJETIVOS.killsParaGanar}` : `Ronda ${S.meta ? S.meta.round : ''}`;
+    $('hud-round').textContent = eqs ? `Azul ${S.meta.marcador.A} – ${S.meta.marcador.B} Rojo /${S.meta.killsMeta || CONFIG.OBJETIVOS.killsParaGanar}` : `Ronda ${S.meta ? S.meta.round : ''}`;
     const reloj = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
     $('hud-timer').textContent = latest.ph === 'combat' ? (eqs ? reloj(Math.ceil(latest.tm)) : Math.ceil(latest.tm)) : (eqs ? reloj(CONFIG.OBJETIVOS.duracionRonda) : CONFIG.TIEMPO_COMBATE);
     if (latest.zo) {
@@ -14186,6 +14194,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V4.8', f: '05-11-2026', n: [
+    '3v3: para ganar se necesitan 30 kills (1v1 y 2v2 siguen con 10).',
+    'Victoria por objetivo: hay que controlar los dos círculos a la vez (tomar el rival y no tener el tuyo en manos del enemigo) junto con las kills.' ] },
   { v: 'V4.7', f: '05-11-2026', n: [
     'Mapa: se quitó a The Cucko y los muros de su cámara.',
     'Círculos de captura: ahora están al norte (Azul) y al sur (Rojo) del mapa.',
