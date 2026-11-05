@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.5</title>
+<title>LOLA V4.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.5</p>
+        <p class="sub version">LOLA V4.6</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1731,8 +1731,8 @@ Object.assign(HABILIDADES, {
                    n1: { dano: 75, quema: 25, quemaDur: 2, lento: 0.10 }, n2: { dano: 75, quema: 25, quemaDur: 2, lento: 0.10 } },
   // ---- Vatrius (Seba, 05-11)
   estocada:      { nombre: 'Estocada', glifo: 'estocada', cd: 7, cdFijo: true, canal: 0.2, largo: 200, vuela: 0.15, ventana: 3,
-                   desc: (n) => `Tras ${fmtN(HABILIDADES.estocada.canal)} s, una estocada rápida te lleva ${HABILIDADES.estocada.largo} hacia donde empujas el joystick (o apuntas): ${n.dano} de daño a cada enemigo que atraviesas. Durante ${HABILIDADES.estocada.ventana} s puedes volver a apretar para regresar al punto de partida con otra estocada: ${n.dano / 2} de daño y ${Math.round(n.lento * 100)}% más lentos durante ${n.lentoDur} s.`,
-                   n1: { dano: 50, lento: 0.25, lentoDur: 2 }, n2: { dano: 50, lento: 0.25, lentoDur: 2 } },
+                   desc: (n) => `Tras ${fmtN(HABILIDADES.estocada.canal)} s, una estocada rápida te lleva ${HABILIDADES.estocada.largo} hacia donde empujas el joystick (o apuntas): ${n.dano} de daño a cada enemigo que atraviesas; si dañas a un enemigo con al menos una gota de sangre, recuperas ${n.cura} de vida. Durante ${HABILIDADES.estocada.ventana} s puedes volver a apretar para regresar al punto de partida con otra estocada: ${n.dano / 2} de daño y ${Math.round(n.lento * 100)}% más lentos durante ${n.lentoDur} s.`,
+                   n1: { dano: 50, lento: 0.25, lentoDur: 2, cura: 20 }, n2: { dano: 50, lento: 0.25, lentoDur: 2, cura: 20 } },   // Seba (05-11, V4.6): la primera estocada cura 20 si daña a un enemigo con gotas
   sedSangre:     { nombre: 'Sed de sangre', glifo: 'sedSangre', cd: 16, cdFijo: true, dur: 6, golpes: 3,   // Seba (05-11, V4.3): 3 cargas como los Puños de Ash
                    desc: (n) => `Tus próximos ${HABILIDADES.sedSangre.golpes} ataques básicos (en ${HABILIDADES.sedSangre.dur} s) hacen +${Math.round(n.pct * 100)}% de la vida actual del enemigo como daño adicional. El tercero te cura lo mismo que el daño que hace.`,
                    n1: { pct: 0.05 }, n2: { pct: 0.05 } },
@@ -1844,7 +1844,7 @@ const PASIVAS = {
   ultimoAliento: { nombre: 'Último aliento', glifo: 'corazonVerde', desc: 'Por debajo del 30% de vida, tus habilidades se recargan 25% más rápido.' },
   sangreReal:   { nombre: 'Sangre real', glifo: 'corona', desc: 'Recuperas 25 de vida cada vez que usas una habilidad.' },
   curacionPlano: { nombre: 'Curación del otro plano', glifo: 'corazonVerde', desc: 'Cada aturdimiento que provocas te cura 15 de vida.' },
-  gotasSangre: { nombre: 'Gotas de sangre', glifo: 'gotasSangre', desc: 'Tus golpes y habilidades dejan 1 gota de sangre en el enemigo (máx. 4; cada golpe renueva todas a 2 s): 5 de daño por segundo por gota. Cada golpe básico que aciertas te cura 5 por gota que ya tenía.' },
+  gotasSangre: { nombre: 'Gotas de sangre', glifo: 'gotasSangre', desc: 'Cada golpe de tus habilidades deja 1 gota de sangre en el enemigo (máx. 4; cada golpe renueva todas a 2 s): 5 de daño por segundo por gota. Los ataques básicos no dejan gotas, salvo el 3.º golpe de la Sed de sangre.' },
   cartuchoDoble: { nombre: 'Cartucho doble', glifo: 'cartuchoDoble', desc: 'Cada 4.º escopetazo sale con 3 perdigones más.' },   // (C) Claude, por aprobar
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el 85% de tu alcance o más lejos.' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas 1 acumulación (máx. 5, duran 4 s y se renuevan todas al sumar una): +3% de velocidad y 3% menos de daño recibido por acumulación.' },
@@ -7707,7 +7707,8 @@ class Game {
           if (f.golpes.has(e.id) || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
           if (dist(e, p) > CONFIG.RADIO_JUGADOR + (e.esUnidad ? 12 : CONFIG.RADIO_JUGADOR) + 4) continue;
           f.golpes.add(e.id);
-          this.damage(e, f.dano, p, { tipo: 'mag', desde: p });
+          const conGota = !f.lento && !f.curo && this.gotasDe(e) > 0;   // Seba (05-11, V4.6): primera estocada — 20 de vida si daña a un enemigo con gotas (una vez por estocada)
+          if (this.damage(e, f.dano, p, { tipo: 'mag', desde: p }) > 0 && conGota) { f.curo = true; this.heal(p, HABILIDADES.estocada.n1.cura, p); }
           if (f.lento && e.alive && e.fx) this.aplicarEfecto(e, 'slow', { t: f.lento.lentoDur, mult: 1 - f.lento.lento, k: 'estocada' });
           this.emit({ k: 'boom', x: e.x | 0, y: e.y | 0, r: 16, c: 'sangre' });
         }
@@ -14176,6 +14177,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V4.6', f: '05-11-2026', n: [
+    'Vatrius — Estocada: la primera estocada recupera 20 de vida si daña a un enemigo con al menos una gota de sangre (una vez por estocada).',
+    'Vatrius — Gotas de sangre: descripción corregida; solo las habilidades dejan gotas (de los básicos, solo el 3.º golpe de la Sed de sangre).' ] },
   { v: 'V4.5', f: '05-11-2026', n: [
     'Nueva heroína: Lei (Aliados). Abanicos cruzados, Abanicos al viento, Ojo del vendaval (ulti) y pasiva Flotar.',
     'Vatrius — Danza carmesí: ahora tiene alcance casi cuerpo a cuerpo (96, antes 450).',
