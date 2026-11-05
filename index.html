@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.2</title>
+<title>LOLA V4.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.2</p>
+        <p class="sub version">LOLA V4.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1719,9 +1719,9 @@ Object.assign(HABILIDADES, {
   estocada:      { nombre: 'Estocada', glifo: 'estocada', cd: 7, cdFijo: true, canal: 0.2, largo: 200, vuela: 0.15, ventana: 3,
                    desc: (n) => `Tras ${fmtN(HABILIDADES.estocada.canal)} s, una estocada rápida te lleva ${HABILIDADES.estocada.largo} hacia donde empujas el joystick (o apuntas): ${n.dano} de daño a cada enemigo que atraviesas. Durante ${HABILIDADES.estocada.ventana} s puedes volver a apretar para regresar al punto de partida con otra estocada: ${n.dano / 2} de daño y ${Math.round(n.lento * 100)}% más lentos durante ${n.lentoDur} s.`,
                    n1: { dano: 50, lento: 0.25, lentoDur: 2 }, n2: { dano: 50, lento: 0.25, lentoDur: 2 } },
-  sedSangre:     { nombre: 'Sed de sangre', glifo: 'sedSangre', cd: 16, cdFijo: true, dur: 6, golpes: 2, cargaDur: 5,
-                   desc: (n) => `Tus próximos ${HABILIDADES.sedSangre.golpes} golpes básicos (en ${HABILIDADES.sedSangre.dur} s) te curan el ${Math.round(n.robo * 100)}% del daño que hacen. El siguiente es un golpe de sangre: +${n.extra} de daño +${n.porGota} por cada gota en el enemigo.`,
-                   n1: { robo: 0.30, extra: 35, porGota: 5 }, n2: { robo: 0.30, extra: 35, porGota: 5 } },
+  sedSangre:     { nombre: 'Sed de sangre', glifo: 'sedSangre', cd: 16, cdFijo: true, dur: 6, golpes: 3,   // Seba (05-11, V4.3): 3 cargas como los Puños de Ash
+                   desc: (n) => `Tus próximos ${HABILIDADES.sedSangre.golpes} ataques básicos (en ${HABILIDADES.sedSangre.dur} s) hacen +${Math.round(n.pct * 100)}% de la vida actual del enemigo como daño adicional. El tercero te cura lo mismo que el daño que hace.`,
+                   n1: { pct: 0.05 }, n2: { pct: 0.05 } },
   danzaCarmesi:  { nombre: 'Danza carmesí', glifo: 'danzaCarmesi', cd: 60, cdFijo: true, ulti: true, alcance: 450, golpes: 4, cada: 0.25,
                    desc: (n) => `Saltas entre los héroes enemigos visibles a ${HABILIDADES.danzaCarmesi.alcance} o menos (al azar) y das ${HABILIDADES.danzaCarmesi.golpes} golpes seguidos: ${n.danos.join(', ')} de daño, cada uno +${n.porGota} por gota en el objetivo. No te pueden detener ni silenciar y recibes ${Math.round(n.red * 100)}% menos de daño.`,
                    n1: { danos: [20, 40, 60, 80], porGota: 5, red: 0.30 }, n2: { danos: [20, 40, 60, 80], porGota: 5, red: 0.30 } },
@@ -1879,8 +1879,7 @@ const ESTADOS = [
   { f3: 16384, nombre: 'Furia del pozo: más daño de ataque', glifo: 'pozoMaldito', bueno: true },
   { f3: 32768, nombre: 'Quemadura verde: −10% velocidad', glifo: 'chaos', bueno: false },
   { f3: 262144, nombre: 'Estocada: puedes volver al punto de partida', glifo: 'estocada', bueno: true },
-  { f3: 524288, nombre: 'Sed de sangre: robo de vida', glifo: 'sedSangre', bueno: true },
-  { f3: 1048576, nombre: 'Golpe de sangre listo', glifo: 'gotasSangre', bueno: true },
+  { f3: 524288, nombre: 'Sed de sangre: +5% de la vida actual del enemigo; el 3.º golpe cura', glifo: 'sedSangre', bueno: true },
   { f3: 2097152, nombre: 'Danza carmesí: imparable, −30% de daño recibido', glifo: 'danzaCarmesi', bueno: true },
   { f3: 4194304, nombre: 'Gotas de sangre', glifo: 'gotasSangre', bueno: false },
   { f3: 65536, nombre: 'Mecha corta: escudo que explota a los 3 s', glifo: 'mechaCorta', bueno: true },
@@ -5632,21 +5631,18 @@ class Game {
 
   meleeArc(p, a, rango, arcoDeg, dmg) {
     const half = (arcoDeg * Math.PI / 180) / 2;
-    let reducido = false, golpeoVat = false;
+    let reducido = false, golpeoVat = false, danoSed = 0;
     this.emit({ k: 'slash', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), r: rango, w: +(half * 2).toFixed(2), c: p.colorIdx, h: p.fx.nephilim ? 'nephilim' : p.build.heroe, gr: p.fx.sobre ? 1 : 0 });
     for (const q of this.enemigos(p.id)) {
       const pt = puntoDe(q, p);
       const d = dist(pt, p);
       if (d > rango + CONFIG.RADIO_JUGADOR) continue;
       if (d > CONFIG.RADIO_JUGADOR && angDiff(Math.atan2(pt.y - p.y, pt.x - p.x), a) > half + 0.25) continue;
-      const vat = HEROES[p.build?.heroe]?.pasiva === 'gotasSangre', gotasAntes = vat ? this.gotasDe(q) : 0;
-      const esp = vat && p.fx.golpeSangre;   // Vatrius: golpe de sangre (+35 +5 por gota)
-      const hizo = this.damage(q, dmg + (esp ? esp.n.extra + esp.n.porGota * gotasAntes : 0), p, { tipo: 'fis', basico: true });
+      const vat = HEROES[p.build?.heroe]?.pasiva === 'gotasSangre', sed = vat && p.fx.sedSangre;
+      const extraSed = sed && q.kind !== 'muro' ? Math.max(0, q.hp) * sed.n.pct : 0;   // Sed de sangre: +5% de la vida actual del enemigo
+      const hizo = this.damage(q, dmg + extraSed, p, { tipo: 'fis', basico: true });
       if (vat && hizo > 0) {
-        if (gotasAntes && !q.esUnidad) this.heal(p, 5 * gotasAntes, p);   // pasiva: 5 por gota que ya tenía
-        if (p.fx.sedSangre) this.heal(p, hizo * p.fx.sedSangre.n.robo, p);
-        if (esp) this.emit({ k: 'golpeSangre', x: q.x | 0, y: q.y | 0, n: gotasAntes });
-        golpeoVat = true;
+        if (sed) { golpeoVat = true; danoSed += hizo; if (sed.quedan === 1) this.emit({ k: 'golpeSangre', x: q.x | 0, y: q.y | 0, n: this.gotasDe(q) }); }
       }
       // Takichi (Seba 29-10): cada básico que daña baja 0,25 s la recarga de sus habilidades 1 y 2
       // Shai (Seba 30-10): Pacto de sangre — cada 3 ataques al mismo enemigo en 3 s explota un sello (15 de daño y +5% de velocidad 3 s)
@@ -5675,7 +5671,8 @@ class Game {
       }
     }
     // Vatrius: el golpe de sangre se gasta; la Sed de sangre cuenta golpes que dieron
-    if (golpeoVat) { if (p.fx.golpeSangre) delete p.fx.golpeSangre; else if (p.fx.sedSangre) p.fx.sedSangre.quedan--; }
+    // Vatrius (Seba 05-11, V4.3): cada golpe de la Sed de sangre gasta una carga; el 3.º cura lo mismo que el daño que hizo
+    if (golpeoVat && p.fx.sedSangre) { const f = p.fx.sedSangre; if (f.quedan === 1) this.heal(p, danoSed, p); if (--f.quedan <= 0) delete p.fx.sedSangre; }
   }
 
   spawnProj(p, a, o) {
@@ -6181,8 +6178,8 @@ class Game {
         break;
       }
       case 'sedSangre': {
-        delete p.fx.golpeSangre;
-        this.aplicarEfecto(p, 'sedSangre', { t: h.dur + 1, n, quedan: h.golpes, fin: this.combatTime + h.dur });
+        this.aplicarEfecto(p, 'sedSangre', { t: h.dur, n, quedan: h.golpes, fin: this.combatTime + h.dur });
+        p.cargas = Math.max(p.cargas, 1); p.cd[0] = 0;   // como los Puños de Ash: listo para golpear
         this.emit({ k: 'sedSangre', x: p.x | 0, y: p.y | 0 });
         break;
       }
@@ -6196,6 +6193,7 @@ class Game {
       case 'mechaCorta': {
         this.aplicarEfecto(p, 'escudo', { t: h.dur + 0.1, v: n.escudo, max: n.escudo, de: p.id, mecha: true });
         this.aplicarEfecto(p, 'mecha', { t: h.dur + 0.2, inicio: this.combatTime, n });
+        p.cargas = Math.min(cargasMax(p), p.cargas + 1);   // Seba (05-11, V4.3): recupera al tiro 1 carga del escopetazo
         break;
       }
       case 'lamparaMina': {   // Seba (05-11): siempre a los pies de Jürgen
@@ -7513,7 +7511,7 @@ class Game {
           }
         }
       }
-      if (p.fx.sedSangre && (p.fx.sedSangre.quedan <= 0 || this.combatTime >= p.fx.sedSangre.fin)) { const n = p.fx.sedSangre.n; delete p.fx.sedSangre; this.aplicarEfecto(p, 'golpeSangre', { t: HABILIDADES.sedSangre.cargaDur, n }); }
+      if (p.fx.sedSangre && (p.fx.sedSangre.quedan <= 0 || this.combatTime >= p.fx.sedSangre.fin)) delete p.fx.sedSangre;
       // Jürgen: si la mecha llega al final con el escudo en pie, explota
       if (p.fx.mecha && this.combatTime - p.fx.mecha.inicio >= HABILIDADES.mechaCorta.dur) {
         const n = p.fx.mecha.n, H = HABILIDADES.mechaCorta; delete p.fx.mecha;
@@ -8001,7 +7999,7 @@ class Game {
       ps.push([p.id, Math.round(p.x), Math.round(p.y), r1(p.hp), p.st.vidaMax, +p.facing.toFixed(2), flags,
         +p.cd[0].toFixed(1), +p.cd[1].toFixed(1), +p.cd[2].toFixed(1), +p.cd[3].toFixed(1), p.caido ? +(p.revive / PVE.REVIVIR_T).toFixed(2) : (p.respawn > 0 ? -+p.respawn.toFixed(1) : 0), p.ack || 0, +p.cargas.toFixed(2), +p.ulti.toFixed(3), fx.escudo ? Math.ceil(fx.escudo.v) : 0, this.cargasHab(p), fx.saltoLanza ? +Math.min(1, fx.saltoLanza.el / fx.saltoLanza.total).toFixed(2) : 0,
         (fx.canalGrillete ? 1 : 0) | (fx.canalPortal ? 2 : 0) | (fx.encadenado ? 4 : 0) | (fx.encadenando ? 8 : 0) | (fx.rafagaGaia ? 16 : 0) | (fx.canalLluvia ? 32 : 0) | (fx.rafagaShai ? 64 : 0) | (fx.manto ? 128 : 0) | (fx.dagasShai ? 256 : 0) | (fx.pacto || fx.impulsoShai ? 512 : 0) | (fx.canalSiega ? 1024 : 0) | (fx.canalPozo ? 2048 : 0) | (fx.pozo ? 4096 : 0) | (fx.nephilim ? 8192 : 0) | (fx.embateGiro ? (fx.embateGiro.paso >= 3 ? 32768 : 16384) : 0) | this.bitsPasiva(p), fx.rafagaShai ? +fx.rafagaShai.a0.toFixed(2) : 0,
-        fx.punosFenix ? fx.punosFenix.n2 : 0, fx.canalPatada ? +Math.min(1, (HABILIDADES.patadaFenix.carga + 0.1 - fx.canalPatada.t) / HABILIDADES.patadaFenix.crece).toFixed(2) : 0, this.timersMayhem(p),
+        fx.punosFenix ? fx.punosFenix.n2 : fx.sedSangre ? fx.sedSangre.quedan : 0, fx.canalPatada ? +Math.min(1, (HABILIDADES.patadaFenix.carga + 0.1 - fx.canalPatada.t) / HABILIDADES.patadaFenix.crece).toFixed(2) : 0, this.timersMayhem(p),
         (fx.encantado ? 1 : 0) | (fx.polvo ? 2 : 0) | (p.enPolvo && this.combatTime - p.enPolvo < 0.3 ? 4 : 0) | (p.armarioT && this.combatTime - p.armarioT < 0.3 ? 8 : 0) | (this.actoVarioDe(p) > 0 ? 16 : 0) | (fx.canalArmario ? 32 : 0) | (fx.levantado ? 64 : 0) | (p.vacioT && this.combatTime - p.vacioT < 1.2 ? 128 : 0) | (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? 256 : 0) | (fx.ampRunico ? 512 : 0) | (fx.canalImpacto ? 1024 : 0) | (fx.cargaCastigo ? 2048 : 0) | (fx.canalPozoM ? 4096 : 0) | (fx.canalChaos ? 8192 : 0) | (fx.furiaPozo ? 16384 : 0) | (p.quemaVerde && this.combatTime - p.quemaVerde < 2 ? 32768 : 0) | (fx.mecha ? 65536 : 0) | (fx.luzMina ? 131072 : 0) | (p.vueltaVat ? 262144 : 0) | (fx.sedSangre ? 524288 : 0) | (fx.golpeSangre ? 1048576 : 0) | (fx.danzaCarmesi ? 2097152 : 0) | (this.gotasDe(p) ? 4194304 : 0) | (CANCELABLES.some(k => fx[k]) ? 8388608 : 0) | (HEROES[p.build?.heroe]?.pasiva === 'mantoSombras' && this.presasTenebris(p) > 0 ? 16777216 : 0),
         this.actoVarioDe(p),
         (p.vacioT && this.combatTime - p.vacioT < 1.2 ? p.vacioN : 0), (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? p.resonancia.n : 0),
@@ -10158,6 +10156,7 @@ class Renderer {
   torretaJurgen(u) {
     const g = this.g, cx = this.gx(u.x), cy = this.gy(u.y), izq = Math.cos(u.f) < 0, s = otro('torretaBrasas', 0, izq);
     const apaga = u.resta <= 0.6;
+    if (this.esAliado(u.owner)) { const rr = Math.round(HABILIDADES.torretaBrasas.rango * ESC); g.globalAlpha = 0.08; this.discDither(cx, cy, rr, PALETA.oro2, 3, 0); g.globalAlpha = 0.55; this.ring(cx, cy, rr, PALETA.oro2, 0.6, 1); g.globalAlpha = 1; }   // Seba (05-11, V4.3): rango de la torreta, solo Jürgen y aliados
     g.globalAlpha = 0.35; this.discDither(cx, cy + 2, 12, PALETA.tinta, 2, 0); g.globalAlpha = 1;
     g.drawImage(s, cx - (s.width >> 1), cy - s.height + 3);
     const ca = Math.cos(u.f), sa = Math.sin(u.f), by = cy - s.height + 9;
@@ -11298,6 +11297,7 @@ class Renderer {
         for (let i = 0; i < 10; i++) { this.g.fillStyle = i < p.av ? (p.av >= 8 && Math.floor(this.time * 8) % 2 ? PALETA.pergamino2 : PALETA.magenta2) : PALETA.magenta0; this.g.fillRect(x0 + i * (w + gap), y + 4, w, 2); }
         y -= 8;
       }
+      if ((p.f3 & 524288) && p.ex > 0) { for (let i = 0; i < p.ex; i++) { const x = cx - (p.ex - 1) * 5 + i * 10, yy = y + 4 + Math.round(Math.sin(this.time * 6 + i * 2) * 1); this.g.save(); this.g.translate(x, yy); this.g.scale(2, 2); this.gota(0, 0, 1); this.g.restore(); } y -= 2; y -= 12; }   // Vatrius: cargas de la Sed de sangre
       if ((p.f2 & 33554432) && p.ex > 0) { for (let i = 0; i < p.ex; i++) this.llama(cx - (p.ex - 1) * 5 + i * 10, y + 6, 0.8, 'rojo', i * 2.3); y -= 14; }
       if (p.f2 & 536870912) this.medallaFenix(cx + (izq ? 10 : -10), y + 2 + Math.round(Math.sin(this.time * 4) * 1.5), 1.6); }
 
@@ -13774,6 +13774,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V4.3', f: '05-11-2026', n: [
+    'Vatrius — Gotas de sangre: cada instancia de daño de sus golpes y habilidades deja una gota (máx. 4). Las gotas siguen haciendo daño, pero ya no curan a Vatrius.',
+    'Vatrius — Sed de sangre: 3 cargas (se ven sobre él) para sus próximos 3 ataques básicos en 6 s. Cada uno hace +5% de la vida actual del enemigo como daño adicional; el tercero cura a Vatrius lo mismo que el daño que hace. Ya no roba vida ni da golpe de sangre.',
+    'Jürgen — Mecha corta: al activarla recupera al instante 1 carga del escopetazo.',
+    'Jürgen — Torreta de brasas: Jürgen y sus aliados ven el rango de la torreta.' ] },
   { v: 'V4.2', f: '05-11-2026', n: [
     'Regeneración base: 10 de vida por segundo, pero solo tras 1,5 s sin recibir daño. Todas las ultis piden 10% más de daño para cargarse.',
     'Canalizaciones: mientras canalizas aparece la X; tocarla (o X / Esc en PC) cancela la canalización.',
