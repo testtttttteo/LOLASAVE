@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.3</title>
+<title>LOLA V4.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.3</p>
+        <p class="sub version">LOLA V4.4</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -5256,14 +5256,24 @@ class Game {
 
   // ================================================================ ataques básicos (daño físico)
   // Ritmo de recarga de las cargas (Fuga y Bendición lo aceleran)
+  // Seba (05-11, V4.3): los básicos cuerpo a cuerpo golpean a 1 solo objetivo — el enemigo en el arco más cerca de donde apuntas (si empatan, el más cercano)
+  objetivoMelee(p, a, rango, half) {
+    let mejor = null, ms = Infinity;
+    for (const q of this.enemigos(p.id)) {
+      const pt = puntoDe(q, p), d = dist(pt, p);
+      if (d > rango + CONFIG.RADIO_JUGADOR) continue;
+      const da = d > CONFIG.RADIO_JUGADOR ? angDiff(Math.atan2(pt.y - p.y, pt.x - p.x), a) : 0;
+      if (da > half + 0.25) continue;
+      const sc = da * 60 + d * 0.5 + (q.kind === 'muro' ? 1000 : 0);   // los muros solo si no hay otra cosa
+      if (sc < ms) { ms = sc; mejor = q; }
+    }
+    return mejor ? [mejor] : [];
+  }
   // Ash: destello de fénix (más alcance, +50 de daño y quema)
   golpeFenix(p, a) {
     const H = HABILIDADES.punosFenix, f = p.fx.punosFenix, half = H.arco * Math.PI / 360;
     this.emit({ k: 'slash', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), r: H.rango, w: +(half * 2).toFixed(2), c: p.colorIdx, h: 'ashFenix' });
-    for (const q of this.enemigos(p.id)) {
-      const pt = puntoDe(q, p), d = dist(pt, p);
-      if (d > H.rango + CONFIG.RADIO_JUGADOR) continue;
-      if (d > CONFIG.RADIO_JUGADOR && angDiff(Math.atan2(pt.y - p.y, pt.x - p.x), a) > half + 0.25) continue;
+    for (const q of this.objetivoMelee(p, a, H.rango, half)) {
       this.damage(q, p.st.dano * (p.fx.espirituFenix ? 1 : 1) + f.n.extra, p, { tipo: 'fis', basico: true });
       if (q.alive && q.kind !== 'muro') this.aplicarEfecto(q, 'burn', { t: f.n.dur, dps: f.n.quema, src: p.id, k: 'punosFenix' });
     }
@@ -5633,11 +5643,8 @@ class Game {
     const half = (arcoDeg * Math.PI / 180) / 2;
     let reducido = false, golpeoVat = false, danoSed = 0;
     this.emit({ k: 'slash', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), r: rango, w: +(half * 2).toFixed(2), c: p.colorIdx, h: p.fx.nephilim ? 'nephilim' : p.build.heroe, gr: p.fx.sobre ? 1 : 0 });
-    for (const q of this.enemigos(p.id)) {
-      const pt = puntoDe(q, p);
-      const d = dist(pt, p);
-      if (d > rango + CONFIG.RADIO_JUGADOR) continue;
-      if (d > CONFIG.RADIO_JUGADOR && angDiff(Math.atan2(pt.y - p.y, pt.x - p.x), a) > half + 0.25) continue;
+    const lista = p.fx.sobre ? this.enemigos(p.id).filter(q => { const pt = puntoDe(q, p), d = dist(pt, p); return d <= rango + CONFIG.RADIO_JUGADOR && (d <= CONFIG.RADIO_JUGADOR || angDiff(Math.atan2(pt.y - p.y, pt.x - p.x), a) <= half + 0.25); }) : this.objetivoMelee(p, a, rango, half);   // Trelgon gigante sigue barriendo media vuelta
+    for (const q of lista) {
       const vat = HEROES[p.build?.heroe]?.pasiva === 'gotasSangre', sed = vat && p.fx.sedSangre;
       const extraSed = sed && q.kind !== 'muro' ? Math.max(0, q.hp) * sed.n.pct : 0;   // Sed de sangre: +5% de la vida actual del enemigo
       const hizo = this.damage(q, dmg + extraSed, p, { tipo: 'fis', basico: true });
@@ -13774,6 +13781,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V4.4', f: '05-11-2026', n: [
+    'Ataques básicos cuerpo a cuerpo: ahora golpean a un solo objetivo, el enemigo más cerca de donde apuntas (antes dañaban a todos en el arco). Incluye los Puños del fénix de Ash. Trelgon gigante sigue barriendo media vuelta.' ] },
   { v: 'V4.3', f: '05-11-2026', n: [
     'Vatrius — Gotas de sangre: cada instancia de daño de sus golpes y habilidades deja una gota (máx. 4). Las gotas siguen haciendo daño, pero ya no curan a Vatrius.',
     'Vatrius — Sed de sangre: 3 cargas (se ven sobre él) para sus próximos 3 ataques básicos en 6 s. Cada uno hace +5% de la vida actual del enemigo como daño adicional; el tercero cura a Vatrius lo mismo que el daño que hace. Ya no roba vida ni da golpe de sangre.',
