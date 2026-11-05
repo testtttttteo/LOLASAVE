@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.6</title>
+<title>LOLA V4.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.6</p>
+        <p class="sub version">LOLA V4.7</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1032,6 +1032,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
         <div class="modos">
           <button class="btn gold" id="b-1v1">1v1</button>
           <button class="btn gold" id="b-2v2">2v2</button>
+          <button class="btn gold" id="b-3v3">3v3</button>
           <button class="btn gold" id="b-practice">Todos contra todos</button>
           <button class="btn draft-tg" id="b-draftmodo" aria-pressed="false">Draft: libre</button>
         </div>
@@ -1082,6 +1083,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="sala-modos" id="sala-modos">
         <button class="btn small" data-m="1v1">1v1</button>
         <button class="btn small" data-m="2v2">2v2</button>
+        <button class="btn small" data-m="3v3">3v3</button>
         <button class="btn small" data-m="ffa">Todos contra todos</button>
       </div>
       <div class="sala-modos sala-draft" id="sala-draft">
@@ -1233,7 +1235,8 @@ const COLOR_JUGADOR = [
 // =====================================================================
 
 const CONFIG = {
-  MAX_JUGADORES: 4,
+  MAX_JUGADORES: 6,   // Seba (05-11, V4.7): 3v3 (todos contra todos sigue con 4 como máximo)
+  MAX_FFA: 4,
 
   // ---- Partida ----
   VIDAS_INICIALES: 5,           // demo: 5 vidas para partidas más cortas
@@ -1242,6 +1245,7 @@ const CONFIG = {
   // Seba (29-10): draft con baneos. A = azul, B = rojo. 2v2: el orden de Seba; 1v1: versión recortada (cada uno banea 2 y elige 1).
   DRAFT_BAN: {
     turnos2v2: [['A', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'pick'], ['A', 'ban'], ['B', 'ban'], ['B', 'pick'], ['A', 'pick']],
+    turnos3v3: [['A', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'pick'], ['B', 'pick'], ['A', 'pick'], ['A', 'ban'], ['B', 'ban'], ['B', 'pick'], ['A', 'pick']],   // (C) Seba (05-11, V4.7)
     turnos1v1: [['A', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'ban'], ['A', 'ban'], ['B', 'pick']],
     porTurno: 30,     // segundos por turno (C); si se acaba, se elige o banea al azar
     esperaBot: 1.5,   // lo que tarda un bot en jugar su turno
@@ -1252,10 +1256,12 @@ const CONFIG = {
   // 1v1 / 2v2 (Seba 28-10): una sola partida, sin rondas. Dos círculos al norte, uno en el lado de cada equipo.
   // Rojo captura el círculo azul y viceversa (el dueño del lado puede recuperarlo). Se abren a los 25 s; 5 s solo dentro.
   // Gana quien, a la vez, tenga capturado el círculo rival y lleve 10 kills. Tope de seguridad: 10 min (gana quien tenga más kills).
-  OBJETIVOS: { puntos: [[-290, -300, 'A'], [290, -300, 'B']], r: 70, apertura: 25, captura: 5, killsParaGanar: 10, duracionRonda: 600 },
+  OBJETIVOS: { puntos: [[0, -330, 'A'], [0, 330, 'B']],   // Seba (05-11, V4.7): azul al norte, rojo al sur
+                r: 70, apertura: 25, captura: 5, killsParaGanar: 10, duracionRonda: 600 },
   // The Cucko (Seba 28-10): ave del terror encerrada en una cámara de piedra al sur. Quien da el último golpe
   // lleva a su equipo el status «Cucko»: +10% de daño a todo enemigo y -10% de daño recibido por 60 s (se pierde al morir).
-  CUCKO: { x: 0, y: 330, camara: 112, abertura: 38, vida: 1200, dano: 60, cd: 2, aviso: 0.8, area: 60, alcance: 175, vel: 80,
+  CUCKO: { activo: false,   // Seba (05-11, V4.7): The Cucko y los muros de su cámara quitados (true lo devuelve)
+           x: 0, y: 330, camara: 112, abertura: 38, vida: 1200, dano: 60, cd: 2, aviso: 0.8, area: 60, alcance: 175, vel: 80,
            aparece: 60, reaparece: 90, buff: { dur: 60, dano: 1.1, recibe: 0.9 } },
   PUNTOS_POR_RONDA: 0,          // rework combate: sin puntos por ahora (todas las habilidades desde el inicio)
   // Seba (28-10): las ultis tienen recarga propia (cd en HABILIDADES) Y se llenan con daño; se necesitan las dos.
@@ -1836,7 +1842,7 @@ const PASIVAS = {
   savia:        { nombre: 'Savia del bosque', glifo: 'nube', desc: 'Recuperas 5 de vida por segundo bajo un árbol.' },
   almas:        { nombre: 'Cosecha de almas', glifo: 'gotaVerde', desc: 'Cuando matan a una de tus invocaciones, recuperas 15 de vida.' },
   eco:          { nombre: 'Eco del camino', glifo: 'gotaAzul', desc: 'Curar a tus aliados también carga tu ulti.' },
-  nubeVoladora: { nombre: 'Sobre la nube', glifo: 'nube', desc: 'Flotas sobre tu nube: pasas por encima de los obstáculos (muros de hielo y muros de la cámara de The Cucko). Cada golpe que daña a un héroe enemigo te da +1% de velocidad de movimiento (máximo +10%). Si pasas 1 s sin dañar a un héroe, empiezas a perderlo de a 1% por segundo.' },
+  nubeVoladora: { nombre: 'Sobre la nube', glifo: 'nube', desc: 'Flotas sobre tu nube: pasas por encima de los obstáculos (muros de hielo). Cada golpe que daña a un héroe enemigo te da +1% de velocidad de movimiento (máximo +10%). Si pasas 1 s sin dañar a un héroe, empiezas a perderlo de a 1% por segundo.' },
   pasoSigiloso: { nombre: 'Paso sigiloso', glifo: 'bota', desc: '+10% de velocidad de movimiento si no recibiste daño en los últimos 3 s.'   /* Seba (31-10): ya no baja recargas con los básicos */ },
   festin:       { nombre: 'Festín', glifo: 'colmillos', desc: 'Cuando muere un héroe enemigo al que dañaste en los últimos 1,5 s, recuperas 50 de vida.' },   // Seba (30-10): 100 → 50
   sentidoAracnido: { nombre: 'Sentido arácnido', glifo: 'ojoArana', desc: 'Los enemigos invisibles o escondidos que pisan tu tela quedan a la vista de todos.' },
@@ -4745,7 +4751,7 @@ class Game {
     this.draft = null;
     if (this.modo === 'equipos' && this.draftModo === 'ban') {
       const n = [...this.players.values()].length;
-      this.draft = { turnos: n > 2 ? CONFIG.DRAFT_BAN.turnos2v2 : CONFIG.DRAFT_BAN.turnos1v1, paso: 0, botT: CONFIG.DRAFT_BAN.esperaBot };
+      this.draft = { turnos: n > 4 ? CONFIG.DRAFT_BAN.turnos3v3 : n > 2 ? CONFIG.DRAFT_BAN.turnos2v2 : CONFIG.DRAFT_BAN.turnos1v1, paso: 0, botT: CONFIG.DRAFT_BAN.esperaBot };
       this.timer = CONFIG.DRAFT_BAN.porTurno;
     }
     this.metaDirty = true;
@@ -4909,7 +4915,7 @@ class Game {
         const eq = this.teamOf(p.id), k = idxEq[eq]++;
         const lado = eq === 'A' ? -1 : 1;
         const m = act.filter(q => this.teamOf(q.id) === eq).length;
-        p.x = lado * R * 0.95; p.y = m > 1 ? (k - 0.5) * 120 : 0;
+        p.x = lado * R * 0.95; p.y = (k - (m - 1) / 2) * 110;   // 1, 2 o 3 por lado
         p.facing = eq === 'A' ? 0 : Math.PI;
       }
       p.moveX = Math.cos(p.facing); p.moveY = Math.sin(p.facing);
@@ -8051,6 +8057,7 @@ class Game {
   // ---------------------------------------------------------------- The Cucko
   // Muro de la cámara: anillo de radio C.camara con una abertura hacia el norte (±abertura grados)
   enMuroCamara(x, y, rad = 0) {
+    if (!CONFIG.CUCKO.activo) return false;   // Seba (05-11, V4.7): sin The Cucko ni su cámara
     const C = CONFIG.CUCKO, dx = x - C.x, dy = y - C.y, d = Math.hypot(dx, dy);
     if (Math.abs(d - C.camara) > 7 + rad) return false;
     return angDiff(Math.atan2(dy, dx), -Math.PI / 2) > C.abertura * Math.PI / 180;
@@ -8063,6 +8070,7 @@ class Game {
     p.x = C.x + dx / d * nd; p.y = C.y + dy / d * nd;
   }
   updateCucko(dt) {
+    if (!CONFIG.CUCKO.activo) { this.cucko = null; return; }   // Seba (05-11, V4.7): The Cucko quitado del mapa
     const C = CONFIG.CUCKO;
     let u = this.cucko;
     if (!u || !u.alive) {
@@ -8270,7 +8278,7 @@ class Game {
       pr: this.projectiles.map(q => [q.id, Math.round(q.x), Math.round(q.y), q.spr, q.colorIdx, +Math.atan2(q.vy, q.vx).toFixed(2), q.owner]),
       z: this.zones.map(z => [z.id, Math.round(z.x), Math.round(z.y), z.r, z.kind, +(1 - z.t / z.total).toFixed(2), +(z.a || 0).toFixed(2), +(z.w || 0).toFixed(2), Math.round(z.ox || 0), Math.round(z.oy || 0), z.owner || 0, +(z.oculto || 0).toFixed(2)]),
       pv: this.modo === 'pve' && this.pve ? this.pveSnap() : null,
-      zo: this.objetivos ? { ab: Math.max(0, Math.ceil(CONFIG.OBJETIVOS.apertura - this.combatTime)), o: this.objetivos.map(o => [o.x, o.y, this.colorDeEquipo(o.dueno), this.colorDeEquipo(o.equipo), +(o.prog / CONFIG.OBJETIVOS.captura).toFixed(2), o.disputado ? 1 : 0, o.dueno, o.lado]), ck: this.cucko ? -1 : Math.max(0, Math.ceil(this.cuckoT || 0)) } : null,
+      zo: this.objetivos ? { ab: Math.max(0, Math.ceil(CONFIG.OBJETIVOS.apertura - this.combatTime)), o: this.objetivos.map(o => [o.x, o.y, this.colorDeEquipo(o.dueno), this.colorDeEquipo(o.equipo), +(o.prog / CONFIG.OBJETIVOS.captura).toFixed(2), o.disputado ? 1 : 0, o.dueno, o.lado]), ck: !CONFIG.CUCKO.activo ? 0 : this.cucko ? -1 : Math.max(0, Math.ceil(this.cuckoT || 0)) } : null,
       ev: events,
     };
   }
@@ -10641,7 +10649,7 @@ class Renderer {
     }
 
     // 1v1 / 2v2: cámara de The Cucko y círculos de cada lado
-    if (view.zo) { this.drawCamara(); this.drawObjetivos(view.zo); }
+    if (view.zo) { if (CONFIG.CUCKO.activo) this.drawCamara(); this.drawObjetivos(view.zo); }
 
     // Avisos en el suelo (golpes fuertes, bombas, miras)
     for (const z of view.zones) {
@@ -13280,11 +13288,11 @@ function startEquipos(tam) {
   S.game = new Game(); S.game.hostId = 'host'; S.myId = 'host';
   S.game.addPlayer('host', name);
   const eq = { host: 'A' };
-  const nombres = tam === 1 ? ['Bot Rival'] : ['Bot Aliado', 'Bot Rival 1', 'Bot Rival 2'];
+  const nombres = tam === 1 ? ['Bot Rival'] : tam === 2 ? ['Bot Aliado', 'Bot Rival 1', 'Bot Rival 2'] : ['Bot Aliado 1', 'Bot Aliado 2', 'Bot Rival 1', 'Bot Rival 2', 'Bot Rival 3'];
   nombres.forEach((nm, i) => {
     const id = 'bot-' + (++S.botN);
     S.game.addPlayer(id, nm, true);
-    eq[id] = tam === 2 && i === 0 ? 'A' : 'B';
+    eq[id] = i < tam - 1 ? 'A' : 'B';
   });
   S.phase = null;
   S.game.draftModo = S.draftModo;   // Seba (29-10): draft libre o con baneos
@@ -13386,11 +13394,11 @@ function addBot() {
   asignarEquipos();
 }
 
-const NOMBRE_MODO = { '1v1': '1v1', '2v2': '2v2', ffa: 'Todos contra todos' };
+const NOMBRE_MODO = { '1v1': '1v1', '2v2': '2v2', '3v3': '3v3', ffa: 'Todos contra todos' };
 function faltaParaEmpezar(m) {
   const n = m.players.length, sala = m.sala || { modo: 'ffa', equipos: {} };
-  if (sala.modo === 'ffa') return n < 2 ? 'Faltan jugadores (mínimo 2)' : null;
-  const tam = sala.modo === '1v1' ? 1 : 2;
+  if (sala.modo === 'ffa') return n < 2 ? 'Faltan jugadores (mínimo 2)' : n > CONFIG.MAX_FFA ? `Sobran ${n - CONFIG.MAX_FFA} para todos contra todos (máximo ${CONFIG.MAX_FFA})` : null;
+  const tam = sala.modo === '1v1' ? 1 : sala.modo === '3v3' ? 3 : 2;
   const a = m.players.filter(p => sala.equipos[p.id] === 'A').length, b = m.players.filter(p => sala.equipos[p.id] === 'B').length;
   if (n < tam * 2) return `Faltan ${tam * 2 - n} jugador${tam * 2 - n > 1 ? 'es' : ''} o bots`;
   if (n > tam * 2) return `Sobran ${n - tam * 2} para ${sala.modo}`;
@@ -14144,6 +14152,7 @@ $('dr-roster').addEventListener('click', (e) => { const b = e.target.closest('[d
 $('dr-lock').onclick = () => { const k = S.verDraft; if (k && HEROES[k]) act({ t: $('dr-lock').dataset.ban ? 'ban' : 'pick', key: k }); };
 $('b-1v1').onclick = () => startEquipos(1);
 $('b-2v2').onclick = () => startEquipos(2);
+$('b-3v3').onclick = () => startEquipos(3);
 $('b-pve').onclick = startPve;
 // Shift + 1, 2, 3: aprender o subir habilidades en combate (PvE)
 window.addEventListener('keydown', (e) => {
@@ -14177,6 +14186,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V4.7', f: '05-11-2026', n: [
+    'Mapa: se quitó a The Cucko y los muros de su cámara.',
+    'Círculos de captura: ahora están al norte (Azul) y al sur (Rojo) del mapa.',
+    'Nuevo modo 3v3: contra bots (botón 3v3 en el inicio) y en salas online. Draft con baneos para 3v3: 4 baneos y 3 elecciones por equipo. Todos contra todos sigue con un máximo de 4.' ] },
   { v: 'V4.6', f: '05-11-2026', n: [
     'Vatrius — Estocada: la primera estocada recupera 20 de vida si daña a un enemigo con al menos una gota de sangre (una vez por estocada).',
     'Vatrius — Gotas de sangre: descripción corregida; solo las habilidades dejan gotas (de los básicos, solo el 3.º golpe de la Sed de sangre).' ] },
