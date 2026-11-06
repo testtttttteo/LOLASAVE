@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V4.9</title>
+<title>LOLA V5.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1014,7 +1014,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V4.9</p>
+        <p class="sub version">LOLA V5.0</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1047,8 +1047,8 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
         <button class="btn" id="b-coleccion">Colección de héroes</button>
         <button class="btn" id="b-patch">Patch Notes</button>
         <button class="btn" id="b-sonido">Sonido: sí</button>
-        <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Gana quien controle los dos círculos (el rival y el suyo) y tenga 10 kills a la vez (30 en 3v3).</p>
-        <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Gana quien controle los dos círculos (el rival y el suyo) y tenga 10 kills a la vez (30 en 3v3).</p>
+        <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
+        <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
       </div>
       
     </div>
@@ -8040,14 +8040,15 @@ class Game {
       o.disputado = dentro.size > 1;
       if (dentro.size === 1) {
         const eq = [...dentro][0];
-        // El rival lo captura; el dueño del lado solo puede recuperarlo si está tomado
-        const nada = eq === o.lado ? o.dueno === null : o.dueno === eq;
+        // Seba (05-11, V5.0): los dos círculos empiezan libres; cualquier equipo puede tomar cualquiera (y robárselo al otro)
+        const nada = o.dueno === eq;
         if (nada) { o.prog = 0; o.equipo = null; continue; }
         if (o.equipo !== eq) { o.equipo = eq; o.prog = 0; }
         o.prog += dt;
         if (o.prog >= O.captura) {
-          o.dueno = eq === o.lado ? null : eq; o.prog = 0; o.equipo = null;
-          this.emit({ k: 'anuncio', s: eq === o.lado ? `${NOM[eq]} RECUPERA SU CÍRCULO` : `${NOM[eq]} TOMA EL CÍRCULO ${NOM[o.lado]}` });
+          const robo = o.dueno && o.dueno !== eq;
+          o.dueno = eq; o.prog = 0; o.equipo = null;
+          this.emit({ k: 'anuncio', s: eq === o.lado ? `${NOM[eq]} ${robo ? 'RECUPERA' : 'TOMA'} SU CÍRCULO` : `${NOM[eq]} ${robo ? 'LE ROBA' : 'TOMA'} EL CÍRCULO ${NOM[o.lado]}` });
           this.emit({ k: 'ring', x: o.x, y: o.y, r: O.r, c: eq === 'A' ? 'acero' : 'grito' });
         }
       } else if (dentro.size === 0) {
@@ -8055,10 +8056,9 @@ class Game {
         if (o.prog === 0) o.equipo = null;
       }
     }
-    // Victoria: controlar los dos círculos (el rival en tu poder y el tuyo sin perder) + 10 kills (30 en 3v3), al mismo tiempo
+    // Victoria (Seba 05-11, V5.0): los dos círculos tomados por tu equipo + 10 kills (30 en 3v3), al mismo tiempo
     for (const eq of ['A', 'B']) {
-      const rival = this.objetivos.find(o => o.lado !== eq), mio = this.objetivos.find(o => o.lado === eq);
-      if (rival && rival.dueno === eq && !(mio && mio.dueno && mio.dueno !== eq) && this.marcador[eq] >= this.killsMeta()) { this.objGanador = eq; break; }
+      if (this.objetivos.every(o => o.dueno === eq) && this.marcador[eq] >= this.killsMeta()) { this.objGanador = eq; break; }
     }
   }
 
@@ -8394,10 +8394,13 @@ function botThink(game, p, dt) {
     const eq = game.teamOf(p.id), O = CONFIG.OBJETIVOS;
     const orden = [...game.players.values()].filter(q => game.teamOf(q.id) === eq).indexOf(p);
     const mio = game.objetivos.find(o => o.lado === eq), rival = game.objetivos.find(o => o.lado !== eq);
-    const enPeligro = mio && (mio.dueno || (mio.equipo && mio.equipo !== eq && mio.prog > 1));
+    // V5.0: hay que tomar los dos; defiende el que el rival esté capturando, si no va a los que falten (repartidos por orden)
+    const peligro = game.objetivos.find(o => o.dueno === eq && o.equipo && o.equipo !== eq && o.prog > 1);
+    const faltan = game.objetivos.filter(o => o.dueno !== eq);
     let obj = null;
-    if (enPeligro && (orden === 0 || !rival || rival.dueno === eq)) obj = mio;
-    else if (rival && rival.dueno !== eq) obj = rival;
+    if (peligro) obj = peligro;
+    else if (faltan.length > 1) obj = orden % 2 === 0 ? mio : rival;
+    else if (faltan.length === 1) obj = faltan[0];
     // The Cucko: el segundo de cada equipo (o el único, si está sano y no hay rivales cerca)
     const ck = game.cucko;
     const cercano = target && !target.esUnidad ? Math.hypot(target.x - p.x, target.y - p.y) : Infinity;
@@ -14024,7 +14027,7 @@ function updateHud(latest, now) {
     $('hud-timer').textContent = latest.ph === 'combat' ? (eqs ? reloj(Math.ceil(latest.tm)) : Math.ceil(latest.tm)) : (eqs ? reloj(CONFIG.OBJETIVOS.duracionRonda) : CONFIG.TIEMPO_COMBATE);
     if (latest.zo) {
       // o[6] = quién lo tiene capturado (null = libre), o[7] = lado al que pertenece
-      const est = (o) => `${o[7] === 'A' ? 'Azul' : 'Rojo'} ${o[6] ? 'TOMADO' : 'libre'}`;
+      const est = (o) => `${o[7] === 'A' ? 'Azul' : 'Rojo'} ${o[6] ? (o[6] === 'A' ? 'de AZUL' : 'de ROJO') : 'libre'}`;
       const ck = latest.zo.ck > 0 ? ` · Cucko ${latest.zo.ck}` : latest.zo.ck < 0 ? ' · ¡Cucko!' : '';
       $('hud-storm').textContent = latest.zo.ab > 0 ? `Círculos en ${latest.zo.ab}${ck}` : `${est(latest.zo.o[0])} · ${est(latest.zo.o[1])}${ck}`;
       $('hud-storm').classList.remove('hidden');
@@ -14216,6 +14219,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.0', f: '05-11-2026', n: [
+    'Círculos: los dos empiezan libres y cualquier equipo puede tomar cualquiera (o robárselo al otro). Para ganar hay que tener los dos tomados por tu equipo a la vez, junto con 10 kills (30 en 3v3). Antes el tuyo contaba como tuyo desde el inicio y bastaba con tomar el rival.' ] },
   { v: 'V4.9', f: '05-11-2026', n: [
     'Rendimiento: los círculos y zonas punteadas (alcances, torreta de Jürgen, Chaos de Fatum, lámparas, fuegos) se dibujan una vez y se reusan. El juego corre mucho más liviano con estos efectos en pantalla.' ] },
   { v: 'V4.8', f: '05-11-2026', n: [
