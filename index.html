@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.0</title>
+<title>LOLA V5.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -618,9 +618,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
 #marcador .mc-t { font: 13px var(--f-num); color: var(--oro2); line-height: 1; }
 #marcador .mc-obj { display: flex; gap: 4px; align-items: center; height: 9px; }
 #marcador .mc-txt { font: 7px var(--f-num); color: var(--piedra3); text-transform: uppercase; }
-#marcador .mc-c { width: 8px; height: 8px; border: 2px solid; box-sizing: border-box; }
-#marcador .mc-c.lado-a { border-color: var(--acero2); }
-#marcador .mc-c.lado-b { border-color: var(--carm2); }
+#marcador .mc-c { width: 8px; height: 8px; border: 2px solid var(--oro1); box-sizing: border-box; }
 #marcador .mc-c.tomado.a { background: var(--acero2); }
 #marcador .mc-c.tomado.b { background: var(--carm2); }
 #marcador .mc-c.capt { background: var(--oro2); animation: mcParpadeo 0.5s steps(2) infinite; }
@@ -1014,7 +1012,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.0</p>
+        <p class="sub version">LOLA V5.1</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1047,8 +1045,8 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
         <button class="btn" id="b-coleccion">Colección de héroes</button>
         <button class="btn" id="b-patch">Patch Notes</button>
         <button class="btn" id="b-sonido">Sonido: sí</button>
-        <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
-        <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren los círculos (uno en el lado de cada equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
+        <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren dos círculos neutrales, uno al norte y otro al sur (no son de ningún equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
+        <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren dos círculos neutrales, uno al norte y otro al sur (no son de ningún equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
       </div>
       
     </div>
@@ -1254,9 +1252,9 @@ const CONFIG = {
   REAPARECER_PASO: 3,           // 1v1 / 2v2 (Seba 29-10): 3 s la 1ª muerte, 6 s la 2ª, 9 s la 3ª...
   INVULNERABLE_REAPARECER: 1.5,   // Seba (28-10): al reaparecer, 1,5 s sin recibir daño (tampoco ataca ni lanza habilidades; sí se mueve)
   // 1v1 / 2v2 (Seba 28-10): una sola partida, sin rondas. Dos círculos al norte, uno en el lado de cada equipo.
-  // Rojo captura el círculo azul y viceversa (el dueño del lado puede recuperarlo). Se abren a los 25 s; 5 s solo dentro.
-  // Gana quien, a la vez, tenga capturado el círculo rival y lleve 10 kills. Tope de seguridad: 10 min (gana quien tenga más kills).
-  OBJETIVOS: { puntos: [[0, -330, 'A'], [0, 330, 'B']],   // Seba (05-11, V4.7): azul al norte, rojo al sur
+  // Dos círculos neutrales (norte y sur): cualquier equipo toma cualquiera y se los roban. Se abren a los 25 s; 5 s solo dentro.
+  // Gana quien, a la vez, tenga los dos círculos y lleve 10 kills (30 en 3v3). Tope de seguridad: 10 min (gana quien tenga más kills).
+  OBJETIVOS: { puntos: [[0, -330, 'N'], [0, 330, 'S']],   // Seba (06-11, V5.1): dos círculos neutrales, norte y sur — ninguno es base de un equipo
                 r: 70, apertura: 25, captura: 5, killsParaGanar: 10, killsParaGanar3v3: 30, duracionRonda: 600 },   // Seba (05-11, V4.8): 3v3 pide 30 kills
   // The Cucko (Seba 28-10): ave del terror encerrada en una cámara de piedra al sur. Quien da el último golpe
   // lleva a su equipo el status «Cucko»: +10% de daño a todo enemigo y -10% de daño recibido por 60 s (se pierde al morir).
@@ -8048,7 +8046,7 @@ class Game {
         if (o.prog >= O.captura) {
           const robo = o.dueno && o.dueno !== eq;
           o.dueno = eq; o.prog = 0; o.equipo = null;
-          this.emit({ k: 'anuncio', s: eq === o.lado ? `${NOM[eq]} ${robo ? 'RECUPERA' : 'TOMA'} SU CÍRCULO` : `${NOM[eq]} ${robo ? 'LE ROBA' : 'TOMA'} EL CÍRCULO ${NOM[o.lado]}` });
+          this.emit({ k: 'anuncio', s: `${NOM[eq]} ${robo ? 'ROBA' : 'TOMA'} EL CÍRCULO ${o.lado === 'N' ? 'NORTE' : 'SUR'}` });
           this.emit({ k: 'ring', x: o.x, y: o.y, r: O.r, c: eq === 'A' ? 'acero' : 'grito' });
         }
       } else if (dentro.size === 0) {
@@ -8389,17 +8387,20 @@ function botThink(game, p, dt) {
     }
   }
 
-  // 1v1 / 2v2: recuperar tu círculo, tomar el del rival o ir por The Cucko
+  // Equipos: tomar los dos círculos neutrales y defender los propios
   if (game.modo === 'equipos' && game.objetivos && game.combatTime >= CONFIG.OBJETIVOS.apertura && !p.fx.mayhem) {
     const eq = game.teamOf(p.id), O = CONFIG.OBJETIVOS;
     const orden = [...game.players.values()].filter(q => game.teamOf(q.id) === eq).indexOf(p);
-    const mio = game.objetivos.find(o => o.lado === eq), rival = game.objetivos.find(o => o.lado !== eq);
     // V5.0: hay que tomar los dos; defiende el que el rival esté capturando, si no va a los que falten (repartidos por orden)
     const peligro = game.objetivos.find(o => o.dueno === eq && o.equipo && o.equipo !== eq && o.prog > 1);
     const faltan = game.objetivos.filter(o => o.dueno !== eq);
     let obj = null;
     if (peligro) obj = peligro;
-    else if (faltan.length > 1) obj = orden % 2 === 0 ? mio : rival;
+    else if (faltan.length > 1) {   // V5.1: círculos neutrales — solo va al más cercano; en equipo se reparten norte y sur
+      const cerca = faltan.slice().sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y));
+      const nEq = [...game.players.values()].filter(q => game.teamOf(q.id) === eq).length;
+      obj = nEq === 1 ? cerca[0] : faltan[orden % 2];
+    }
     else if (faltan.length === 1) obj = faltan[0];
     // The Cucko: el segundo de cada equipo (o el único, si está sano y no hay rivales cerca)
     const ck = game.cucko;
@@ -8499,7 +8500,7 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'orbeVida': si = d < 450; break;
       case 'bombaPegajosa': si = d < 400; break;
       case 'jetpack': si = d < 150 || (vida < 0.4 && d < 300); break;
-      case 'mina': si = d < 260 || (game.objetivos && game.objetivos.some(o => o.lado === game.teamOf(p.id) && Math.hypot(o.x - p.x, o.y - p.y) < 80)); break;
+      case 'mina': si = d < 260 || (game.objetivos && game.objetivos.some(o => o.dueno === game.teamOf(p.id) && Math.hypot(o.x - p.x, o.y - p.y) < 80)); break;
       case 'granBombazo': si = d > 150 && d < 480; break;
       case 'discoGaia': si = d < 300; break;
       case 'saltoJuicio': si = d < HABILIDADES.saltoJuicio.alcance + 20 && (!target.esUnidad); break;
@@ -11912,9 +11913,9 @@ class Renderer {
       const cx = this.gx(x), cy = this.gy(y), r = Math.round(O.r * ESC);
       const cd = colDueno >= 0 && COLOR_JUGADOR[colDueno] ? COLOR_JUGADOR[colDueno] : null;
       const cerrado = zo.ab > 0;
-      // Suelo: piedra, teñida con el color de quien lo capturó. Borde exterior: color del lado al que pertenece
+      // Suelo: piedra, teñida con el color de quien lo capturó. Borde exterior neutral (V5.1: ningún círculo es de un equipo)
       this.discDither(cx, cy, r, cd ? CHAR[cd.x] : PALETA.piedra0, 3, cerrado ? 0 : t);
-      this.ring(cx, cy, r + 3, lado === 'A' ? PALETA.acero1 : PALETA.carmesi1, 0.7, 1);
+      this.ring(cx, cy, r + 3, PALETA.oro1, 0.7, 1);
       this.ring(cx, cy, r, cerrado ? PALETA.piedra1 : cd ? CHAR[cd.z] : PALETA.pergamino2, 1, 1);
       this.ring(cx, cy, r - 3, cerrado ? PALETA.piedra0 : cd ? CHAR[cd.X] : PALETA.piedra2, 0.6, 1);
       // Estandarte en el centro
@@ -11930,7 +11931,7 @@ class Renderer {
         this.arc(cx, cy, r + 2, a0, a0 + TAU * prog, cc, 2);
       }
       if (disputado && t % 2) this.ring(cx, cy, r + 1, PALETA.pergamino2, 1, 1);
-      const rot = cerrado ? String(zo.ab) : lado === 'A' ? 'AZUL' : 'ROJO';
+      const rot = cerrado ? String(zo.ab) : lado === 'N' ? 'NORTE' : 'SUR';
       const s = texto(rot, cerrado ? PALETA.piedra3 : PALETA.pergamino2);
       this.g.drawImage(s, cx - (s.width >> 1), cy + 7);
     });
@@ -13233,7 +13234,7 @@ function actualizarMarcador(latest) {
     else for (const o of zo.o) {
       // o = [x, y, colDueño, colCaptura, progreso, disputado, dueño, lado]
       const cls = o[6] ? 'tomado ' + (o[6] === 'A' ? 'a' : 'b') : (o[4] > 0 ? 'capt' : 'libre');
-      html += `<span class="mc-c lado-${o[7] === 'A' ? 'a' : 'b'} ${cls}" title="Círculo ${o[7] === 'A' ? 'azul' : 'rojo'}"></span>`;
+      html += `<span class="mc-c ${cls}" title="Círculo ${o[7] === 'N' ? 'norte' : 'sur'}"></span>`;
     }
     html += zo.ck > 0 ? `<span class="mc-ck">${zo.ck}</span>` : zo.ck < 0 ? '<span class="mc-ck vivo">!</span>' : '';
   }
@@ -13896,7 +13897,7 @@ function renderResults() {
     $('rs-title').textContent = r.ganador ? (r.ganador === miEq ? '¡Ganó tu equipo!' : 'Ganaron los rivales') : 'Empate';
     if (S.sonoFin !== r) { S.sonoFin = r; sonido.play(r.ganador === miEq ? 'victoria' : 'derrota'); }
     $('rs-mult').classList.remove('hidden');
-    $('rs-mult').textContent = `${r.ganador ? (r.porObjetivos ? `Círculo rival tomado y ${r.meta} kills` : 'Se acabó el tiempo: más kills') + ' · ' : 'Tiempo agotado, igualados · '}Kills: Azul ${r.marcador.A} – ${r.marcador.B} Rojo`;
+    $('rs-mult').textContent = `${r.ganador ? (r.porObjetivos ? `Los dos círculos y ${r.meta} kills` : 'Se acabó el tiempo: más kills') + ' · ' : 'Tiempo agotado, igualados · '}Kills: Azul ${r.marcador.A} – ${r.marcador.B} Rojo`;
     $('rs-list').innerHTML = '';
     $('rs-list').insertAdjacentHTML('beforeend', `<li class="tabla-li">${tablaPvp(r.list)}</li>`);
     return;
@@ -14027,7 +14028,7 @@ function updateHud(latest, now) {
     $('hud-timer').textContent = latest.ph === 'combat' ? (eqs ? reloj(Math.ceil(latest.tm)) : Math.ceil(latest.tm)) : (eqs ? reloj(CONFIG.OBJETIVOS.duracionRonda) : CONFIG.TIEMPO_COMBATE);
     if (latest.zo) {
       // o[6] = quién lo tiene capturado (null = libre), o[7] = lado al que pertenece
-      const est = (o) => `${o[7] === 'A' ? 'Azul' : 'Rojo'} ${o[6] ? (o[6] === 'A' ? 'de AZUL' : 'de ROJO') : 'libre'}`;
+      const est = (o) => `${o[7] === 'N' ? 'Norte' : 'Sur'} ${o[6] ? (o[6] === 'A' ? 'de AZUL' : 'de ROJO') : 'libre'}`;
       const ck = latest.zo.ck > 0 ? ` · Cucko ${latest.zo.ck}` : latest.zo.ck < 0 ? ' · ¡Cucko!' : '';
       $('hud-storm').textContent = latest.zo.ab > 0 ? `Círculos en ${latest.zo.ab}${ck}` : `${est(latest.zo.o[0])} · ${est(latest.zo.o[1])}${ck}`;
       $('hud-storm').classList.remove('hidden');
@@ -14219,6 +14220,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.1', f: '06-11-2026', n: [
+    'Círculos neutrales: el Norte y el Sur ya no son la base de ningún equipo (borde dorado, sin color de equipo). Se tiñen del color de quien los toma.',
+    'Para ganar hay que tener los dos círculos y 10 kills a la vez (30 en 3v3). Los bots van a los dos y defienden los que tienen.' ] },
   { v: 'V5.0', f: '05-11-2026', n: [
     'Círculos: los dos empiezan libres y cualquier equipo puede tomar cualquiera (o robárselo al otro). Para ganar hay que tener los dos tomados por tu equipo a la vez, junto con 10 kills (30 en 3v3). Antes el tuyo contaba como tuyo desde el inicio y bastaba con tomar el rival.' ] },
   { v: 'V4.9', f: '05-11-2026', n: [
