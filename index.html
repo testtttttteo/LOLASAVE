@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.1</title>
+<title>LOLA V5.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1012,7 +1012,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.1</p>
+        <p class="sub version">LOLA V5.2</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1490,7 +1490,7 @@ Object.assign(HEROES, {
   lei: {
     casa: 'aliados',
     nombre: 'Lei', rol: 'Daño · combate', fondo: 'lei', arma: 'abanicoLei',
-    desc: 'Guerrera de los abanicos, de coleta negra y máscara, con ropa negra y celeste. Lanza sus abanicos en curvas que se cruzan, los arroja de lejos para frenar a sus presas y se eleva en el ojo del vendaval.',
+    desc: 'Guerrera de los abanicos, de coleta negra y máscara, con ropa negra y celeste. Lanza sus abanicos en curvas que se cruzan, los arroja de lejos para frenar a sus presas y se eleva en el ojo del vendaval para soltar una gran rueda de viento.',
     vida: 370, dano: 31, recarga: 1.0, ultiCarga: 300, velocidad: 163,   // Seba (05-11): daño 31, velocidad 125 en juego
     ataque: { tipo: 'melee', rango: 65, arco: 120 },   // (C) abanicos: un poco más de alcance y arco que los puños de Ash
     habs: ['abanicosCruzados', 'abanicosViento', 'ojoVendaval'],
@@ -1793,9 +1793,11 @@ Object.assign(HABILIDADES, {
   abanicosViento: { nombre: 'Abanicos al viento', glifo: 'abanicosViento', cd: 15, cdFijo: true, golpes: 5, dura: 10, alcance: 300, vel: 620, lentoDur: 2.5, lentoMax: 0.4,   // (C) recarga, alcance, duración del lento y tope
                    desc: (n) => `Tus próximos ${HABILIDADES.abanicosViento.golpes} ataques básicos son abanicos lanzados a distancia (${HABILIDADES.abanicosViento.alcance} de alcance): +${n.extra} de daño cada uno y el enemigo queda ${Math.round(n.lento * 100)}% más lento por cada abanico que recibe (se acumula hasta ${Math.round(HABILIDADES.abanicosViento.lentoMax * 100)}%; dura ${fmtN(HABILIDADES.abanicosViento.lentoDur)} s desde el último). Puedes seguir usando tus habilidades. Se pierden si no los usas en ${HABILIDADES.abanicosViento.dura} s.`,
                    n1: { extra: 15, lento: 0.10 }, n2: { extra: 15, lento: 0.10 } },   // Seba (05-11): +15 de daño y 10% por golpe
-  ojoVendaval:   { nombre: 'Ojo del vendaval', glifo: 'ojoVendaval', cd: 50, cdFijo: true, ulti: true, canal: 0.3, dur: 3, radio: 150, alcance: 320, impactos: 3, area: 45, aviso: 0.25, entre: 0.35,   // Seba (05-11): cae en 0,25 s   // (C) radio, alcance, área, aviso y tiempo entre impactos
-                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.ojoVendaval.canal)} s y te elevas en un torbellino de viento y energía celeste durante ${HABILIDADES.ojoVendaval.dur} s, quieta en el aire: nada te detiene y recibes ${Math.round(n.red * 100)}% menos de daño (el daño por porcentaje de vida te afecta normal). Los enemigos a ${HABILIDADES.ojoVendaval.radio} o menos quedan ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para apuntar cada uno de tus ${HABILIDADES.ojoVendaval.impactos} impactos (hasta ${HABILIDADES.ojoVendaval.alcance}): una ráfaga de energía celeste cae en ${fmtN(HABILIDADES.ojoVendaval.aviso)} s (su marca avisa) y hace ${n.dano} de daño; un enemigo que recibe varios impactos sufre +${Math.round(n.extra * 100)}% del segundo y +${Math.round(n.extra * 200)}% del tercero. Los que no apuntes caen solos al final sobre el enemigo más cercano.`,
-                   n1: { dano: 120, extra: 0.20, lento: 0.20, red: 0.60 }, n2: { dano: 120, extra: 0.20, lento: 0.20, red: 0.60 } },
+  // Seba (06-11): rework — apretar te eleva; durante la levitación, apretar otra vez suelta la rueda celeste donde apuntas (dentro del radio
+  // del lento) y una tercera vez corta la levitación. La rueda recorre hasta ese punto y queda girando 5 s.
+  ojoVendaval:   { nombre: 'Ojo del vendaval', glifo: 'ojoVendaval', cd: 50, cdFijo: true, ulti: true, dur: 3, radio: 150, vel: 960, rueda: 60, giro: 5, tick: 0.25, minRecast: 0.15,   // Seba: velocidad +50% (640 → 960); (C) tamaño de la rueda
+                   desc: (n) => `Te elevas en un torbellino de viento y energía celeste durante ${HABILIDADES.ojoVendaval.dur} s, quieta en el aire: nada te detiene, recibes ${Math.round(n.red * 100)}% menos de daño (el daño por porcentaje de vida te afecta normal) y los enemigos a ${HABILIDADES.ojoVendaval.radio} o menos quedan ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una gran rueda celeste, como uno de tus abanicos girando, hacia donde apuntes dentro de ese radio: hace ${n.dano} de daño a cada enemigo que alcanza y se queda girando ${HABILIDADES.ojoVendaval.giro} s, con ${n.dps} de daño por segundo a quien siga dentro. Una tercera vez corta la levitación.`,
+                   n1: { dano: 125, dps: 25, lento: 0.33, red: 0.60 }, n2: { dano: 125, dps: 25, lento: 0.33, red: 0.60 } },   // Seba: lento 33%
   embate:        { nombre: 'Embate de halabarda', glifo: 'embate', cd: 10, cdFijo: true, ventana: 3, avance: 45, alcance: 35, radio: 45, giro: 0.4, cura: 25,   // Seba (31-10): recarga 9 → 10, cura 50 → 25 (una vez por giro que daña al menos a un héroe)   // Seba (30-10): físico, con vueltas en el aire; golpe en un radio chico al frente
                    desc: (n) => `Hasta 3 veces (tienes ${HABILIDADES.embate.ventana} s entre cada una): giras en el aire (cada giro que acierta a un héroe te cura ${HABILIDADES.embate.cura}) con la halabarda avanzando un poco y golpeas en un radio chico al frente (${n.dano} de daño). La 3ra es un martillazo de frente: mismo daño y aturde ${fmtN(n.aturde)} s a los que acierta. No eres inmune a control: un aturdimiento o un silencio no corta el giro en curso, pero te afecta igual y no te deja volver a usarla mientras dure.`,
                    n1: { dano: 50, aturde: 0.75 }, n2: { dano: 50, aturde: 0.75 } },
@@ -1976,7 +1978,7 @@ const GUIAS = {
   castigo: { tipo: 'linea', alcance: 450, ancho: 24 }, pozoMaldito: { tipo: 'punto', alcance: 300, r: 90 }, chaos: { tipo: 'punto', alcance: 600, r: 60 },
   impactoRunico: { tipo: 'punto', alcance: 300, r: 70 }, ondaRunica: { tipo: 'propio', r: 200 }, vacio: { tipo: 'punto', alcance: 380, r: 132 },
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
-  abanicosCruzados: { tipo: 'linea', alcance: 308, ancho: 60 }, abanicosViento: { tipo: 'propio', r: 300 }, ojoVendaval: { tipo: 'propio', r: 150 },
+  abanicosCruzados: { tipo: 'linea', alcance: 308, ancho: 60 }, abanicosViento: { tipo: 'propio', r: 300 }, ojoVendaval: { tipo: 'propio', r: 150 }, ojoVendavalRueda: { tipo: 'punto', alcance: 150, r: 60 },
   punosFenix: { tipo: 'propio', r: 110 }, patadaFenix: { tipo: 'linea', alcance: 286, ancho: 24 }, espirituFenix: { tipo: 'propio', r: 120 },
   embate: { tipo: 'cono', alcance: 85, arco: 90 }, totemGaia: { tipo: 'propio', r: 90 }, nephilim: { tipo: 'linea', alcance: 380, ancho: 20 },
   almaErrante: { tipo: 'linea', alcance: 600, ancho: 28 }, siega: { tipo: 'cono', alcance: 80, arco: 180 }, pozoMaldad: { tipo: 'punto', alcance: 300, r: 100 },
@@ -5464,33 +5466,23 @@ class Game {
     const arena = this.units.find(u => u.alive && u.kind === 'arenaEstepa' && u.dentro && u.dentro.has(p.id) && dist(p, u) < u.r);
     return this.jugadoresEnemigos(p.id).filter(q => q.alive && !q.esUnidad && !((q.hidden || (q.fx && q.fx.invisible)) && !(q.fx && q.fx.expuesto)) && dist(q, p) <= H.alcance + CONFIG.RADIO_JUGADOR && (!arena || dist(q, arena) < arena.r));
   }
-  // Lei: Ojo del vendaval — apunta un impacto (marca 0,5 s antes de caer). auto: lo tira solo sobre el enemigo más cercano.
-  impactoLei(p, auto = false) {
+  // Lei: Ojo del vendaval — suelta la rueda en la dirección que apuntó al lanzar la ulti
+  // Seba (06-11): la rueda va al punto apuntado dentro del radio del lento (150). auto: al enemigo más cercano en el radio, o se pierde
+  ruedaLei(p, auto = false) {
     const v = p.fx.vendaval, H = HABILIDADES.ojoVendaval;
-    if (!v || v.quedan <= 0) return;
-    if (!auto && (this.combatTime - v.inicio < H.canal || this.combatTime < v.prox)) return;
-    let x, y;
-    if (this._apunte && !auto) { const d = this.distApunte(H.alcance); x = p.x + Math.cos(this._apunte.a) * d; y = p.y + Math.sin(this._apunte.a) * d; }
+    let a, d;
+    if (this._apunte && !auto) { a = this._apunte.a; d = this.distApunte(H.radio); }
     else {
-      const t = this.target(p, H.alcance + CONFIG.RADIO_JUGADOR);
-      if (t) { x = t.x; y = t.y; }
-      else if (auto) return;
-      else { x = p.x + Math.cos(p.facing) * H.alcance * 0.6; y = p.y + Math.sin(p.facing) * H.alcance * 0.6; }
+      const t = this.target(p, H.radio + CONFIG.RADIO_JUGADOR);
+      if (t) { a = Math.atan2(t.y - p.y, t.x - p.x); d = Math.min(H.radio, Math.hypot(t.x - p.x, t.y - p.y)); }
+      else if (auto) { v.lanzada = true; return; }
+      else { a = p.facing; d = H.radio * 0.6; }
     }
-    const c = { x, y }; this.clampWall(c);
-    v.quedan--; v.prox = this.combatTime + H.entre;
-    p.facing = Math.atan2(c.y - p.y, c.x - p.x);
-    const n = v.n, golpes = v.golpes;
-    this.zones.push({ id: this.nextId++, kind: 'impactoLei', x: c.x, y: c.y, r: H.area, t: H.aviso, total: H.aviso, owner: p.id,
-      fin: () => {
-        this.emit({ k: 'impactoLei', x: c.x | 0, y: c.y | 0, r: H.area });
-        for (const e of this.enemigos(p.id, false)) {
-          if (e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
-          if (distA(e, c) > H.area + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
-          const k = golpes[e.id] || 0; golpes[e.id] = k + 1;
-          this.damage(e, n.dano * (1 + n.extra * k), p, { tipo: 'mag', ulti: true, desde: c });
-        }
-      } });
+    v.lanzada = true; v.lanzadaT = this.combatTime; p.facing = a;
+    const fin = { x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d }; this.clampWall(fin);
+    this.projectiles.push({ id: this.nextId++, owner: p.id, colorIdx: p.colorIdx, x: p.x, y: p.y, vx: Math.cos(a), vy: Math.sin(a), left: 1, radio: H.rueda, dmg: v.n.dano, tipo: 'mag', spr: 'ruedaLei',
+      rueda: { ox: p.x, oy: p.y, a, d: 0, max: Math.hypot(fin.x - p.x, fin.y - p.y), t: 0, tick: 0, golpes: new Set(), n: v.n } });
+    this.emit({ k: 'abanicos', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
   }
   // Fatum: Castigo — suelta el alma cargada (40 + 15 por segundo, máx. 3 s)
   soltarCastigo(p) {
@@ -6145,8 +6137,13 @@ class Game {
       if (lv) { if (lv.recorrido > 20) { this.clampWall(lv); lv.estado = 'clavada'; lv.t = 0; this.emit({ k: 'boom', x: lv.x | 0, y: lv.y | 0, r: 16, c: 'piedra' }); } return; }
     }
     // Driiar (Seba 30-10): en forma Nephilim el botón de la ulti lanza la Onda de la naturaleza
-    if (key === 'ojoVendaval' && p.fx.vendaval) { this.impactoLei(p); return; }   // Lei: cada apretada apunta un impacto
-    if (p.fx.vendaval) return;   // Lei (C): mientras levita solo apunta sus impactos
+    if (key === 'ojoVendaval' && p.fx.vendaval) {   // Lei: 2.ª vez suelta la rueda; 3.ª vez corta la levitación
+      const v = p.fx.vendaval;
+      if (this.combatTime - v.inicio < HABILIDADES.ojoVendaval.minRecast) return;
+      if (!v.lanzada) this.ruedaLei(p); else if (this.combatTime - v.lanzadaT >= HABILIDADES.ojoVendaval.minRecast) delete p.fx.vendaval;
+      return;
+    }
+    if (p.fx.vendaval) return;   // Lei (C): mientras levita no usa otras habilidades
     if (p.fx.encantado) return;   // Vario: encantado no usa habilidades
     if (p.fx.polvo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'EN EL POLVO', id: p.id }); return; }   // Vario: con el polvo no usa otras habilidades
     if (key === 'patadaFenix' && p.fx.canalPatada) { this.soltarPatada(p); return; }   // Ash: segunda apretada = saltar
@@ -6551,7 +6548,7 @@ class Game {
       }
       case 'ojoVendaval': {
         p.disparo = null;
-        this.aplicarEfecto(p, 'vendaval', { t: h.canal + h.dur, inicio: this.combatTime, n, quedan: h.impactos, prox: 0, golpes: {} });
+        this.aplicarEfecto(p, 'vendaval', { t: h.dur, inicio: this.combatTime, n, lanzada: false });   // Seba (06-11): apretar solo la eleva
         this.emit({ k: 'vendaval', x: p.x | 0, y: p.y | 0, r: h.radio });
         break;
       }
@@ -7761,15 +7758,15 @@ class Game {
           }
         }
       }
-      // Lei: Ojo del vendaval — lento alrededor, los bots apuntan solos y al final caen solos los impactos que queden
+      // Lei: Ojo del vendaval — lento alrededor mientras levita; a los 0,5 s suelta la rueda
       if (p.fx.vendaval) {
         const v = p.fx.vendaval, H = HABILIDADES.ojoVendaval, el = this.combatTime - v.inicio;
-        if (el >= H.canal) for (const e of this.enemigos(p.id, false)) {
+        for (const e of this.enemigos(p.id, false)) {
           if (!e.fx || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
           if (dist(e, p) <= H.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) this.aplicarEfecto(e, 'slow', { t: 0.3, mult: 1 - v.n.lento, k: 'vendaval' });
         }
-        if (p.bot && el >= H.canal && v.quedan > 0 && this.combatTime >= v.prox) { this._apunte = null; this.impactoLei(p); }
-        if (v.t <= dt * 1.5) while (v.quedan > 0) { const q = v.quedan; this.impactoLei(p, true); if (v.quedan === q) break; }
+        if (p.bot && !v.lanzada && el >= 0.3 && this.target(p, H.radio + CONFIG.RADIO_JUGADOR)) { this._apunte = null; this.ruedaLei(p); }
+        if (!v.lanzada && v.t <= dt * 1.5) { this._apunte = null; this.ruedaLei(p, true); }   // (C) si no la soltó, sale sola al final hacia el enemigo más cercano en el radio
       }
       // Fatum: Castigo sale solo a los 3 s; los bots disparan el Chaos solos (el Pozo se corta solo con el botón X o con control)
       if (p.fx.cargaCastigo && this.combatTime - p.fx.cargaCastigo.inicio >= HABILIDADES.castigo.max) this.soltarCastigo(p);
@@ -7912,6 +7909,30 @@ class Game {
 
     // Proyectiles
     for (const pr of this.projectiles) {
+      // Lei: rueda del Ojo del vendaval — avanza hasta su alcance (125 a cada enemigo que alcanza) y queda girando 5 s (25 por segundo a quien siga dentro)
+      if (pr.rueda) {
+        const W = pr.rueda, H = HABILIDADES.ojoVendaval, own = this.players.get(pr.owner);
+        const enRueda = (e) => !(e.esUnidad && UNIDADES[e.kind]?.invulnerable) && e.kind !== 'muro' && distA(e, pr) <= pr.radio + (e.esUnidad ? 10 : R);
+        if (W.d < W.max) {
+          W.d = Math.min(W.max, W.d + H.vel * dt);
+          pr.x = W.ox + Math.cos(W.a) * W.d; pr.y = W.oy + Math.sin(W.a) * W.d;
+          for (const e of this.enemigos(pr.owner, false)) {
+            if (W.golpes.has(e.id) || !enRueda(e)) continue;
+            W.golpes.add(e.id);
+            this.damage(e, W.n.dano, own || null, { tipo: 'mag', ulti: true, desde: pr });
+            this.emit({ k: 'boom', x: e.x | 0, y: e.y | 0, r: 22, c: 'rayo' });
+          }
+          if (W.d >= W.max) { pr.vx = 0; pr.vy = 0; }
+        } else {
+          W.t += dt; W.tick += dt;
+          if (W.tick >= H.tick) {
+            W.tick -= H.tick;
+            for (const e of this.enemigos(pr.owner, false)) if (enRueda(e)) this.damage(e, W.n.dps * H.tick, own || null, { tipo: 'mag', ulti: true, desde: pr });
+          }
+          if (W.t >= H.giro) pr.dead = true;
+        }
+        continue;
+      }
       // Lei: abanico en curva — sale por su lado, llega a la punta (donde se cruza con el otro) y vuelve por el camino del otro
       if (pr.abanico) {
         const A = pr.abanico, H = HABILIDADES.abanicosCruzados;
@@ -8273,7 +8294,7 @@ class Game {
         (fx.encantado ? 1 : 0) | (fx.polvo ? 2 : 0) | (p.enPolvo && this.combatTime - p.enPolvo < 0.3 ? 4 : 0) | (p.armarioT && this.combatTime - p.armarioT < 0.3 ? 8 : 0) | (this.actoVarioDe(p) > 0 ? 16 : 0) | (fx.canalArmario ? 32 : 0) | (fx.levantado ? 64 : 0) | (p.vacioT && this.combatTime - p.vacioT < 1.2 ? 128 : 0) | (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? 256 : 0) | (fx.ampRunico ? 512 : 0) | (fx.canalImpacto ? 1024 : 0) | (fx.cargaCastigo ? 2048 : 0) | (fx.canalPozoM ? 4096 : 0) | (fx.canalChaos ? 8192 : 0) | (fx.furiaPozo ? 16384 : 0) | (p.quemaVerde && this.combatTime - p.quemaVerde < 2 ? 32768 : 0) | (fx.mecha ? 65536 : 0) | (fx.luzMina ? 131072 : 0) | (p.vueltaVat ? 262144 : 0) | (fx.sedSangre ? 524288 : 0) | (fx.golpeSangre ? 1048576 : 0) | (fx.danzaCarmesi ? 2097152 : 0) | (this.gotasDe(p) ? 4194304 : 0) | (CANCELABLES.some(k => fx[k]) ? 8388608 : 0) | (HEROES[p.build?.heroe]?.pasiva === 'mantoSombras' && this.presasTenebris(p) > 0 ? 16777216 : 0) | (fx.abanicosViento ? 33554432 : 0) | (fx.vendaval ? 67108864 : 0) | (fx.flotar ? 134217728 : 0) | (fx.lentos && fx.lentos.abanicoLei ? 268435456 : 0),
         this.actoVarioDe(p),
         (p.vacioT && this.combatTime - p.vacioT < 1.2 ? p.vacioN : 0), (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? p.resonancia.n : 0),
-        fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, fx.canalChaos ? fx.canalChaos.quedan : 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? fx.vendaval.quedan + (this.combatTime - fx.vendaval.inicio < HABILIDADES.ojoVendaval.canal ? 10 : 0) : fx.abanicosViento ? fx.abanicosViento.quedan : 0]);   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, fx.canalChaos ? fx.canalChaos.quedan : 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : 0]);   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -8523,7 +8544,7 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'armario': si = d < 340 && !target.esUnidad; break;
       case 'abanicosCruzados': si = d < 315 && d > 40; break;
       case 'abanicosViento': si = d < 320 && (d > 110 || target.esUnidad === undefined && target.st && target.st.ataque.tipo !== 'melee'); break;
-      case 'ojoVendaval': si = d < 260 && !target.esUnidad; break;
+      case 'ojoVendaval': si = d < 170 && !target.esUnidad; break;
       case 'punosFenix': si = d < 140; break;
       case 'patadaFenix': si = d < 250 && !target.esUnidad; break;
       case 'espirituFenix': si = d < 160; break;
@@ -12252,26 +12273,30 @@ class Renderer {
     }
     g.globalAlpha = 1;
   }
-  // Lei: ráfaga del Ojo del vendaval — una fuerza alargada de energía celeste que cae en diagonal, con cintas de viento
-  // que la envuelven y la cabeza abierta como un abanico. k = 0 (en el cielo) → 1 (llega al suelo)
-  rafagaVendaval(cx, cy, k, seed) {
-    const g = this.g, T = this.time, e = k * k;
-    const ox = cx - 46, oy = cy - 120, hx = Math.round(ox + (cx - ox) * e), hy = Math.round(oy + (cy - oy) * e);
-    const dx = cx - ox, dy = cy - oy, d = Math.hypot(dx, dy), ux = dx / d, uy = dy / d, nx = -uy, ny = ux, L = 26 + Math.round(30 * k);
-    const tx = Math.round(hx - ux * L), ty = Math.round(hy - uy * L), mx = Math.round(hx - ux * L * 0.45), my = Math.round(hy - uy * L * 0.45);
-    this.linea(tx, ty, hx, hy, PALETA.tinta, 0, 0, 3); this.linea(mx, my, hx, hy, PALETA.tinta, 0, 0, 7);
-    this.linea(tx, ty, hx, hy, PALETA.acero0, 0, 0, 1); this.linea(mx, my, hx, hy, PALETA.acero1, 0, 0, 5);
-    this.linea(Math.round(hx - ux * L * 0.3), Math.round(hy - uy * L * 0.3), hx, hy, PALETA.acero2, 0, 0, 3);
-    this.linea(Math.round(hx - ux * L * 0.15), Math.round(hy - uy * L * 0.15), hx, hy, PALETA.pergamino2, 0, 0, 1);
-    for (let i = 0; i < 14; i++) {   // cintas de viento en espiral alrededor de la ráfaga
-      const f = i / 14, px = hx - ux * L * 1.1 * f, py = hy - uy * L * 1.1 * f, o = Math.sin(T * 30 + f * 9 + seed) * (2 + 5 * f);
-      g.fillStyle = i % 3 === 0 ? PALETA.pergamino2 : PALETA.acero2; g.fillRect(Math.round(px + nx * o), Math.round(py + ny * o), 1, 1);
-      g.fillStyle = PALETA.acero1; g.fillRect(Math.round(px - nx * o), Math.round(py - ny * o), 1, 1);
+  // Lei (Seba 06-11): rueda del Ojo del vendaval — un gran abanico celeste abierto en círculo que gira como una sierra
+  // (inspirada en el chakram de Timbersaw): sombra y área en el suelo, varillas que giran, borde dentado de luz, eje dorado
+  // y cintas de viento alrededor. Avanzando deja estela; detenida, suelta chispas de viento.
+  ruedaLei(p, cx, cy) {
+    const g = this.g, T = this.time, R = Math.round(HABILIDADES.ojoVendaval.rueda * ESC), Y = 0.72, M = this.ruedasPrev || (this.ruedasPrev = new Map()), prev = M.get(p.id), mov = !prev || Math.abs(prev.x - p.x) + Math.abs(prev.y - p.y) > 0.5 || (prev.mov && T - prev.t < 0.1), rot = T * (mov ? 14 : 9);
+    const P = (r, a) => [Math.round(cx + Math.cos(a) * r), Math.round(cy - 6 + Math.sin(a) * r * Y)];
+    if (!prev || prev.x !== p.x || prev.y !== p.y) M.set(p.id, { x: p.x, y: p.y, t: T, mov: !!prev }); if (M.size > 20) M.clear();
+    g.globalAlpha = 0.3; this.discDither(cx, cy + 2, R, PALETA.tinta, 2, 0); g.globalAlpha = 0.22; this.discDither(cx, cy, R, PALETA.acero1, 3, Math.floor(T * 8)); g.globalAlpha = 1;
+    if (mov) for (let i = 1; i <= 4; i++) { const a = p.a + Math.PI, d = R * 0.5 + i * 6; g.globalAlpha = 0.6 - i * 0.12; const [x, y] = P(d, a); this.arc(x, y, R - i * 3, p.a + Math.PI - 0.9, p.a + Math.PI + 0.9, PALETA.acero2, 1); }
+    g.globalAlpha = 1;
+    for (let i = 0; i < 72; i++) { const a = i * TAU / 72; const [x1, y1] = P(R + 2, a); g.fillStyle = PALETA.tinta; g.fillRect(x1 - 1, y1 - 1, 3, 3); }   // contorno
+    for (let r2 = R + 1; r2 > 0; r2--) for (let i = 0, n = Math.max(8, r2 * 6); i < n; i++) { const a = i * TAU / n; const [x, y] = P(r2, a); g.fillStyle = PALETA.acero1; g.fillRect(x, y, 1, 1); }   // tela celeste del abanico
+    for (let i = 0; i < 24; i++) {   // varillas: pliegues claros y oscuros que giran
+      const a = rot + i * TAU / 24; const [x0, y0] = P(R * 0.2, a), [x1, y1] = P(R * 0.95, a);
+      this.linea(x0, y0, x1, y1, i % 2 ? PALETA.acero2 : PALETA.acero0, 0, 0, 1);
     }
-    for (let i = -3; i <= 3; i++) {   // la punta se abre como un abanico de viento
-      const b = Math.atan2(uy, ux) + i * 0.22, r2 = 6 - Math.abs(i);
-      this.linea(hx, hy, Math.round(hx + Math.cos(b) * r2), Math.round(hy + Math.sin(b) * r2), i % 2 ? PALETA.acero2 : PALETA.pergamino2, 0, 0, 1);
-    }
+    for (let i = 0; i < 72; i++) { const a = i * TAU / 72; const [x, y] = P(R, a), [x2, y2] = P(R - 1, a); g.fillStyle = PALETA.acero2; g.fillRect(x, y, 1, 1); g.fillStyle = PALETA.pergamino2; if (i % 6 === 0) g.fillRect(x2, y2, 1, 1); }   // borde de luz
+    for (let i = 0; i < 12; i++) { const a = rot + i * TAU / 12; const [x, y] = P(R + 2, a); g.fillStyle = i % 2 ? PALETA.pergamino2 : PALETA.acero2; g.fillRect(x - 1, y - 1, 2, 2); }   // dientes
+    for (let i = 0; i < 3; i++) { const a = -rot * 0.6 + i * TAU / 3; const [x, y] = P(R * 0.6, a); this.arc(x, y, Math.round(R * 0.3), a, a + 1.6, PALETA.pergamino2, 1); }   // remolinos interiores
+    const [hx, hy] = P(0, 0);
+    this.bolaPixel(hx, hy, 5, PALETA.tinta); this.bolaPixel(hx, hy, 4, PALETA.acero1); this.bolaPixel(hx, hy, 2, PALETA.oro1); g.fillStyle = PALETA.pergamino2; g.fillRect(hx - 1, hy - 1, 1, 1);
+    for (let i = 0; i < 4; i++) { const a = rot * 0.5 + i * TAU / 4; this.arc(cx, cy - 6, R + 5 + (i % 2) * 3, a, a + 0.7, i % 2 ? PALETA.acero1 : PALETA.acero2, 1); }   // cintas de viento
+    if (!mov) for (let i = 0; i < 5; i++) { const ph = (T * 2 + i / 5) % 1, a = i * 1.3 + Math.floor(T * 2 + i / 5) * 2.1, d = R + ph * 10; const [x, y] = P(d, a); g.globalAlpha = 1 - ph; g.fillStyle = PALETA.acero2; g.fillRect(x, y - Math.round(ph * 6), 1, 2); }
+    g.globalAlpha = 1;
   }
   drawProj(p) {
     const cx = this.gx(p.x), cy = this.gy(p.y);
@@ -12294,6 +12319,7 @@ class Renderer {
     }
     if (p.spr === 'fuegoVerde' || (p.spr && p.spr.startsWith('castigo'))) { this.fuegoVerdeProj(cx, cy, p.a, p.spr === 'fuegoVerde' ? 0 : +p.spr.slice(7) + 1); return; }
     if (p.spr === 'runaAethar') { this.runaProj(cx, cy, p.a); return; }
+    if (p.spr === 'ruedaLei') { this.ruedaLei(p, cx, cy); return; }   // Lei: rueda de la ulti
     if (p.spr === 'abanicoLei' || p.spr === 'abanicoVuelo') { if (p.spr === 'abanicoLei') this.rastroAbanico(p); this.abanicoProj(cx, cy - 8, p.a, p.spr === 'abanicoLei' ? 9 : 6); return; }   // Lei
     if (p.spr === 'cartaVario') { this.cartaVarioProj(cx, cy, p.a); return; }
     if (p.spr === 'dagaUlti') {
@@ -12733,16 +12759,6 @@ class Renderer {
           g.globalAlpha = 1;
           break;
         }
-        case 'impactoLei': {   // Lei: la ráfaga golpea — destello celeste, onda y viento que sale en abanico hacia todos lados
-          const r = Math.round(f.r * ESC);
-          if (t < 0.25) { this.discDither(cx, cy, Math.round(r * (0.7 + t * 1.6)), PALETA.acero2, 2, Math.floor(f.age * 30)); if (t < 0.12) this.discDither(cx, cy, Math.round(r * 0.4), PALETA.pergamino2, 1, 0); }
-          this.ring(cx, cy, Math.round(r * (0.6 + t)), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * (0.6 + t)), PALETA.acero2, 1 - t, 1);
-          g.globalAlpha = 1 - t;
-          for (let i = 0; i < 10; i++) { const a = i * TAU / 10 + 0.2, r0 = r * (0.3 + t * 0.9), r1 = r0 + 6 + 6 * (1 - t); this.arc(cx, cy, Math.round((r0 + r1) / 2), a, a + 0.5 * (1 - t) + 0.15, i % 2 ? PALETA.acero2 : PALETA.pergamino2, 1); }
-          for (let i = 0; i < 6; i++) { const a = hash(i, 5, f.x | 0) * TAU, d = r * (0.2 + t * 1.2); g.fillStyle = PALETA.acero2; g.fillRect(Math.round(cx + Math.cos(a) * d), Math.round(cy + Math.sin(a) * d * 0.7 - Math.sin(Math.PI * t) * 12), 2, 1); }
-          g.globalAlpha = 1;
-          break;
-        }
         case 'dinamita': {
           // Jürgen: la mecha llega al final — estallido naranja, onda, astillas rojas y humo
           const r = Math.round(f.r * ESC);
@@ -13012,7 +13028,7 @@ function miJugador() {
   const r = latest.p.find(p => p[0] === S.myId);
   if (!r) return null;
   const pos = S.predPos || { x: r[1], y: r[2] };
-  return { x: pos.x, y: pos.y, alive: !!(r[6] & 1), st: meta.st, build: meta.build };
+  return { x: pos.x, y: pos.y, alive: !!(r[6] & 1), st: meta.st, build: meta.build, lev: !!(r[23] & 67108864) };   // lev: Lei levitando (online)
 }
 
 const renderer = new Renderer($('cv'));
@@ -13044,7 +13060,8 @@ function guiaActual() {
     if (ap.slot < 0) return ap.a === null ? null : basica(ap.a, false, ap.frac);
     const k = habilidadesDe(p.build)[ap.slot];
     if (!k || p.build.niv[ap.slot] < 1) return null;
-    const G = GUIAS[k] || { tipo: 'linea', alcance: 400 };
+    const lev = p.fx ? !!p.fx.vendaval : !!p.lev;   // Lei levitando: la guía pasa a ser el punto de la rueda dentro del radio
+    const G = (k === 'ojoVendaval' && lev ? GUIAS.ojoVendavalRueda : GUIAS[k]) || { tipo: 'linea', alcance: 400 };
     if (k === 'impactoRunico' && ap.a === null) return { tipo: 'propio', r: G.r, x: p.x, y: p.y };   // Seba (05-11): tocar sin apuntar = sello bajo Æthar
     return { ...G, x: p.x, y: p.y, a: ap.a, d: (G.alcance || 0) * Math.max(0.1, ap.frac || 0) };
   }
@@ -14220,6 +14237,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.2', f: '06-11-2026', n: [
+    'Lei — Ojo del vendaval (rework): 1.ª vez se eleva 3 s quieta, nada la detiene, recibe 60% menos de daño y frena 33% a los enemigos a 150. 2.ª vez suelta una rueda celeste hacia donde apuntas, dentro del radio del lento: 125 de daño a cada enemigo que alcanza y queda girando 5 s haciendo 25 por segundo. 3.ª vez corta la levitación. Si no la sueltas, sale sola hacia el enemigo más cercano en el radio.' ] },
   { v: 'V5.1', f: '06-11-2026', n: [
     'Círculos neutrales: el Norte y el Sur ya no son la base de ningún equipo (borde dorado, sin color de equipo). Se tiñen del color de quien los toma.',
     'Para ganar hay que tener los dos círculos y 10 kills a la vez (30 en 3v3). Los bots van a los dos y defienden los que tienen.' ] },
