@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.2</title>
+<title>LOLA V5.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1012,7 +1012,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.2</p>
+        <p class="sub version">LOLA V5.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1795,8 +1795,9 @@ Object.assign(HABILIDADES, {
                    n1: { extra: 15, lento: 0.10 }, n2: { extra: 15, lento: 0.10 } },   // Seba (05-11): +15 de daño y 10% por golpe
   // Seba (06-11): rework — apretar te eleva; durante la levitación, apretar otra vez suelta la rueda celeste donde apuntas (dentro del radio
   // del lento) y una tercera vez corta la levitación. La rueda recorre hasta ese punto y queda girando 5 s.
-  ojoVendaval:   { nombre: 'Ojo del vendaval', glifo: 'ojoVendaval', cd: 50, cdFijo: true, ulti: true, dur: 3, radio: 150, vel: 960, rueda: 60, giro: 5, tick: 0.25, minRecast: 0.15,   // Seba: velocidad +50% (640 → 960); (C) tamaño de la rueda
-                   desc: (n) => `Te elevas en un torbellino de viento y energía celeste durante ${HABILIDADES.ojoVendaval.dur} s, quieta en el aire: nada te detiene, recibes ${Math.round(n.red * 100)}% menos de daño (el daño por porcentaje de vida te afecta normal) y los enemigos a ${HABILIDADES.ojoVendaval.radio} o menos quedan ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una gran rueda celeste, como uno de tus abanicos girando, hacia donde apuntes dentro de ese radio: hace ${n.dano} de daño a cada enemigo que alcanza y se queda girando ${HABILIDADES.ojoVendaval.giro} s, con ${n.dps} de daño por segundo a quien siga dentro. Una tercera vez corta la levitación.`,
+  ojoVendaval:   { nombre: 'Ojo del vendaval', glifo: 'ojoVendaval', cd: 50, cdFijo: true, ulti: true, dur: 3, radio: 150, vel: 960, rueda: 60, giro: 5, tick: 0.25, lentoRueda: 0.05, lentoRuedaDur: 1,   // Seba (06-11, V5.3): −5% por golpe de la rueda, acumulable sin tope; (C) dura 1 s desde el último golpe
+                   minRecast: 0.15,   // Seba: velocidad +50% (640 → 960); (C) tamaño de la rueda
+                   desc: (n) => `Te elevas en un torbellino de viento y energía celeste durante ${HABILIDADES.ojoVendaval.dur} s, quieta en el aire: nada te detiene, recibes ${Math.round(n.red * 100)}% menos de daño (el daño por porcentaje de vida te afecta normal) y los enemigos a ${HABILIDADES.ojoVendaval.radio} o menos quedan ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una gran rueda celeste, como uno de tus abanicos girando, hacia donde apuntes dentro de ese radio: hace ${n.dano} de daño a cada enemigo que alcanza y se queda girando ${HABILIDADES.ojoVendaval.giro} s, con ${n.dps} de daño por segundo a quien siga dentro (cada golpe de la rueda frena ${Math.round(HABILIDADES.ojoVendaval.lentoRueda * 100)}% más, acumulable). Una tercera vez corta la levitación.`,
                    n1: { dano: 125, dps: 25, lento: 0.33, red: 0.60 }, n2: { dano: 125, dps: 25, lento: 0.33, red: 0.60 } },   // Seba: lento 33%
   embate:        { nombre: 'Embate de halabarda', glifo: 'embate', cd: 10, cdFijo: true, ventana: 3, avance: 45, alcance: 35, radio: 45, giro: 0.4, cura: 25,   // Seba (31-10): recarga 9 → 10, cura 50 → 25 (una vez por giro que daña al menos a un héroe)   // Seba (30-10): físico, con vueltas en el aire; golpe en un radio chico al frente
                    desc: (n) => `Hasta 3 veces (tienes ${HABILIDADES.embate.ventana} s entre cada una): giras en el aire (cada giro que acierta a un héroe te cura ${HABILIDADES.embate.cura}) con la halabarda avanzando un poco y golpeas en un radio chico al frente (${n.dano} de daño). La 3ra es un martillazo de frente: mismo daño y aturde ${fmtN(n.aturde)} s a los que acierta. No eres inmune a control: un aturdimiento o un silencio no corta el giro en curso, pero te afecta igual y no te deja volver a usarla mientras dure.`,
@@ -5468,6 +5469,14 @@ class Game {
   }
   // Lei: Ojo del vendaval — suelta la rueda en la dirección que apuntó al lanzar la ulti
   // Seba (06-11): la rueda va al punto apuntado dentro del radio del lento (150). auto: al enemigo más cercano en el radio, o se pierde
+  // Seba (06-11, V5.3): cada golpe de la rueda de Lei frena 5% más, sin tope propio (el tope general de 25% de velocidad sigue). (C) se pierde 1 s después del último golpe
+  lentoRueda(e) {
+    if (!e.alive || !e.fx || e.kind === 'muro') return;
+    const H = HABILIDADES.ojoVendaval, st = e.ruedaLento;
+    const k = st && this.combatTime - st.t <= H.lentoRuedaDur ? st.n + 1 : 1;
+    e.ruedaLento = { n: k, t: this.combatTime };
+    this.aplicarEfecto(e, 'slow', { t: H.lentoRuedaDur, mult: Math.max(0, 1 - H.lentoRueda * k), k: 'ruedaLei' });
+  }
   ruedaLei(p, auto = false) {
     const v = p.fx.vendaval, H = HABILIDADES.ojoVendaval;
     let a, d;
@@ -7919,7 +7928,7 @@ class Game {
           for (const e of this.enemigos(pr.owner, false)) {
             if (W.golpes.has(e.id) || !enRueda(e)) continue;
             W.golpes.add(e.id);
-            this.damage(e, W.n.dano, own || null, { tipo: 'mag', ulti: true, desde: pr });
+            this.damage(e, W.n.dano, own || null, { tipo: 'mag', ulti: true, desde: pr }); this.lentoRueda(e);
             this.emit({ k: 'boom', x: e.x | 0, y: e.y | 0, r: 22, c: 'rayo' });
           }
           if (W.d >= W.max) { pr.vx = 0; pr.vy = 0; }
@@ -7927,7 +7936,7 @@ class Game {
           W.t += dt; W.tick += dt;
           if (W.tick >= H.tick) {
             W.tick -= H.tick;
-            for (const e of this.enemigos(pr.owner, false)) if (enRueda(e)) this.damage(e, W.n.dps * H.tick, own || null, { tipo: 'mag', ulti: true, desde: pr });
+            for (const e of this.enemigos(pr.owner, false)) if (enRueda(e)) { this.damage(e, W.n.dps * H.tick, own || null, { tipo: 'mag', ulti: true, desde: pr }); this.lentoRueda(e); }
           }
           if (W.t >= H.giro) pr.dead = true;
         }
@@ -14237,6 +14246,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.3', f: '06-11-2026', n: [
+    'Lei — Ojo del vendaval: cada golpe de la rueda (el impacto y cada uno de los 4 golpes por segundo mientras gira) frena 5% más al enemigo, acumulable sin tope propio. Se pierde 1 s después del último golpe. Sigue el tope general: nadie baja de 25% de su velocidad.' ] },
   { v: 'V5.2', f: '06-11-2026', n: [
     'Lei — Ojo del vendaval (rework): 1.ª vez se eleva 3 s quieta, nada la detiene, recibe 60% menos de daño y frena 33% a los enemigos a 150. 2.ª vez suelta una rueda celeste hacia donde apuntas, dentro del radio del lento: 125 de daño a cada enemigo que alcanza y queda girando 5 s haciendo 25 por segundo. 3.ª vez corta la levitación. Si no la sueltas, sale sola hacia el enemigo más cercano en el radio.' ] },
   { v: 'V5.1', f: '06-11-2026', n: [
