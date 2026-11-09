@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.4</title>
+<title>LOLA V5.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1012,7 +1012,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.4</p>
+        <p class="sub version">LOLA V5.5</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1810,10 +1810,11 @@ Object.assign(HABILIDADES, {
                      // Seba: 1 s, 50, 25%; (C) alcance, ancho de la onda, largo y duración del muro, recarga
                    desc: (n) => `Canalizas ${HABILIDADES.muroAldor.canal} s sin dejar de moverte: una onda recorre el suelo hasta distancia ${DIST(HABILIDADES.muroAldor.alcance)} (${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos por ${fmtN(HABILIDADES.muroAldor.lentoDur)} s) y al final se levanta un muro de piedra por ${fmtN(HABILIDADES.muroAldor.dur)} s. Bloquea el paso y los proyectiles, salvo los de las ultis (la flecha de Lire sí se frena). Los saltos instantáneos lo cruzan.`,
                    n1: { dano: 25, lento: 0.25 }, n2: { dano: 25, lento: 0.25 } },   // Seba (09-11): onda 25
-  ecosMartillo:  { nombre: 'Eco de la montaña', glifo: 'ecosMartillo', cd: 45, cdFijo: true, ulti: true, canal: 1, radio: 77, crece: 1.25, entre: 0.42, lentoDur: 2.5,   // Seba (09-11): canaliza 1 s; pulsos 20% más lentos (0,35 → 0,42 s)
+  ecosMartillo:  { nombre: 'Eco de la montaña', glifo: 'ecosMartillo', cd: 45, cdFijo: true, ulti: true, canal: 0.75, radio: 77,   // Seba (09-11, V5.5): canaliza 0,75 s
+                   crece: 1.25, entre: 0.42, lentoDur: 2.5,   // Seba (09-11): canaliza 1 s; pulsos 20% más lentos (0,35 → 0,42 s)
                      // Seba (09-11): radios +10% (70 → 77), lento 40% por 2,5 s
                      // Seba: 3 ecos, 65, 33%, +25% de radio cada uno; (C) radio, tiempos, recarga
-                   desc: (n) => `Canalizas ${HABILIDADES.ecosMartillo.canal} s envuelto en un aura verde: nada te detiene, aunque recibes daño normal. Luego golpeas el suelo y salen 3 ecos en línea, uno cada ${fmtN(HABILIDADES.ecosMartillo.entre)} s y cada uno 25% más grande que el anterior: ${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos por ${fmtN(HABILIDADES.ecosMartillo.lentoDur)} s.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.ecosMartillo.canal)} s (tú y tus aliados ven dónde caerán los ecos) envuelto en un aura verde: nada te detiene, aunque recibes daño normal. Luego golpeas el suelo y salen 3 ecos en línea, uno cada ${fmtN(HABILIDADES.ecosMartillo.entre)} s y cada uno 25% más grande que el anterior: ${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos por ${fmtN(HABILIDADES.ecosMartillo.lentoDur)} s.`,
                    n1: { dano: 85, lento: 0.40 }, n2: { dano: 85, lento: 0.40 } },   // Seba (09-11): 85
   abanicosCruzados: { nombre: 'Abanicos cruzados', glifo: 'abanicosCruzados', cd: 10, cdFijo: true, alcance: 308, curva: 70,   // Seba (05-11): alcance +10% (280 → 308)
                     ida: 0.55, vuelta: 0.55, radio: 16,   // Seba (05-11): 10% más lentos (0,5 → 0,55 s por tramo)   // (C) alcance, recarga, curva
@@ -6770,16 +6771,20 @@ class Game {
       case 'ecosMartillo': {
         const a = this._apunte ? this._apunte.a : this.aim(p, 380).a;
         p.facing = a; p.disparo = null;
-        // Seba (09-11): canaliza 1 s (aura verde) y después da el martillazo; un aturdimiento, silencio o encanto lo corta
+        // Seba (09-11): canaliza (0,75 s desde V5.5, aura verde) y después da el martillazo; un aturdimiento, silencio o encanto lo corta
+        const r1 = h.radio, r2 = r1 * h.crece, r3 = r2 * h.crece, d1 = r1 * 0.6, d2 = d1 + (r1 + r2) * 0.85, d3 = d2 + (r2 + r3) * 0.85;
+        const ecos = [[d1, r1], [d2, r2], [d3, r3]];
         this.aplicarEfecto(p, 'canalEcosAldor', { t: h.canal });
         const zc = { id: this.nextId++, kind: 'canalEcosAldor', x: p.x, y: p.y, r: 0, t: h.canal, total: h.canal, owner: p.id, sigue: p,
           fin: (z) => {
             if (z.cancelado || !p.alive) return;
-            const r1 = h.radio, r2 = r1 * h.crece, r3 = r2 * h.crece, d1 = r1 * 0.6, d2 = d1 + (r1 + r2) * 0.85, d3 = d2 + (r2 + r3) * 0.85;
-            [[d1, r1], [d2, r2], [d3, r3]].forEach(([d, r], i) => this.ecoAldor(p, p.x + Math.cos(a) * d, p.y + Math.sin(a) * d, Math.round(r), 0.05 + i * h.entre, n, i));
+            ecos.forEach(([d, r], i) => this.ecoAldor(p, p.x + Math.cos(a) * d, p.y + Math.sin(a) * d, Math.round(r), 0.05 + i * h.entre, n, i));
             this.emit({ k: 'martillazo', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
           } };
         this.zones.push(zc); p.fx.canalEcosAldor.zona = zc;
+        // Seba (09-11, V5.5): mientras canaliza, Aldor y sus aliados ven dónde caerán los 3 ecos (el rival no)
+        ecos.forEach(([d, r], i) => this.zones.push({ id: this.nextId++, kind: 'ecoAviso', x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d, r: Math.round(r), t: h.canal, total: h.canal, owner: p.id,
+          tick: (z) => { if (!p.alive || !p.fx.canalEcosAldor) { z.t = 0; return; } z.x = p.x + Math.cos(a) * d; z.y = p.y + Math.sin(a) * d; } }));
         break;
       }
       // ---------------------------------------------------------- Lei (Seba 05-11)
@@ -11158,6 +11163,15 @@ class Renderer {
         // marca del muro que va a salir (al alcance máximo)
         const H = HABILIDADES.muroAldor, mx = this.gx(z.ox + ca * H.alcance), my = this.gy(z.oy + sa * H.alcance), L = Math.round(H.largo * ESC / 2);
         g.globalAlpha = 0.5 + 0.4 * z.prog; this.linea(Math.round(mx - sa * L), Math.round(my + ca * L), Math.round(mx + sa * L), Math.round(my - ca * L), parpadeo ? PALETA.oro1 : PALETA.piedra2, 1, z.id, 2); g.globalAlpha = 1;
+      } else if (z.kind === 'ecoAviso') {
+        // Aldor (Seba 09-11, V5.5): aviso de dónde caerán los ecos, solo para Aldor y sus aliados
+        const aliado = z.owner === this._myId || (this.equipos && this.equipos[z.owner] && this.equipos[z.owner] === this.equipos[this._myId]);
+        if (aliado) {
+          const g = this.g;
+          g.globalAlpha = 0.12 + 0.18 * z.prog; this.discDither(cx, cy, r, PALETA.bosque1, 3, t); g.globalAlpha = 0.85;
+          this.ring(cx, cy, r, PALETA.tinta, 0.6, 3); this.ring(cx, cy, r, parpadeo ? PALETA.bosque1 : PALETA.madera2, 0.6, 1);
+          this.ring(cx, cy, Math.max(2, Math.round(r * z.prog)), PALETA.bosque1, 1, 1); g.globalAlpha = 1;
+        }
       } else if (z.kind === 'ecoAldor') {
         // Aldor: marca de cada eco — tierra agrietada que se llena antes del golpe
         const g = this.g;
@@ -14615,6 +14629,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.5', f: '09-11-2026', n: [
+    'Aldor — Eco de la montaña: canaliza 0,75 s (antes 1 s). Mientras canaliza, Aldor y sus aliados ven dónde caerán los 3 ecos; el rival no.' ] },
   { v: 'V5.4', f: '09-11-2026', n: [
     'Nuevo héroe: Aldor (Aliados), enano del martillo y «hermano» de Jürgen. Giro del martillo, Muralla de piedra, Eco de la montaña (ulti) y pasiva Temple de enano.',
     'Textos: se revisaron las descripciones de héroes, habilidades, pasivas y estados. Las distancias y los radios ahora se dicen en palabras (corta, media, larga; pequeño, mediano, grande), con frases más cortas y las mismas formas en todo el juego. No cambia ningún número.' ] },
