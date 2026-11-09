@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.3</title>
+<title>LOLA V5.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1012,7 +1012,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.3</p>
+        <p class="sub version">LOLA V5.4</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1310,7 +1310,7 @@ const HEROES = {
   beast: {
     casa: 'aliados',
     nombre: "Su'rulfar", rol: 'Tanque / iniciador', fondo: 'beast', arma: 'garras',   // Seba (28-10): antes «The Beast»
-    desc: 'Bestia mamífera. Mucha vida, entra rodando y aturde a pedradas.',
+    desc: 'Bestia de mucha vida: entra rodando y aturde a pedradas.',
     vida: 445, dano: 30, recarga: 1.2, ultiCarga: 354, velocidad: 168,   // Seba (29-10): daño 35 → 30 (la vida vuelve a 445)   // Seba (28-10): velocidad vuelve a 168
     ataque: { tipo: 'melee', rango: 60, arco: 120 },
     habs: ['lanzaPiedra', 'terremoto', 'mayhem'],
@@ -1319,7 +1319,7 @@ const HEROES = {
   lire: {
     casa: 'aliados',
     nombre: 'Lire', rol: 'Daño', fondo: 'lire', arma: 'arco3',
-    desc: 'Elfa verde arquera. Mucho daño a distancia y se cura bajo los árboles.',
+    desc: 'Elfa arquera del bosque. Mucho daño a distancia; se cura bajo los árboles.',
     vida: 370, dano: 28, recarga: 1.0, ultiCarga: 287, velocidad: 165,   // Seba (05-11): vida 380 → 370   // Seba (29-10): vida 405 → 380
     ataque: { tipo: 'proyectil', proj: 'flecha', vel: 640, alcance: 440, radio: 5 },
     habs: ['torreta', 'fuga', 'tiroBosque'],
@@ -1328,7 +1328,7 @@ const HEROES = {
   nigromante: {
     casa: 'renegados',
     nombre: 'Karilthal', rol: 'Magia · invocador', fondo: 'nigromante', arma: 'baculoHueso',   // Seba (28-10): antes «Nigromante»
-    desc: 'Brujo que revive muertos. Esqueletos, maldiciones y un gólem.',
+    desc: 'Brujo que revive a los muertos: esqueletos, maldiciones y un gólem.',
     vida: 385, dano: 25, recarga: 1.5, ultiCarga: 265, velocidad: 141,   // Seba (29-10): vida 395 → 385
     ataque: { tipo: 'proyectil', proj: 'sombra', vel: 460, alcance: 420, radio: 6 },
     habs: ['esqueletos', 'maldicion', 'golem'],
@@ -1337,7 +1337,7 @@ const HEROES = {
   maidas: {
     casa: 'aliados',
     nombre: 'Maidas', rol: 'Magia · daño', fondo: 'maidas', arma: 'baston3',
-    desc: 'Mago de la realeza. Fuego, muros de hielo y un dragón.',
+    desc: 'Mago de la realeza: fuego, muros de hielo y un dragón que cobra su precio.',
     vida: 375, dano: 28, recarga: 1.4, ultiCarga: 287, velocidad: 141,
     ataque: { tipo: 'proyectil', proj: 'orbeFuego', vel: 440, alcance: 420, radio: 6 },
     habs: ['pulso', 'muro', 'dragon'],
@@ -1346,7 +1346,7 @@ const HEROES = {
   monh: {
     casa: 'aliados',
     nombre: 'Monh', rol: 'Sanador', fondo: 'monh', arma: 'bastonFarol',
-    desc: 'Curandero vagabundo, un sacerdote algo raro sin religión. Sostiene al equipo con círculos y orbes de sanación.',
+    desc: 'Curandero vagabundo, un sacerdote sin religión. Sostiene al equipo con círculos y orbes de sanación.',
     vida: 359, dano: 18, recarga: 1.6, ultiCarga: 243, velocidad: 146,
     ataque: { tipo: 'proyectil', proj: 'orbe', vel: 440, alcance: 420, radio: 6 },
     habs: ['circulo', 'orbeVida', 'bendicion'],
@@ -1355,7 +1355,7 @@ const HEROES = {
   biteroi: {
     casa: 'renegados',
     nombre: 'Biteroi', rol: 'Daño · control', fondo: 'biteroi', arma: 'bombaMano',
-    desc: 'Bombardero loco. Bombas que caen donde apuntas, un jetpack para escapar dejando un pasillo de explosiones, minas escondidas y un bombazo que no perdona a nadie.',
+    desc: 'Bombardero loco: bombas donde apunta, un jetpack que deja un pasillo de explosiones, minas escondidas y un bombazo que no perdona a nadie.',
     vida: 370, dano: 41, recarga: 1.8,   // Seba (05-11): vida 375 → 370
     ultiCarga: 280, velocidad: 146,   // Seba (28-10): +15 al ataque y +25 a las habilidades
     ataque: { tipo: 'parabola', alcance: 380, area: 45, vuelo: 0.6 },
@@ -1376,7 +1376,7 @@ const HEROES = {
   takichi: {
     casa: 'renegados',
     nombre: 'Takichi', rol: 'Asesino', fondo: 'takichi', arma: 'sable1',
-    desc: 'Samurái errante y sombrío con dos sables. Entra de un sablazo, desaparece en humo y castiga a los mal parados.',
+    desc: 'Samurái errante y sombrío de dos sables. Entra de un sablazo, desaparece en humo y castiga a los mal parados.',
     vida: 365, dano: 40, recarga: 1.0, ultiCarga: 300, velocidad: 170,
     ataque: { tipo: 'melee', rango: 55, arco: 100 },
     habs: ['sablazo', 'humo', 'danza'],
@@ -1397,7 +1397,7 @@ const HEROES = {
   kazaro: {
     casa: 'renegados',
     nombre: 'Kazaro', rol: 'Luchador', fondo: 'kazaro', arma: 'lanzaKazaro',
-    desc: 'Lancero nómade renegado de tatuajes azules. Arroja su lanza y salta a ella, gira entre enemigos sin que nada lo detenga y encierra a sus presas en una arena de fuego azul.',
+    desc: 'Lancero nómade de tatuajes azules. Arroja su lanza y salta tras ella, gira sin que nada lo detenga y encierra a sus presas en una arena de fuego azul.',
     vida: 385, dano: 35, recarga: 1.2, ultiCarga: 300, velocidad: 160,   // Seba (05-11): vida 385   // Seba (29-10): vida 410 → 365 → 385 → 375; daño 33 → 35
     ataque: { tipo: 'melee', rango: 61, arco: 100 },   // Seba (29-10): alcance 72 → 61 (−15%)
     habs: ['lanzaErrante', 'decimar', 'llamaEstepa'],
@@ -1432,7 +1432,7 @@ Object.assign(HEROES, {
   vatrius: {
     casa: 'renegados',
     nombre: 'Vatrius', rol: 'Duelista · asesino', fondo: 'vatrius', arma: 'rapiera',
-    desc: 'Espadachín vampiro de pelo blanco y ojos rojos, levita negra con forro carmesí y rapiera de plata. Marca a sus presas con gotas de sangre y se alimenta de ellas.',
+    desc: 'Espadachín vampiro de pelo blanco y rapiera de plata. Marca a sus presas con gotas de sangre y se alimenta de ellas.',
     vida: 365, dano: 28, recarga: 1.15, ultiCarga: 300, velocidad: 160,   // (C) bajado tras la simulación (32 / 1,0 / 165 daba 81%)
     ataque: { tipo: 'melee', rango: 70, arco: 60 },
     habs: ['estocada', 'sedSangre', 'danzaCarmesi'],
@@ -1442,7 +1442,7 @@ Object.assign(HEROES, {
   jurgen: {
     casa: 'aliados',
     nombre: 'Jürgen', rol: 'Constructor · soporte', fondo: 'jurgen', arma: 'trabuco',
-    desc: 'Enano ingeniero de barba roja trenzada, gafas de forja en la frente y una llave inglesa a la espalda. Llena de perdigones al que se acerque, se escuda con dinamita, ilumina a los suyos con su lámpara de mina y planta su torreta de brasas.',
+    desc: 'Enano ingeniero de barba roja y gafas de forja. Llena de perdigones al que se acerca, se escuda con dinamita, ilumina a los suyos con su lámpara y planta una torreta de brasas.',
     vida: 400, dano: 45, recarga: 1.75, ultiCarga: 320, velocidad: 144,   // Seba (05-11): recarga como Tenebris; velocidad 110 en juego
     ataque: { tipo: 'escopeta', proj: 'perdigon', vel: 760, alcance: 200, radio: 4.4, perdigones: 5, abre: 0.11 },
     habs: ['mechaCorta', 'lamparaMina', 'torretaBrasas'],
@@ -1451,7 +1451,7 @@ Object.assign(HEROES, {
   fatum: {
     casa: 'renegados',
     nombre: 'Fatum', rol: 'Daño · control', fondo: 'fatum', arma: 'fuegoMano',
-    desc: 'Brujo necrófago de cripta: capucha morada, pelo blanco y una calavera en el hombro. Castiga con almas en fuego verde, abre un pozo maldito que aturde y desata el Chaos sobre sus enemigos.',
+    desc: 'Brujo de cripta, de capucha morada y calavera al hombro. Castiga con almas de fuego verde, aturde con un pozo maldito y desata el Chaos.',
     vida: 360, dano: 30, recarga: 1.1, ultiCarga: 320, velocidad: 153,   // Seba (05-11): se probó 0,9 y se volvió a 1,1
     ataque: { tipo: 'proyectil', proj: 'fuegoVerde', vel: 520, alcance: 420, radio: 6 },
     habs: ['castigo', 'pozoMaldito', 'chaos'],
@@ -1464,7 +1464,7 @@ Object.assign(HEROES, {
   aethar: {
     casa: 'errantes',
     nombre: 'Æthar', rol: 'Control · daño', fondo: 'aethar', arma: 'runaMano',
-    desc: 'Mago invocador de capucha café y ojos azules, siempre rodeado de runas celestes. Tiende sellos rúnicos invisibles, debilita con su onda y abre el Vacío sobre sus enemigos.',
+    desc: 'Mago de capucha café rodeado de runas celestes. Tiende sellos invisibles, debilita con su onda y abre el Vacío sobre sus enemigos.',
     vida: 375, dano: 26, recarga: 1.1, ultiCarga: 320, velocidad: 150,   // Seba (05-11): vida 375, daño 26, velocidad 115 en juego
     ataque: { tipo: 'proyectil', proj: 'runaAethar', vel: 520, alcance: 400, radio: 6 },
     habs: ['impactoRunico', 'ondaRunica', 'vacio'],
@@ -1477,11 +1477,25 @@ Object.assign(HEROES, {
   vario: {
     casa: 'errantes',
     nombre: 'Vario', rol: 'Control', fondo: 'vario', arma: 'cartaVario',
-    desc: 'Ilusionista de máscara de sol y luna. Encanta con corazones, deja un rastro de polvo de estrellas y abre un armario mágico que se traga a sus rivales.',
+    desc: 'Ilusionista de máscara de sol y luna. Encanta con corazones, deja un rastro de polvo de estrellas y abre una caja mágica que se traga a sus rivales.',
     vida: 380, dano: 25, recarga: 1.1, ultiCarga: 330, velocidad: 150,   // Seba (05-11): daño 26 → 25
     ataque: { tipo: 'proyectil', proj: 'cartaVario', vel: 520, alcance: 300, radio: 6 },   // Seba: cartas, alcance menor que Lire y los demás tiradores
     habs: ['encanto', 'polvoEstrellas', 'armario'],
     pasiva: 'actoFinal',
+  },
+});
+
+// Seba (09-11): Aldor, enano del martillo (Aliados), «hermano» de Jürgen. Tanque ofensivo: combate y hace daño, pero sin un básico
+// demasiado fuerte. Números (C) salvo los que fijó Seba.
+Object.assign(HEROES, {
+  aldor: {
+    casa: 'aliados',
+    nombre: 'Aldor', rol: 'Tanque ofensivo', fondo: 'aldor', arma: 'martilloAldor',
+    desc: 'Enano de barba trenzada con un martillo más alto que él. Lo hace girar, levanta muros de piedra y hace temblar la tierra con sus ecos.',
+    vida: 395, dano: 29, recarga: 1.44, ultiCarga: 300, velocidad: 149,   // Seba (09-11): vida 395, daño 29, básico 1,8 s y velocidad 114 en juego
+    ataque: { tipo: 'melee', rango: 75, arco: 140 },   // (C) el martillo llega un poco más lejos que un puño
+    habs: ['giroMartillo', 'muroAldor', 'ecosMartillo'],
+    pasiva: 'templeEnano',
   },
 });
 
@@ -1490,7 +1504,7 @@ Object.assign(HEROES, {
   lei: {
     casa: 'aliados',
     nombre: 'Lei', rol: 'Daño · combate', fondo: 'lei', arma: 'abanicoLei',
-    desc: 'Guerrera de los abanicos, de coleta negra y máscara, con ropa negra y celeste. Lanza sus abanicos en curvas que se cruzan, los arroja de lejos para frenar a sus presas y se eleva en el ojo del vendaval para soltar una gran rueda de viento.',
+    desc: 'Guerrera de los abanicos, de coleta negra y máscara. Los lanza en curvas que se cruzan, frena de lejos a sus presas y se eleva en el ojo del vendaval.',
     vida: 370, dano: 31, recarga: 1.0, ultiCarga: 300, velocidad: 163,   // Seba (05-11): daño 31, velocidad 125 en juego
     ataque: { tipo: 'melee', rango: 65, arco: 120 },   // (C) abanicos: un poco más de alcance y arco que los puños de Ash
     habs: ['abanicosCruzados', 'abanicosViento', 'ojoVendaval'],
@@ -1504,7 +1518,7 @@ Object.assign(HEROES, {
   ash: {
     casa: 'aliados',
     nombre: 'Ash', rol: 'Daño · luchador', fondo: 'ash', arma: 'puno',
-    desc: 'Luchador de puños y patadas, de pelo rojo en llamas, torso y pies descubiertos. Pelea con el poder del fénix: puños de fuego, una patada voladora y el espíritu del fénix que lo acompaña.',
+    desc: 'Luchador de pelo en llamas que pelea con el poder del fénix: puños de fuego, una patada voladora y el espíritu del fénix a su lado.',
     vida: 380, dano: 30, recarga: 1.0, ultiCarga: 300, velocidad: 157,   // Seba (31-10): 120 en juego
     ataque: { tipo: 'melee', rango: 55, arco: 100 },
     habs: ['punosFenix', 'patadaFenix', 'espirituFenix'],
@@ -1517,7 +1531,7 @@ Object.assign(HEROES, {
   driiar: {
     casa: 'aliados',
     nombre: 'Driiar', rol: 'Luchador · sustento', fondo: 'driiar', arma: 'halabarda',
-    desc: 'Viejo druida feérico del bosque, de barba blanca y ojos verdes. Pelea con una halabarda y magia de la naturaleza; en la ulti se transforma en Nephilim, un semi-ángel de alas rojas.',
+    desc: 'Viejo druida feérico de halabarda y magia de la naturaleza. En la ulti se transforma en Nephilim, un semiángel de alas rojas.',
     vida: 390, dano: 30, recarga: 1.1, ultiCarga: 300, velocidad: 150,
     ataque: { tipo: 'melee', rango: 70, arco: 110 },
     habs: ['embate', 'totemGaia', 'nephilim'],
@@ -1530,7 +1544,7 @@ Object.assign(HEROES, {
   tenebris: {
     casa: 'renegados',
     nombre: 'Tenebris', rol: 'Daño · control', fondo: 'tenebris', arma: 'guadana',
-    desc: 'La parca: capucha negra, cara de sombra con ojos que titilan y una guadaña. Maldice con almas errantes, siega la mitad de la vida y cae sobre sus presas en un pozo de almas.',
+    desc: 'La parca: capucha negra, ojos que titilan y una guadaña. Maldice con almas errantes, siega la mitad de la vida y cae sobre sus presas en un pozo de almas.',
     vida: 370, dano: 38, recarga: 1.75,   // Seba (30-10): daño 33 → 38
     ultiCarga: 300, velocidad: 155,   // Seba (30-10): recarga +25% (1,4 → 1,75)   // Seba (30-10): daño 28 → 33, recarga más lenta (1,2 → 1,4 (C))
     ataque: { tipo: 'melee', rango: 64, arco: 140 },
@@ -1544,7 +1558,7 @@ Object.assign(HEROES, {
   shai: {
     casa: 'renegados',   // Seba (30-10): pasa a Renegados
     nombre: 'Shai', rol: 'Asesina', fondo: 'shai', arma: 'dagaShai',
-    desc: 'Asesina templaria de negro, con capucha y una daga larga. Aparece a la espalda de su presa, se cubre con un manto de luz y la llena de dagas mágicas que vuelven a ella.',
+    desc: 'Asesina templaria de negro con una daga larga. Aparece a la espalda de su presa, se cubre con un manto de luz y la llena de dagas mágicas.',
     vida: 370, dano: 32, recarga: 1.0, ultiCarga: 300, velocidad: 160,
     ataque: { tipo: 'melee', rango: 55, arco: 100 },
     habs: ['saltoJuicio', 'mantoLuz', 'secretoTemplario'],
@@ -1577,62 +1591,62 @@ const HABILIDADES = {
   // ---- The Beast
   // Seba (28-10): reemplaza al Rugido
   lanzaPiedra: { nombre: 'Lanzamiento de piedra', glifo: 'rocaLanzada', cd: 9, cdFijo: true, alcance: 220, vel: 520,   // Seba (29-10): 9 s exactos (antes 9,6)
-                desc: (n) => `Arrancas una roca y la lanzas en línea recta: ${fmtN(n.dano)} de daño al primer enemigo y lo aturdes ${fmtN(n.aturde)} s (no se mueve, no ataca ni lanza habilidades).`,
+                desc: (n) => `Lanzas una roca en línea recta: ${fmtN(n.dano)} de daño y ${fmtN(n.aturde)} s de aturdimiento al primer enemigo.`,
                 n1: { dano: 60, aturde: 1 }, n2: { dano: 78, aturde: 1 } },   // Seba (05-11): aturde 1 s   // Seba (29-10): 56 → 60, aturde 0,8 s
   terremoto:  { nombre: 'Terremoto', glifo: 'roca', cd: 12,
-                desc: (n) => `Durante ${n.dur} s, cada paso largo (un cuerpo y cuarto) que avanzas dispara 4 piedras: primero norte, sur, este y oeste, y en el siguiente paso las diagonales: ${n.dano} de daño, ${n.danoInv} a invocaciones.`,
+                desc: (n) => `Durante ${n.dur} s, cada paso largo dispara 4 piedras a tu alrededor (alternan entre los cuatro lados y las diagonales): ${n.dano} de daño, ${n.danoInv} a invocaciones.`,
                 n1: { dur: 5, dano: 23, danoInv: 46 }, n2: { dur: 5, dano: 32.5, danoInv: 65 }, paso: 45, alcancePiedra: 180 },   // Seba (28-10): menos piedras (antes cada 18 = medio cuerpo)
   mayhem:     { nombre: 'Mayhem', glifo: 'remolinoBestia', cd: 40, ulti: true,
-                desc: (n) => `Te enrollas ${n.dur} s: +30% de velocidad. Cada enemigo que pisas recibe ${n.dano} de daño, queda lento ${Math.round(n.lento * 100)}% por ${fmtN(n.cada)} s y aturdido ${fmtN(n.aturde)} s (máximo un aturdimiento por segundo a cada enemigo); al mismo enemigo puedes volver a dañarlo cada ${fmtN(n.cada)} s. No puedes usar habilidades mientras ruedas.`,
+                desc: (n) => `Te enrollas y ruedas ${n.dur} s con +30% de velocidad. Cada enemigo que pisas recibe ${n.dano} de daño, queda ${Math.round(n.lento * 100)}% más lento y aturdido ${fmtN(n.aturde)} s (puedes volver a dañarlo cada ${fmtN(n.cada)} s y aturdirlo una vez por segundo). Mientras ruedas no usas habilidades.`,
                 n1: { dur: 5, dano: 50, cada: 0.5, lento: 0.1, aturde: 0.3, stunCada: 1 }, n2: { dur: 5, dano: 65, cada: 0.5, lento: 0.1, aturde: 0.3, stunCada: 1 } },   // Seba (31-10): aturde 0,3 s (1 por segundo por enemigo); sin empuje   // Seba (28-10): antes 47 cada 2 s, sin lento
 
   // ---- Lire
   torreta:    { nombre: 'Torreta', glifo: 'diana', cd: 15, cdFijo: true, cargas: 2, max: 2,   // Seba (29-10): 14 → 15 s   // Seba (31-10): arreglo, un comentario se había comido «cargas» y «máximo»   // Seba (28-10): 2 cargas, recarga 14 s al gastar la segunda, máximo 2 activas
-                desc: (n) => `Montas una torreta a tus pies que dispara sola, a tu mismo ritmo: ${fmtN(n.dano)} por flecha. Indestructible, dura ${n.dur} s. Tienes 2 cargas; la recarga (15 s) parte al gastar la segunda y devuelve las dos. Máximo 2 activas a la vez.`,
+                desc: (n) => `Montas a tus pies una torreta indestructible que dispara a tu ritmo durante ${n.dur} s: ${fmtN(n.dano)} por flecha. Tienes 2 cargas, que vuelven juntas 15 s después de gastar la segunda. Máximo 2 torretas a la vez.`,
                 n1: { dano: 21, dur: 5 }, n2: { dano: 27, dur: 5 } },   // Seba (05-11): duran 5 s   // Seba (28-10): 75% del daño de Lire (28 → 21), duran 6 s   // Seba (28-10): 4 → 25 → 20 por flecha
   fuga:       { nombre: 'Fuga', glifo: 'bota', cd: 14, cdFijo: true,   // Seba (29-10): 14 s exactos (antes 14,4), 25%
                 desc: (n) => `Durante ${n.dur} s ganas ${Math.round(n.pct * 100)}% de velocidad de movimiento y de ataque.`,
                 n1: { pct: 0.25, dur: 3 }, n2: { pct: 0.33, dur: 3 } },
   tiroBosque: { nombre: 'Tiro del bosque', glifo: 'flechaVerde', cd: 45, ulti: true,
-                desc: (n) => `Flecha que busca héroes (ignora invocaciones): ${n.dano} al primero. Rebota 3 veces, cada rebote 25% menos (${Math.round(n.dano * 0.75)}, ${Math.round(n.dano * 0.5625)}, ${Math.round(n.dano * 0.421875)}). Rebota a otro enemigo cercano; si no hay, vuelve a golpear al mismo. Cada golpe deja la «Marca de Lire» ${n.marcaDur} s: recibe ${Math.round(n.marca * 100)}% más de daño de todo.`,
+                desc: (n) => `Flecha que persigue héroes (ignora invocaciones): ${n.dano} de daño y 3 rebotes, cada uno 25% más débil (${Math.round(n.dano * 0.75)}, ${Math.round(n.dano * 0.5625)}, ${Math.round(n.dano * 0.421875)}). Si no hay otro enemigo cerca, vuelve al mismo. Cada golpe deja la «Marca de Lire» ${n.marcaDur} s: recibe ${Math.round(n.marca * 100)}% más de daño de todas las fuentes.`,
                 n1: { dano: 100, marca: 0.05, marcaDur: 5 }, n2: { dano: 130, marca: 0.05, marcaDur: 5 }, rebotes: 3, radioRebote: 320, baja: 0.75 },   // Seba (28-10): rework
 
   // ---- Nigromante
   esqueletos: { nombre: 'Invocar esqueletos', glifo: 'calavera', cd: 10,
-                desc: (n) => `Invocas ${n.cant} esqueletos (${n.vida} de vida, ${fmtN(n.dano)} de daño, 2,5 ataques/s) por ${n.dur} s o hasta morir. Máximo ${n.max} a la vez: con ${n.max} vivos no puedes invocar más.`,
+                desc: (n) => `Invocas ${n.cant} esqueletos por ${n.dur} s (${n.vida} de vida, ${fmtN(n.dano)} de daño, 2,5 ataques por segundo). Máximo ${n.max} a la vez.`,
                 // Nerf de Seba (27-10): -30% de vida y de daño (antes 50 de vida y 3 de daño)
                 // Seba (27-10): menos esqueletos (antes 3 por invocación, máximo 6)
                 n1: { cant: 3, dano: 2, vida: 45, dur: 20, max: 6 }, n2: { cant: 3, dano: 2.7, vida: 46, dur: 20, max: 5 } },
   maldicion:  { nombre: 'Maldición', glifo: 'espiral', cd: 18.8, cdFijo: true, expande: 1.5,   // Seba (31-10): nube que tarda 1,5 s en llegar a todo el alcance   // Seba (28-10): +2 s (16,8 → 18,8)
-                desc: (n) => `Sueltas una nube morada y negra que avanza contigo y se expande en ${fmtN(HABILIDADES.maldicion.expande)} s hasta ${HABILIDADES.maldicion.radio} de distancia: los enemigos que toca quedan malditos (calavera negra encima): ${fmtN(n.dps)} de daño por segundo por ${n.dur} s y silenciados ${fmtN(n.silencio)} s (el silencio corta canalizaciones).`,
+                desc: (n) => `Sueltas una nube morada que te acompaña y en ${fmtN(HABILIDADES.maldicion.expande)} s se abre hasta un radio ${RADIO(HABILIDADES.maldicion.radio)}. Los enemigos que toca quedan malditos: ${fmtN(n.dps)} de daño por segundo durante ${n.dur} s y silenciados ${fmtN(n.silencio)} s (el silencio corta canalizaciones).`,
                 n1: { dps: 20, dur: 4, silencio: 1.5 }, n2: { dps: 26, dur: 4, silencio: 1.5 }, radio: 187 },   // Seba (29-10): radio 220 → 187 (−15%)   // Seba (28-10): daño 5 → 4 s, silencio 2 → 1,5 s   // Seba (28-10): 15 → 20 por segundo
   golem:      { nombre: 'Invocar gólem', glifo: 'calaveraPiedra', cd: 50, ulti: true,
-                desc: (n) => `Gólem de ${n.vida} de vida que golpea en área cada 1,5 s por ${fmtN(n.dano)}. Te cura 25 por cada jugador que golpea. Dura ${n.dur} s o hasta morir.`,
+                desc: (n) => `Invocas un gólem de ${n.vida} de vida por ${n.dur} s. Golpea en área cada 1,5 s (${fmtN(n.dano)} de daño) y te cura 25 por cada héroe que golpea.`,
                 n1: { vida: 320, dano: 45, dur: 12 }, n2: { vida: 416, dano: 58.5, dur: 14 } },   // Seba (28-10): 280 → 320 de vida, 30 → 45 de daño, +20% de velocidad   // Seba (27-10): el gólem dura 12 s
 
   // ---- Maidas
   pulso:      { nombre: 'Pulso de fuego', glifo: 'llama', cd: 6.3, cdFijo: true,   // Seba (29-10): −10% (7 → 6,3)   // Seba (28-10): recarga 7 s exactos
-                desc: (n) => `Orbe que quema a los enemigos que alcanza en su trayecto y estalla donde apuntas: ${fmtN(n.dano)} de daño en área y quema ${fmtN(n.dps)} por segundo por ${n.quema} s (no se acumula).`,
+                   desc: (n) => `Lanzas un orbe que quema a los enemigos que toca en su camino y estalla donde apuntas: ${fmtN(n.dano)} de daño en área y una quemadura de ${fmtN(n.dps)} por segundo durante ${n.quema} s (no se acumula).`,
                 n1: { dano: 32.5, dps: 30, quema: 2 }, n2: { dano: 42.25, dps: 39, quema: 2 }, alcance: 420, radio: 70 },   // Seba (28-10): golpe -30%, quema 3 → 2 s
   muro:       { nombre: 'Muro de hielo', glifo: 'muroHielo', cd: 15.1, cdFijo: true,   // Seba (29-10): −10% (16,8 → 15,1)
-                desc: (n) => `Muro de 3,5 cuerpos con ${n.vida} de vida por ${n.dur} s. Bloquea a los enemigos y todos sus proyectiles; tus disparos lo atraviesan. Si lo rompen, su recarga se reinicia.`,
+                   desc: (n) => `Levantas un muro de hielo de 3,5 cuerpos, con ${n.vida} de vida, por ${n.dur} s. Frena a los enemigos y todos sus proyectiles; tus disparos lo atraviesan. Si lo rompen, su recarga se reinicia.`,
                 n1: { vida: 100, dur: 6 }, n2: { vida: 130, dur: 6 } },
   dragon:     { nombre: 'Invocar dragón', glifo: 'dragon', cd: 40, ulti: true,
-                desc: (n) => `Dragón de ${n.vida} de vida que ataca solo (${fmtN(n.dano)} en área, 1,5 ataques/s). Dura 5 s.`,
+                   desc: (n) => `Invocas un dragón de ${n.vida} de vida que ataca solo durante 5 s (${fmtN(n.dano)} de daño en área, 1,5 ataques por segundo).`,
                 n1: { vida: 150, dano: 50 }, n2: { vida: 195, dano: 65 } },
 };
 
 Object.assign(HABILIDADES, {
   // ---- Monh
   circulo:    { nombre: 'Círculo de sanación', glifo: 'circuloVida', cd: 15, cdFijo: true,   // Seba (29-10): 15 s exactos
-                desc: (n) => `Plantas un círculo bajo tus pies por ${n.dur} s (queda fijo ahí, con una cruz verde al centro). Cada segundo cura ${fmtN(n.pct * 100)}% de la vida máxima a los aliados dentro (también a ti). Puedes moverte y atacar.`,
+                desc: (n) => `Plantas a tus pies un círculo de sanación fijo por ${n.dur} s. Cada segundo cura el ${fmtN(n.pct * 100)}% de la vida máxima a los aliados dentro, tú incluido. Puedes moverte y atacar.`,
                 n1: { pct: 0.15, dur: 4 }, n2: { pct: 0.195, dur: 4 }, radio: 108, alcance: 200 },   // Seba (28-10): 25% → 15%
   // Seba (28-10): de 10 fijo a 10% de la vida actual; recarga menor que la del Círculo
   orbeVida:   { nombre: 'Orbe', glifo: 'orbeVida', cd: 6, cdFijo: true,   // Seba (29-10): 6 s exactos (antes 7,2)
-                desc: (n) => `Orbe lento que avanza en línea recta 4 s. Cada 0,5 s cura a los aliados cerca el ${fmtN(n.pct * 100)}% de su vida actual y quita a los enemigos cerca el ${fmtN(n.pct * 100)}% de su vida actual (a invocaciones y a The Cucko, máximo ${n.topeInv}). Al final de su recorrido explota y repite el efecto en el mismo radio.`,
+                   desc: (n) => `Lanzas un orbe lento que avanza 4 s. Cada 0,5 s cura a los aliados cercanos el ${fmtN(n.pct * 100)}% de su vida actual y quita lo mismo a los enemigos cercanos (máximo ${n.topeInv} a invocaciones). Al final de su recorrido explota y repite el efecto.`,
                 n1: { pct: 0.1, topeInv: 30 }, n2: { pct: 0.13, topeInv: 39 }, radio: 70, vel: 90, dur: 4 },
   bendicion:  { nombre: 'Bendición del camino', glifo: 'solVida', cd: 30, ulti: true, canal: 0.5, radio: 200,   // Seba (05-11): rework — canaliza 0,5 s, cura en área y escudo por exceso
-                desc: (n) => `Canalizas ${fmtN(HABILIDADES.bendicion.canal)} s (un aturdimiento o un silencio lo corta) y un baño de luz dorada cura ${n.vida} de vida a ti y a los aliados a menos de ${HABILIDADES.bendicion.radio}. Quien sobrepase su vida máxima con esta curación (aunque sea por 1 punto) gana un escudo de ${n.escudo} de daño por ${n.escudoDur} s. La Siega lo rompe.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.bendicion.canal)} s (se corta si te aturden o silencian) y un baño de luz dorada cura ${n.vida} de vida a ti y a los aliados en un radio ${RADIO(HABILIDADES.bendicion.radio)}. Quien pase su vida máxima con esta curación, aunque sea por 1 punto, gana un escudo de ${n.escudo} por ${n.escudoDur} s. La Siega lo rompe.`,
                 n1: { vida: 200, escudo: 50, escudoDur: 5 }, n2: { vida: 200, escudo: 50, escudoDur: 5 } },   // Seba (28-10): cura 100 → 200, daño +10% (solo habilidades) → +25% (todo)
 });
 
@@ -1643,188 +1657,203 @@ Object.assign(HABILIDADES, {
                    n1: { dur: 2, dano: 106 }, n2: { dur: 2, dano: 155 } },
   // Seba (28-10): reemplaza a la Bomba pegajosa. Para reposicionarse y escapar de Trelgon o The Beast.
   jetpack:       { nombre: 'Jetpack', glifo: 'jetpack', cd: 12.5, canal: 0.5,   // Seba (28-10): 0,5 s de canalización
-                   desc: (n) => `Canalizas 0,5 s quieto (un aturdimiento o un silencio lo corta) y saltas con el jetpack hacia donde apuntas (${n.largo} de distancia, ${n.dur} s en el aire; si no apuntas, te alejas del enemigo más cercano). En el aire nada te daña. Sueltas ${n.bombas} bombas en el camino que estallan una tras otra cada ${fmtN(n.cada)} s: ${n.dano} de daño cada una, y al mismo enemigo cada bomba siguiente le hace ${n.extra} más (${n.dano}, ${n.dano + n.extra}, ${n.dano + 2 * n.extra}...).`,
+                   desc: (n) => `Canalizas 0,5 s quieto (se corta si te aturden o silencian) y saltas con el jetpack a distancia ${DIST(n.largo)}: ${n.dur} s en el aire sin recibir daño (sin apuntar, te alejas del enemigo más cercano). Dejas ${n.bombas} bombas en el camino que estallan una tras otra: ${n.dano} de daño cada una, y ${n.extra} más por cada bomba que ya golpeó a ese enemigo (${n.dano}, ${n.dano + n.extra}, ${n.dano + 2 * n.extra}…).`,
                    n1: { largo: 320, dur: 2, bombas: 5, cada: 0.56, dano: 70, extra: 15, radio: 60 }, n2: { largo: 320, dur: 2, bombas: 5, cada: 0.56, dano: 91, extra: 20, radio: 60 } },   // Seba (28-10): 100 → 70 (sube 15 por bomba al mismo héroe)
   mina:          { nombre: 'Mina antipersonal', glifo: 'mina', cd: 10, max: 2, armado: 1,
-                   desc: (n) => `Plantas una mina en el suelo (los rivales solo ven un punto rojo parpadeante). Si un enemigo la pisa, recibe ${n.dano} de daño. Máximo 2.`,
+                   desc: (n) => `Plantas una mina que los rivales apenas ven (un punto rojo que parpadea): ${n.dano} de daño al enemigo que la pisa. Máximo 2.`,
                    n1: { dano: 106 }, n2: { dano: 155 } },
   // ---- Rasho (Seba, 28-10)
   trueno:        { nombre: 'Trueno', glifo: 'rayo', cd: 11, cdFijo: true, segundo: 1.5, alcance: 420, vel: 820, radioRebote: 150,
-                   desc: (n) => `Lanzas un rayo en línea recta: ${n.dano} de daño y deja lento 50% por ${n.dur} s. Si hay otro enemigo cerca, rebota 1 vez con la mitad de todo: ${fmtN(n.dano / 2)} de daño y 25% lento. ${fmtN(HABILIDADES.trueno.segundo)} s después, un trueno cae del cielo sobre el enemigo alcanzado y repite el daño, la lentitud y el rebote.`,
+                   desc: (n) => `Lanzas un rayo en línea recta: ${n.dano} de daño y 50% más lento por ${n.dur} s. Rebota una vez a un enemigo cercano con la mitad: ${fmtN(n.dano / 2)} de daño y 25% más lento. ${fmtN(HABILIDADES.trueno.segundo)} s después, un trueno cae sobre el enemigo alcanzado y repite el daño, la lentitud y el rebote.`,
                    n1: { dano: 50, dur: 2 }, n2: { dano: 65, dur: 2 } },
   manosRayo:     { nombre: 'Manos de rayo', glifo: 'manoRayo', cd: 12, radioRebote: 150,
-                   desc: (n) => `Disparas una ráfaga de ${n.tiros} rayos seguidos, como metralleta (no gastan tus cargas). Cada rayo hace ${n.rayo} de daño y rebota con el ${Math.round(n.rebote * 100)}% al enemigo más cercano al golpeado.`,
+                   desc: (n) => `Disparas ${n.tiros} rayos seguidos, como metralleta, sin gastar cargas: ${n.rayo} de daño cada uno, y un rebote del ${Math.round(n.rebote * 100)}% al enemigo más cercano.`,
                    n1: { tiros: 4, cada: 0.1, rayo: 30, rebote: 0.5 }, n2: { tiros: 4, cada: 0.1, rayo: 39, rebote: 0.5 } },   // Seba (28-10): 30 por rayo, rebote 50%   // Seba (28-10): rework a ráfaga de 6
   tormenta:      { nombre: 'Tormenta eléctrica', glifo: 'nubeRayo', cd: 45, ulti: true, vel: 110, ancho: 180, cada: 0.9, descargas: 4,   // Seba (28-10): el doble de grande
-                   desc: (n) => `Lanzas una nube de tormenta que avanza en línea recta. Cada 0,9 s suelta una descarga (${n.descargas} en total): ${n.dano} de daño a los enemigos bajo la nube. No daña a tus aliados.`,
+                   desc: (n) => `Lanzas una nube de tormenta que avanza en línea recta y suelta ${n.descargas} descargas, una cada 0,9 s: ${n.dano} de daño a los enemigos que están debajo.`,
                    n1: { dano: 135, descargas: 4 }, n2: { dano: 175, descargas: 4 } },   // Seba (28-10): +35% (100 → 135)
   // ---- Takichi (Seba, 28-10)
   sablazo:       { nombre: 'Sablazo', glifo: 'sablazo', cd: 8, cdFijo: true, canal: 0.5, largo: 220, ancho: 24.3,   // Seba (05-11): canal 0,7 → 0,5 s; ancho −10%
                    bajaKill: 0.5,   // Seba (31-10): ancho 34 → 27 (−20%, también los tajos del ulti)   // Seba (28-10): recarga 10 → 9 → 8 s; si mata a un héroe, la recarga baja a la mitad
-                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.sablazo.canal)} s (brillas en morado; un aturdimiento o un silencio lo corta) y avanzas de un sablazo: ${n.dano} de daño a todos los enemigos que atraviesas. Quedas al final del tajo. Si matas a un héroe con el tajo, la recarga baja a la mitad.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.sablazo.canal)} s (brillas en morado; se corta si te aturden o silencian) y cruzas de un sablazo: ${n.dano} de daño a todos los enemigos que atraviesas. Si matas a un héroe, la recarga baja a la mitad.`,
                    n1: { dano: 150 }, n2: { dano: 208 } },   // Seba (28-10): 150 → 160   // Seba (31-10): 160 → 150
   humo:          { nombre: 'Bomba de humo', glifo: 'humo', cd: 14.17, sinEnemigos: 250,
-                   desc: (n) => `Solo sin enemigos a menos de 250, salvo que estés bajo un árbol (ahí siempre se puede): te vuelves invisible hasta ${n.dur} s. Los rivales no te ven ni te apuntan solos, pero los tiros y las áreas te pegan. Atacar o usar una habilidad te revela; recibir daño no.`,
+                   desc: (n) => `Te vuelves invisible hasta ${n.dur} s. Solo funciona sin enemigos a distancia media o menos, salvo bajo un árbol. Los rivales no te ven ni te apuntan, pero los tiros y las áreas sí te pegan. Atacar o usar habilidades te revela; recibir daño no.`,
                    n1: { dur: 6 }, n2: { dur: 7 } },
   danza:         { nombre: 'Danza silenciosa', glifo: 'clones', cd: 50, ulti: true, lado: 180,
-                   desc: (n) => `Marcas un cuadrado donde estás con 5 clones (uno en cada esquina y uno al centro) por ${n.dur} s. Al aparecer, los 4 de las esquinas canalizan 0,5 s y cruzan en diagonal con un Sablazo (${numerosHab('sablazo', 1).dano} a todos los que atraviesan) hasta la esquina opuesta. Cada clon golpea por ${Math.round(n.mult * 100)}% de tu daño a los enemigos pegados a él, a tu mismo ritmo de ataque (si estás potenciado, ellos también). Los enemigos dentro quedan lentos ${Math.round(n.lento * 100)}%. Prefieren héroes antes que invocaciones.`,
+                   desc: (n) => `Creas un cuadrado con 5 clones por ${n.dur} s, uno en cada esquina y uno al centro. Al aparecer, los de las esquinas cruzan en diagonal con un sablazo (${numerosHab('sablazo', 1).dano} de daño a quien atraviesan). Cada clon pega a tu ritmo con el ${Math.round(n.mult * 100)}% de tu daño, y los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos. Prefieren atacar héroes.`,
                    n1: { dur: 6, mult: 0.5, lento: 0.35 }, n2: { dur: 6, mult: 0.65, lento: 0.35 } },
   // ---- Aracnida (Seba, 28-10)
   atraparPresa:  { nombre: 'Atrapar presa', glifo: 'gancho', cd: 17.5, cdFijo: true, stunDesde: 0.85,   // Seba (05-11): 17,5 s; aturde solo desde el 85% del alcance
                    alcance: 400, vel: 900,
-                   desc: (n) => `Disparas un hilo de seda en línea recta. El primer enemigo que toca (también invocaciones) recibe ${n.dano} de daño y es arrastrado hasta tus pies; si lo alcanzas lejos (desde el ${Math.round(HABILIDADES.atraparPresa.stunDesde * 100)}% del alcance), además queda aturdido ${n.aturde} s. The Cucko no se mueve.`,
+                   desc: (n) => `Disparas un hilo de seda en línea recta. El primer enemigo, sea héroe o invocación, recibe ${n.dano} de daño y es arrastrado a tus pies; si lo alcanzas lejos (desde el ${Math.round(HABILIDADES.atraparPresa.stunDesde * 100)}% del alcance), además queda aturdido ${n.aturde} s.`,
                    n1: { dano: 100, aturde: 2 }, n2: { dano: 130, aturde: 2 } },
   tejer:         { nombre: 'Tejer', glifo: 'telarana', cd: 25, radio: 162,   // Seba (29-10): tela 25% más grande (130 → 162)
-                   desc: (n) => `Tejes una tela de araña donde estás (solo 1 a la vez) por ${n.dur} s. Encima de ella ganas +${Math.round(n.buff * 100)}% de recarga de ataque y +${Math.round(n.vel * 100)}% de velocidad, y recibes ${Math.round(n.buff * 100)}% menos de daño. Los enemigos que la pisan quedan lentos ${Math.round(n.lento * 100)}%.`,
+                   desc: (n) => `Tejes una telaraña donde estás por ${n.dur} s (solo una a la vez). Sobre ella ganas +${Math.round(n.buff * 100)}% de recarga de ataque y +${Math.round(n.vel * 100)}% de velocidad, y recibes ${Math.round(n.buff * 100)}% menos de daño. Los enemigos que la pisan van ${Math.round(n.lento * 100)}% más lentos.`,
                    n1: { dur: 25, buff: 0.15, vel: 0.15, lento: 0.15 },   /* Seba (30-10): todo parejo en 15% y lento 15% */ n2: { dur: 25, buff: 0.25, vel: 0.2, lento: 0.25 } },   // Seba (29-10): recarga y resistencia 15% → 20% (velocidad sigue 15%)
   mordida:       { nombre: 'Mordida venenosa', glifo: 'colmillos', cd: 35, ulti: true, alcance: 120, ventanaKill: 1.5, bajaKill: 0.5,   // Seba (28-10)
-                   desc: (n) => `Saltas sobre el héroe enemigo más cercano (a menos de 120) y lo muerdes: ${n.dano} de daño y veneno de ${n.dps} por segundo durante ${n.dur} s. Si no hay nadie cerca, no se gasta. Si el mordido muere hasta 1,5 s después, la recarga de la Mordida baja a la mitad.`,
+                   desc: (n) => `Saltas sobre el héroe enemigo más cercano, a corta distancia, y lo muerdes: ${n.dano} de daño y veneno de ${n.dps} por segundo durante ${n.dur} s. Sin nadie cerca, no se gasta. Si muere en los 1,5 s siguientes, la recarga baja a la mitad.`,
                    n1: { dano: 75, dps: 25, dur: 5 }, n2: { dano: 130, dps: 32.5, dur: 5 } },   // Seba (05-11): 100 → 75
   // ---- Trelgon (Seba, 28-10; nombres de las habilidades 1 y 2 y números propuestos por Claude)
   mazazos:       { nombre: 'Mazazos', glifo: 'mazazo', cd: 17, cdFijo: true, radio: 110,   // Seba (29-10): 17 s exactos (antes 15,6)
-                   desc: (n) => `Durante ${n.pulsos} s golpeas el suelo con el mazo una vez por segundo. Cada golpe hace ${fmtN(n.dano)} de daño y aturde ${fmtN(n.aturde)} s a los enemigos a tu alrededor (la zona te sigue).`,
+                   desc: (n) => `Durante ${n.pulsos} s golpeas el suelo una vez por segundo: ${fmtN(n.dano)} de daño y ${fmtN(n.aturde)} s de aturdimiento a los enemigos a tu alrededor.`,
                    n1: { dano: 25, aturde: 0.5, pulsos: 4, cada: 1 }, n2: { dano: 32.5, aturde: 0.5, pulsos: 4, cada: 1 } },
   escudoMusgo:   { nombre: 'Escudo de musgo', glifo: 'escudoMusgo', cd: 15, radio: 200,
-                   desc: (n) => `Te cubres de musgo: un escudo que absorbe ${n.escudo} de daño por ${n.dur} s. Los aliados cerca de ti (a menos de 200) reciben un escudo de ${n.aliado}.`,
+                   desc: (n) => `Te cubres de musgo: un escudo de ${n.escudo} por ${n.dur} s. Los aliados cercanos reciben un escudo de ${n.aliado}.`,
                    n1: { escudo: 100, aliado: 50, dur: 10 },   // Seba (29-10): 140 / 53 → 100 / 50
                    n2: { escudo: 182, aliado: 68, dur: 10 } },   // Seba (28-10): -30% (antes 200 / 75)
   sobrecrecimiento: { nombre: 'Sobrecrecimiento', glifo: 'brote', cd: 55, ulti: true, radio: 130,
-                   desc: (n) => `Creces durante ${n.dur} s: +${n.vida} de vida, +${Math.round(n.rango * 100)}% de alcance del mazo y +${Math.round(n.dano * 100)}% de daño de ataque, y tus golpes barren media vuelta (pegan a todos los que tengas al frente). El enemigo que pase más de ${n.raiz} s cerca de ti (a menos de 130) queda atrapado por raíces y aturdido ${n.aturde} s, y se puede repetir. Al terminar pierdes lo que quede de la vida extra.`,
+                   desc: (n) => `Creces durante ${n.dur} s: +${n.vida} de vida, +${Math.round(n.rango * 100)}% de alcance y +${Math.round(n.dano * 100)}% de daño de ataque, y tus golpes barren a todos los que tengas al frente. Quien pase más de ${n.raiz} s a tu lado queda atrapado por raíces y aturdido ${n.aturde} s (puede repetirse). Al terminar pierdes la vida extra que te quede.`,
                    n1: { dur: 8, vida: 250, rango: 0.5, dano: 0.45, raiz: 2, aturde: 1 }, n2: { dur: 8, vida: 325, rango: 0.5, dano: 0.55, raiz: 2, aturde: 1 } },   // Seba (28-10): daño 35% → 45%
   // ---- Kazaro (Seba, 29-10; números (C))
   lanzaErrante:  { nombre: 'Lanza errante', glifo: 'lanza', cd: 12, cdFijo: true,   // Seba (29-10): 10 → 12 s
                    alcance: 380, vel: 760, ancho: 26, clavada: 2, radioCura: 120,
-                   desc: (n) => `Arrojas la lanza en línea recta: ${n.dano} a todos los enemigos que atraviesa. Queda clavada 2 s (si presionas mientras vuela, la entierras ahí mismo). Si vuelves a presionar en ese tiempo, saltas por el aire hasta ella: al caer aturdes ${n.aturde} s y recuperas ${n.cura} de vida por cada héroe enemigo a menos de 120 de la lanza. Si no, vuelve a tus manos y hace ${n.dano} a todos los enemigos que cruza.`,
+                   desc: (n) => `Arrojas tu lanza en línea recta: ${n.dano} de daño a todos los enemigos que atraviesa. Queda clavada 2 s (si aprietas mientras vuela, la entierras ahí mismo): si vuelves a apretar, saltas hasta ella, aturdes ${fmtN(n.aturde)} s a los enemigos cercanos y recuperas ${n.cura} de vida por cada héroe enemigo cerca de la lanza. Si no, vuelve a tus manos y daña otra vez a quienes cruza.`,
                    n1: { dano: 75, cura: 50, aturde: 1.5 }, n2: { dano: 97.5, cura: 65, aturde: 1.5 } },   // Seba (29-10): al caer aturde 1,5 s (antes 2)
   decimar:       { nombre: 'Decimar', glifo: 'decimar', cd: 18, cdFijo: true, radio: 110,
-                   desc: (n) => `Durante ${fmtN(n.dur)} s giras la lanza: ${n.dano} de daño cada ${fmtN(n.cada)} s a los enemigos cerca (${Math.round(n.dano * n.dur / n.cada)} en total). Mientras giras eres inmune a todo control (arrastres, silencios, lentos, aturdimientos). Te puedes mover, pero no atacar.`,
+                   desc: (n) => `Giras la lanza durante ${fmtN(n.dur)} s: ${n.dano} de daño cada ${fmtN(n.cada)} s a los enemigos cercanos (${Math.round(n.dano * n.dur / n.cada)} en total). Mientras giras, ningún control te afecta. Puedes moverte, pero no atacar.`,
                    n1: { dur: 3.5, cada: 0.35, dano: 20 }, n2: { dur: 3.5, cada: 0.35, dano: 26 } },   // Seba (29-10): 25 → 20 por golpe
   // Seba (29-10): rework — arena de fuego azul que encierra (radio, canalización quieto y efectos (C))
   llamaEstepa:   { nombre: 'Llama de la estepa', glifo: 'llamaAzul', cd: 50, ulti: true, canal: 1, radio: 135,   // Seba (29-10): radio 150 → 135
-                   desc: (n) => `Canalizas 1 s quieto (un aturdimiento o un silencio lo corta) y levantas una arena de fuego azul a tu alrededor por ${n.dur} s: los enemigos no pueden entrar ni salir. Dentro recuperas ${n.cura} de vida por segundo y los enemigos arden con «Fuego azul» (${n.fuego} por segundo). Con más héroes dentro arde más: +50% por cada héroe (aliado o enemigo) más allá del primero, sin contarte a ti.`,
+                   desc: (n) => `Canalizas 1 s quieto (se corta si te aturden o silencian) y levantas a tu alrededor una arena de fuego azul por ${n.dur} s: los enemigos no pueden entrar ni salir. Dentro recuperas ${n.cura} de vida por segundo y los enemigos arden con «Fuego azul»: ${n.fuego} por segundo, +50% por cada héroe extra dentro (sin contarte a ti).`,
                    n1: { dur: 8, cura: 30, fuego: 30, extra: 0.5 }, n2: { dur: 8, cura: 39, fuego: 39, extra: 0.5 } },   // Seba (29-10): fuego y cura parejos, 30/s   // Seba (29-10): dura 8 s, fuego 20, +50% por héroe extra dentro
   granBombazo:   { nombre: 'Gran bombazo', glifo: 'bombazo', cd: 45, ulti: true, alcance: 420, radio: 108, aviso: 2,
-                   desc: (n) => `Marcas una zona circular; a los 2 s cae un bombazo: ${n.dano} de daño a todos los jugadores dentro, incluidos tus aliados y tú.`,
+                   desc: (n) => `Marcas una zona; a los 2 s cae un bombazo: ${n.dano} de daño a todos los que estén dentro, tú y tus aliados incluidos.`,
                    n1: { dano: 350 }, n2: { dano: 455 } },   // Seba (28-10): 191 → 350
   // ---- Gaia (Seba, 29-10)
   discoGaia:     { nombre: 'Disco de Gaia', glifo: 'discoGaia', cd: 18, cdFijo: true, alcance: 300, vel: 527, radioRebote: 96, rebote: 0.25,   // Seba (29-10): 15% más lento (620 → 527); rebote hasta 96 (20% menos que el radio de caída de Kazaro, 120)
-                   desc: (n) => `Lanzas un disco mágico en línea recta. Al primer enemigo: ${n.danos[0]} de daño y aturdido ${fmtN(n.aturde[0])} s. Rebota al azar a otro enemigo a menos de ${HABILIDADES.discoGaia.radioRebote}: ${n.danos[1]} y ${fmtN(n.aturde[1])} s. Último rebote: ${n.danos[2]} y ${fmtN(n.aturde[2])} s. No repite al mismo seguido (con 2 enemigos, el último vuelve al primero). También rebota en invocaciones; ignora las torretas.`,
+                   desc: (n) => `Lanzas un disco que rebota al azar entre enemigos cercanos: ${n.danos[0]} de daño y ${fmtN(n.aturde[0])} s de aturdimiento al primero, ${n.danos[1]} y ${fmtN(n.aturde[1])} s al segundo, ${n.danos[2]} y ${fmtN(n.aturde[2])} s al último. No repite al mismo seguido; rebota también en invocaciones e ignora las torretas.`,
                    n1: { danos: [50, 100, 125], aturde: [1, 1.5, 2] },   /* Seba (30-10): aturdimientos 1,5/2/2,5 → 1/1,5/2 */ n2: { danos: [65, 130, 162], aturde: [1.5, 2, 2.5] } },
   pasoCeleste:   { nombre: 'Paso celestial', glifo: 'portalGaia', cd: 13, cdFijo: true,   /* Seba (30-10): 12 → 13 s */ canal: 0.4, largo: 300, radio: 130,
-                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.pasoCeleste.canal)} s (un aturdimiento o un silencio lo corta), entras a un portal y sales por otro a ${HABILIDADES.pasoCeleste.largo} de distancia. Al salir, un pulso deja lentos ${Math.round(n.lento * 100)}% por ${n.dur} s a los enemigos cerca y les hace ${n.dano} de daño + 1 por cada punto de vida que te falte (máximo +${n.tope}).`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.pasoCeleste.canal)} s (se corta si te aturden o silencian) y cruzas por un portal a distancia ${DIST(HABILIDADES.pasoCeleste.largo)}. Al salir, un pulso deja ${Math.round(n.lento * 100)}% más lentos por ${n.dur} s a los enemigos cercanos y les hace ${n.dano} de daño, +1 por cada punto de vida que te falte (máximo +${n.tope}).`,
                    n1: { dano: 25, tope: 75, lento: 0.25, dur: 4 },   /* Seba (30-10): tope 100 → 75, lento 40% → 25% */ n2: { dano: 32, tope: 130, lento: 0.4, dur: 4 } },
   lluviaEstrellas: { nombre: 'Lluvia de estrellas', glifo: 'estrellas', cd: 50, ulti: true, distancias: [120, 260, 400], radio: 80, cada: 0.805, aviso: 0.575,   // Seba (29-10): meteoros 15% más lentos (0,7 → 0,805 s; caída 0,5 → 0,575 s)
-                   desc: (n) => `Te quedas quieta canalizando mientras caen 3 meteoros en línea recta, uno tras otro (cada ${fmtN(HABILIDADES.lluviaEstrellas.cada)} s): uno cerca, otro a media distancia y otro lejos. Nada interrumpe la canalización, pero sí puedes recibir daño. Cada meteoro hace ${n.dano} de daño y aturde ${fmtN(n.aturde)} s.`,
+                   desc: (n) => `Canalizas quieta mientras caen 3 meteoros en línea, uno cada ${fmtN(HABILIDADES.lluviaEstrellas.cada)} s: cerca, a media distancia y lejos. Nada interrumpe la canalización, aunque sí recibes daño. Cada meteoro hace ${n.dano} de daño y aturde ${fmtN(n.aturde)} s.`,
                    n1: { dano: 125, aturde: 1 }, n2: { dano: 162, aturde: 1 } },
   // ---- Shai (Seba, 30-10; números (C))
   // Seba (30-10): rework 2 — blink apuntado como la bomba de Biteroi (a un punto, alcance corto-medio). Si no hay un héroe
   // enemigo en ese punto, no se teletransporta y la habilidad igual entra en recarga.
   saltoJuicio:   { nombre: 'Salto del juicio', glifo: 'ganchoShai', cd: 10, cdFijo: true, alcance: 137, area: 45, rangoMin: 60,   // Seba (05-11): daño 100 → 85; sin apuntar, rango mínimo hacia el joystick
                     // Seba (30-10): alcance −15% (230 → 196) y luego −30% (196 → 137)
-                   desc: (n) => `Apuntas a un punto (hasta ${HABILIDADES.saltoJuicio.alcance} de distancia). Si hay un héroe enemigo ahí (si hay varios, el de menos vida), desapareces, apareces a su espalda y lo apuñalas: ${n.dano} de daño. Tocando sin apuntar, el punto queda a ${HABILIDADES.saltoJuicio.rangoMin} de distancia hacia donde mueves el joystick. Si fallas, no te mueves y la habilidad igual se recarga. Si lo matas, quedas invisible y con +${Math.round(n.vel * 100)}% de velocidad por ${n.invis} s.`,
+                   desc: (n) => `Apuntas a distancia ${DIST(HABILIDADES.saltoJuicio.alcance)}: si hay un héroe enemigo (el de menos vida si hay varios), apareces a su espalda y lo apuñalas: ${n.dano} de daño. Si tocas sin apuntar, el punto queda a distancia ${DIST(HABILIDADES.saltoJuicio.rangoMin)} hacia donde mueves el joystick. Si no hay nadie, no te mueves y la habilidad igual se recarga. Si lo matas, quedas invisible y con +${Math.round(n.vel * 100)}% de velocidad por ${n.invis} s.`,
                    n1: { dano: 85, invis: 2, vel: 0.5 }, n2: { dano: 130, invis: 2, vel: 0.5 } },
   // ---- Fatum (Seba, 05-11)
   castigo:       { nombre: 'Castigo', glifo: 'castigo', cd: 12, cdFijo: true, alcance: 450, vel: 520, max: 3,   // Seba (05-11): recarga 12 s
-                   desc: (n) => `Invocas un alma de fuego verde en el lugar donde estás, mirando hacia donde apuntas; se queda ahí cargando mientras sigues moviéndote y atacando. Vuelve a apretar para que salga en línea recta hacia esa dirección (o sale sola a los ${HABILIDADES.castigo.max} s): ${n.base} de daño + ${n.porSeg} por cada segundo cargado (máx. ${n.base + n.porSeg * HABILIDADES.castigo.max}). Atraviesa: daña a todos los enemigos que toca.`,
+                   desc: (n) => `Invocas un alma de fuego verde donde estás, mirando hacia donde apuntas; se carga mientras te mueves y atacas. Vuelve a apretar para soltarla en línea recta (sale sola a los ${HABILIDADES.castigo.max} s): ${n.base} de daño, +${n.porSeg} por segundo cargado (máximo ${n.base + n.porSeg * HABILIDADES.castigo.max}), a todos los enemigos que atraviesa.`,
                    n1: { base: 60, porSeg: 20 }, n2: { base: 60, porSeg: 20 } },   // Seba (05-11): 60 + 20 por segundo
-  pozoMaldito:   { nombre: 'Pozo Maldito', glifo: 'pozoMaldito', cd: 18, cdFijo: true, alcance: 300, radio: 90, max: 5,
-                   desc: (n) => `Canalizas hasta ${HABILIDADES.pozoMaldito.max} s un pozo maldito (quedas quieto; se corta al volver a apretarla, con la X o con cualquier control): cada segundo que un enemigo pasa dentro queda aturdido ${fmtN(n.aturde)} s. Al terminar ganas +${n.bono} de daño de ataque por cada héroe aturdido (las invocaciones no cuentan) durante ${n.bonoDur} s.`,
+  pozoMaldito:   { nombre: 'Pozo maldito', glifo: 'pozoMaldito', cd: 18, cdFijo: true, alcance: 300, radio: 90, max: 5,
+                   desc: (n) => `Canalizas quieto un pozo maldito hasta ${HABILIDADES.pozoMaldito.max} s (lo cortas al volver a apretar, con la X o con cualquier control). Cada segundo dentro aturde ${fmtN(n.aturde)} s a los enemigos. Al terminar ganas +${n.bono} de daño de ataque por cada héroe aturdido durante ${n.bonoDur} s.`,
                    n1: { aturde: 0.5, bono: 10, bonoDur: 5 }, n2: { aturde: 0.5, bono: 10, bonoDur: 5 } },
   chaos:         { nombre: 'Chaos', glifo: 'chaos', cd: 60, cdFijo: true, ulti: true, alcance: 600, radio: 60, cae: 0.6, fuego: 2, canal: 6, disparos: 4,
-                   desc: (n) => `Canalizas hasta ${HABILIDADES.chaos.canal} s (cualquier control lo corta) y cada vez que aprietas lanzas un proyectil de fuego verde donde apuntes (hasta ${HABILIDADES.chaos.disparos}): ${n.dano} de daño en su radio y deja el piso en llamas ${HABILIDADES.chaos.fuego} s. Quien pasa 0,5 s en el fuego se quema: ${n.quema} de daño por segundo durante ${n.quemaDur} s y ${Math.round(n.lento * 100)}% más lento.`,
+                   desc: (n) => `Canalizas hasta ${HABILIDADES.chaos.canal} s (cualquier control lo corta) y con cada toque lanzas fuego verde donde apuntas, hasta ${HABILIDADES.chaos.disparos} veces: ${n.dano} de daño en área y llamas en el piso por ${HABILIDADES.chaos.fuego} s. Quien pasa 0,5 s en ellas se quema: ${n.quema} de daño por segundo durante ${n.quemaDur} s y ${Math.round(n.lento * 100)}% más lento.`,
                    n1: { dano: 75, quema: 25, quemaDur: 2, lento: 0.10 }, n2: { dano: 75, quema: 25, quemaDur: 2, lento: 0.10 } },
   // ---- Vatrius (Seba, 05-11)
   estocada:      { nombre: 'Estocada', glifo: 'estocada', cd: 7, cdFijo: true, canal: 0.2, largo: 200, vuela: 0.15, ventana: 3,
-                   desc: (n) => `Tras ${fmtN(HABILIDADES.estocada.canal)} s, una estocada rápida te lleva ${HABILIDADES.estocada.largo} hacia donde empujas el joystick (o apuntas): ${n.dano} de daño a cada enemigo que atraviesas; si dañas a un enemigo con al menos una gota de sangre, recuperas ${n.cura} de vida. Durante ${HABILIDADES.estocada.ventana} s puedes volver a apretar para regresar al punto de partida con otra estocada: ${n.dano / 2} de daño y ${Math.round(n.lento * 100)}% más lentos durante ${n.lentoDur} s.`,
+                   desc: (n) => `Tras ${fmtN(HABILIDADES.estocada.canal)} s te lanzas en una estocada a distancia ${DIST(HABILIDADES.estocada.largo)} hacia donde apuntas: ${n.dano} de daño a cada enemigo que atraviesas; si dañas a uno con al menos una gota de sangre, recuperas ${n.cura} de vida. Durante ${HABILIDADES.estocada.ventana} s puedes volver a apretar para regresar con otra estocada: ${fmtN(n.dano / 2)} de daño y ${Math.round(n.lento * 100)}% más lentos por ${n.lentoDur} s.`,
                    n1: { dano: 50, lento: 0.25, lentoDur: 2, cura: 20 }, n2: { dano: 50, lento: 0.25, lentoDur: 2, cura: 20 } },   // Seba (05-11, V4.6): la primera estocada cura 20 si daña a un enemigo con gotas
   sedSangre:     { nombre: 'Sed de sangre', glifo: 'sedSangre', cd: 16, cdFijo: true, dur: 6, golpes: 3,   // Seba (05-11, V4.3): 3 cargas como los Puños de Ash
-                   desc: (n) => `Tus próximos ${HABILIDADES.sedSangre.golpes} ataques básicos (en ${HABILIDADES.sedSangre.dur} s) hacen +${Math.round(n.pct * 100)}% de la vida actual del enemigo como daño adicional. El tercero te cura lo mismo que el daño que hace.`,
+                   desc: (n) => `Tus próximos ${HABILIDADES.sedSangre.golpes} ataques básicos (en ${HABILIDADES.sedSangre.dur} s) hacen +${Math.round(n.pct * 100)}% de la vida actual del enemigo como daño extra. El tercero te cura lo mismo que el daño que hace.`,
                    n1: { pct: 0.05 }, n2: { pct: 0.05 } },
   danzaCarmesi:  { nombre: 'Danza carmesí', glifo: 'danzaCarmesi', cd: 60, cdFijo: true, ulti: true, alcance: 96, golpes: 4, cada: 0.25,   // Seba (05-11, V4.4): casi cuerpo a cuerpo — 30% menos que el Salto del juicio de Shai (137)
                   
-                   desc: (n) => `Saltas entre los héroes enemigos visibles a ${HABILIDADES.danzaCarmesi.alcance} o menos (al azar) y das ${HABILIDADES.danzaCarmesi.golpes} golpes seguidos: ${n.danos.join(', ')} de daño, cada uno +${n.porGota} por gota en el objetivo. No te pueden detener ni silenciar y recibes ${Math.round(n.red * 100)}% menos de daño.`,
+                   desc: (n) => `Saltas al azar entre los héroes enemigos visibles a distancia ${DIST(HABILIDADES.danzaCarmesi.alcance)} y das ${HABILIDADES.danzaCarmesi.golpes} golpes seguidos: ${n.danos.join(', ')} de daño, +${n.porGota} por gota en el objetivo. Nada te detiene ni te silencia, y recibes ${Math.round(n.red * 100)}% menos de daño.`,
                    n1: { danos: [20, 40, 60, 80], porGota: 5, red: 0.30 }, n2: { danos: [20, 40, 60, 80], porGota: 5, red: 0.30 } },
   // ---- Jürgen (Seba, 05-11)
   mechaCorta:    { nombre: 'Mecha corta', glifo: 'mechaCorta', cd: 14, cdFijo: true, dur: 3, radio: 110,
-                   desc: (n) => `Te atas un cartucho de dinamita: escudo de ${n.escudo}. Si a los ${HABILIDADES.mechaCorta.dur} s el escudo sigue en pie, la mecha llega al final y explota a tu alrededor: ${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos durante ${n.lentoDur} s a los enemigos.`,
+                   desc: (n) => `Te atas un cartucho de dinamita: escudo de ${n.escudo}. Si a los ${HABILIDADES.mechaCorta.dur} s el escudo sigue en pie, explota a tu alrededor: ${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos por ${n.lentoDur} s.`,
                    n1: { escudo: 50, dano: 50, lento: 0.25, lentoDur: 2 }, n2: { escudo: 50, dano: 50, lento: 0.25, lentoDur: 2 } },
   lamparaMina:   { nombre: 'Lámpara de mina', glifo: 'lamparaMina', cd: 18, cdFijo: true, radio: 140, dur: 7,   // Seba (05-11): 7 s
-                   desc: (n) => `Dejas una lámpara de mina a tus pies durante ${HABILIDADES.lamparaMina.dur} s. Tú y tus aliados en su luz: +${Math.round(n.vel * 100)}% de velocidad y ${Math.round(n.red * 100)}% menos de daño recibido.`,
+                   desc: (n) => `Dejas una lámpara de mina a tus pies por ${HABILIDADES.lamparaMina.dur} s. Tú y tus aliados en su luz ganan +${Math.round(n.vel * 100)}% de velocidad y reciben ${Math.round(n.red * 100)}% menos de daño.`,
                    n1: { vel: 0.20, red: 0.20 }, n2: { vel: 0.20, red: 0.20 } },
   torretaBrasas: { nombre: 'Torreta de brasas', glifo: 'torretaBrasas', cd: 60, cdFijo: true, ulti: true, rango: 425, cada: 0.174, dur: 6.5,   // Seba (05-11): a sus pies, rango +25%, cadencia +15%, duración fija 6,5 s
-                   desc: (n) => `Despliegas a tus pies una torreta de disparo rápido durante ${fmtN(HABILIDADES.torretaBrasas.dur)} s: ${n.dano} de daño por brasa al enemigo más cercano en su rango.`,
+                   desc: (n) => `Despliegas a tus pies una torreta de disparo rápido por ${fmtN(HABILIDADES.torretaBrasas.dur)} s: ${n.dano} de daño por brasa al enemigo más cercano.`,
                    n1: { dano: 25 }, n2: { dano: 25 } },
   // ---- Æthar (Seba, 05-11)
-  impactoRunico: { nombre: 'Impacto Rúnico', glifo: 'impactoRunico', cd: 12, cdFijo: true, alcance: 300, radio: 70, oculto: 1.1, aviso: 0.5,   // Seba (05-11): sin canalización
-                   desc: (n) => `Marcas al instante un sello rúnico en el suelo (hasta ${HABILIDADES.impactoRunico.alcance}). Tus aliados lo ven; el rival solo lo ve ${fmtN(HABILIDADES.impactoRunico.aviso)} s antes de que explote. Al explotar, los enemigos dentro quedan aturdidos ${fmtN(n.aturde)} s y reciben ${n.dano} de daño.`,
+  impactoRunico: { nombre: 'Impacto rúnico', glifo: 'impactoRunico', cd: 12, cdFijo: true, alcance: 300, radio: 70, oculto: 1.1, aviso: 0.5,   // Seba (05-11): sin canalización
+                   desc: (n) => `Marcas al instante un sello rúnico a distancia ${DIST(HABILIDADES.impactoRunico.alcance)}. Tus aliados lo ven; el rival, solo ${fmtN(HABILIDADES.impactoRunico.aviso)} s antes de que explote. Al explotar aturde ${fmtN(n.aturde)} s y hace ${n.dano} de daño a los enemigos dentro.`,
                    n1: { aturde: 1.25, dano: 100 }, n2: { aturde: 1.25, dano: 100 } },   // Seba (05-11): una sola instancia de 100; recarga 12 s
-  ondaRunica:    { nombre: 'Onda Rúnica', glifo: 'ondaRunica', cd: 15, cdFijo: true, radio: 200, crece: 1.5,
-                   desc: (n) => `Sueltas una onda rúnica que crece desde ti durante ${fmtN(HABILIDADES.ondaRunica.crece)} s (hasta ${HABILIDADES.ondaRunica.radio}). Los enemigos que alcanza quedan ${Math.round(n.lento * 100)}% más lentos y reciben ${Math.round(n.amp * 100)}% más de daño de las habilidades tuyas y de tus aliados durante ${n.dur} s.`,
+  ondaRunica:    { nombre: 'Onda rúnica', glifo: 'ondaRunica', cd: 15, cdFijo: true, radio: 200, crece: 1.5,
+                   desc: (n) => `Sueltas una onda rúnica que crece desde ti durante ${fmtN(HABILIDADES.ondaRunica.crece)} s hasta un radio ${RADIO(HABILIDADES.ondaRunica.radio)}. Los enemigos que alcanza quedan ${Math.round(n.lento * 100)}% más lentos y reciben ${Math.round(n.amp * 100)}% más de daño de tus habilidades y las de tus aliados durante ${n.dur} s.`,
                    n1: { lento: 0.25, amp: 0.25, dur: 3 }, n2: { lento: 0.25, amp: 0.25, dur: 3 } },
   vacio:         { nombre: 'Vacío', glifo: 'vacio', cd: 55, cdFijo: true, ulti: true, alcance: 380, radio: 132, previo: 0.5, cada: 0.182, rblast: 30, cae: 0.3,   // Seba (05-11): +10% de radio (120 → 132) y +10% de runas
-                   desc: (n) => `Abres el Vacío en un punto (hasta ${HABILIDADES.vacio.alcance}): el sello aparece ${fmtN(HABILIDADES.vacio.previo)} s antes y durante ${fmtN(n.dur)} s caen runas al azar en un radio de ${HABILIDADES.vacio.radio}. Cada una hace ${n.dano} de daño y ${Math.round(n.lento * 100)}% de lentitud; cada nueva runa que golpea al mismo enemigo suma +${n.inc} de daño y +${Math.round(n.lentoInc * 100)}% de lentitud.`,
+                   desc: (n) => `Abres el Vacío a distancia ${DIST(HABILIDADES.vacio.alcance)}: su sello aparece ${fmtN(HABILIDADES.vacio.previo)} s antes y durante ${fmtN(n.dur)} s caen runas al azar en un radio ${RADIO(HABILIDADES.vacio.radio)}. Cada runa hace ${n.dano} de daño y frena ${Math.round(n.lento * 100)}%; cada runa extra sobre el mismo enemigo suma +${n.inc} de daño y +${Math.round(n.lentoInc * 100)}% de lentitud.`,
                    n1: { dur: 5, dano: 25, inc: 10, lento: 0.10, lentoInc: 0.03 }, n2: { dur: 5, dano: 25, inc: 10, lento: 0.10, lentoInc: 0.03 } },   // Seba (05-11): 3,5 → 5 s
   // ---- Vario (Seba, 02-11)
   encanto:       { nombre: 'Encanto', glifo: 'encanto', cd: 16, cdFijo: true, alcance: 320, vel: 285, abre: 25,   // Seba (02-11): corazones 25% más lentos
-                   desc: (n) => `Lanzas 3 corazones (uno al frente y dos en ángulo). Cada rival recibe solo uno en total (cuerpo a cuerpo, siempre cuenta como el central). El central hace ${n.dano} de daño y lo encanta ${fmtN(n.dur)} s: camina hacia ti ${Math.round(n.lento * 100)}% más lento y no puede atacar ni usar habilidades. Los laterales tienen la mitad del efecto.`,
+                   desc: (n) => `Lanzas 3 corazones en abanico; cada rival recibe solo uno (cuerpo a cuerpo, siempre el central). El central hace ${n.dano} de daño y encanta ${fmtN(n.dur)} s: el rival camina hacia ti ${Math.round(n.lento * 100)}% más lento, sin atacar ni usar habilidades. Los laterales tienen la mitad del efecto.`,
                    n1: { dano: 70, dur: 1.5, lento: 0.5 }, n2: { dano: 70, dur: 1.5, lento: 0.5 } },
   polvoEstrellas: { nombre: 'Polvo de estrellas', glifo: 'polvoEstrellas', cd: 16, cdFijo: true, dur: 5, nube: 3.9, radio: 30, cada: 0.15,   // Seba (02-11): dura 5 s; el polvo queda 3,9 s en el piso
-                   desc: (n) => `Durante ${HABILIDADES.polvoEstrellas.dur} s dejas un rastro de nubes de polvo de estrellas: cada 0,5 s que un enemigo sigue dentro recibe más daño (${n.dps0} a ${n.dpsMax} por segundo) y más lentitud (${Math.round(n.lento0 * 100)}% a ${Math.round(n.lentoMax * 100)}%); si sale 0,5 s, se reinicia. El efecto sigue mientras el polvo esté en el piso. Afecta invocaciones. Mientras lo sueltas no puedes atacar ni usar otras habilidades, recibes ${Math.round(n.red * 100)}% menos de daño y vas ${Math.round(n.vel * 100)}% más rápido.`,
+                   desc: (n) => `Durante ${HABILIDADES.polvoEstrellas.dur} s dejas un rastro de polvo de estrellas. Por cada 0,5 s que un enemigo sigue dentro, recibe más daño (de ${n.dps0} a ${n.dpsMax} por segundo) y más lentitud (de ${Math.round(n.lento0 * 100)}% a ${Math.round(n.lentoMax * 100)}%); si sale 0,5 s, vuelve a empezar. El polvo queda en el piso y afecta a invocaciones. Mientras lo sueltas no atacas ni usas otras habilidades, recibes ${Math.round(n.red * 100)}% menos de daño y vas ${Math.round(n.vel * 100)}% más rápido.`,
                    n1: { dps0: 10, inc: 10, dpsMax: 40, lento0: 0.1, lentoInc: 0.1, lentoMax: 0.5, red: 0.25, vel: 0.25 }, n2: { dps0: 10, inc: 10, dpsMax: 40, lento0: 0.1, lentoInc: 0.1, lentoMax: 0.5, red: 0.25, vel: 0.25 } },
   armario:       { nombre: 'Caja mágica', glifo: 'armario', cd: 70, cdFijo: true, ulti: true, alcance: 350, canal: 2, radio: 94, atrae: 55,   // Seba (02-11): radio +15% (82 → 94);   // Seba (02-11): canalización 2,5 → 2 s;   // Seba (02-11): pasa a ser una caja mágica con efecto en un radio (40% menor que el de la ulti de Shai, 137)   // Seba (02-11): arrastre el doble de lento   // Seba: la recarga de ulti más alta del juego
-                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.armario.canal)} s (un aturdimiento o un silencio lo corta) y aparece una caja mágica en el punto apuntado. Al abrirse, durante ${n.dur} s los enemigos a menos de ${HABILIDADES.armario.radio} quedan aturdidos, son atraídos hacia la caja y reciben ${n.dps} de daño por segundo.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.armario.canal)} s (se corta si te aturden o silencian) y aparece una caja mágica donde apuntas. Al abrirse, durante ${fmtN(n.dur)} s aturde a los enemigos en un radio ${RADIO(HABILIDADES.armario.radio)}, los atrae hacia ella y les hace ${n.dps} de daño por segundo.`,
                    n1: { dur: 3.5, dps: 40 }, n2: { dur: 3.5, dps: 40 } },   // Seba (02-11): 3 → 3,5 s
   // ---- Ash (Seba, 31-10)
   punosFenix:    { nombre: 'Puños del fénix', glifo: 'punosFenix', cd: 14, cdFijo: true, golpes: 3, rango: 110, arco: 50, dura: 8,
-                   desc: (n) => `Tus próximos ${HABILIDADES.punosFenix.golpes} ataques básicos son destellos de fénix con más alcance (${HABILIDADES.punosFenix.rango}): +${n.extra} de daño cada uno y quema al enemigo (${n.quema} de daño por segundo durante ${n.dur} s; no se acumula). Se pierden si no los usas en ${HABILIDADES.punosFenix.dura} s.`,
+                   desc: (n) => `Tus próximos ${HABILIDADES.punosFenix.golpes} ataques básicos son destellos de fénix con más alcance: +${n.extra} de daño y una quemadura de ${n.quema} por segundo durante ${n.dur} s (no se acumula). Se pierden a los ${HABILIDADES.punosFenix.dura} s.`,
                    n1: { extra: 20, quema: 25, dur: 2 }, n2: { extra: 20, quema: 25, dur: 2 } },   // Seba (31-10): +20 y quema en 2 s
   patadaFenix:   { nombre: 'Patada del fénix', glifo: 'patadaFenix', cd: 15, cdFijo: true, lento: 0.25, lentoDur: 2, min: 80, max: 286, crece: 1.2, carga: 3, salto: 0.3,   // Seba (31-10): recarga 17 → 15; lento 25% por 2 s al acertar   // Seba (31-10): canaliza hasta 3 s; el alcance crece (+10%) solo hasta 1,2 s (C) y el resto se mantiene
-                   desc: (n) => `Canalizas una patada hasta ${HABILIDADES.patadaFenix.carga} s: el alcance crece de ${HABILIDADES.patadaFenix.min} a ${HABILIDADES.patadaFenix.max} en ${fmtN(HABILIDADES.patadaFenix.crece)} s y luego se mantiene (puedes seguir apuntando). Mientras cargas, apuntas con el joystick (o con el botón): una marca en el suelo muestra dónde vas a caer. Vuelve a apretar para saltar (o salta solo al terminar la canalización). El primer enemigo que alcanzas recibe ${n.dano} de daño y queda en llamas (${n.quema} de daño por segundo durante ${n.dur} s) y ${Math.round(HABILIDADES.patadaFenix.lento * 100)}% más lento por ${fmtN(HABILIDADES.patadaFenix.lentoDur)} s. Un aturdimiento o un silencio corta la carga.`,
+                   desc: (n) => `Cargas una patada hasta ${HABILIDADES.patadaFenix.carga} s: su alcance crece de distancia ${DIST(HABILIDADES.patadaFenix.min)} a ${DIST(HABILIDADES.patadaFenix.max)} en ${fmtN(HABILIDADES.patadaFenix.crece)} s, y una marca en el suelo muestra dónde caerás. Vuelve a apretar para saltar (al final de la carga saltas solo). El primer enemigo que alcanzas recibe ${n.dano} de daño, se quema (${n.quema} por segundo durante ${n.dur} s) y queda ${Math.round(HABILIDADES.patadaFenix.lento * 100)}% más lento ${fmtN(HABILIDADES.patadaFenix.lentoDur)} s. La carga se corta si te aturden o silencian.`,
                    n1: { dano: 75, quema: 25, dur: 2 }, n2: { dano: 75, quema: 25, dur: 2 } },   // Seba (31-10): 75 y quema en 2 s
-  espirituFenix: { nombre: 'Espíritu del Fenix', glifo: 'espirituFenix', cd: 45, ulti: true, radio: 120, bajaKill: 3,   // Seba (31-10): sin recarga más rápida; −3 s a las habilidades por cada héroe enemigo que muere dentro
-                   desc: (n) => `El Espíritu del Fenix te acompaña ${n.dur} s: ${n.dps} de daño por segundo a todos los enemigos a menos de ${HABILIDADES.espirituFenix.radio} (el doble a las invocaciones), +${Math.round(n.vel * 100)}% de velocidad de movimiento. Por cada héroe enemigo que muere dentro del radio, la recarga de tus habilidades 1 y 2 baja ${HABILIDADES.espirituFenix.bajaKill} s. La recarga de la ulti empieza al terminar.`,
+  espirituFenix: { nombre: 'Espíritu del fénix', glifo: 'espirituFenix', cd: 45, ulti: true, radio: 120, bajaKill: 3,   // Seba (31-10): sin recarga más rápida; −3 s a las habilidades por cada héroe enemigo que muere dentro
+                   desc: (n) => `El espíritu del fénix te acompaña ${n.dur} s: ${n.dps} de daño por segundo a los enemigos en un radio ${RADIO(HABILIDADES.espirituFenix.radio)} (el doble a invocaciones) y +${Math.round(n.vel * 100)}% de velocidad. Cada héroe enemigo que muere en el radio baja ${HABILIDADES.espirituFenix.bajaKill} s la recarga de tus habilidades 1 y 2. La recarga de la ulti empieza al terminar.`,
                    n1: { dur: 6, dps: 30, vel: 0.4 }, n2: { dur: 6, dps: 30, vel: 0.4 } },   // Seba (31-10): 6 s, 30/s, doble a invocaciones
   // ---- Driiar (Seba, 30-10)
   // ---- Lei (Seba, 05-11; números (C) salvo los que fijó Seba)
+  // ---- Aldor (Seba, 09-11; números (C) salvo los que fijó Seba)
+  giroMartillo:  { nombre: 'Giro del martillo', glifo: 'giroMartillo', cd: 9,   // Seba (09-11): 9 s
+                   cdFijo: true, radio: 90, escudoDur: 3,   // (C) radio y recarga; Seba: 75, escudo 25 por 3 s si golpea a 2+ héroes
+                   desc: (n) => `Giras el martillo a tu alrededor: ${n.dano} de daño a los enemigos en un radio ${RADIO(HABILIDADES.giroMartillo.radio)}. Si golpeas a 2 o más, sean héroes o invocaciones, ganas un escudo de ${n.escudo} por ${HABILIDADES.giroMartillo.escudoDur} s.`,
+                   n1: { dano: 75, escudo: 50 }, n2: { dano: 75, escudo: 50 } },   // Seba (09-11): escudo 50
+  muroAldor:     { nombre: 'Muralla de piedra', glifo: 'muroAldor', cd: 14, cdFijo: true, canal: 1, alcance: 130, velOnda: 195, ancho: 50,   // Seba (09-11): se mueve mientras canaliza; onda 25% más lenta (260 → 195 por s); alcance a la mitad (260 → 130)
+                   largo: 130, dur: 5.5, lentoDur: 1.5,   // Seba (09-11): muro 5,5 s
+                     // Seba: 1 s, 50, 25%; (C) alcance, ancho de la onda, largo y duración del muro, recarga
+                   desc: (n) => `Canalizas ${HABILIDADES.muroAldor.canal} s sin dejar de moverte: una onda recorre el suelo hasta distancia ${DIST(HABILIDADES.muroAldor.alcance)} (${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos por ${fmtN(HABILIDADES.muroAldor.lentoDur)} s) y al final se levanta un muro de piedra por ${fmtN(HABILIDADES.muroAldor.dur)} s. Bloquea el paso y los proyectiles, salvo los de las ultis (la flecha de Lire sí se frena). Los saltos instantáneos lo cruzan.`,
+                   n1: { dano: 25, lento: 0.25 }, n2: { dano: 25, lento: 0.25 } },   // Seba (09-11): onda 25
+  ecosMartillo:  { nombre: 'Eco de la montaña', glifo: 'ecosMartillo', cd: 45, cdFijo: true, ulti: true, canal: 1, radio: 77, crece: 1.25, entre: 0.42, lentoDur: 2.5,   // Seba (09-11): canaliza 1 s; pulsos 20% más lentos (0,35 → 0,42 s)
+                     // Seba (09-11): radios +10% (70 → 77), lento 40% por 2,5 s
+                     // Seba: 3 ecos, 65, 33%, +25% de radio cada uno; (C) radio, tiempos, recarga
+                   desc: (n) => `Canalizas ${HABILIDADES.ecosMartillo.canal} s envuelto en un aura verde: nada te detiene, aunque recibes daño normal. Luego golpeas el suelo y salen 3 ecos en línea, uno cada ${fmtN(HABILIDADES.ecosMartillo.entre)} s y cada uno 25% más grande que el anterior: ${n.dano} de daño y ${Math.round(n.lento * 100)}% más lentos por ${fmtN(HABILIDADES.ecosMartillo.lentoDur)} s.`,
+                   n1: { dano: 85, lento: 0.40 }, n2: { dano: 85, lento: 0.40 } },   // Seba (09-11): 85
   abanicosCruzados: { nombre: 'Abanicos cruzados', glifo: 'abanicosCruzados', cd: 10, cdFijo: true, alcance: 308, curva: 70,   // Seba (05-11): alcance +10% (280 → 308)
                     ida: 0.55, vuelta: 0.55, radio: 16,   // Seba (05-11): 10% más lentos (0,5 → 0,55 s por tramo)   // (C) alcance, recarga, curva
-                   desc: (n) => `Lanzas tus dos abanicos en curva, uno por cada lado, hasta ${HABILIDADES.abanicosCruzados.alcance} de distancia. En la punta se cruzan y cada uno vuelve por el camino del otro. Cada abanico hace ${n.dano} de daño a cada enemigo que toca a la ida y otra vez a la vuelta (${n.dano * 2} en el punto de cruce).`,
+                   desc: (n) => `Lanzas tus dos abanicos en curva, uno por cada lado, hasta distancia ${DIST(HABILIDADES.abanicosCruzados.alcance)}. Se cruzan en la punta y cada uno vuelve por el camino del otro. Cada abanico hace ${n.dano} de daño a la ida y a la vuelta (${n.dano * 2} en el cruce).`,
                    n1: { dano: 60 }, n2: { dano: 60 } },
   abanicosViento: { nombre: 'Abanicos al viento', glifo: 'abanicosViento', cd: 15, cdFijo: true, golpes: 5, dura: 10, alcance: 300, vel: 620, lentoDur: 2.5, lentoMax: 0.4,   // (C) recarga, alcance, duración del lento y tope
-                   desc: (n) => `Tus próximos ${HABILIDADES.abanicosViento.golpes} ataques básicos son abanicos lanzados a distancia (${HABILIDADES.abanicosViento.alcance} de alcance): +${n.extra} de daño cada uno y el enemigo queda ${Math.round(n.lento * 100)}% más lento por cada abanico que recibe (se acumula hasta ${Math.round(HABILIDADES.abanicosViento.lentoMax * 100)}%; dura ${fmtN(HABILIDADES.abanicosViento.lentoDur)} s desde el último). Puedes seguir usando tus habilidades. Se pierden si no los usas en ${HABILIDADES.abanicosViento.dura} s.`,
+                   desc: (n) => `Tus próximos ${HABILIDADES.abanicosViento.golpes} ataques básicos son abanicos lanzados a distancia ${DIST(HABILIDADES.abanicosViento.alcance)}: +${n.extra} de daño y ${Math.round(n.lento * 100)}% más lento por cada abanico, hasta ${Math.round(HABILIDADES.abanicosViento.lentoMax * 100)}% (dura ${fmtN(HABILIDADES.abanicosViento.lentoDur)} s desde el último). Puedes seguir usando habilidades. Se pierden a los ${HABILIDADES.abanicosViento.dura} s.`,
                    n1: { extra: 15, lento: 0.10 }, n2: { extra: 15, lento: 0.10 } },   // Seba (05-11): +15 de daño y 10% por golpe
   // Seba (06-11): rework — apretar te eleva; durante la levitación, apretar otra vez suelta la rueda celeste donde apuntas (dentro del radio
   // del lento) y una tercera vez corta la levitación. La rueda recorre hasta ese punto y queda girando 5 s.
   ojoVendaval:   { nombre: 'Ojo del vendaval', glifo: 'ojoVendaval', cd: 50, cdFijo: true, ulti: true, dur: 3, radio: 150, vel: 960, rueda: 60, giro: 5, tick: 0.25, lentoRueda: 0.05, lentoRuedaDur: 1,   // Seba (06-11, V5.3): −5% por golpe de la rueda, acumulable sin tope; (C) dura 1 s desde el último golpe
                    minRecast: 0.15,   // Seba: velocidad +50% (640 → 960); (C) tamaño de la rueda
-                   desc: (n) => `Te elevas en un torbellino de viento y energía celeste durante ${HABILIDADES.ojoVendaval.dur} s, quieta en el aire: nada te detiene, recibes ${Math.round(n.red * 100)}% menos de daño (el daño por porcentaje de vida te afecta normal) y los enemigos a ${HABILIDADES.ojoVendaval.radio} o menos quedan ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una gran rueda celeste, como uno de tus abanicos girando, hacia donde apuntes dentro de ese radio: hace ${n.dano} de daño a cada enemigo que alcanza y se queda girando ${HABILIDADES.ojoVendaval.giro} s, con ${n.dps} de daño por segundo a quien siga dentro (cada golpe de la rueda frena ${Math.round(HABILIDADES.ojoVendaval.lentoRueda * 100)}% más, acumulable). Una tercera vez corta la levitación.`,
+                   desc: (n) => `Te elevas ${HABILIDADES.ojoVendaval.dur} s en un torbellino de viento: quieta, imparable y con ${Math.round(n.red * 100)}% menos de daño recibido (el daño por porcentaje de vida te afecta normal). Los enemigos en un radio ${RADIO(HABILIDADES.ojoVendaval.radio)} van ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una gran rueda celeste dentro de ese radio: ${n.dano} de daño a quien alcanza, y luego gira ${HABILIDADES.ojoVendaval.giro} s en el lugar con ${n.dps} de daño por segundo. Cada golpe de la rueda frena ${Math.round(HABILIDADES.ojoVendaval.lentoRueda * 100)}% más, acumulable. Una tercera vez cortas la levitación.`,
                    n1: { dano: 125, dps: 25, lento: 0.33, red: 0.60 }, n2: { dano: 125, dps: 25, lento: 0.33, red: 0.60 } },   // Seba: lento 33%
   embate:        { nombre: 'Embate de halabarda', glifo: 'embate', cd: 10, cdFijo: true, ventana: 3, avance: 45, alcance: 35, radio: 45, giro: 0.4, cura: 25,   // Seba (31-10): recarga 9 → 10, cura 50 → 25 (una vez por giro que daña al menos a un héroe)   // Seba (30-10): físico, con vueltas en el aire; golpe en un radio chico al frente
-                   desc: (n) => `Hasta 3 veces (tienes ${HABILIDADES.embate.ventana} s entre cada una): giras en el aire (cada giro que acierta a un héroe te cura ${HABILIDADES.embate.cura}) con la halabarda avanzando un poco y golpeas en un radio chico al frente (${n.dano} de daño). La 3ra es un martillazo de frente: mismo daño y aturde ${fmtN(n.aturde)} s a los que acierta. No eres inmune a control: un aturdimiento o un silencio no corta el giro en curso, pero te afecta igual y no te deja volver a usarla mientras dure.`,
+                   desc: (n) => `Hasta 3 veces, con ${HABILIDADES.embate.ventana} s entre una y otra: giras en el aire avanzando con la halabarda y golpeas al frente (${n.dano} de daño); cada giro que acierta a un héroe te cura ${HABILIDADES.embate.cura}. El tercero es un golpe de frente que además aturde ${fmtN(n.aturde)} s. No eres inmune al control: un aturdimiento o un silencio no corta el giro en curso, pero te afecta igual y no te deja seguir la serie.`,
                    n1: { dano: 50, aturde: 0.75 }, n2: { dano: 50, aturde: 0.75 } },
   totemGaia:     { nombre: 'Tótem de Gaia', glifo: 'totemGaia', cd: 16, cdFijo: true, radio: 90,
-                   desc: (n) => `Plantas un tronco tallado bajo tus pies por ${n.dur} s. En un radio pequeño da ${n.cura} de vida por segundo a los aliados y hace ${n.dps} de daño por segundo a los enemigos.`,
+                   desc: (n) => `Plantas un tótem tallado a tus pies por ${n.dur} s. En un radio pequeño cura ${n.cura} por segundo a los aliados y hace ${n.dps} de daño por segundo a los enemigos.`,
                    n1: { cura: 25, dps: 25, dur: 4 }, n2: { cura: 25, dps: 25, dur: 4 } },   // Seba (30-10): 40 → 25
   nephilim:      { nombre: 'Nephilim', glifo: 'nephilim', cd: 50, ulti: true, onda: { alcance: 380, vel: 420, cd: 2.5 },   // Seba (31-10): la onda pasa a ser un orbe
-                   desc: (n) => `Te transformas en Nephilim por ${n.dur} s (dejas la halabarda, peleas a puños y el Tótem queda sellado): creces, regeneras ${n.regen} de vida por segundo y ganas ${Math.round(n.bono * 100)}% de daño de ataque, de velocidad de ataque, de movimiento y de vida (sobre la vida que tienes al transformarte). Mientras dura, tu 1ra habilidad pasa a ser el Orbe de la naturaleza: ${n.onda} de daño y ${Math.round(n.lento * 100)}% más lento por ${n.lentoDur} s (cada ${HABILIDADES.nephilim.onda.cd} s).`,
+                   desc: (n) => `Te transformas en Nephilim por ${n.dur} s: creces, dejas la halabarda y peleas a puños, regeneras ${n.regen} de vida por segundo y ganas ${Math.round(n.bono * 100)}% de daño de ataque, velocidad de ataque, velocidad y vida (sobre la vida que tienes al transformarte). Tu primera habilidad pasa a ser el Orbe de la naturaleza (${n.onda} de daño y ${Math.round(n.lento * 100)}% más lento por ${n.lentoDur} s, cada ${fmtN(HABILIDADES.nephilim.onda.cd)} s) y el tótem queda sellado.`,
                    n1: { dur: 8, bono: 0.25, regen: 10, onda: 50, lento: 0.25, lentoDur: 2 }, n2: { dur: 8, bono: 0.25, regen: 20, onda: 50, lento: 0.25, lentoDur: 2 } },   // Seba (31-10): +25% en todo y 20 de vida por segundo   // Seba (31-10): orbe 50, lento 25% 2 s
   // ---- Tenebris (Seba, 30-10; números (C))
   almaErrante:   { nombre: 'Alma errante', glifo: 'almaErrante', cd: 12, cdFijo: true, alcance: 0, vel: 150, velMax: 300, acelera: 400, radio: 14, curaKill: 25,   // Seba (30-10): sin límite de distancia (borde a borde); acelera hasta el doble
-                   desc: (n) => `Sueltas un alma lenta en línea recta que acelera mientras viaja (hasta el doble de velocidad). Llega hasta el borde del mapa y vuelve hasta el borde contrario. El primer héroe enemigo que toca (ida o vuelta) queda maldito: ${n.dps} de daño por segundo y ${Math.round(n.lento * 100)}% más lento por ${n.dur} s, y silenciado los primeros ${fmtN(n.silencio)} s. Atraviesa invocaciones. Si no toca a nadie, desaparece. Si el maldito muere con la maldición encima, recuperas ${HABILIDADES.almaErrante.curaKill} de vida y la recarga de esta habilidad vuelve a 0.`,
+                   desc: (n) => `Sueltas un alma que cruza el mapa en línea recta, acelerando, y vuelve hasta el borde contrario. El primer héroe enemigo que toca queda maldito: ${n.dps} de daño por segundo y ${Math.round(n.lento * 100)}% más lento por ${n.dur} s, y silenciado los primeros ${fmtN(n.silencio)} s. Atraviesa invocaciones. Si el maldito muere con la maldición encima, recuperas ${HABILIDADES.almaErrante.curaKill} de vida y la habilidad se recarga al instante.`,
                    n1: { dps: 20, dur: 4, lento: 0.2, silencio: 1.5 }, n2: { dps: 20, dur: 4, lento: 0.2, silencio: 1.5 } },   // Seba (30-10): silencia 2 s   // Seba (31-10): 2 → 1,5 s
   siega:         { nombre: 'Siega', glifo: 'siega', cd: 14, cdFijo: true, canal: 1, rango: 80, arco: 180, cura: 75,   // Seba (30-10): +75 de vida por héroe golpeado
-                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.siega.canal)} s quieto (un aturdimiento o un silencio lo corta) y das un tajo de guadaña en arco (mientras canalizas, el tajo gira hacia donde apuntas o mueves el joystick): los enemigos pierden el ${Math.round(n.pct * 100)}% de su vida actual. Rompe los escudos (Escudo de musgo, Manto de luz) y silencia esas habilidades ${fmtN(n.silencio)} s. Recuperas ${HABILIDADES.siega.cura} de vida por cada héroe enemigo golpeado (las invocaciones no curan). Mata a los esqueletos; al gólem y al dragón les quita el ${Math.round(n.pct * 100)}% de su vida.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.siega.canal)} s quieto (se corta si te aturden o silencian), girando el arco hacia donde apuntas, y das un tajo de guadaña: los enemigos pierden el ${Math.round(n.pct * 100)}% de su vida actual. Rompe los escudos (Escudo de musgo, Manto de luz) y bloquea esas habilidades ${fmtN(n.silencio)} s. Recuperas ${HABILIDADES.siega.cura} de vida por cada héroe enemigo golpeado. Mata a los esqueletos; al gólem y al dragón les quita el ${Math.round(n.pct * 100)}% de su vida.`,
                    n1: { pct: 0.5, silencio: 1 }, n2: { pct: 0.5, silencio: 1 } },
   pozoMaldad:    { nombre: 'Pozo de la maldad', glifo: 'pozoMaldad', cd: 45, ulti: true, canal: 1.5, alcance: 300, radio: 100, curaKill: 50,   // Seba (30-10): canal 2 → 1,5 s; +50 de vida si un enemigo muere dentro   // Seba (30-10): 50 → 45 s
-                   desc: (n) => `Apuntas un punto (hasta ${HABILIDADES.pozoMaldad.alcance}) y canalizas ${fmtN(HABILIDADES.pozoMaldad.canal)} s quieto (un aturdimiento o un silencio lo corta). Al terminar apareces ahí y silencias ${fmtN(n.silencio)} s a los enemigos del pozo, que te sigue bajo los pies ${n.dur} s: ${n.dps} de daño por segundo y ${Math.round(n.lento * 100)}% más lentos a los enemigos dentro. Si un héroe enemigo muere dentro del pozo, recuperas ${HABILIDADES.pozoMaldad.curaKill} de vida.`,
+                   desc: (n) => `Apuntas un punto a distancia ${DIST(HABILIDADES.pozoMaldad.alcance)} y canalizas ${fmtN(HABILIDADES.pozoMaldad.canal)} s quieto (se corta si te aturden o silencian). Apareces ahí y silencias ${fmtN(n.silencio)} s a los enemigos cercanos; el pozo te sigue bajo los pies ${n.dur} s: ${n.dps} de daño por segundo y ${Math.round(n.lento * 100)}% más lentos a los enemigos dentro. Si un héroe enemigo muere en el pozo, recuperas ${HABILIDADES.pozoMaldad.curaKill} de vida.`,
                    n1: { dps: 25, dur: 5, lento: 0.4, silencio: 0.5 }, n2: { dps: 25, dur: 5, lento: 0.4, silencio: 0.5 } },   // Seba (30-10): lento 25% → 40%
   mantoLuz:      { nombre: 'Manto de luz', glifo: 'mantoLuz', cd: 16, cdFijo: true,
-                   desc: (n) => `Te rodeas de una malla de luz por ${n.dur} s: recibes ${Math.round(n.reduce * 100)}% menos de daño de todas las fuentes y ganas +${Math.round(n.vel * 100)}% de velocidad.`,
+                   desc: (n) => `Te cubres con una malla de luz por ${n.dur} s: recibes ${Math.round(n.reduce * 100)}% menos de daño de todas las fuentes y ganas +${Math.round(n.vel * 100)}% de velocidad.`,
                    n1: { dur: 4, reduce: 0.5, vel: 0.25 }, n2: { dur: 4, reduce: 0.5, vel: 0.25 } },
   // Seba (30-10): rework — 15 dagas de 15 que el jugador dirige mientras salen (siguen su apuntado); vuelven a los 2 s y repiten el daño
   // Seba (30-10): rework estilo Katarina — 45 cuchillas en todas direcciones dentro del radio del Salto del juicio (137); Shai se puede mover
-  secretoTemplario: { nombre: 'Secreto Templario', glifo: 'dagasShai', cd: 50, ulti: true, alcance: 137, vel: 1485, dagas: 55, cada: 0.03, vuelta: 2, regreso: 0.37,   // Seba (30-10): 45 → 55 cuchillas   // Seba (30-10): 50% más rápidas al salir, entre una y otra y al volver (990 → 1485, 0,045 → 0,03 s, 0,55 → 0,37 s); clavadas siguen 2 s
-                   desc: (n) => `Durante ${fmtN(Math.round(HABILIDADES.secretoTemplario.dagas * HABILIDADES.secretoTemplario.cada * 10) / 10)} s lanzas ${HABILIDADES.secretoTemplario.dagas} cuchillas mágicas en todas las direcciones, girando, hasta ${HABILIDADES.secretoTemplario.alcance} de distancia (puedes moverte: salen de donde estés). Cada una hace ${n.dano} de daño al primer enemigo que toca y se le queda clavada, o se clava en el piso al llegar al borde. A los ${HABILIDADES.secretoTemplario.vuelta} s vuelven volando hasta ti (te siguen si te mueves): repiten el daño al héroe donde estaban y dañan a todos los enemigos que cruzan en el camino.`,
+  secretoTemplario: { nombre: 'Secreto templario', glifo: 'dagasShai', cd: 50, ulti: true, alcance: 137, vel: 1485, dagas: 55, cada: 0.03, vuelta: 2, regreso: 0.37,   // Seba (30-10): 45 → 55 cuchillas   // Seba (30-10): 50% más rápidas al salir, entre una y otra y al volver (990 → 1485, 0,045 → 0,03 s, 0,55 → 0,37 s); clavadas siguen 2 s
+                   desc: (n) => `Durante ${fmtN(Math.round(HABILIDADES.secretoTemplario.dagas * HABILIDADES.secretoTemplario.cada * 10) / 10)} s lanzas ${HABILIDADES.secretoTemplario.dagas} cuchillas mágicas que giran en todas direcciones hasta distancia ${DIST(HABILIDADES.secretoTemplario.alcance)}; salen de donde estés y puedes moverte. Cada una hace ${n.dano} de daño al primer enemigo que toca y se le queda clavada, o se clava en el piso. A los ${HABILIDADES.secretoTemplario.vuelta} s vuelven hacia ti: repiten el daño a quien tenían clavado y dañan a todos los enemigos que cruzan.`,
                    n1: { dano: 18 }, n2: { dano: 23 } },   // Seba (30-10): 15 → 18
   // ---- Tek'Tal (Seba, 29-10)
   fisura:        { nombre: 'Fisura', glifo: 'fisura', cd: 14, cdFijo: true, largo: 320, ancho: 40, muro: 4,
@@ -1839,27 +1868,28 @@ Object.assign(HABILIDADES, {
 });
 
 const PASIVAS = {
-  regenBestial: { nombre: 'Regeneración bestial', glifo: 'corazonVerde', desc: 'Si no recibes daño por 3 s, regeneras 10 de vida por segundo.' },
-  savia:        { nombre: 'Savia del bosque', glifo: 'nube', desc: 'Recuperas 5 de vida por segundo bajo un árbol.' },
+  regenBestial: { nombre: 'Regeneración bestial', glifo: 'corazonVerde', desc: 'Si no recibes daño en 3 s, regeneras 10 de vida por segundo.' },
+  savia:        { nombre: 'Savia del bosque', glifo: 'nube', desc: 'Bajo un árbol recuperas 5 de vida por segundo.' },
   almas:        { nombre: 'Cosecha de almas', glifo: 'gotaVerde', desc: 'Cuando matan a una de tus invocaciones, recuperas 15 de vida.' },
   eco:          { nombre: 'Eco del camino', glifo: 'gotaAzul', desc: 'Curar a tus aliados también carga tu ulti.' },
-  nubeVoladora: { nombre: 'Sobre la nube', glifo: 'nube', desc: 'Flotas sobre tu nube: pasas por encima de los obstáculos (muros de hielo). Cada golpe que daña a un héroe enemigo te da +1% de velocidad de movimiento (máximo +10%). Si pasas 1 s sin dañar a un héroe, empiezas a perderlo de a 1% por segundo.' },
-  pasoSigiloso: { nombre: 'Paso sigiloso', glifo: 'bota', desc: '+10% de velocidad de movimiento si no recibiste daño en los últimos 3 s.'   /* Seba (31-10): ya no baja recargas con los básicos */ },
+  nubeVoladora: { nombre: 'Sobre la nube', glifo: 'nube', desc: 'Flotas sobre tu nube y pasas por encima de los obstáculos (muros de hielo). Cada golpe a un héroe enemigo te da +1% de velocidad (máximo +10%); tras 1 s sin dañar a un héroe, pierdes 1% por segundo.' },
+  pasoSigiloso: { nombre: 'Paso sigiloso', glifo: 'bota', desc: '+10% de velocidad si no recibiste daño en los últimos 3 s.'   /* Seba (31-10): ya no baja recargas con los básicos */ },
   festin:       { nombre: 'Festín', glifo: 'colmillos', desc: 'Cuando muere un héroe enemigo al que dañaste en los últimos 1,5 s, recuperas 50 de vida.' },   // Seba (30-10): 100 → 50
   sentidoAracnido: { nombre: 'Sentido arácnido', glifo: 'ojoArana', desc: 'Los enemigos invisibles o escondidos que pisan tu tela quedan a la vista de todos.' },
-  furiaBosque:  { nombre: 'Furia del bosque', glifo: 'huellaTroll', desc: '+3% de velocidad de movimiento por cada héroe enemigo a menos de 250 (máximo +30%).' },
+  furiaBosque:  { nombre: 'Furia del bosque', glifo: 'huellaTroll', desc: '+3% de velocidad por cada héroe enemigo a distancia media o menos (máximo +30%).' },
   ultimoAliento: { nombre: 'Último aliento', glifo: 'corazonVerde', desc: 'Por debajo del 30% de vida, tus habilidades se recargan 25% más rápido.' },
   sangreReal:   { nombre: 'Sangre real', glifo: 'corona', desc: 'Recuperas 25 de vida cada vez que usas una habilidad.' },
   curacionPlano: { nombre: 'Curación del otro plano', glifo: 'corazonVerde', desc: 'Cada aturdimiento que provocas te cura 15 de vida.' },
-  gotasSangre: { nombre: 'Gotas de sangre', glifo: 'gotasSangre', desc: 'Cada golpe de tus habilidades deja 1 gota de sangre en el enemigo (máx. 4; cada golpe renueva todas a 2 s): 5 de daño por segundo por gota. Los ataques básicos no dejan gotas, salvo el 3.º golpe de la Sed de sangre.' },
+  gotasSangre: { nombre: 'Gotas de sangre', glifo: 'gotasSangre', desc: 'Cada golpe de tus habilidades deja una gota de sangre en el enemigo (máximo 4; cada golpe las renueva por 2 s): 5 de daño por segundo por gota. Los ataques básicos no dejan gotas, salvo el 3.º golpe de la Sed de sangre.' },
   cartuchoDoble: { nombre: 'Cartucho doble', glifo: 'cartuchoDoble', desc: 'Cada 4.º escopetazo sale con 3 perdigones más.' },   // (C) Claude, por aprobar
-  distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el 85% de tu alcance o más lejos.' },
-  resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas 1 acumulación (máx. 5, duran 4 s y se renuevan todas al sumar una): +3% de velocidad y 3% menos de daño recibido por acumulación.' },
-  actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas 1 acumulación (se pierden si pasan 2 s sin una nueva). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
-  flotar: { nombre: 'Flotar', glifo: 'flotar', desc: 'Cada vez que usas 3 habilidades, ganas 5% de velocidad de movimiento durante 4 s (recarga de 8 s; mientras recarga, las habilidades no cuentan).' },   // Seba (05-11)
+  distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
+  resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
+  actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  templeEnano: { nombre: 'Temple de enano', glifo: 'templeEnano', desc: 'Cada 100 de daño que recibes (sin contar escudos) llena tu medidor. Lleno, durante 3 s ganas +5% de velocidad, +5% de daño y 5% de resistencia al control; luego se recarga 5 s. Si no se llena, se vacía de a poco.' },   // Seba (09-11); nombre (C)
+  flotar: { nombre: 'Flotar', glifo: 'flotar', desc: 'Cada 3 habilidades que usas ganas +5% de velocidad por 4 s (recarga de 8 s; mientras recarga, no cuentan).' },   // Seba (05-11)
   pielBrasa: { nombre: 'Piel de brasa', glifo: 'pielBrasa', desc: 'Recibes 10% menos de daño de ataques básicos.' },
-  dueloBosque: { nombre: 'Duelo del bosque', glifo: 'dueloBosque', desc: 'Por cada héroe aliado muerto regeneras 5 de vida por segundo. Al reaparecer el aliado, pierdes ese bono.' },
-  mantoSombras: { nombre: 'Manto de sombras', glifo: 'mantoSombras', desc: 'Mientras canalizas la Siega o el Pozo de la maldad, recibes 10% menos de daño de todas las fuentes. Además, ganas 10% de velocidad de movimiento por cada héroe enemigo con 25% de su vida o menos.' },   // Seba (05-11): antes +5% por maldito
+  dueloBosque: { nombre: 'Duelo del bosque', glifo: 'dueloBosque', desc: 'Por cada héroe aliado muerto regeneras 5 de vida por segundo, hasta que reaparece.' },
+  mantoSombras: { nombre: 'Manto de sombras', glifo: 'mantoSombras', desc: 'Mientras canalizas la Siega o el Pozo de la maldad recibes 10% menos de daño. Además, ganas +10% de velocidad por cada héroe enemigo con 25% de su vida o menos.' },   // Seba (05-11): antes +5% por maldito
   pactoSangre:  { nombre: 'Pacto de sangre', glifo: 'selloShai', desc: 'Cada 3 ataques al mismo enemigo en 3 s explota un sello: 10 de daño y +5% de velocidad por 3 s.' },
   temblor:      { nombre: 'Temblor', glifo: 'roca', desc: 'Cada tercer puñetazo al mismo enemigo lo deja lento 10% por 4 s.' },
 };
@@ -1888,6 +1918,9 @@ const UNIDADES = {
   enemigo:   { vel: 0 },
 };
 
+// Distancias y radios en palabras para los textos (Seba 09-11: «corta, media, larga» en vez de números)
+const DIST = (d) => d <= 110 ? 'muy corta' : d <= 200 ? 'corta' : d <= 320 ? 'media' : 'larga';
+const RADIO = (r) => r <= 95 ? 'pequeño' : r <= 140 ? 'mediano' : 'grande';
 const fmtN = (v) => Number.isInteger(v) ? String(v) : String(Math.round(v * 10) / 10).replace('.', ',');
 
 // Guía de apuntado de cada habilidad (lo que se dibuja al arrastrar el botón o con el mouse)
@@ -1896,7 +1929,7 @@ const fmtN = (v) => Number.isInteger(v) ? String(v) : String(Math.round(v * 10) 
 // las fortalezas y resistencias se manejan como status, no como stats fijos).
 const ESTADOS = [
   // Seba (31-10): las pasivas y transformaciones también muestran su estado (f2 = índice 18 del snapshot)
-  { f2: 65536,   nombre: 'Nephilim: +25% daño, vel. de ataque, movimiento y vida; +20 vida/s', glifo: 'nephilim', bueno: true },
+  { f2: 65536,   nombre: 'Nephilim: +25% de daño, velocidad de ataque, velocidad y vida; +10 de vida/s', glifo: 'nephilim', bueno: true },
   { f2: 131072,  nombre: 'Tótem sellado (Nephilim)', glifo: 'espiral', bueno: false },
   { f2: 33554432, nombre: 'Puños del fénix', glifo: 'punosFenix', bueno: true },
   { f3: 1, nombre: 'Encantado: camina hacia Vario', glifo: 'encanto', bueno: false },
@@ -1904,14 +1937,14 @@ const ESTADOS = [
   { f3: 4, nombre: 'En el polvo de estrellas', glifo: 'polvoEstrellas', bueno: false },
   { f3: 8, nombre: 'Atrapado por la caja mágica', glifo: 'armario', bueno: false },
   { f3: 16, nombre: 'Acto final: acumulaciones de Vario', glifo: 'actoFinal', bueno: false },
-  { f3: 64, nombre: 'Levantado por el Impacto Rúnico', glifo: 'impactoRunico', bueno: false },
+  { f3: 64, nombre: 'Levantado por el Impacto rúnico', glifo: 'impactoRunico', bueno: false },
   { f3: 128, nombre: 'Vacío: cada runa golpea más fuerte', glifo: 'vacio', bueno: false },
-  { f3: 256, nombre: 'Resonancia rúnica: +3% velocidad y −3% daño recibido por acumulación', glifo: 'resonancia', bueno: true },
-  { f3: 16777216, nombre: 'Manto de sombras: +10% velocidad por enemigo con poca vida', glifo: 'mantoSombras', bueno: true },
-  { f3: 512, nombre: 'Onda Rúnica: −25% velocidad y +25% daño de habilidades recibido', glifo: 'ondaRunica', bueno: false },
+  { f3: 256, nombre: 'Resonancia rúnica: +3% de velocidad y −3% de daño recibido por acumulación', glifo: 'resonancia', bueno: true },
+  { f3: 16777216, nombre: 'Manto de sombras: +10% de velocidad por enemigo con poca vida', glifo: 'mantoSombras', bueno: true },
+  { f3: 512, nombre: 'Onda rúnica: −25% de velocidad y +25% de daño de habilidades recibido', glifo: 'ondaRunica', bueno: false },
   { f3: 2048, nombre: 'Cargando Castigo', glifo: 'castigo', bueno: true },
-  { f3: 16384, nombre: 'Furia del pozo: más daño de ataque', glifo: 'pozoMaldito', bueno: true },
-  { f3: 32768, nombre: 'Quemadura verde: −10% velocidad', glifo: 'chaos', bueno: false },
+  { f3: 16384, nombre: 'Pozo maldito: más daño de ataque', glifo: 'pozoMaldito', bueno: true },
+  { f3: 32768, nombre: 'Quemadura verde: −10% de velocidad', glifo: 'chaos', bueno: false },
   { f3: 262144, nombre: 'Estocada: puedes volver al punto de partida', glifo: 'estocada', bueno: true },
   { f3: 524288, nombre: 'Sed de sangre: +5% de la vida actual del enemigo; el 3.º golpe cura', glifo: 'sedSangre', bueno: true },
   { f3: 2097152, nombre: 'Danza carmesí: imparable, −30% de daño recibido', glifo: 'danzaCarmesi', bueno: true },
@@ -1920,17 +1953,19 @@ const ESTADOS = [
   { f3: 33554432, nombre: 'Abanicos al viento: ataques a distancia', glifo: 'abanicosViento', bueno: true },
   { f3: 67108864, nombre: 'Ojo del vendaval: imparable, −60% de daño recibido', glifo: 'ojoVendaval', bueno: true },
   { f3: 134217728, nombre: 'Flotar: +5% de velocidad', glifo: 'flotar', bueno: true },
+  { f3: 1073741824, nombre: 'Eco de la montaña: canalizando', glifo: 'ecosMartillo', bueno: true },
+  { f3: 536870912, nombre: 'Temple de enano: +5% de velocidad, daño y resistencia al control', glifo: 'templeEnano', bueno: true },
   { f3: 268435456, nombre: 'Frenado por los abanicos de Lei', glifo: 'abanicosViento', bueno: false },
-  { f3: 131072, nombre: 'Lámpara de mina: +20% velocidad y 20% menos de daño recibido', glifo: 'lamparaMina', bueno: true },
-  { f2: 536870912, nombre: 'Espíritu del Fenix: +40% velocidad, recarga 25% más rápida', glifo: 'espirituFenix', bueno: true },
-  { f2: 262144,  nombre: 'Duelo del bosque: +5 vida/s por aliado caído', glifo: 'dueloBosque', bueno: true },
-  { f2: 524288,  nombre: 'Manto de sombras: -10% daño recibido', glifo: 'mantoSombras', bueno: true },
-  { f2: 1048576, nombre: 'Regeneración bestial: +10 vida/s', glifo: 'corazonVerde', bueno: true },
-  { f2: 2097152, nombre: 'Savia del bosque: +5 vida/s', glifo: 'nube', bueno: true },
-  { f2: 4194304, nombre: 'Paso sigiloso: +10% velocidad', glifo: 'bota', bueno: true },
+  { f3: 131072, nombre: 'Lámpara de mina: +20% de velocidad y −20% de daño recibido', glifo: 'lamparaMina', bueno: true },
+  { f2: 536870912, nombre: 'Espíritu del fénix: +40% de velocidad', glifo: 'espirituFenix', bueno: true },
+  { f2: 262144,  nombre: 'Duelo del bosque: +5 de vida/s por aliado caído', glifo: 'dueloBosque', bueno: true },
+  { f2: 524288,  nombre: 'Manto de sombras: −10% de daño recibido', glifo: 'mantoSombras', bueno: true },
+  { f2: 1048576, nombre: 'Regeneración bestial: +10 de vida/s', glifo: 'corazonVerde', bueno: true },
+  { f2: 2097152, nombre: 'Savia del bosque: +5 de vida/s', glifo: 'nube', bueno: true },
+  { f2: 4194304, nombre: 'Paso sigiloso: +10% de velocidad', glifo: 'bota', bueno: true },
   { f2: 8388608, nombre: 'Furia del bosque: más velocidad', glifo: 'huellaTroll', bueno: true },
   { f2: 16777216, nombre: 'Último aliento: habilidades 25% más rápidas', glifo: 'corazonVerde', bueno: true },
-  { f2: 67108864, nombre: 'Pacto de sangre: +5% velocidad', glifo: 'selloShai', bueno: true },
+  { f2: 67108864, nombre: 'Pacto de sangre: +5% de velocidad', glifo: 'selloShai', bueno: true },
   { bit: 1073741824, nombre: 'En el aire', glifo: 'jetpack', bueno: true },
   { bit: 134217728, nombre: 'Sobrecrecimiento', glifo: 'brote', bueno: true },
   { bit: 67108864, nombre: 'Escudo', glifo: 'escudoMusgo', bueno: true },
@@ -1949,11 +1984,11 @@ const ESTADOS = [
   { bit: 8,      nombre: 'Camuflado', glifo: 'nube', bueno: true },
   { bit: 2048,   nombre: 'Aturdido', glifo: 'rocaLanzada', bueno: false },
   { bit: 16777216, nombre: 'Envenenado', glifo: 'colmillos', bueno: false },
-  { bit: 65536,  nombre: 'Marca de Lire (+5% daño recibido)', glifo: 'diana', bueno: false },
+  { bit: 65536,  nombre: 'Marca de Lire: +5% de daño recibido', glifo: 'diana', bueno: false },
   { bit: 524288, nombre: 'Bomba pegada', glifo: 'bomba', bueno: false },
   { bit: 256,    nombre: 'Vulnerable', glifo: 'grito', bueno: false },
   { bit: 512,    nombre: 'Levantando la arena', glifo: 'llamaAzul', bueno: true },
-  { bit: 128,    nombre: 'Decimar (inmune a control)', glifo: 'decimar', bueno: true },
+  { bit: 128,    nombre: 'Decimar: inmune al control', glifo: 'decimar', bueno: true },
   { bit: 1024,   nombre: 'Fuego azul', glifo: 'llamaAzul', bueno: false },
   { bit: 64,     nombre: 'Silenciado', glifo: 'espiral', bueno: false },
   { bit: 4,      nombre: 'Maldito', glifo: 'calavera', bueno: false },
@@ -1979,6 +2014,7 @@ const GUIAS = {
   castigo: { tipo: 'linea', alcance: 450, ancho: 24 }, pozoMaldito: { tipo: 'punto', alcance: 300, r: 90 }, chaos: { tipo: 'punto', alcance: 600, r: 60 },
   impactoRunico: { tipo: 'punto', alcance: 300, r: 70 }, ondaRunica: { tipo: 'propio', r: 200 }, vacio: { tipo: 'punto', alcance: 380, r: 132 },
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
+  giroMartillo: { tipo: 'propio', r: 90 }, muroAldor: { tipo: 'muro', alcance: 130, largo: 130 }, ecosMartillo: { tipo: 'linea', alcance: 380, ancho: 140 },
   abanicosCruzados: { tipo: 'linea', alcance: 308, ancho: 60 }, abanicosViento: { tipo: 'propio', r: 300 }, ojoVendaval: { tipo: 'propio', r: 150 }, ojoVendavalRueda: { tipo: 'punto', alcance: 150, r: 60 },
   punosFenix: { tipo: 'propio', r: 110 }, patadaFenix: { tipo: 'linea', alcance: 286, ancho: 24 }, espirituFenix: { tipo: 'propio', r: 120 },
   embate: { tipo: 'cono', alcance: 85, arco: 90 }, totemGaia: { tipo: 'propio', r: 90 }, nephilim: { tipo: 'linea', alcance: 380, ancho: 20 },
@@ -2010,142 +2046,148 @@ for (const hb of Object.values(HABILIDADES)) {
 for (const u of Object.values(UNIDADES)) if (u.vel) u.vel = Math.round(u.vel * RITMO.movimiento);
 
 // ===== matchups.js =====
-// Generado por tools/matchups.js (2026-11-05): % de duelos 1v1 que gana la fila contra la columna.
+// Generado por tools/matchups.js (2026-11-09): % de duelos 1v1 que gana la fila contra la columna.
 // Medido con bots (apuntado automático), 8 duelos por par.
 const MATCHUPS = {
  "beast": {
-  "lire": 63,
+  "lire": 75,
   "nigromante": 100,
-  "maidas": 25,
+  "maidas": 50,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 100,
-  "aracnida": 100,
-  "kazaro": 38,
+  "takichi": 88,
+  "aracnida": 88,
+  "kazaro": 50,
   "trelgon": 100,
-  "gaia": 50,
+  "gaia": 63,
   "vatrius": 0,
   "jurgen": 88,
   "fatum": 50,
   "aethar": 100,
   "vario": 0,
-  "lei": 25,
-  "ash": 88,
+  "aldor": 100,
+  "lei": 50,
+  "ash": 100,
   "driiar": 38,
-  "tenebris": 63,
-  "shai": 13
+  "tenebris": 50,
+  "shai": 38
  },
  "lire": {
-  "beast": 38,
-  "nigromante": 50,
+  "beast": 25,
+  "nigromante": 38,
   "maidas": 50,
   "monh": 13,
-  "biteroi": 75,
-  "rasho": 88,
-  "takichi": 25,
-  "aracnida": 63,
-  "kazaro": 63,
+  "biteroi": 88,
+  "rasho": 100,
+  "takichi": 0,
+  "aracnida": 88,
+  "kazaro": 38,
   "trelgon": 0,
-  "gaia": 100,
-  "vatrius": 0,
+  "gaia": 50,
+  "vatrius": 25,
   "jurgen": 100,
-  "fatum": 100,
-  "aethar": 88,
+  "fatum": 88,
+  "aethar": 100,
   "vario": 100,
-  "lei": 38,
+  "aldor": 88,
+  "lei": 63,
   "ash": 88,
-  "driiar": 88,
+  "driiar": 63,
   "tenebris": 100,
   "shai": 0
  },
  "nigromante": {
   "beast": 0,
-  "lire": 50,
-  "maidas": 88,
+  "lire": 63,
+  "maidas": 63,
   "monh": 100,
-  "biteroi": 75,
+  "biteroi": 50,
   "rasho": 100,
   "takichi": 0,
   "aracnida": 100,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 100,
+  "gaia": 88,
   "vatrius": 0,
   "jurgen": 100,
-  "fatum": 88,
+  "fatum": 100,
   "aethar": 100,
   "vario": 100,
-  "lei": 75,
-  "ash": 75,
-  "driiar": 50,
-  "tenebris": 100,
+  "aldor": 38,
+  "lei": 100,
+  "ash": 38,
+  "driiar": 38,
+  "tenebris": 88,
   "shai": 0
  },
  "maidas": {
-  "beast": 75,
+  "beast": 50,
   "lire": 50,
-  "nigromante": 13,
-  "monh": 63,
+  "nigromante": 38,
+  "monh": 75,
   "biteroi": 63,
   "rasho": 88,
-  "takichi": 50,
-  "aracnida": 88,
-  "kazaro": 63,
-  "trelgon": 25,
-  "gaia": 100,
+  "takichi": 38,
+  "aracnida": 75,
+  "kazaro": 50,
+  "trelgon": 88,
+  "gaia": 88,
   "vatrius": 25,
-  "jurgen": 88,
-  "fatum": 75,
-  "aethar": 100,
-  "vario": 88,
+  "jurgen": 100,
+  "fatum": 88,
+  "aethar": 88,
+  "vario": 100,
+  "aldor": 75,
   "lei": 75,
-  "ash": 88,
-  "driiar": 38,
-  "tenebris": 100,
-  "shai": 13
+  "ash": 100,
+  "driiar": 50,
+  "tenebris": 63,
+  "shai": 0
  },
  "monh": {
   "beast": 0,
   "lire": 88,
   "nigromante": 0,
-  "maidas": 38,
+  "maidas": 25,
   "biteroi": 63,
-  "rasho": 50,
+  "rasho": 75,
   "takichi": 0,
-  "aracnida": 0,
+  "aracnida": 25,
   "kazaro": 0,
-  "trelgon": 0,
-  "gaia": 75,
+  "trelgon": 13,
+  "gaia": 100,
   "vatrius": 0,
   "jurgen": 88,
-  "fatum": 75,
+  "fatum": 88,
   "aethar": 100,
   "vario": 88,
-  "lei": 0,
-  "ash": 25,
+  "aldor": 13,
+  "lei": 75,
+  "ash": 0,
   "driiar": 0,
-  "tenebris": 75,
+  "tenebris": 88,
   "shai": 0
  },
  "biteroi": {
   "beast": 100,
-  "lire": 25,
-  "nigromante": 25,
+  "lire": 13,
+  "nigromante": 50,
   "maidas": 38,
   "monh": 38,
-  "rasho": 88,
+  "rasho": 50,
   "takichi": 100,
   "aracnida": 100,
-  "kazaro": 100,
-  "trelgon": 13,
-  "gaia": 38,
+  "kazaro": 63,
+  "trelgon": 25,
+  "gaia": 25,
   "vatrius": 100,
   "jurgen": 75,
-  "fatum": 75,
-  "aethar": 25,
+  "fatum": 50,
+  "aethar": 50,
   "vario": 88,
-  "lei": 88,
+  "aldor": 100,
+  "lei": 100,
   "ash": 100,
   "driiar": 100,
   "tenebris": 100,
@@ -2153,374 +2195,414 @@ const MATCHUPS = {
  },
  "rasho": {
   "beast": 100,
-  "lire": 13,
+  "lire": 0,
   "nigromante": 0,
   "maidas": 13,
-  "monh": 50,
-  "biteroi": 13,
-  "takichi": 38,
+  "monh": 25,
+  "biteroi": 50,
+  "takichi": 63,
   "aracnida": 75,
-  "kazaro": 88,
+  "kazaro": 75,
   "trelgon": 100,
-  "gaia": 25,
-  "vatrius": 38,
-  "jurgen": 63,
-  "fatum": 50,
+  "gaia": 38,
+  "vatrius": 25,
+  "jurgen": 88,
+  "fatum": 38,
   "aethar": 63,
   "vario": 88,
+  "aldor": 100,
   "lei": 88,
   "ash": 100,
-  "driiar": 100,
+  "driiar": 88,
   "tenebris": 100,
   "shai": 0
  },
  "takichi": {
-  "beast": 0,
-  "lire": 75,
+  "beast": 13,
+  "lire": 100,
   "nigromante": 100,
-  "maidas": 50,
+  "maidas": 63,
   "monh": 100,
   "biteroi": 0,
-  "rasho": 63,
+  "rasho": 38,
   "aracnida": 0,
-  "kazaro": 38,
-  "trelgon": 63,
+  "kazaro": 75,
+  "trelgon": 50,
   "gaia": 13,
   "vatrius": 0,
-  "jurgen": 50,
-  "fatum": 75,
+  "jurgen": 38,
+  "fatum": 88,
   "aethar": 100,
-  "vario": 38,
-  "lei": 38,
-  "ash": 25,
-  "driiar": 13,
+  "vario": 0,
+  "aldor": 100,
+  "lei": 50,
+  "ash": 13,
+  "driiar": 38,
   "tenebris": 88,
   "shai": 0
  },
  "aracnida": {
-  "beast": 0,
-  "lire": 38,
+  "beast": 13,
+  "lire": 13,
   "nigromante": 0,
-  "maidas": 13,
-  "monh": 100,
+  "maidas": 25,
+  "monh": 75,
   "biteroi": 0,
   "rasho": 25,
   "takichi": 100,
   "kazaro": 13,
-  "trelgon": 100,
-  "gaia": 63,
+  "trelgon": 88,
+  "gaia": 88,
   "vatrius": 0,
-  "jurgen": 13,
-  "fatum": 25,
-  "aethar": 63,
+  "jurgen": 25,
+  "fatum": 50,
+  "aethar": 88,
   "vario": 0,
-  "lei": 88,
-  "ash": 38,
-  "driiar": 75,
-  "tenebris": 75,
-  "shai": 75
+  "aldor": 100,
+  "lei": 75,
+  "ash": 88,
+  "driiar": 50,
+  "tenebris": 88,
+  "shai": 100
  },
  "kazaro": {
-  "beast": 63,
-  "lire": 38,
+  "beast": 50,
+  "lire": 63,
   "nigromante": 100,
-  "maidas": 38,
+  "maidas": 50,
   "monh": 100,
-  "biteroi": 0,
-  "rasho": 13,
-  "takichi": 63,
+  "biteroi": 38,
+  "rasho": 25,
+  "takichi": 25,
   "aracnida": 88,
   "trelgon": 100,
   "gaia": 13,
   "vatrius": 25,
   "jurgen": 100,
-  "fatum": 50,
-  "aethar": 100,
+  "fatum": 100,
+  "aethar": 88,
   "vario": 0,
-  "lei": 13,
+  "aldor": 75,
+  "lei": 75,
   "ash": 50,
   "driiar": 63,
-  "tenebris": 25,
+  "tenebris": 13,
   "shai": 13
  },
  "trelgon": {
   "beast": 0,
   "lire": 100,
   "nigromante": 100,
-  "maidas": 75,
-  "monh": 100,
-  "biteroi": 88,
+  "maidas": 13,
+  "monh": 88,
+  "biteroi": 75,
   "rasho": 0,
-  "takichi": 38,
-  "aracnida": 0,
+  "takichi": 50,
+  "aracnida": 13,
   "kazaro": 0,
-  "gaia": 50,
+  "gaia": 75,
   "vatrius": 0,
   "jurgen": 100,
   "fatum": 25,
   "aethar": 100,
   "vario": 0,
-  "lei": 25,
+  "aldor": 0,
+  "lei": 63,
   "ash": 100,
   "driiar": 0,
   "tenebris": 75,
-  "shai": 0
+  "shai": 13
  },
  "gaia": {
-  "beast": 50,
-  "lire": 0,
-  "nigromante": 0,
-  "maidas": 0,
-  "monh": 25,
-  "biteroi": 63,
-  "rasho": 75,
+  "beast": 38,
+  "lire": 50,
+  "nigromante": 13,
+  "maidas": 13,
+  "monh": 0,
+  "biteroi": 75,
+  "rasho": 63,
   "takichi": 88,
-  "aracnida": 38,
+  "aracnida": 13,
   "kazaro": 88,
-  "trelgon": 50,
-  "vatrius": 38,
-  "jurgen": 75,
-  "fatum": 100,
-  "aethar": 88,
+  "trelgon": 25,
+  "vatrius": 75,
+  "jurgen": 63,
+  "fatum": 75,
+  "aethar": 75,
   "vario": 100,
+  "aldor": 63,
   "lei": 100,
-  "ash": 88,
-  "driiar": 0,
-  "tenebris": 100,
+  "ash": 75,
+  "driiar": 38,
+  "tenebris": 88,
   "shai": 13
  },
  "vatrius": {
   "beast": 100,
-  "lire": 100,
+  "lire": 75,
   "nigromante": 100,
   "maidas": 75,
   "monh": 100,
   "biteroi": 0,
-  "rasho": 63,
+  "rasho": 75,
   "takichi": 100,
   "aracnida": 100,
   "kazaro": 75,
   "trelgon": 100,
-  "gaia": 63,
-  "jurgen": 100,
+  "gaia": 25,
+  "jurgen": 50,
   "fatum": 88,
-  "aethar": 100,
-  "vario": 0,
-  "lei": 38,
-  "ash": 25,
-  "driiar": 100,
-  "tenebris": 100,
-  "shai": 75
+  "aethar": 88,
+  "vario": 38,
+  "aldor": 100,
+  "lei": 75,
+  "ash": 0,
+  "driiar": 75,
+  "tenebris": 88,
+  "shai": 88
  },
  "jurgen": {
   "beast": 13,
   "lire": 0,
   "nigromante": 0,
-  "maidas": 13,
+  "maidas": 0,
   "monh": 13,
   "biteroi": 25,
-  "rasho": 38,
-  "takichi": 50,
-  "aracnida": 88,
+  "rasho": 13,
+  "takichi": 63,
+  "aracnida": 75,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 25,
-  "vatrius": 0,
-  "fatum": 50,
-  "aethar": 38,
-  "vario": 38,
-  "lei": 13,
-  "ash": 13,
-  "driiar": 0,
-  "tenebris": 75,
+  "gaia": 38,
+  "vatrius": 50,
+  "fatum": 38,
+  "aethar": 50,
+  "vario": 63,
+  "aldor": 0,
+  "lei": 50,
+  "ash": 63,
+  "driiar": 13,
+  "tenebris": 88,
   "shai": 0
  },
  "fatum": {
   "beast": 50,
-  "lire": 0,
-  "nigromante": 13,
-  "maidas": 25,
-  "monh": 25,
-  "biteroi": 25,
-  "rasho": 50,
-  "takichi": 25,
-  "aracnida": 75,
-  "kazaro": 50,
+  "lire": 13,
+  "nigromante": 0,
+  "maidas": 13,
+  "monh": 13,
+  "biteroi": 50,
+  "rasho": 63,
+  "takichi": 13,
+  "aracnida": 50,
+  "kazaro": 0,
   "trelgon": 75,
-  "gaia": 0,
+  "gaia": 25,
   "vatrius": 13,
-  "jurgen": 50,
-  "aethar": 50,
-  "vario": 75,
-  "lei": 38,
-  "ash": 75,
+  "jurgen": 63,
+  "aethar": 0,
+  "vario": 63,
+  "aldor": 50,
+  "lei": 0,
+  "ash": 63,
   "driiar": 0,
-  "tenebris": 75,
-  "shai": 25
+  "tenebris": 63,
+  "shai": 13
  },
  "aethar": {
   "beast": 0,
-  "lire": 13,
+  "lire": 0,
   "nigromante": 0,
-  "maidas": 0,
+  "maidas": 13,
   "monh": 0,
-  "biteroi": 75,
+  "biteroi": 50,
   "rasho": 38,
   "takichi": 0,
-  "aracnida": 38,
-  "kazaro": 0,
+  "aracnida": 13,
+  "kazaro": 13,
   "trelgon": 0,
-  "gaia": 13,
-  "vatrius": 0,
-  "jurgen": 63,
-  "fatum": 50,
-  "vario": 50,
-  "lei": 0,
-  "ash": 75,
+  "gaia": 25,
+  "vatrius": 13,
+  "jurgen": 50,
+  "fatum": 100,
+  "vario": 88,
+  "aldor": 25,
+  "lei": 25,
+  "ash": 88,
   "driiar": 13,
-  "tenebris": 88,
+  "tenebris": 50,
   "shai": 0
  },
  "vario": {
   "beast": 100,
   "lire": 0,
   "nigromante": 0,
-  "maidas": 13,
+  "maidas": 0,
   "monh": 13,
   "biteroi": 13,
   "rasho": 13,
-  "takichi": 63,
+  "takichi": 100,
   "aracnida": 100,
   "kazaro": 100,
   "trelgon": 100,
   "gaia": 0,
-  "vatrius": 100,
-  "jurgen": 63,
-  "fatum": 25,
-  "aethar": 50,
+  "vatrius": 63,
+  "jurgen": 38,
+  "fatum": 38,
+  "aethar": 13,
+  "aldor": 100,
   "lei": 75,
   "ash": 100,
   "driiar": 100,
   "tenebris": 100,
-  "shai": 88
+  "shai": 100
  },
- "lei": {
-  "beast": 75,
-  "lire": 63,
-  "nigromante": 25,
-  "maidas": 25,
-  "monh": 100,
-  "biteroi": 13,
-  "rasho": 13,
-  "takichi": 63,
-  "aracnida": 13,
-  "kazaro": 88,
-  "trelgon": 75,
-  "gaia": 0,
-  "vatrius": 63,
-  "jurgen": 88,
-  "fatum": 63,
-  "aethar": 100,
-  "vario": 25,
-  "ash": 50,
-  "driiar": 63,
-  "tenebris": 13,
-  "shai": 38
- },
- "ash": {
-  "beast": 13,
+ "aldor": {
+  "beast": 0,
   "lire": 13,
-  "nigromante": 25,
-  "maidas": 13,
-  "monh": 75,
+  "nigromante": 63,
+  "maidas": 25,
+  "monh": 88,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 75,
-  "aracnida": 63,
-  "kazaro": 50,
-  "trelgon": 0,
-  "gaia": 13,
-  "vatrius": 75,
-  "jurgen": 88,
-  "fatum": 25,
-  "aethar": 25,
+  "takichi": 0,
+  "aracnida": 0,
+  "kazaro": 25,
+  "trelgon": 100,
+  "gaia": 38,
+  "vatrius": 0,
+  "jurgen": 100,
+  "fatum": 50,
+  "aethar": 75,
   "vario": 0,
-  "lei": 50,
-  "driiar": 38,
-  "tenebris": 88,
+  "lei": 25,
+  "ash": 0,
+  "driiar": 25,
+  "tenebris": 63,
   "shai": 0
  },
- "driiar": {
-  "beast": 63,
+ "lei": {
+  "beast": 50,
+  "lire": 38,
+  "nigromante": 0,
+  "maidas": 25,
+  "monh": 25,
+  "biteroi": 0,
+  "rasho": 13,
+  "takichi": 50,
+  "aracnida": 25,
+  "kazaro": 25,
+  "trelgon": 38,
+  "gaia": 0,
+  "vatrius": 25,
+  "jurgen": 50,
+  "fatum": 100,
+  "aethar": 75,
+  "vario": 25,
+  "aldor": 75,
+  "ash": 63,
+  "driiar": 38,
+  "tenebris": 50,
+  "shai": 25
+ },
+ "ash": {
+  "beast": 0,
   "lire": 13,
-  "nigromante": 50,
-  "maidas": 63,
+  "nigromante": 63,
+  "maidas": 0,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 88,
-  "aracnida": 25,
+  "aracnida": 13,
+  "kazaro": 50,
+  "trelgon": 0,
+  "gaia": 25,
+  "vatrius": 100,
+  "jurgen": 38,
+  "fatum": 38,
+  "aethar": 13,
+  "vario": 0,
+  "aldor": 100,
+  "lei": 38,
+  "driiar": 63,
+  "tenebris": 100,
+  "shai": 0
+ },
+ "driiar": {
+  "beast": 63,
+  "lire": 38,
+  "nigromante": 63,
+  "maidas": 50,
+  "monh": 100,
+  "biteroi": 0,
+  "rasho": 13,
+  "takichi": 63,
+  "aracnida": 50,
   "kazaro": 38,
   "trelgon": 100,
-  "gaia": 100,
-  "vatrius": 0,
-  "jurgen": 100,
+  "gaia": 63,
+  "vatrius": 25,
+  "jurgen": 88,
   "fatum": 100,
   "aethar": 88,
   "vario": 0,
-  "lei": 38,
-  "ash": 63,
-  "tenebris": 63,
+  "aldor": 75,
+  "lei": 63,
+  "ash": 38,
+  "tenebris": 88,
   "shai": 0
  },
  "tenebris": {
-  "beast": 38,
+  "beast": 50,
   "lire": 0,
-  "nigromante": 0,
-  "maidas": 0,
-  "monh": 25,
+  "nigromante": 13,
+  "maidas": 38,
+  "monh": 13,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 13,
-  "aracnida": 25,
-  "kazaro": 75,
+  "aracnida": 13,
+  "kazaro": 88,
   "trelgon": 25,
-  "gaia": 0,
-  "vatrius": 0,
-  "jurgen": 25,
-  "fatum": 25,
-  "aethar": 13,
+  "gaia": 13,
+  "vatrius": 13,
+  "jurgen": 13,
+  "fatum": 38,
+  "aethar": 50,
   "vario": 0,
-  "lei": 88,
-  "ash": 13,
-  "driiar": 38,
+  "aldor": 38,
+  "lei": 50,
+  "ash": 0,
+  "driiar": 13,
   "shai": 100
  },
  "shai": {
-  "beast": 88,
+  "beast": 63,
   "lire": 100,
   "nigromante": 100,
-  "maidas": 88,
+  "maidas": 100,
   "monh": 100,
   "biteroi": 0,
   "rasho": 100,
   "takichi": 100,
-  "aracnida": 25,
+  "aracnida": 0,
   "kazaro": 88,
-  "trelgon": 100,
+  "trelgon": 88,
   "gaia": 88,
-  "vatrius": 25,
+  "vatrius": 13,
   "jurgen": 100,
-  "fatum": 75,
+  "fatum": 88,
   "aethar": 100,
-  "vario": 13,
-  "lei": 63,
+  "vario": 0,
+  "aldor": 100,
+  "lei": 75,
   "ash": 100,
   "driiar": 100,
   "tenebris": 0
  }
 };
-const MATCHUPS_INFO = { fecha: '2026-11-05', duelos: 8 };
+const MATCHUPS_INFO = { fecha: '2026-11-09', duelos: 8 };
 
 // ===== sprites.js =====
 // =====================================================================
@@ -4606,6 +4688,67 @@ Object.assign(GLIFOS, {
 });
 Object.assign(FONDOS, { lei: ['n', 'b'] });
 
+// Aldor (Seba 09-11): enano del martillo (referencia 8 bit), «hermano» de Jürgen con su propia paleta — melena y barba trenzada
+// color ceniza, cara clara a la vista (Seba 09-11: «parecía un simio»): piel pálida, cejas y bigote gris ceniza, ojos y nariz marcados, capa verde oscuro con broche de bronce, armadura de cuero con remaches de bronce,
+// cinturón con hebilla, grebas de acero y botas con puntera de bronce. Cuerpo base oculto (como Jürgen).
+Object.assign(CAPAS, {
+  cuerpoAldor: L({
+    3: '......3p4PP43.......',
+    4: '.....34PPPPPP43.....',
+    5: '....3PP4PPPP4PP3....',
+    6: '....pP33qqqq33Pp....',
+    7: '....3pqkqqqqkqp3....',
+    8: '....3pqqqmmqqqp3....',
+    9: '...3pp4p4qq4p4pp3...',
+    10: '...3ppPPPPPPPPpp3...',
+    11: '..ggG3pPPpPPPp3Ggg..',
+    12: '.gGGGwWpPPpPPpWwGGg.',
+    13: '.gGOywWWpPPPPpWWwGg.',
+    14: '.gGGwwWWpPpPpWWwwGg.',
+    15: '.gGgwwWWWpPpWWWwwgg.',
+    16: '.gGgwwoWWWpWWWowwgg.',
+    17: '.gGGwOooOoyoOooOwGGg',
+    18: '.gGGwWWwwWWwwWWwGGg.',
+  }),
+  piernasAldor0: L({
+    19: '..gGg.wW23WW32Ww.gGg',
+    20: '...gg.wWWw.wWWw..gg.',
+    21: '.....wwoWw.wwoWw....',
+  }),
+  piernasAldor1: L({
+    19: '..gGg2Ww3....3wW2gGg',
+    20: '...gwWWw....wWWwg...',
+    21: '...wwoWw.....wwoWw..',
+  }),
+});
+Object.assign(APARIENCIA, {
+  aldor: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoAldor'], ['cuerpoAldor']], cabeza: [[], []], quieto: 'piernasAldor0', paso: 'piernasAldor1' },
+});
+Object.assign(ARMAS_SPR, {
+  // Martillo de guerra de Aldor, más grande que él (más que la guadaña de Tenebris): mango de madera con anillos de bronce y pomo,
+  // cabeza de piedra y acero con bordes claros, remaches de bronce en las esquinas y una runa de oro tallada en cada cara.
+  martilloAldor: { g: [6, 5], S: 51, rows: [
+    '......................23333332',
+    '......................34444443',
+    '......................3o2332o3',
+    '......................33OyyO33',
+    '......................332oo233',
+    'oOwWWOmWWWWmWWOWWWmWWw33O22O33',
+    'oowwwOWwwwwWwwOwwwWwww332oo233',
+    '......................33OyyO33',
+    '......................3o2332o3',
+    '......................34444443',
+    '......................23333332',
+    '.......................222222.'] },
+});
+Object.assign(GLIFOS, {
+  giroMartillo: ['..3333...', '.3....3..', '3..22..3.', '3.2442.3.', '..2442...', '3..22..3.', '.3..w.3..', '..33w3...', '....w....'],
+  muroAldor: ['.........', '.2.3.2.3.', '2323232323'.slice(0, 9), '3o23o23o2', '232323232', '.........', 'l.l.l.l.l', '.p.p.p.p.', 'ppppppppp'],
+  ecosMartillo: ['...444...', '..43334..', '...3w3...', '....w....', '....w....', '.o.....o.', 'o.O...O.o', '.o.OyO.o.', '..o...o..'],
+  templeEnano: ['...PPP...', '..PPPPP..', '.PkPPPkP.', '.PPWWWPP.', '..PPPPP..', '..pPPPp..', 'yy.pPp.yy', 'yyy.p.yyy', '.yyyyyyy.'],
+});
+Object.assign(FONDOS, { aldor: ['g', 'w'] });
+
 // ===== sim.js =====
 // =====================================================================
 //  LOLA — SIMULACIÓN AUTORITATIVA (corre en el anfitrión / modo práctica)
@@ -4623,7 +4766,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalChaos', 'canalEstocada', 'canalBendicion'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalChaos', 'canalEstocada', 'canalBendicion'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 const CANCELABLES = CANALES.filter(k => k !== 'embateGiro').concat(['canalLluvia']);
 const canalizando = (fx) => CANALES.some(k => fx[k]);
@@ -5081,6 +5224,7 @@ class Game {
     if (amt <= 0) return 0;
 
     const atacante = src ? (src.esUnidad ? this.players.get(src.owner) : src) : null;
+    if (atacante && atacante.fx && atacante.fx.templeAldor && !o.pct) amt *= 1.05;   // Aldor: Temple de enano, +5% de daño
 
     // Escudo de musgo (Trelgon): absorbe el daño antes que la vida (la tormenta lo atraviesa)
     let absorbido = 0;
@@ -5096,6 +5240,7 @@ class Game {
       }
       if (amt <= 0) return absorbido;
     }
+    if (esJugador && amt > 0 && HEROES[target.build?.heroe]?.pasiva === 'templeEnano') this.medidorAldor(target, amt);   // sin contar escudos
 
     if (!esJugador) {
       this.actoFinal(atacante, target, o); this.resonar(atacante, target, o); this.gotear(atacante, target, o);
@@ -5188,7 +5333,9 @@ class Game {
   aplicarEfecto(t, key, val) {
     if (!t.fx) t.fx = {};
     if ((t.fx.jetpack || t.fx.renacer) && NEGATIVOS.has(key)) return;
-    if ((t.fx.decimar || t.fx.danzaCarmesi || t.fx.vendaval) && CONTROL.has(key)) return;   // Vatrius: imparable en la Danza carmesí;   // Seba (05-11): el Embate de Driiar ya no es inmune a control (el control no corta el giro en curso)   // Driiar (Seba 31-10): inmune a control mientras gira   // Kazaro girando   // en el aire (o recién reaparecido) no le afecta nada   // Lei: nada la detiene en el Ojo del vendaval
+    if ((t.fx.decimar || t.fx.danzaCarmesi || t.fx.vendaval || t.fx.canalEcosAldor) && CONTROL.has(key)) return;   // Vatrius: imparable en la Danza carmesí;   // Seba (05-11): el Embate de Driiar ya no es inmune a control (el control no corta el giro en curso)   // Driiar (Seba 31-10): inmune a control mientras gira   // Kazaro girando   // en el aire (o recién reaparecido) no le afecta nada   // Lei: nada la detiene en el Ojo del vendaval   // Aldor (Seba 09-11): la ulti es infrenable
+    // Aldor (Seba 09-11): Temple de enano — 5% de resistencia al control (dura 5% menos y los lentos frenan 5% menos)
+    if (t.fx.templeAldor && val && CONTROL.has(key)) { val = Object.assign({}, val); if (Number.isFinite(val.t)) val.t *= 0.95; if (key === 'slow' && Number.isFinite(val.mult)) val.mult = 1 - (1 - val.mult) * 0.95; }
     // Un aturdimiento corta la canalización del Sablazo
     // Seba (28-10): aturdimiento y silencio cortan las canalizaciones (Sablazo y Jetpack)
     const canal = (key === 'aturdido' || key === 'silence' || key === 'encantado') && (CANALES.find(k => k !== 'embateGiro' && t.fx[k]) || null);
@@ -5345,7 +5492,7 @@ class Game {
 
   knock(t, fromX, fromY, force) {
     if (t.esUnidad && (t.kind === 'torreta' || t.kind === 'torretaBrasas' || t.kind === 'muro' || t.kind === 'golem' || t.kind === 'cucko')) return;
-    if (t.fx && t.fx.vendaval) return;   // Lei: no la mueve nada mientras levita
+    if (t.fx && (t.fx.vendaval || t.fx.canalEcosAldor)) return;   // Lei: no la mueve nada mientras levita; Aldor: tampoco mientras canaliza la ulti
     const dx = t.x - fromX, dy = t.y - fromY, d = Math.hypot(dx, dy) || 1;
     t.kbx = (t.kbx || 0) + dx / d * force;
     t.kby = (t.kby || 0) + dy / d * force;
@@ -5466,6 +5613,53 @@ class Game {
     const H = HABILIDADES.danzaCarmesi;
     const arena = this.units.find(u => u.alive && u.kind === 'arenaEstepa' && u.dentro && u.dentro.has(p.id) && dist(p, u) < u.r);
     return this.jugadoresEnemigos(p.id).filter(q => q.alive && !q.esUnidad && !((q.hidden || (q.fx && q.fx.invisible)) && !(q.fx && q.fx.expuesto)) && dist(q, p) <= H.alcance + CONFIG.RADIO_JUGADOR && (!arena || dist(q, arena) < arena.r));
+  }
+  // Aldor: Temple de enano — cada 100 de daño recibido llena el medidor; lleno da 3 s de buff y 5 s de recarga (C: desde que se activa)
+  medidorAldor(p, amt) {
+    if (p.fx.templeAldor || this.combatTime < (p.templeCd || 0)) return;
+    p.medidor = (p.medidor || 0) + amt;
+    if (p.medidor >= 100) {
+      p.medidor = 0; p.templeCd = this.combatTime + 5;
+      this.aplicarEfecto(p, 'templeAldor', { t: 3 });
+      this.emit({ k: 'templeAldor', x: p.x | 0, y: p.y | 0, id: p.id });
+      this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'TEMPLE', id: p.id });
+    }
+  }
+  // Aldor: muro de piedra (muroRoca que además frena proyectiles; la Fisura de Tek'Tal no)
+  muroDeAldor(p, x, y, a) {
+    const H = HABILIDADES.muroAldor, c = { x, y }; this.clampWall(c);
+    this.units.push({ id: this.nextId++, kind: 'muroRoca', owner: p.id, esUnidad: true, alive: true, sinCuerpo: true, bloqueaProy: true,
+      x: c.x, y: c.y, hp: 1, maxHp: 0, cd: 0, t: 0, dur: H.dur, facing: a + Math.PI / 2, fx: {}, largo: H.largo, tipo: -H.largo });   // tipo negativo = muro de Aldor (dibujo)
+    this.emit({ k: 'muroAldor', x: c.x | 0, y: c.y | 0, a: +a.toFixed(2) });
+    for (const q of this.players.values()) if (q.alive) this.chocarRocas(q, CONFIG.RADIO_JUGADOR);
+  }
+  // ¿Un proyectil choca con un muro de Aldor? (los de las ultis lo atraviesan, salvo la flecha del Tiro del bosque de Lire)
+  frenaMuroAldor(pr, bx, by) {
+    if (!this.units.some(m => m.alive && m.bloqueaProy)) return null;
+    if (pr.deUlti && pr.spr !== 'flechaBosque') return null;
+    for (const m of this.units) {
+      if (!m.alive || !m.bloqueaProy) continue;
+      const [x1, y1, x2, y2] = this.extremosRoca(m), ax = pr.x, ay = pr.y;
+      const d = (bx - ax) * (y2 - y1) - (by - ay) * (x2 - x1);
+      if (Math.abs(d) < 1e-6) continue;
+      const t = ((x1 - ax) * (y2 - y1) - (y1 - ay) * (x2 - x1)) / d, u = ((x1 - ax) * (by - ay) - (y1 - ay) * (bx - ax)) / d;
+      if (t >= 0 && t <= 1 && u >= -0.08 && u <= 1.08) return { x: ax + (bx - ax) * t, y: ay + (by - ay) * t };
+    }
+    return null;
+  }
+  // Aldor: un eco del martillazo (marca en el suelo y golpe al terminar)
+  ecoAldor(p, x, y, r, demora, n, i) {
+    const H = HABILIDADES.ecosMartillo, c = { x, y }; this.clampWall(c);
+    this.zones.push({ id: this.nextId++, kind: 'ecoAldor', x: c.x, y: c.y, r, t: demora, total: Math.max(demora, 0.01), owner: p.id,
+      fin: () => {
+        this.emit({ k: 'ecoAldor', x: c.x | 0, y: c.y | 0, r, i });
+        for (const e of this.enemigos(p.id, false)) {
+          if (e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (distA(e, c) > r + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          this.damage(e, n.dano, p, { tipo: 'mag', ulti: true, desde: c });
+          if (e.alive) this.aplicarEfecto(e, 'slow', { t: H.lentoDur, mult: 1 - n.lento, k: 'ecoAldor' + i });
+        }
+      } });
   }
   // Lei: Ojo del vendaval — suelta la rueda en la dirección que apuntó al lanzar la ulti
   // Seba (06-11): la rueda va al punto apuntado dentro del radio del lento (150). auto: al enemigo más cercano en el radio, o se pierde
@@ -5723,6 +5917,7 @@ class Game {
     if (p.fx.espirituFenix) v *= 1 + p.fx.espirituFenix.n.vel;   // Ash
     if (p.fx.polvo) v *= 1 + p.fx.polvo.n.vel;
     if (p.fx.flotar) v *= 1.05;   // Lei: Flotar
+    if (p.fx.templeAldor) v *= 1.05;   // Aldor: Temple de enano
     if (p.fx.luzMina) v *= 1 + p.fx.luzMina.vel;   // Jürgen: Lámpara de mina   // Vario: Polvo de estrellas
     if (p.resonancia && this.combatTime - p.resonancia.t <= 4) v *= 1 + 0.03 * p.resonancia.n;   // Æthar: Resonancia rúnica
     if (p.build && HEROES[p.build.heroe]?.pasiva === 'furiaBosque') {   // Trelgon: +3% por héroe enemigo cerca (máx. 30%)
@@ -5883,7 +6078,7 @@ class Game {
       x: p.x + Math.cos(a) * start, y: p.y + Math.sin(a) * start,
       vx: Math.cos(a) * o.vel, vy: Math.sin(a) * o.vel,
       left: o.alcance, radio: o.radio || 5, dmg: o.dmg, dmgInv: o.dmgInv, tipo: o.tipo || 'fis', spr: o.spr,
-      efecto: o.efecto || null, basico: !!o.basico, soloJugadores: !!o.soloJugadores, atraviesa: !!o.atraviesa, sinEmpuje: !!o.sinEmpuje, extra: o.extra, src: p.esUnidad ? p : null,
+      efecto: o.efecto || null, basico: !!o.basico, deUlti: !!(o.deUlti || this._enUlti), soloJugadores: !!o.soloJugadores, atraviesa: !!o.atraviesa, sinEmpuje: !!o.sinEmpuje, extra: o.extra, src: p.esUnidad ? p : null,
     });
   }
 
@@ -6117,7 +6312,7 @@ class Game {
   castAbility(p, slot, apunte = null) {
     this._apunte = apunte && Number.isFinite(apunte.a) ? apunte : null;
     this._cancela = !!(apunte && apunte.d === -99);   // botón X de cancelar (Fatum: Pozo Maldito)
-    try { this._castAbility(p, slot); } finally { this._apunte = null; this._cancela = false; }
+    try { this._castAbility(p, slot); } finally { this._apunte = null; this._cancela = false; this._enUlti = false; }
   }
 
   // Distancia elegida al apuntar (para habilidades que caen en un punto)
@@ -6235,6 +6430,7 @@ class Game {
     } else p.cd[slot + 1] = h.cd;
     if (h.ulti) p.ulti = 0;
     this.revelar(p);
+    this._enUlti = !!h.ulti;   // Aldor: los proyectiles de ultis atraviesan su muro
     // Lei (Seba 05-11): Flotar — cada 3 habilidades, +5% de velocidad por 4 s (recarga 8 s; mientras recarga no cuentan)
     if (HEROES[p.build.heroe].pasiva === 'flotar' && this.combatTime >= (p.flotarCd || 0)) {
       p.flotarN = (p.flotarN || 0) + 1;
@@ -6535,6 +6731,55 @@ class Game {
         this.zones.push(zona);
         this.aplicarEfecto(p, 'canalArmario', { t: h.canal + 0.1, zona });
         this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'CAJA MAGICA' });
+        break;
+      }
+      // ---------------------------------------------------------- Aldor (Seba 09-11)
+      case 'giroMartillo': {
+        let heroes = 0;
+        for (const e of this.enemigos(p.id, false)) {
+          if (e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (dist(e, p) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          this.damage(e, n.dano, p, { tipo: 'mag', desde: p });
+          heroes++;   // Seba (09-11): cuenta cualquier enemigo (héroes e invocaciones)
+        }
+        this.emit({ k: 'giroMartillo', x: p.x | 0, y: p.y | 0, r: h.radio, id: p.id });
+        if (heroes >= 2) { this.aplicarEfecto(p, 'escudo', { t: h.escudoDur, v: n.escudo, max: n.escudo, de: p.id }); this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'ESCUDO', id: p.id }); }
+        break;
+      }
+      case 'muroAldor': {
+        const a = this._apunte ? this._apunte.a : this.aim(p, h.alcance).a;
+        p.facing = a;   // Seba (09-11): Aldor puede moverse mientras la onda avanza
+        const ox = p.x, oy = p.y, golpes = new Set();
+        this.zones.push({ id: this.nextId++, kind: 'ondaAldor', x: ox, y: oy, ox, oy, a, r: h.ancho / 2, t: h.canal, total: h.canal, owner: p.id,
+          tick: (z) => {   // la onda avanza por el suelo hasta el alcance durante la canalización
+            const d = Math.min(h.alcance, h.velOnda * (z.total - z.t));   // la onda llega al alcance y espera el final de la canalización
+            z.x = ox + Math.cos(a) * d; z.y = oy + Math.sin(a) * d;
+            for (const e of this.enemigos(p.id, false)) {
+              if (golpes.has(e.id) || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              const ex = e.x - ox, ey = e.y - oy, along = ex * Math.cos(a) + ey * Math.sin(a), lat = Math.abs(-ex * Math.sin(a) + ey * Math.cos(a));
+              if (along < 0 || along > d + 10 || lat > h.ancho / 2 + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+              golpes.add(e.id);
+              this.damage(e, n.dano, p, { tipo: 'mag', desde: z });
+              if (e.alive) this.aplicarEfecto(e, 'slow', { t: h.lentoDur, mult: 1 - n.lento, k: 'ondaAldor' });
+            }
+          },
+          fin: (z) => { if (!z.cancelado && p.alive) this.muroDeAldor(p, ox + Math.cos(a) * h.alcance, oy + Math.sin(a) * h.alcance, a); } });
+        this.emit({ k: 'pisoton', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
+        break;
+      }
+      case 'ecosMartillo': {
+        const a = this._apunte ? this._apunte.a : this.aim(p, 380).a;
+        p.facing = a; p.disparo = null;
+        // Seba (09-11): canaliza 1 s (aura verde) y después da el martillazo; un aturdimiento, silencio o encanto lo corta
+        this.aplicarEfecto(p, 'canalEcosAldor', { t: h.canal });
+        const zc = { id: this.nextId++, kind: 'canalEcosAldor', x: p.x, y: p.y, r: 0, t: h.canal, total: h.canal, owner: p.id, sigue: p,
+          fin: (z) => {
+            if (z.cancelado || !p.alive) return;
+            const r1 = h.radio, r2 = r1 * h.crece, r3 = r2 * h.crece, d1 = r1 * 0.6, d2 = d1 + (r1 + r2) * 0.85, d3 = d2 + (r2 + r3) * 0.85;
+            [[d1, r1], [d2, r2], [d3, r3]].forEach(([d, r], i) => this.ecoAldor(p, p.x + Math.cos(a) * d, p.y + Math.sin(a) * d, Math.round(r), 0.05 + i * h.entre, n, i));
+            this.emit({ k: 'martillazo', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
+          } };
+        this.zones.push(zc); p.fx.canalEcosAldor.zona = zc;
         break;
       }
       // ---------------------------------------------------------- Lei (Seba 05-11)
@@ -7767,6 +8012,8 @@ class Game {
           }
         }
       }
+      // Aldor: el medidor del Temple baja 1 punto cada 0,5 s si no se llena
+      if (p.medidor > 0 && !p.fx.templeAldor) p.medidor = Math.max(0, p.medidor - 2 * dt);
       // Lei: Ojo del vendaval — lento alrededor mientras levita; a los 0,5 s suelta la rueda
       if (p.fx.vendaval) {
         const v = p.fx.vendaval, H = HABILIDADES.ojoVendaval, el = this.combatTime - v.inicio;
@@ -7952,6 +8199,8 @@ class Game {
         const tx = A.ox + ca * L, ty = A.oy + sa * L, cx = A.ox + ca * L / 2 - sa * W, cy = A.oy + sa * L / 2 + ca * W;
         const [p0x, p0y, p2x, p2y] = ida ? [A.ox, A.oy, tx, ty] : [tx, ty, A.ox, A.oy];
         const nx = (1 - u) * (1 - u) * p0x + 2 * u * (1 - u) * cx + u * u * p2x, ny = (1 - u) * (1 - u) * p0y + 2 * u * (1 - u) * cy + u * u * p2y;
+        const frenaA = this.frenaMuroAldor(pr, nx, ny);
+        if (frenaA) { pr.dead = true; this.emit({ k: 'boom', x: frenaA.x | 0, y: frenaA.y | 0, r: 10, c: 'piedra' }); continue; }
         pr.vx = nx - pr.x; pr.vy = ny - pr.y; pr.x = nx; pr.y = ny;
         const own = this.players.get(pr.owner), set = ida ? A.ida : A.vuelta;
         for (const e of this.enemigos(pr.owner, false)) {
@@ -7984,6 +8233,8 @@ class Game {
         continue;
       }
       const step = Math.hypot(pr.vx, pr.vy) * dt;
+      const frena = this.frenaMuroAldor(pr, pr.x + pr.vx * dt, pr.y + pr.vy * dt);   // Aldor: su muro frena los proyectiles
+      if (frena) { pr.dead = true; this.emit({ k: 'boom', x: frena.x | 0, y: frena.y | 0, r: 10, c: 'piedra' }); continue; }
       pr.x += pr.vx * dt; pr.y += pr.vy * dt; pr.left -= step;
       let hit = null;
       if (pr.efecto === 'pulso') {
@@ -8300,10 +8551,10 @@ class Game {
         +p.cd[0].toFixed(1), +p.cd[1].toFixed(1), +p.cd[2].toFixed(1), +p.cd[3].toFixed(1), p.caido ? +(p.revive / PVE.REVIVIR_T).toFixed(2) : (p.respawn > 0 ? -+p.respawn.toFixed(1) : 0), p.ack || 0, +p.cargas.toFixed(2), +p.ulti.toFixed(3), fx.escudo ? Math.ceil(fx.escudo.v) : 0, this.cargasHab(p), fx.saltoLanza ? +Math.min(1, fx.saltoLanza.el / fx.saltoLanza.total).toFixed(2) : 0,
         (fx.canalGrillete ? 1 : 0) | (fx.canalPortal ? 2 : 0) | (fx.encadenado ? 4 : 0) | (fx.encadenando ? 8 : 0) | (fx.rafagaGaia ? 16 : 0) | (fx.canalLluvia ? 32 : 0) | (fx.rafagaShai ? 64 : 0) | (fx.manto ? 128 : 0) | (fx.dagasShai ? 256 : 0) | (fx.pacto || fx.impulsoShai ? 512 : 0) | (fx.canalSiega ? 1024 : 0) | (fx.canalPozo ? 2048 : 0) | (fx.pozo ? 4096 : 0) | (fx.nephilim ? 8192 : 0) | (fx.embateGiro ? (fx.embateGiro.paso >= 3 ? 32768 : 16384) : 0) | this.bitsPasiva(p), fx.rafagaShai ? +fx.rafagaShai.a0.toFixed(2) : 0,
         fx.punosFenix ? fx.punosFenix.n2 : fx.sedSangre ? fx.sedSangre.quedan : 0, fx.canalPatada ? +Math.min(1, (HABILIDADES.patadaFenix.carga + 0.1 - fx.canalPatada.t) / HABILIDADES.patadaFenix.crece).toFixed(2) : 0, this.timersMayhem(p),
-        (fx.encantado ? 1 : 0) | (fx.polvo ? 2 : 0) | (p.enPolvo && this.combatTime - p.enPolvo < 0.3 ? 4 : 0) | (p.armarioT && this.combatTime - p.armarioT < 0.3 ? 8 : 0) | (this.actoVarioDe(p) > 0 ? 16 : 0) | (fx.canalArmario ? 32 : 0) | (fx.levantado ? 64 : 0) | (p.vacioT && this.combatTime - p.vacioT < 1.2 ? 128 : 0) | (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? 256 : 0) | (fx.ampRunico ? 512 : 0) | (fx.canalImpacto ? 1024 : 0) | (fx.cargaCastigo ? 2048 : 0) | (fx.canalPozoM ? 4096 : 0) | (fx.canalChaos ? 8192 : 0) | (fx.furiaPozo ? 16384 : 0) | (p.quemaVerde && this.combatTime - p.quemaVerde < 2 ? 32768 : 0) | (fx.mecha ? 65536 : 0) | (fx.luzMina ? 131072 : 0) | (p.vueltaVat ? 262144 : 0) | (fx.sedSangre ? 524288 : 0) | (fx.golpeSangre ? 1048576 : 0) | (fx.danzaCarmesi ? 2097152 : 0) | (this.gotasDe(p) ? 4194304 : 0) | (CANCELABLES.some(k => fx[k]) ? 8388608 : 0) | (HEROES[p.build?.heroe]?.pasiva === 'mantoSombras' && this.presasTenebris(p) > 0 ? 16777216 : 0) | (fx.abanicosViento ? 33554432 : 0) | (fx.vendaval ? 67108864 : 0) | (fx.flotar ? 134217728 : 0) | (fx.lentos && fx.lentos.abanicoLei ? 268435456 : 0),
+        (fx.encantado ? 1 : 0) | (fx.polvo ? 2 : 0) | (p.enPolvo && this.combatTime - p.enPolvo < 0.3 ? 4 : 0) | (p.armarioT && this.combatTime - p.armarioT < 0.3 ? 8 : 0) | (this.actoVarioDe(p) > 0 ? 16 : 0) | (fx.canalArmario ? 32 : 0) | (fx.levantado ? 64 : 0) | (p.vacioT && this.combatTime - p.vacioT < 1.2 ? 128 : 0) | (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? 256 : 0) | (fx.ampRunico ? 512 : 0) | (fx.canalImpacto ? 1024 : 0) | (fx.cargaCastigo ? 2048 : 0) | (fx.canalPozoM ? 4096 : 0) | (fx.canalChaos ? 8192 : 0) | (fx.furiaPozo ? 16384 : 0) | (p.quemaVerde && this.combatTime - p.quemaVerde < 2 ? 32768 : 0) | (fx.mecha ? 65536 : 0) | (fx.luzMina ? 131072 : 0) | (p.vueltaVat ? 262144 : 0) | (fx.sedSangre ? 524288 : 0) | (fx.golpeSangre ? 1048576 : 0) | (fx.danzaCarmesi ? 2097152 : 0) | (this.gotasDe(p) ? 4194304 : 0) | (CANCELABLES.some(k => fx[k]) ? 8388608 : 0) | (HEROES[p.build?.heroe]?.pasiva === 'mantoSombras' && this.presasTenebris(p) > 0 ? 16777216 : 0) | (fx.abanicosViento ? 33554432 : 0) | (fx.vendaval ? 67108864 : 0) | (fx.flotar ? 134217728 : 0) | (fx.lentos && fx.lentos.abanicoLei ? 268435456 : 0) | (fx.templeAldor ? 536870912 : 0) | (fx.canalEcosAldor ? 1073741824 : 0),
         this.actoVarioDe(p),
         (p.vacioT && this.combatTime - p.vacioT < 1.2 ? p.vacioN : 0), (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? p.resonancia.n : 0),
-        fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, fx.canalChaos ? fx.canalChaos.quedan : 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : 0]);   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, fx.canalChaos ? fx.canalChaos.quedan : 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : 0, HEROES[p.build.heroe]?.pasiva === 'templeEnano' ? (fx.templeAldor || this.combatTime < (p.templeCd || 0) ? -1 : Math.round(p.medidor || 0)) : 0]);   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -8551,6 +8802,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'encanto': si = d < 300 && !target.esUnidad; break;
       case 'polvoEstrellas': si = d < 140; break;
       case 'armario': si = d < 340 && !target.esUnidad; break;
+      case 'giroMartillo': si = d < 100; break;
+      case 'muroAldor': si = d < 115 && d > 30 && !target.esUnidad; break;   // el muro queda detrás del enemigo
+      case 'ecosMartillo': si = d < 300 && !target.esUnidad; break;
       case 'abanicosCruzados': si = d < 315 && d > 40; break;
       case 'abanicosViento': si = d < 320 && (d > 110 || target.esUnidad === undefined && target.st && target.st.ataque.tipo !== 'melee'); break;
       case 'ojoVendaval': si = d < 170 && !target.esUnidad; break;
@@ -9956,7 +10210,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -10231,12 +10485,13 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
     }
     if (ev.k === 'hit' || ev.k === 'cura') f.ox = Math.round((hash(ev.x | 0, ev.y | 0, this.time * 1000 | 0) - 0.5) * 10);
+    if (ev.k === 'slash' && ev.h === 'aldor') { this.aldorCombo = (this.aldorCombo || 0) + 1; f.lado = this.aldorCombo % 2; f.dur = 0.35; }   // Aldor: martillazo pesado
     if (ev.k === 'slash' && ev.h === 'lei') { this.leiCombo = (this.leiCombo || 0) + 1; f.lado = this.leiCombo % 2; f.dur = 0.3; }   // Lei: el abanico barre de un lado y luego del otro
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
     if (ev.k === 'slash' && ev.id !== undefined) this.swing.set(ev.id, { t: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, T: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, a: ev.a });
@@ -10893,6 +11148,23 @@ class Renderer {
         for (let i = 0; i < 7; i++) { const b = -Math.PI / 2 - 1.2 + i * 0.4, rr = Math.round(r * (0.4 + 0.5 * k)); g.globalAlpha = 0.7; this.linea(cx, cy, Math.round(cx + Math.cos(b) * rr), Math.round(cy + Math.sin(b) * rr * 0.75), PALETA.acero1, 0, 0, 1); }
         g.globalAlpha = 1;
         this.rafagaVendaval(cx, cy, k, z.id);
+      } else if (z.kind === 'ondaAldor') {
+        // Aldor: onda por el suelo — grieta desde Aldor hasta el frente, con rocas que saltan donde va la onda
+        const g = this.g, ox = this.gx(z.ox), oy = this.gy(z.oy), ca = Math.cos(z.a), sa = Math.sin(z.a), w = Math.round(z.r * ESC);
+        this.linea(ox, oy, cx, cy, PALETA.tinta, 1.5, z.id, 3); this.linea(ox, oy, cx, cy, PALETA.madera0, 1.5, z.id, 1);
+        g.globalAlpha = 0.35; this.discDither(cx, cy, w + 4, PALETA.madera1, 2, t); g.globalAlpha = 1;
+        for (let i = 0; i < 5; i++) { const off = (i - 2) * (w / 2), ph = (this.time * 6 + i * 0.37) % 1, x = Math.round(cx - sa * off - ca * ph * 6), y = Math.round(cy + ca * off - sa * ph * 6 - Math.sin(Math.PI * ph) * 7);
+          g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 4, 4); g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.madera2; g.fillRect(x, y, 2, 2); }
+        // marca del muro que va a salir (al alcance máximo)
+        const H = HABILIDADES.muroAldor, mx = this.gx(z.ox + ca * H.alcance), my = this.gy(z.oy + sa * H.alcance), L = Math.round(H.largo * ESC / 2);
+        g.globalAlpha = 0.5 + 0.4 * z.prog; this.linea(Math.round(mx - sa * L), Math.round(my + ca * L), Math.round(mx + sa * L), Math.round(my - ca * L), parpadeo ? PALETA.oro1 : PALETA.piedra2, 1, z.id, 2); g.globalAlpha = 1;
+      } else if (z.kind === 'ecoAldor') {
+        // Aldor: marca de cada eco — tierra agrietada que se llena antes del golpe
+        const g = this.g;
+        g.globalAlpha = 0.25 + 0.3 * z.prog; this.discDither(cx, cy, r, PALETA.madera1, 2, t); g.globalAlpha = 1;
+        this.ring(cx, cy, r, PALETA.tinta, 1, 3); this.ring(cx, cy, r, parpadeo ? PALETA.oro1 : PALETA.madera2, 1, 1);
+        this.ring(cx, cy, Math.max(2, Math.round(r * z.prog)), PALETA.piedra2, 1, 1);
+        for (let i = 0; i < 6; i++) { const b = i * TAU / 6 + z.id; this.linea(cx, cy, Math.round(cx + Math.cos(b) * r * 0.8), Math.round(cy + Math.sin(b) * r * 0.8), PALETA.madera0, 1.2, z.id + i, 1); }
       } else if (z.kind === 'selloRunico') {
         // Æthar: sello del Impacto Rúnico — los aliados lo ven siempre; el rival solo en los últimos 0,5 s
         const aliado = z.owner === this._myId || (this.equipos && this.equipos[z.owner] && this.equipos[z.owner] === this.equipos[this._myId]);
@@ -11476,6 +11748,24 @@ class Renderer {
       for (let i = 0; i < 7; i++) { const ph = (T * 1.4 + i / 7) % 1, x = cx - 9 + ((i * 7) % 19); g.globalAlpha = 1 - ph; g.fillStyle = i % 3 ? PALETA.acero2 : PALETA.pergamino2; g.fillRect(x, yb + 22 - Math.round(ph * 26), 1, 2); }
       g.globalAlpha = 1;
       for (let i = 0; i < 2; i++) { const a = T * 6 + i * Math.PI; this.arc(cx, yb + 12, 12, a, a + 1.4, PALETA.acero2, 1); this.arc(cx, yb + 12, 14, a + 0.2, a + 1, PALETA.acero1, 1); }
+    }
+    if (p.f3 & 1073741824) {   // Aldor canalizando el Eco de la montaña (Seba 09-11): aura verde de la tierra que crece, con motas que suben y runas a sus pies
+      const T = this.time, pul = 0.5 + 0.5 * Math.sin(T * 10);
+      g.globalAlpha = 0.25 + 0.15 * pul; this.discDither(cx, cy - 8, 15, PALETA.bosque1, 2, Math.floor(T * 10)); g.globalAlpha = 1;
+      this.ring(cx, cy - 8, 15 + Math.round(pul * 2), PALETA.tinta, 1, 3); this.ring(cx, cy - 8, 15 + Math.round(pul * 2), PALETA.bosque2 || PALETA.bosque1, 1, 1);
+      this.ring(cx, cy + 2, 11, PALETA.bosque0, 1, 1);
+      for (let i = 0; i < 6; i++) { const b = T * 2 + i * TAU / 6; g.fillStyle = i % 2 ? PALETA.bosque1 : PALETA.oro1; g.fillRect(Math.round(cx + Math.cos(b) * 11), Math.round(cy + 2 + Math.sin(b) * 4), 2, 1); }   // runas
+      for (let i = 0; i < 8; i++) { const ph = (T * 1.2 + i / 8) % 1, x = cx - 12 + ((i * 7) % 25); g.globalAlpha = 1 - ph; g.fillStyle = i % 3 ? PALETA.bosque1 : PALETA.pergamino2; g.fillRect(x, cy - Math.round(ph * 30), 1, 2); }
+      g.globalAlpha = 1;
+    }
+    if (meta.build.heroe === 'aldor') {   // Aldor: medidor del Temple bajo los pies (lo ven todos) y brasas de bronce con el Temple activo
+      const T = this.time, bx = cx - 9, by = cy + 9;
+      g.fillStyle = PALETA.tinta; g.fillRect(bx - 1, by - 1, 20, 4);
+      g.fillStyle = PALETA.noche; g.fillRect(bx, by, 18, 2);
+      if (p.f3 & 536870912) { g.fillStyle = Math.floor(T * 8) % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(bx, by, 18, 2); }
+      else if (p.md > 0) { g.fillStyle = PALETA.oro1; g.fillRect(bx, by, Math.max(1, Math.round(18 * Math.min(100, p.md) / 100)), 2); }
+      if (p.f3 & 536870912) for (let i = 0; i < 6; i++) { const ph = (T * 1.5 + i / 6) % 1, x = cx - 8 + ((i * 7) % 17); g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, cy + 4 - Math.round(ph * 24) - sube, 1, 2); }
+      g.globalAlpha = 1;
     }
     if (p.f3 & 33554432) {   // Lei con los Abanicos al viento: remolinos de viento en las manos
       const T = this.time;
@@ -12229,7 +12519,7 @@ class Renderer {
 
   // Muro de roca de la Fisura (Tek'Tal): piedras grises oscuras apiladas a lo largo de la grieta, con magma entre ellas
   drawMuroRoca(u) {
-    const g = this.g, L = (+u.tipo || 300) / 2, ca = Math.cos(u.f), sa = Math.sin(u.f);
+    const g = this.g, aldor = +u.tipo < 0, L = Math.abs(+u.tipo || 300) / 2, ca = Math.cos(u.f), sa = Math.sin(u.f);   // Aldor: tipo negativo
     const n = Math.max(3, Math.round(L * 2 / 22));
     const piedras = [];
     for (let i = 0; i <= n; i++) { const k = -L + (L * 2) * i / n; piedras.push([u.x + ca * k, u.y + sa * k, i]); }
@@ -12237,6 +12527,28 @@ class Renderer {
     const acaba = u.resta > 0 && u.resta < 1 && Math.floor(this.time * 8) % 2;   // parpadea antes de desaparecer
     for (const [x, y, i] of piedras) {
       const cx = this.gx(x), cy = this.gy(y), h = 9 + Math.round(hash(i, 3, u.id) * 4), w = 6 + Math.round(hash(i, 5, u.id) * 2);
+      if (aldor) {
+        // Aldor (Seba 09-11: «más textura de piedra»): sillares apilados — hiladas de piedras con juntas de mortero desfasadas,
+        // luz arriba a la izquierda y sombra abajo en cada piedra, grietas, musgo en la cima y una runa de bronce cada dos bloques
+        const H2 = 14 + Math.round(hash(i, 3, u.id) * 3), W2 = 7, top = cy - H2;
+        g.fillStyle = PALETA.tinta; g.fillRect(cx - W2 - 1, top - 1, W2 * 2 + 3, H2 + 4);
+        g.fillStyle = acaba ? PALETA.piedra2 : PALETA.piedra0; g.fillRect(cx - W2, top, W2 * 2 + 1, H2 + 2);   // mortero
+        for (let fila = 0, yy = top; yy < cy; fila++, yy += 5) {
+          const alto = Math.min(4, cy + 1 - yy), corte = (fila + i) % 2 ? 3 : -2;
+          for (const [x0, x1] of [[cx - W2, cx + corte - 1], [cx + corte + 1, cx + W2]]) {
+            if (x1 < x0) continue;
+            const sh = hash(i * 7 + fila, x0 & 7, u.id);
+            g.fillStyle = sh > 0.66 ? PALETA.piedra2 : sh > 0.3 ? PALETA.piedra1 : PALETA.piedra1; g.fillRect(x0, yy, x1 - x0 + 1, alto);
+            g.fillStyle = PALETA.piedra3; g.fillRect(x0, yy, x1 - x0, 1); g.fillRect(x0, yy, 1, alto - 1);   // luz
+            g.fillStyle = PALETA.piedra0; g.fillRect(x0 + 1, yy + alto - 1, x1 - x0, 1);   // sombra
+            if (sh > 0.8 && alto > 2) { g.fillStyle = PALETA.piedra0; g.fillRect(x0 + 2, yy + 1, 1, 1); g.fillRect(x0 + 3, yy + 2, 1, 1); }   // grieta
+          }
+        }
+        g.fillStyle = PALETA.bosque1; g.fillRect(cx - W2, top, W2 * 2 + 1, 1); g.fillRect(cx - W2 + 1 + (i % 3) * 3, top + 1, 3, 1);
+        g.fillStyle = PALETA.bosque0; g.fillRect(cx - W2 + 3 + (i % 2) * 6, top + 1, 2, 1); g.fillRect(cx - W2 + (i % 4) * 3, top + 2, 1, 1);
+        if (i % 2 === 0) { g.fillStyle = (Math.floor(this.time * 3) + i) % 4 ? PALETA.oro1 : PALETA.oro2; g.fillRect(cx - 1, top + 7, 3, 1); g.fillRect(cx, top + 6, 1, 3); }
+        continue;
+      }
       g.fillStyle = PALETA.tinta; g.fillRect(cx - w - 1, cy - h - 1, w * 2 + 3, h + 4);
       g.fillStyle = acaba ? PALETA.piedra2 : PALETA.piedra0; g.fillRect(cx - w, cy - h, w * 2 + 1, h + 2);
       g.fillStyle = PALETA.piedra1; g.fillRect(cx - w, cy - h, w * 2 + 1, 3); g.fillRect(cx - w, cy - h, 2, h);
@@ -12388,6 +12700,21 @@ class Renderer {
             this.linea(x0, y0, x0 + Math.round(ca * L), y0 + Math.round(sa * L * 0.8), PALETA.tinta, 0, 0, 3);
             this.linea(x0, y0, x0 + Math.round(ca * L), y0 + Math.round(sa * L * 0.8), PALETA.acero2, 0, 0, 1);
             g.fillStyle = PALETA.pergamino2; g.fillRect(x0 + Math.round(ca * L) - 1, y0 + Math.round(sa * L * 0.8) - 1, 2, 2);
+            g.globalAlpha = 1;
+            break;
+          }
+          if (f.h === 'aldor') {
+            // Aldor: martillazo pesado — media luna ancha de polvo y piedra que baja con fuerza, golpe seco al final con astillas de roca
+            const lado = f.lado ? -1 : 1, R0 = Math.round(f.r * ESC) + 3, e = 1 - Math.pow(1 - Math.min(1, t * 2.2), 3), yc = cy - 6;
+            const a0 = f.a - lado * 1.2, head = a0 + lado * 2.4 * e, cola = a0 + lado * Math.max(0, 2.4 * e - 1.3);
+            const [lo, hi] = lado > 0 ? [cola, head] : [head, cola];
+            g.globalAlpha = t > 0.6 ? (1 - t) / 0.4 : 1;
+            this.arc(cx, yc, R0, lo, hi, PALETA.tinta, 6); this.arc(cx, yc, R0, lo, hi, PALETA.madera1, 4);
+            this.arc(cx, yc, R0, lado > 0 ? Math.max(lo, head - 0.8) : head, lado > 0 ? head : Math.min(hi, head + 0.8), PALETA.piedra2, 3);
+            this.arc(cx, yc, R0 + 2, lado > 0 ? Math.max(lo, head - 0.4) : head, lado > 0 ? head : Math.min(hi, head + 0.4), PALETA.pergamino1, 1);
+            const hx2 = Math.round(cx + Math.cos(head) * R0), hy2 = Math.round(yc + Math.sin(head) * R0);
+            g.fillStyle = PALETA.tinta; g.fillRect(hx2 - 4, hy2 - 4, 9, 9); g.fillStyle = PALETA.piedra2; g.fillRect(hx2 - 3, hy2 - 3, 7, 7); g.fillStyle = PALETA.piedra3; g.fillRect(hx2 - 3, hy2 - 3, 7, 1); g.fillStyle = PALETA.oro1; g.fillRect(hx2, hy2 - 1, 1, 3);
+            if (t > 0.45) for (let i = 0; i < 6; i++) { const b = f.a + (i - 2.5) * 0.35, d = R0 + (t - 0.45) * 40, k2 = (t - 0.45) / 0.55; g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.madera2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(yc + Math.sin(b) * d - Math.sin(Math.PI * k2) * 8), 2, 2); }
             g.globalAlpha = 1;
             break;
           }
@@ -12753,6 +13080,48 @@ class Renderer {
           for (let i = 0; i < 7; i++) { const b = a + (i - 3) * 0.13, d = 6 + t * (40 + (i * 13) % 20); g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(Math.round(mx + Math.cos(b) * d), Math.round(my + Math.sin(b) * d * 0.8), 2, 1); }
           for (let i = 0; i < 3; i++) { g.globalAlpha = (1 - t) * 0.7; const d = 4 + t * 14; g.fillStyle = PALETA.piedra2; g.fillRect(Math.round(mx + ca * d) - 2 + i * 2, Math.round(my + sa * d) - 3 - Math.round(t * 8) + i, 3, 3); }
           g.globalAlpha = 1;
+          break;
+        }
+        case 'giroMartillo': {   // Aldor: el martillo gira a su alrededor — cabeza de piedra que da la vuelta, estela de polvo y anillo de golpe
+          const r = Math.round(f.r * ESC), a = t * TAU * 1.5;
+          this.arc(cx, cy - 6, r - 2, a - 2.2, a, PALETA.tinta, 5); this.arc(cx, cy - 6, r - 2, a - 2.2, a, PALETA.madera1, 3); this.arc(cx, cy - 6, r - 1, a - 0.9, a, PALETA.piedra3, 1);
+          const hx2 = Math.round(cx + Math.cos(a) * (r - 2)), hy2 = Math.round(cy - 6 + Math.sin(a) * (r - 2));
+          g.fillStyle = PALETA.tinta; g.fillRect(hx2 - 5, hy2 - 5, 11, 11); g.fillStyle = PALETA.piedra2; g.fillRect(hx2 - 4, hy2 - 4, 9, 9); g.fillStyle = PALETA.piedra3; g.fillRect(hx2 - 4, hy2 - 4, 9, 2); g.fillStyle = PALETA.oro1; g.fillRect(hx2 - 1, hy2 - 1, 3, 3);
+          this.ring(cx, cy, r, PALETA.tinta, 1 - t, 3); this.ring(cx, cy, r, PALETA.madera2, 1 - t, 1);
+          g.globalAlpha = 1 - t; for (let i = 0; i < 10; i++) { const b = i * TAU / 10 + a * 0.3, d = r * (0.8 + t * 0.4); g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.madera2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.7), 2, 1); } g.globalAlpha = 1;
+          break;
+        }
+        case 'pisoton': case 'martillazo': {   // Aldor: patada o martillazo al suelo — polvo que se abre y grietas
+          const r = f.k === 'martillazo' ? 26 : 14;
+          g.globalAlpha = 1 - t; this.discDither(cx, cy, Math.round(r * (0.4 + t)), PALETA.madera2, 2, Math.floor(f.age * 20));
+          for (let i = 0; i < 5; i++) { const b = (f.a || 0) + (i - 2) * 0.7; this.linea(cx, cy, Math.round(cx + Math.cos(b) * r), Math.round(cy + Math.sin(b) * r * 0.7), PALETA.madera0, 1.5, i, 1); }
+          g.globalAlpha = 1;
+          if (f.k === 'martillazo' && t < 0.25) { g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 2, cy - 4, 5, 3); }
+          break;
+        }
+        case 'muroAldor': {   // Aldor: el muro sale del suelo — rocas y polvo que saltan a lo largo
+          const ca = Math.cos(f.a), sa = Math.sin(f.a), L = Math.round(HABILIDADES.muroAldor.largo * ESC / 2);
+          g.globalAlpha = 1 - t;
+          for (let i = 0; i < 9; i++) { const k2 = (i / 8) * 2 - 1, x = cx - sa * L * k2, y = cy + ca * L * k2, h2 = Math.sin(Math.PI * t) * (10 + (i % 3) * 4); g.fillStyle = PALETA.tinta; g.fillRect(Math.round(x) - 2, Math.round(y - h2) - 2, 5, 5); g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.madera2; g.fillRect(Math.round(x) - 1, Math.round(y - h2) - 1, 3, 3); }
+          this.discDither(cx, cy, Math.round(L * (0.5 + t * 0.5)), PALETA.madera2, 3, 0);
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'ecoAldor': {   // Aldor: golpe del eco — onda de tierra, rocas puntiagudas que salen y polvo
+          const r = Math.round(f.r * ESC);
+          if (t < 0.3) this.discDither(cx, cy, Math.round(r * (0.5 + t * 1.5)), PALETA.madera2, 2, Math.floor(f.age * 30));
+          this.ring(cx, cy, Math.round(r * (0.7 + t * 0.5)), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * (0.7 + t * 0.5)), PALETA.pergamino1, 1 - t, 1);
+          const sube2 = Math.sin(Math.PI * Math.min(1, t * 1.6));
+          for (let i = 0; i < 9; i++) {   // púas de roca
+            const b = i * TAU / 9 + (f.i || 0), d = r * 0.75, x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.85), h2 = Math.round((6 + (i % 3) * 3) * sube2);
+            if (h2 < 1) continue;
+            g.fillStyle = PALETA.tinta; g.fillRect(x - 3, y - h2 - 1, 7, h2 + 2); g.fillStyle = PALETA.piedra1; g.fillRect(x - 2, y - h2, 5, h2); g.fillStyle = PALETA.piedra3; g.fillRect(x - 1, y - h2, 1, h2); g.fillStyle = PALETA.piedra2; g.fillRect(x, y - h2 - 1, 1, 1);
+          }
+          break;
+        }
+        case 'templeAldor': {   // Aldor: se llena el Temple — destello de bronce y chispas que suben
+          this.ring(cx, cy - 8, Math.round(10 + t * 12), PALETA.tinta, 1 - t, 3); this.ring(cx, cy - 8, Math.round(10 + t * 12), PALETA.oro2, 1 - t, 1);
+          g.globalAlpha = 1 - t; for (let i = 0; i < 8; i++) { const b = i * TAU / 8; g.fillStyle = i % 2 ? PALETA.oro1 : PALETA.antorcha; g.fillRect(Math.round(cx + Math.cos(b) * 10), Math.round(cy - 8 - t * 18 + Math.sin(b) * 4), 1, 2); } g.globalAlpha = 1;
           break;
         }
         case 'abanicos': {   // Lei suelta los abanicos: soplo de viento hacia adelante
@@ -14246,6 +14615,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.4', f: '09-11-2026', n: [
+    'Nuevo héroe: Aldor (Aliados), enano del martillo y «hermano» de Jürgen. Giro del martillo, Muralla de piedra, Eco de la montaña (ulti) y pasiva Temple de enano.',
+    'Textos: se revisaron las descripciones de héroes, habilidades, pasivas y estados. Las distancias y los radios ahora se dicen en palabras (corta, media, larga; pequeño, mediano, grande), con frases más cortas y las mismas formas en todo el juego. No cambia ningún número.' ] },
   { v: 'V5.3', f: '06-11-2026', n: [
     'Lei — Ojo del vendaval: cada golpe de la rueda (el impacto y cada uno de los 4 golpes por segundo mientras gira) frena 5% más al enemigo, acumulable sin tope propio. Se pierde 1 s después del último golpe. Sigue el tope general: nadie baja de 25% de su velocidad.' ] },
   { v: 'V5.2', f: '06-11-2026', n: [
