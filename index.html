@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.7</title>
+<title>LOLA V5.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.7</p>
+        <p class="sub version">LOLA V5.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1255,7 +1255,7 @@ const CONFIG = {
   // Seba (29-10): draft con baneos. A = azul, B = rojo. 2v2: el orden de Seba; 1v1: versión recortada (cada uno banea 2 y elige 1).
   DRAFT_BAN: {
     turnos2v2: [['A', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'pick'], ['A', 'ban'], ['B', 'ban'], ['B', 'pick'], ['A', 'pick']],
-    turnos3v3: [['A', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'pick'], ['B', 'pick'], ['A', 'pick'], ['A', 'ban'], ['B', 'ban'], ['B', 'pick'], ['A', 'pick']],   // (C) Seba (05-11, V4.7)
+    turnos3v3: [['A', 'ban'], ['B', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'pick'], ['A', 'ban'], ['A', 'ban'], ['B', 'ban'], ['B', 'pick'], ['A', 'pick'], ['A', 'pick'], ['B', 'pick']],   // Seba (10-11, V5.8): 6 baneos y 6 picks
     turnos1v1: [['A', 'ban'], ['B', 'ban'], ['A', 'pick'], ['B', 'ban'], ['A', 'ban'], ['B', 'pick']],
     porTurno: 30,     // segundos por turno (C); si se acaba, se elige o banea al azar
     esperaBot: 1.5,   // lo que tarda un bot en jugar su turno
@@ -14950,6 +14950,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V5.8', f: '10-11-2026', n: [
+    'Draft 3v3 con baneos: nuevo orden de 6 baneos y 6 picks — Azul ban, Rojo ban, Rojo ban, Azul pick, Rojo pick, Azul ban, Azul ban, Rojo ban, Rojo pick, Azul pick, Azul pick, Rojo pick.',
+  ] },
   { v: 'V5.7', f: '10-11-2026', n: [
     'Rendimiento: los círculos punteados grandes (alcances, zonas, fuegos) se pintan de una vez en vez de punto por punto, y la franja del apunte en línea es un solo trazo. Menos tirones al invocar cosas.',
     'Fatum: ya no se dibuja el alcance verde de 600 mientras canaliza el Chaos. Jürgen: el rango de la torreta se ve solo con su borde (sin la grilla de relleno).',
