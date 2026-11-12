@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V5.9</title>
+<title>LOLA V6.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V5.9</p>
+        <p class="sub version">LOLA V6.0</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1832,7 +1832,7 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Una mano del infierno brota a tus pies y avanza hasta distancia ${DIST(HABILIDADES.manoInfierno.alcance)}; tras una pausa vuelve barriendo el suelo: a cada enemigo que toca a la vuelta le hace ${n.dano} de daño, lo arrastra hacia donde la lanzaste y lo deja ${Math.round(n.lento * 100)}% más lento por ${HABILIDADES.manoInfierno.lentoDur} s.`,
                    n1: { dano: 75, lento: 0.25 }, n2: { dano: 75, lento: 0.25 } },
   pozoSangre:    { nombre: 'Pozo de sangre', glifo: 'pozoSangre', cd: 14, cdFijo: true, canal: 1.5, alcance: 280, radio: 110, dur: 4, gotaDur: 2, contagio: 110,   // Seba: canal 1,5 s visible, lento 25% dentro, gota 2 s → 50, contagio 25 y luego 10; (C) alcance, radio, duración del pozo, radio de contagio, recarga
-                   desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}: la marca se llena de sangre durante ${fmtN(HABILIDADES.pozoSangre.canal)} s a la vista de todos (tú puedes seguir moviéndote) y entonces se abre un pozo de sangre de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s: los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota de sangre que a los ${HABILIDADES.pozoSangre.gotaDur} s estalla por ${n.danos[0]}. Cada estallido contagia una gota a los enemigos cercanos, por ${n.danos[1]}, y esas por ${n.danos[2]}.`,
+                   desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}: la marca se llena de sangre durante ${fmtN(HABILIDADES.pozoSangre.canal)} s a la vista de todos (tú puedes seguir moviéndote) y entonces se abre un pozo de sangre de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s: los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota de sangre que a los ${HABILIDADES.pozoSangre.gotaDur} s estalla por ${n.danos[0]} (una vez por enemigo en cada pozo). Cada estallido contagia una gota a los enemigos cercanos, por ${n.danos[1]}, y esas por ${n.danos[2]}.`,
                    n1: { lento: 0.25, danos: [50, 25, 10] }, n2: { lento: 0.25, danos: [50, 25, 10] } },
   festinSangre:  { nombre: 'Festín de sangre', glifo: 'festinSangre', cd: 50, cdFijo: true, ulti: true, canal: 1, radio: 150, dur: 5, cada: 1, alcance: 90, escudoDur: 4,   // Seba: canal 1 s infrenable, escudo 75 y status 5 s a aliados y a él, 8%/s de la vida máxima, al final escudo del 25% de lo consumido; (C) radios, recarga, duración de los escudos
                    desc: (n) => `Canalizas ${HABILIDADES.festinSangre.canal} s sin que nada te detenga. Tú y los aliados en un radio ${RADIO(HABILIDADES.festinSangre.radio)} ganan un escudo de ${n.escudo} y, por ${HABILIDADES.festinSangre.dur} s, cada segundo le quitan el ${Math.round(n.pct * 100)}% de la vida máxima a los enemigos a distancia ${DIST(HABILIDADES.festinSangre.alcance)}. Al terminar, cada uno gana un escudo del ${Math.round(n.escudoFin * 100)}% de la vida que consumió.`,
@@ -7046,13 +7046,14 @@ class Game {
           fin: (z) => {
             if (z.cancelado || !p.alive) return;
             this.emit({ k: 'pozoZeal', x: c.x | 0, y: c.y | 0, r: h.radio });
+            const yaGota = new Set();   // Seba (11-11, V6.0): cada pozo le pone la gota de 50 una sola vez a cada enemigo (los contagios sí se repiten)
             this.zones.push({ id: this.nextId++, kind: 'pozoZeal', x: c.x, y: c.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id,
               tick: (zp) => {
                 for (const e of this.enemigos(p.id, false)) {
                   if (e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
                   if (dist(e, c) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
                   this.aplicarEfecto(e, 'slow', { t: 0.3, mult: 1 - n.lento, k: 'pozoZeal' });
-                  if (!e.fx.gotaZeal) this.aplicarEfecto(e, 'gotaZeal', { t: h.gotaDur, nivel: 0, n, src: p.id });
+                  if (!e.fx.gotaZeal && !yaGota.has(e.id)) { yaGota.add(e.id); this.aplicarEfecto(e, 'gotaZeal', { t: h.gotaDur, nivel: 0, n, src: p.id }); }
                 }
               } });
           } };
@@ -11206,7 +11207,7 @@ class Renderer {
   }
   // Zeal: mano del infierno — garra roja gigante vista desde arriba, con 4 dedos en garra, nudillos y uñas oscuras; apunta en la dirección a (hacia donde barre)
   manoInfierno(cx, cy, a, w, k, T) {
-    const g = this.g, s = otro('manoInfierno', 0), esc = (w * 1.9) / s.width, pul = 1 + 0.06 * Math.sin(T * 10);
+    const g = this.g, s = otro('manoInfierno', 0), esc = (w * 1.5) / s.width,   /* Seba (11-11, V6.0): garra ~20% más chica para calzar con el golpe (el golpe no cambia) */ pul = 1 + 0.06 * Math.sin(T * 10);
     g.save(); g.translate(cx, cy - 6); g.rotate(a + Math.PI); g.scale(esc * pul * k, esc * pul);
     g.drawImage(s, -s.width * 0.4, -s.height / 2);
     g.restore();
@@ -15299,6 +15300,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.0', f: '11-11-2026', n: [
+    'Zeal, Pozo de sangre: cada pozo le pone la gota de 50 una sola vez a cada enemigo (antes, al estallar, quien seguía dentro recibía otra). Los contagios de otras gotas sí se pueden repetir.',
+    'Zeal, Mano del infierno: la garra se dibuja más chica para que calce con la zona que golpea (el golpe no cambia).',
+  ] },
   { v: 'V5.9', f: '11-11-2026', n: [
     'Nuevo héroe: Zeal (Renegados, magia · daño), mago vampírico. Básico: orbe de sangre a distancia 400.',
     'Zeal — Sed arcana (pasiva): cada 100 de daño con habilidades recupera 50 de vida; si eso lo pasa de su vida máxima, gana un escudo de 25.',
