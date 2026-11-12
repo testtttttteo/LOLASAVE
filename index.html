@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.2</title>
+<title>LOLA V6.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.2</p>
+        <p class="sub version">LOLA V6.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1497,6 +1497,19 @@ Object.assign(HEROES, {
   },
 });
 
+// Seba (11-11): Legios, caballero de armadura negra y dorada sobre un caballo café (Aliados). Números (C) salvo los que fijó Seba.
+Object.assign(HEROES, {
+  legios: {
+    casa: 'aliados',
+    nombre: 'Legios', rol: 'Tanque · apoyo', fondo: 'legios', arma: 'lanzaLegios',
+    desc: 'Caballero del Rey de armadura negra y dorada, a caballo y con lanza. Carga contra el enemigo, aguanta con su escudo y bendice a los suyos con la luz dorada.',
+    vida: 420, dano: 29, recarga: 1.3, ultiCarga: 320, velocidad: 155,   // Seba: vida menor que Su'rulfar (445), daño 1 menos que Su'rulfar, velocidad igual a Trelgon; (C) vida 420, recarga 1,63 s en juego
+    ataque: { tipo: 'melee', rango: 85, arco: 110 },   // (C) lanza: más alcance que una espada
+    habs: ['cargaLegios', 'escudoJuramento', 'porElRey'],
+    pasiva: 'juicioDorado',
+  },
+});
+
 // Seba (11-11): Zeal, mago vampírico (Renegados). Números (C) salvo los que fijó Seba.
 Object.assign(HEROES, {
   zeal: {
@@ -1827,6 +1840,18 @@ Object.assign(HABILIDADES, {
                    n1: { dur: 6, dps: 30, vel: 0.4 }, n2: { dur: 6, dps: 30, vel: 0.4 } },   // Seba (31-10): 6 s, 30/s, doble a invocaciones
   // ---- Driiar (Seba, 30-10)
   // ---- Lei (Seba, 05-11; números (C) salvo los que fijó Seba)
+  // ---- Boa (Seba, 06-11; números (C) salvo los que fijó Seba)
+  // ---- Legios (Seba, 11-11; números (C) salvo los que fijó Seba)
+  cargaLegios:     { nombre: 'Carga de caballería', glifo: 'cargaLegios', cd: 12, cdFijo: true, dur: 3, espera: 4.5, lentoDur: 2, radio: 60,   // Seba (12-11): canal 3 s, hasta 3 veces (1 por segundo), el beneficio dura 4,5 s o hasta golpear a 1 enemigo, efecto en un radio pequeño alrededor del golpeado, recarga 12 s; +20% velocidad, +15, 1 s de silencio, −20% por segundo; (C) radio 60, lento 2 s
+                     desc: (n) => `Cargas durante ${HABILIDADES.cargaLegios.dur} s sin detenerte (nada te corta). Cada segundo suma, hasta 3 veces: +${Math.round(n.vel * 100)}% de velocidad y tu siguiente básico hace +${n.dano} de daño, silencia ${n.silencio} s y frena ${Math.round(n.lento * 100)}% por ${HABILIDADES.cargaLegios.lentoDur} s, también a los enemigos en un radio ${RADIO(HABILIDADES.cargaLegios.radio)} alrededor del golpeado. Lo acumulado dura ${fmtN(HABILIDADES.cargaLegios.espera)} s o hasta que golpees a un enemigo; si golpeas durante la carga, gastas lo que llevas.`,
+                     n1: { vel: 0.2, dano: 15, silencio: 1, lento: 0.2 }, n2: { vel: 0.2, dano: 15, silencio: 1, lento: 0.2 } },
+  escudoJuramento: { nombre: 'Escudo del juramento', glifo: 'escudoJuramento', cd: 15, cdFijo: true, dur: 4, radio: 110,   // Seba: escudo 75; si se rompe en 4 s, 50 de daño en un radio y recupera 50; recarga 15 s (12-11); (C) radio
+                     desc: (n) => `Ganas un escudo de ${n.escudo} por ${HABILIDADES.escudoJuramento.dur} s. Si se rompe antes, estalla: ${n.dano} de daño a los enemigos en un radio ${RADIO(HABILIDADES.escudoJuramento.radio)} y recuperas ${n.cura} de vida.`,
+                     n1: { escudo: 75, dano: 50, cura: 50 }, n2: { escudo: 75, dano: 50, cura: 50 } },
+  porElRey:        { nombre: 'Por el Rey', glifo: 'porElRey', cd: 56, cdFijo: true, ulti: true, canal: 0.5, dur: 8, radio: 180,   // Seba (12-11): 8 s y recarga 56
+                       // Seba: canal 0,5 s visible para todos que no lo frena ni se corta (12-11), 7 s, escudo 50 una vez, +25% velocidad y daño a aliados, −25% de daño y +5% de daño recibido a enemigos (12-11), solo dentro del radio; (C) radio, recarga
+                     desc: (n) => `La luz del Rey baja sobre ti en ${fmtN(HABILIDADES.porElRey.canal)} s (todos la ven, sigues moviéndote y nada la corta) y dura ${HABILIDADES.porElRey.dur} s, en un radio ${RADIO(HABILIDADES.porElRey.radio)} que te acompaña. Dentro, tus aliados y tú ganan +${Math.round(n.vel * 100)}% de velocidad y +${Math.round(n.dano * 100)}% de daño, y un escudo de ${n.escudo} (una sola vez). Los enemigos dentro hacen ${Math.round(n.debil * 100)}% menos de daño y reciben ${Math.round(n.vulnera * 100)}% más.`,
+                     n1: { escudo: 50, vel: 0.25, dano: 0.25, debil: 0.25, vulnera: 0.05 }, n2: { escudo: 50, vel: 0.25, dano: 0.25, debil: 0.25, vulnera: 0.05 } },
   // ---- Zeal (Seba, 11-11; números (C) salvo los que fijó Seba)
   manoInfierno:  { nombre: 'Mano del infierno', glifo: 'manoInfierno', cd: 12, cdFijo: true, alcance: 280, ancho: 90, ida: 0.3, buffer: 0.25, vuelta: 0.6, arrastre: 100, lentoDur: 2,   // Seba (11-11): sale desde Zeal hacia adelante, espera, y daña/arrastra/frena solo a la vuelta, hacia el punto de casteo; (C) tiempos 0,3+0,25+0,6, alcance, ancho, arrastre 100, lento 2 s, recarga
                    desc: (n) => `Una mano del infierno brota a tus pies y avanza hasta distancia ${DIST(HABILIDADES.manoInfierno.alcance)}; tras una pausa vuelve barriendo el suelo: a cada enemigo que toca a la vuelta le hace ${n.dano} de daño, lo arrastra hacia donde la lanzaste y lo deja ${Math.round(n.lento * 100)}% más lento por ${HABILIDADES.manoInfierno.lentoDur} s.`,
@@ -1929,6 +1954,8 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  juicioDorado: { nombre: 'Juicio Real', glifo: 'juicioDorado', cd: 2.5, radio: 110, dano: 25,   // Seba (12-11): 50 → 25
+                  lento: 0.10, lentoDur: 2.5, desc: 'Cuando te golpea una habilidad, una lanza dorada cae sobre un enemigo al azar cerca de ti: 25 de daño y 10% más lento por 2,5 s. Una vez cada 2,5 s.' },   // Seba (11-11); nombre (C)
   sedArcana: { nombre: 'Sed arcana', glifo: 'sedArcana', cada: 100, cura: 50, escudo: 25, escudoDur: 4, ventana: 15, cd: 10,   // Seba (11-11, V6.1): 100 de daño en 15 s; recarga 10 s
     desc: 'Si haces 100 de daño con habilidades en 15 s (desde el primer golpe), recuperas 50 de vida. Si eso te pasa de tu vida máxima, aunque sea por 1, ganas un escudo de 25. Luego la pasiva se recarga 10 s. La barra bajo tus pies muestra cuánto llevas.' },   // Seba (11-11); nombre y 4 s (C)
   templeEnano: { nombre: 'Temple de enano', glifo: 'templeEnano', desc: 'Cada 100 de daño que recibes (sin contar escudos) llena tu medidor. Lleno, durante 3 s ganas +5% de velocidad, +5% de daño y 5% de resistencia al control; luego se recarga 5 s. Si no se llena, se vacía de a poco.' },   // Seba (09-11); nombre (C)
@@ -2062,6 +2089,7 @@ const GUIAS = {
   castigo: { tipo: 'linea', alcance: 450, ancho: 24 }, pozoMaldito: { tipo: 'punto', alcance: 300, r: 90 }, chaos: { tipo: 'rumble', alcance: 600, largo: 366, r: 66 },
   impactoRunico: { tipo: 'punto', alcance: 300, r: 70 }, ondaRunica: { tipo: 'propio', r: 200 }, vacio: { tipo: 'punto', alcance: 380, r: 132 },
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
+  cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
   giroMartillo: { tipo: 'propio', r: 90 }, muroAldor: { tipo: 'muro', alcance: 163, largo: 160 }, ecosMartillo: { tipo: 'linea', alcance: 380, ancho: 140 },
   abanicosCruzados: { tipo: 'linea', alcance: 308, ancho: 60, variable: true }, abanicosViento: { tipo: 'propio', r: 300 }, ojoVendaval: { tipo: 'propio', r: 150 }, ojoVendavalRueda: { tipo: 'punto', alcance: 150, r: 60 },
@@ -4805,6 +4833,193 @@ Object.assign(GLIFOS, {
 });
 Object.assign(FONDOS, { aldor: ['g', 'w'] });
 
+// Seba (11-11): Legios — caballero de armadura negra con remates dorados y yelmo cerrado con visor y penacho dorados, sobre un caballo café
+// con crin oscura, bridas doradas y gualdrapa negra con borde de oro. Lanza negra con anillos y punta dorada.
+Object.assign(CAPAS, {
+  cuerpoLegios: L({
+    3: '.......yO...........',
+    4: '......yOy.nnnn......',
+    5: '.....yO..n1222n.....',
+    6: '.....O...nyyyyn.....',
+    7: '.........n1kk1n.....',
+    8: '.......OnnnnnnnO....',
+    9: '......nnn12221nn.wW.',
+    10: '.....nOnn12221nnwWWW',
+    11: '....nnOnn1nn1nnwWkOW',
+    12: '..wnnnOnnnnnnnwWWWmm',
+    13: '.wwWnnOOOOOOOOWWW.kk',
+    14: '.wWWWnnnnnnnnnWWm...',
+    15: '.w.WWnOnOnOnOnWm....',
+    16: '.w..WWmmmmmmmWWm....',
+  }),
+  piernasLegios0: L({
+    17: '....Ww.w....Ww.w....',
+    18: '....Ww.w....Ww.w....',
+    19: '....Ww..w...Ww..w...',
+    20: '....OO..w...OO..w...',
+    21: '....kk..k...kk..k...',
+  }),
+  piernasLegios1: L({
+    17: '...Ww..w.....Ww.w...',
+    18: '...Ww...w....Ww..w..',
+    19: '..Ww....w...Ww...w..',
+    20: '..OO.....w..OO....w.',
+    21: '..kk.....k..kk....k.',
+  }),
+});
+Object.assign(APARIENCIA, {
+  legios: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoLegios'], ['cuerpoLegios']], cabeza: [[], []], quieto: 'piernasLegios0', paso: 'piernasLegios1' },
+});
+Object.assign(ARMAS_SPR, {
+  lanzaLegios: { g: [3, 6], S: 35, rows: [
+    '........................', '........................', '........................', '........................',
+    '...................y....', '..................OyyO..', 'nnnnOnnnnnnOnnnnnnOyyyyq', '..................OyyO..',
+    '.............OyO...y....', '..............O.........', '........................', '........................'] },
+});
+Object.assign(GLIFOS, {
+  cargaLegios:     ['.......yq', '......yy.', 'O.O.Oy...', '.....y...', 'OOOOy....', '...y.....', 'O.y.O.O..', '.y.......', 'y........'],
+  escudoJuramento: ['.OOOOOOO.', 'OnnnynnnO', 'OnnyyynnO', 'OnnnynnnO', 'OnnnynnnO', '.OnnynnO.', '.OnnnnnO.', '..OnnnO..', '...OOO...'],
+  porElRey:        ['....y....', '..y.y.y..', 'yyqqqyy..', '..yqqqqyy', '...qqq...', '..O.O.O..', '..O.O.O..', '..O.O.O..', '.OOOOOOO.'],
+  juicioDorado:    ['....y....', '...yqy...', '....y....', '....O....', '....O....', '....O....', '.y..O..y.', '..yyOyy..', '.y.yyy.y.'],
+});
+Object.assign(FONDOS, { legios: ['n', 'O'] });
+Object.assign(OTROS, {
+  // Legios: paloma dorada minimalista de Por el Rey (alas abiertas)
+  escudoLegios: ['.OOOOOOO.', 'OnnnynnnO', 'OnnyyynnO', 'OnnnynnnO', 'OnnnynnnO', '.OnnynnO.', '.OnnnnnO.', '..OnnnO..', '...OOO...'],   // Escudo del juramento
+  palomaRey: ['y.........y', 'yy.......yy', '.yyy.q.yyy.', '..yyyqyyy..', '....yyy....', '....yOy....', '...y.y.y...'],
+});
+
+// Seba (11-11, ronda 2): Legios grande — el caballo ya mide como un héroe normal y el caballero va encima (lienzo 36×36):
+// yelmo cerrado con visor en cruz y penacho dorado ancho, hombreras redondas con borde de oro, peto con cruz dorada, cinturón,
+// greba con espuela dorada, capa corta que ondea; caballo café con crin oscura, bridas doradas, paño negro con borde de oro bajo la silla.
+// Cuadros: 0 quieto, 1 y 2 galope (patas cruzadas).
+const LEGIOS_GRANDE = [
+  [
+    '...............yyyO11...............',
+    '.............yyyyyO11...............',
+    '............yyyOOOO111..............',
+    '...........yyOOO22O111..............',
+    '..........yyOO.nnyyyyy..............',
+    '.........yyOO..1221y11..............',
+    '.........yOO...1221O11..............',
+    '........yyO..2.1111111.2............',
+    '........yOo232222222223222..........',
+    '.......OOO22222221112222222..w......',
+    '........o.OOOOOOO1O1OOOOOOO.W.w.....',
+    '.............21n11O112111...wwW.....',
+    '............O11nOOyOO211232wwOWWW...',
+    '............On1n11O1121122OwwWOWW...',
+    '...........Onn1n11O1121.222wWWOWWW..',
+    '...........Onnn111O111...mwwOOOyOO..',
+    '..........OnnnnOOOyOOO..WwwWWWWOWWW.',
+    '..........OnnnnW.1111...mwwWWWWWooWW',
+    '.........OnOWWWmW1111W.WwwWWW.ooWWwk',
+    '.....wwWmmmOnnnnn1111mmmwwWWoo......',
+    '....wWmmmWWOnnnnnn222WWwwWoo........',
+    '...wwWWWWWWOnnnnnn322WWWWWWW........',
+    '..wwWWWWWWOnnnnnyn222OWWWWW.........',
+    '..wWwWWWWWOnnnnOnO222kWWWW..........',
+    '.www.WWWWWOnnnnnOnOOOOWWWW..........',
+    '.www...WWOnnnnnnnnnnnnOW............',
+    '.wWw....WWOyOOyOOyOOyOOWW...........',
+    '..www...WW..ww.W.....wwWW...........',
+    '..www...WW..ww.......wwWW...........',
+    '...www..Wm..ww.......wwWm...........',
+    '........WW..ww.......wwWW...........',
+    '........WW..ww.......wwWW...........',
+    '........WW..ww.......wwWW...........',
+    '........WW..ww.......wwWW...........',
+    '........OO..OO.......OOOO...........',
+    '.......kkk.kkk......kkkkk...........',
+  ],
+  [
+    '...............yyyO11...............',
+    '.............yyyyyO11...............',
+    '............yyyOOOO111..............',
+    '...........yyOOO22O111..............',
+    '..........yyOO.nnyyyyy..............',
+    '.........yyOO..1221y11..............',
+    '.........yOO...1221O11..............',
+    '........yyO..2.1111111.2............',
+    '........yOo232222222223222..........',
+    '.......OOO22222221112222222..w......',
+    '........o.OOOOOOO1O1OOOOOOO.W.w.....',
+    '.............21n11O112111...wwW.....',
+    '............O11nOOyOO211232wwOWWW...',
+    '............On1n11O1121122OwwWOWW...',
+    '...........Onn1n11O1121.222wWWOWWW..',
+    '...........Onnn111O111...mwwOOOyOO..',
+    '..........OnnnnOOOyOOO..WwwWWWWOWWW.',
+    '..........OnnnnW.1111...mwwWWWWWooWW',
+    '.........OnOWWWmW1111W.WwwWWW.ooWWwk',
+    '.....wwWmmmOnnnnn1111mmmwwWWoo......',
+    '....wWmmmWWOnnnnnn222WWwwWoo........',
+    '...wwWWWWWWOnnnnnn322WWWWWWW........',
+    '..wwWWWWWWOnnnnnyn222OWWWWW.........',
+    '..wWwWWWWWOnnnnOnO222kWWWW..........',
+    '.www.WWWWWOnnnnnOnOOOOWWWW..........',
+    '.www...WWOnnnnnnnnnnnnOW............',
+    '.wWw....WWOyOOyOOyOOyOOWW...........',
+    '..www...WW..ww.W....wwwWW...........',
+    '..www..WWW..ww......ww.WWW..........',
+    '...wwwWmW...www.....ww..Wm..........',
+    '......WW.....ww....www..WW..........',
+    '......WW.....www...ww...WWW.........',
+    '.....WWW......ww..www....WW.........',
+    '.....WW.......www.ww.....WWW........',
+    '.....OO........OO.OO......OO........',
+    '....kkk.......kkkkkk.....kkk........',
+  ],
+  [
+    '...............yyyO11...............',
+    '.............yyyyyO11...............',
+    '............yyyOOOO111..............',
+    '...........yyOOO22O111..............',
+    '..........yyOO.nnyyyyy..............',
+    '.........yyOO..1221y11..............',
+    '.........yOO...1221O11..............',
+    '........yyO..2.1111111.2............',
+    '........yOo232222222223222..........',
+    '.......OOO22222221112222222..w......',
+    '........o.OOOOOOO1O1OOOOOOO.W.w.....',
+    '.............21n11O112111...wwW.....',
+    '............O11nOOyOO211232wwOWWW...',
+    '............On1n11O1121122OwwWOWW...',
+    '...........Onn1n11O1121.222wWWOWWW..',
+    '...........Onnn111O111...mwwOOOyOO..',
+    '..........OnnnnOOOyOOO..WwwWWWWOWWW.',
+    '..........OnnnnW.1111...mwwWWWWWooWW',
+    '.........OnOWWWmW1111W.WwwWWW.ooWWwk',
+    '.....wwWmmmOnnnnn1111mmmwwWWoo......',
+    '....wWmmmWWOnnnnnn222WWwwWoo........',
+    '...wwWWWWWWOnnnnnn322WWWWWWW........',
+    '..wwWWWWWWOnnnnnyn222OWWWWW.........',
+    '..wWwWWWWWOnnnnOnO222kWWWW..........',
+    '.www.WWWWWOnnnnnOnOOOOWWWW..........',
+    '.www...WWOnnnnnnnnnnnnOW............',
+    '.wWw....WWOyOOyOOyOOyOOWW...........',
+    '..www...WW..ww.W.....wWWW...........',
+    '..www...WW.www.......wWW............',
+    '...www..WWmww.........mW............',
+    '.........WWw.........WWW............',
+    '.........WWW.........WWww...........',
+    '.........wWW........WWWww...........',
+    '.........wWWW.......WW.www..........',
+    '.........OOOO.......OO..OO..........',
+    '........kkkkk......kkk.kkk..........',
+  ]
+];
+const cacheLegios = new Map();
+function legiosGrande(frame) {
+  if (cacheLegios.has(frame)) return cacheLegios.get(frame);
+  const m = matrizVacia(36, 36);
+  pintar(m, LEGIOS_GRANDE[frame]);
+  const der = aCanvas(contornear(m));
+  const r = { der, izq: espejo(der) };
+  cacheLegios.set(frame, r);
+  return r;
+}
+
 // Seba (11-11): Zeal, mago vampírico — pelo oscuro largo con mechas castañas, cara pálida con ojos rojos, cuello alto y capa roja, camisa blanca con chorrera, levita y pantalón oscuros, botas.
 Object.assign(CAPAS, {
   cuerpoZeal: L({
@@ -5380,6 +5595,7 @@ class Game {
     if (!esJugador && UNIDADES[target.kind].invulnerable) return 0;
 
     if (esJugador && target.fx && target.fx.jetpack) return 0;   // Biteroi en el aire: nada lo daña (Seba)
+    if (esJugador && !o.basico && !o.tick && !o.silencioso && !o.juicio && src && src !== target && HEROES[target.build?.heroe]?.pasiva === 'juicioDorado') this.juicioLegios(target);   // Legios: Juicio dorado
     // Escudo frontal (escudero): bloquea lo que viene de frente
     if (target.escudo && o.tipo !== 'puro' && !o.silencioso) {
       const d = o.desde || src;
@@ -5392,10 +5608,13 @@ class Game {
     let amt = amount;
     if (target.fx && target.fx.vuln) amt *= target.fx.vuln.mult;
     if (target.fx && target.fx.marcado && src && src.enemigo) amt *= target.fx.marcado.mult;
-    if (target.fx && target.fx.marcaLire && o.tipo !== 'puro') amt *= target.fx.marcaLire.mult;   // Marca de Lire: +5% de todas las fuentes
+    if (target.fx && target.fx.marcaLire && o.tipo !== 'puro') amt *= target.fx.marcaLire.mult;
+    if (target.fx && target.fx.auraReyEnemiga && !o.pct) amt *= 1 + (target.fx.auraReyEnemiga.vulnera || 0);   // Legios (12-11): +5% de daño recibido dentro del radio   // Marca de Lire: +5% de todas las fuentes
     { const at = src ? (src.esUnidad ? this.players.get(src.owner) : src) : null;
       if (o.tipo !== 'puro' && at && at.fx && at.fx.bendecido) amt *= 1 + (at.fx.bendecido.dano || 0);   // Seba (28-10): +25% a habilidades y ataques
       if (at && at.fx && at.fx.cucko) amt *= CONFIG.CUCKO.buff.dano;
+      if (at && at.fx && at.fx.auraRey && !o.pct) amt *= 1 + at.fx.auraRey.dano;          // Legios: Por el Rey (+25% a sus aliados dentro del radio)
+      if (at && at.fx && at.fx.auraReyEnemiga && !o.pct) amt *= 1 - at.fx.auraReyEnemiga.debil;   // Legios: los enemigos dentro hacen 25% menos
     }   // Seba (31-10): se quitó el +50% de daño de Kazaro durante la Llama (resto de la ulti antigua; `extra` ahora es el +50% de fuego por héroe extra en la arena)
     if (esJugador && target.fx && target.fx.cucko) amt *= CONFIG.CUCKO.buff.recibe;
     if (esJugador && target.fx && target.fx.enTela) amt *= 1 - target.fx.enTela.buff;   // Aracnida sobre su tela
@@ -5424,7 +5643,7 @@ class Game {
       const e = target.fx.escudo;
       absorbido = Math.min(e.v, amt);
       e.v -= absorbido; amt -= absorbido;
-      if (e.v <= 0.01) { delete target.fx.escudo; this.emit({ k: 'escudoRoto', x: target.x | 0, y: target.y | 0 }); }
+      if (e.v <= 0.01) { delete target.fx.escudo; this.emit({ k: 'escudoRoto', x: target.x | 0, y: target.y | 0 }); if (e.legios && this.combatTime <= e.legios) this.estallaJuramento(target); }   // Legios: roto dentro de los 4 s
       target.ultimoDano = this.combatTime;
       if (absorbido > 0) {
         if (!o.silencioso) this.emit({ k: 'hit', x: target.x | 0, y: target.y | 0, v: Math.round(absorbido), s: atacante ? atacante.id : null, t: target.id, esc: 1 });
@@ -5818,6 +6037,31 @@ class Game {
     return this.jugadoresEnemigos(p.id).filter(q => q.alive && !q.esUnidad && !((q.hidden || (q.fx && q.fx.invisible)) && !(q.fx && q.fx.expuesto)) && dist(q, p) <= H.alcance + CONFIG.RADIO_JUGADOR && (!arena || dist(q, arena) < arena.r));
   }
   // Aldor: Temple de enano — cada 100 de daño recibido llena el medidor; lleno da 3 s de buff y 5 s de recarga (C: desde que se activa)
+  // Legios: etapa de la Carga de caballería — 1 por segundo cumplido y 0,5 por los 0,5 s finales (0, 1, 2, 2,5)
+  etapaCarga(c) { return Math.min(3, Math.floor((c.el || 0) + 1e-6)); }   // Seba (12-11): 1 por segundo cumplido, hasta 3
+  // Legios: Escudo del juramento roto antes de 4 s — estalla (50 en radio) y cura 50
+  estallaJuramento(p) {
+    const H = HABILIDADES.escudoJuramento, n = H.n1;
+    this.emit({ k: 'juramentoLegios', x: p.x | 0, y: p.y | 0, r: H.radio });
+    for (const e of this.enemigos(p.id, false)) {
+      if (e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+      if (dist(e, p) > H.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+      this.damage(e, n.dano, p, { tipo: 'mag', desde: p, juicio: true });
+    }
+    this.heal(p, n.cura, p);
+  }
+  // Legios: Juicio dorado (Seba 11-11) — al recibir un golpe directo de habilidad, lanza dorada a un enemigo al azar cerca (cada 2,5 s)
+  juicioLegios(p) {
+    const P = PASIVAS.juicioDorado;
+    if (!p.alive || this.combatTime < (p.juicioCd || 0)) return;
+    const cand = this.enemigos(p.id, false).filter(e => e.alive && e.kind !== 'muro' && !(e.esUnidad && UNIDADES[e.kind]?.invulnerable) && dist(e, p) <= P.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR));
+    if (!cand.length) return;
+    p.juicioCd = this.combatTime + P.cd;
+    const e = cand[Math.floor(Math.random() * cand.length)];
+    this.emit({ k: 'juicioLegios', x: e.x | 0, y: e.y | 0, x2: p.x | 0, y2: p.y | 0 });
+    this.damage(e, P.dano, p, { tipo: 'mag', desde: p, juicio: true });
+    if (e.alive) this.aplicarEfecto(e, 'slow', { t: P.lentoDur, mult: 1 - P.lento, k: 'juicioDorado' });
+  }
   // Zeal: Sed arcana (Seba 11-11) — cada 100 de daño con habilidades cura 50; si se pasa de la vida máxima, escudo de 25
   sedZeal(atacante, real, o) {
     if (!atacante || !atacante.alive || o.basico || !(real > 0) || HEROES[atacante.build?.heroe]?.pasiva !== 'sedArcana') return;
@@ -6152,6 +6396,8 @@ class Game {
     if (p.fx.espirituFenix) v *= 1 + p.fx.espirituFenix.n.vel;   // Ash
     if (p.fx.polvo) v *= 1 + p.fx.polvo.n.vel;
     if (p.fx.flotar) v *= 1.05;   // Lei: Flotar
+    if (p.fx.cargaLegios) v *= 1 + HABILIDADES.cargaLegios.n1.vel * this.etapaCarga(p.fx.cargaLegios);   // Legios: +20% por segundo de carga
+    if (p.fx.auraRey) v *= 1 + p.fx.auraRey.vel;   // Legios: Por el Rey
     if (p.fx.templeAldor) v *= 1.05;   // Aldor: Temple de enano
     if (p.fx.ascension) v *= 1 + p.fx.ascension.n.vel;   // Lire: Ascensión élfica
     if (p.fx.luzMina) v *= 1 + p.fx.luzMina.vel;   // Jürgen: Lámpara de mina   // Vario: Polvo de estrellas
@@ -6277,6 +6523,10 @@ class Game {
   }
 
   meleeArc(p, a, rango, arcoDeg, dmg) {
+    // Legios: el básico gasta la carga acumulada (si ataca durante la carga, gasta lo que lleva)
+    // Seba (12-11): solo se gasta si el básico golpea a un enemigo
+    p._golpeCarga = null;
+    if (p.fx && p.fx.cargaLegios) { const s = this.etapaCarga(p.fx.cargaLegios), n = HABILIDADES.cargaLegios.n1; if (s > 0) p._golpeCarga = { s, dano: Math.round(n.dano * s), silencio: n.silencio * s, lento: n.lento * s }; }
     const half = (arcoDeg * Math.PI / 180) / 2;
     let reducido = false, golpeoVat = false, danoSed = 0;
     this.emit({ k: 'slash', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), r: rango, w: +(half * 2).toFixed(2), c: p.colorIdx, h: p.fx.nephilim ? 'nephilim' : p.build.heroe, gr: p.fx.sobre ? 1 : 0 });
@@ -6284,7 +6534,22 @@ class Game {
     for (const q of lista) {
       const vat = HEROES[p.build?.heroe]?.pasiva === 'gotasSangre', sed = vat && p.fx.sedSangre;
       const extraSed = sed && q.kind !== 'muro' ? Math.max(0, q.hp) * sed.n.pct : 0;   // Sed de sangre: +5% de la vida actual del enemigo
-      const hizo = this.damage(q, dmg + extraSed, p, { tipo: 'fis', basico: true, gotaSed: !!(sed && sed.quedan === 1) });
+      const cg = p._golpeCarga;   // Legios: golpe cargado de la Carga de caballería
+      const hizo = this.damage(q, dmg + extraSed + (cg ? cg.dano : 0), p, { tipo: 'fis', basico: true, gotaSed: !!(sed && sed.quedan === 1) });
+      if (cg && hizo > 0) {   // Legios: golpe cargado — silencio y lento al golpeado y a los enemigos en un radio pequeño alrededor (+daño a esos también)
+        p._golpeCarga = null; delete p.fx.cargaLegios;
+        const H = HABILIDADES.cargaLegios, centro = { x: q.x, y: q.y };
+        this.emit({ k: 'golpeLegios', x: q.x | 0, y: q.y | 0, s: cg.s, r: H.radio });
+        for (const e of this.enemigos(p.id, false)) {
+          if (e.kind === 'muro' || !e.alive || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (e !== q && dist(e, centro) > H.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          if (e !== q) this.damage(e, cg.dano, p, { tipo: 'mag', desde: centro, juicio: true });
+          if (!e.alive) continue;
+          if (!e.esUnidad) this.aplicarEfecto(e, 'silence', { t: cg.silencio });
+          this.aplicarEfecto(e, 'slow', { t: H.lentoDur, mult: 1 - cg.lento, k: 'cargaLegios' });
+          e.fx.selloLegios = { t: Math.max(cg.silencio, H.lentoDur), s: cg.s };   // status visible
+        }
+      }
       if (vat && hizo > 0) {
         if (sed) { golpeoVat = true; danoSed += hizo; if (sed.quedan === 1) this.emit({ k: 'golpeSangre', x: q.x | 0, y: q.y | 0, n: this.gotasDe(q) }); }
       }
@@ -7011,6 +7276,32 @@ class Game {
         this.zones.push(zona);
         this.aplicarEfecto(p, 'canalArmario', { t: h.canal + 0.1, zona });
         this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'CAJA MAGICA' });
+        break;
+      }
+      // ---------------------------------------------------------- Legios (Seba 11-11)
+      case 'cargaLegios': {
+        // Canaliza «pasivamente»: se mueve, ataca y no lo cortan aturdidos ni silencios (no está en CANALES)
+        this.aplicarEfecto(p, 'cargaLegios', { t: h.dur + h.espera, el: 0, etapa: 0 });
+        this.emit({ k: 'cargaLegios', x: p.x | 0, y: p.y | 0, id: p.id });
+        break;
+      }
+      case 'escudoJuramento': {
+        const e = p.fx.escudo;
+        if (e && e.v > 0) { e.v += n.escudo; e.max = Math.max(e.max || 0, e.v); e.t = Math.max(e.t, h.dur); e.legios = this.combatTime + h.dur; }
+        else this.aplicarEfecto(p, 'escudo', { t: h.dur, v: n.escudo, max: n.escudo, de: p.id, legios: this.combatTime + h.dur });
+        this.emit({ k: 'escudoLegios', x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'porElRey': {
+        // Seba (12-11): el «canal» es solo un aviso visible para todos: no lo frena ni se corta
+        p.fx.canalRey = { t: h.canal };
+        const zc = { id: this.nextId++, kind: 'canalRey', x: p.x, y: p.y, r: h.radio, t: h.canal, total: h.canal, owner: p.id, sigue: p,
+          fin: (z) => {
+            if (!p.alive) return;
+            this.aplicarEfecto(p, 'porElRey', { t: h.dur, n, escudados: new Set() });
+            this.emit({ k: 'porElRey', x: p.x | 0, y: p.y | 0, r: h.radio });
+          } };
+        this.zones.push(zc);
         break;
       }
       // ---------------------------------------------------------- Zeal (Seba 11-11)
@@ -8399,6 +8690,28 @@ class Game {
           }
         }
       }
+      // Legios: Carga de caballería (sube la etapa por segundo) y Por el Rey (aura que lo acompaña)
+      if (p.fx.cargaLegios) {
+        const c = p.fx.cargaLegios, H = HABILIDADES.cargaLegios;
+        c.el = Math.min(H.dur, (c.el || 0) + dt);
+        const s = this.etapaCarga(c);
+        if (s !== c.etapa) { c.etapa = s; this.emit({ k: 'etapaLegios', x: p.x | 0, y: p.y | 0, s, id: p.id }); }
+      }
+      if (p.fx.porElRey) {
+        const v = p.fx.porElRey, H = HABILIDADES.porElRey, eq = this.teamOf(p.id);
+        for (const q of this.players.values()) {
+          if (!q.alive || dist(q, p) > H.radio + CONFIG.RADIO_JUGADOR) continue;
+          if (this.teamOf(q.id) === eq) {
+            q.fx.auraRey = { t: 0.2, vel: v.n.vel, dano: v.n.dano };
+            if (!v.escudados.has(q.id)) {   // Seba: un solo escudo de 50 por aliado (también Legios)
+              v.escudados.add(q.id);
+              const e = q.fx.escudo;
+              if (e && e.v > 0) { e.v += v.n.escudo; e.max = Math.max(e.max || 0, e.v); e.t = Math.max(e.t, v.t); e.rey = true; }
+              else this.aplicarEfecto(q, 'escudo', { t: v.t, v: v.n.escudo, max: v.n.escudo, de: p.id, rey: true });
+            }
+          } else q.fx.auraReyEnemiga = { t: 0.2, debil: v.n.debil, vulnera: v.n.vulnera };
+        }
+      }
       // Zeal: Festín de sangre en cada aliado — cada segundo 8% de la vida máxima a los enemigos cercanos; al terminar, escudo del 25% de lo consumido
       if (p.fx.festinZeal) {
         const v = p.fx.festinZeal, H = HABILIDADES.festinSangre;
@@ -8976,7 +9289,8 @@ class Game {
         (p.vacioT && this.combatTime - p.vacioT < 1.2 ? p.vacioN : 0), (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? p.resonancia.n : 0),
         fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : fx.ascension ? fx.ascension.quedan : 0, HEROES[p.build.heroe]?.pasiva === 'templeEnano' ? (fx.templeAldor || this.combatTime < (p.templeCd || 0) ? -1 : Math.round(p.medidor || 0)) : 0, (fx.ascension ? 1 : 0) | (HEROES[p.build.heroe]?.pasiva === 'cartuchoDoble' && ((p.tirosEscopeta || 0) + 1) % 4 === 0 ? 2 : 0),
         p.esMuneco ? Math.round(p.cuenta) : 0, p.esMuneco && p.cuentaDesde !== null ? Math.ceil(CONFIG.ENTRENO.ventana - (this.combatTime - p.cuentaDesde)) : 0, p.esMuneco && this.combatTime - p.cuentaFinalT < CONFIG.ENTRENO.muestra ? p.cuentaFinal : -1,
-        fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p)]);   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
+        fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), fx.escudo && fx.escudo.v > 0 ? (fx.escudo.legios && this.combatTime <= fx.escudo.legios ? 1 : 0) | (fx.escudo.rey ? 2 : 0) : 0]);   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -9225,6 +9539,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'encanto': si = d < 300 && !target.esUnidad; break;
       case 'polvoEstrellas': si = d < 140; break;
       case 'armario': si = d < 340 && !target.esUnidad; break;
+      case 'cargaLegios': si = d < 420 && d > 120; break;
+      case 'escudoJuramento': si = d < 120; break;
+      case 'porElRey': si = d < 220 && !target.esUnidad; break;
       case 'manoInfierno': si = d < 270 && d > 60; break;
       case 'pozoSangre': si = d < 300 && !target.esUnidad; break;
       case 'festinSangre': si = d < 120 && !target.esUnidad; break;
@@ -10637,7 +10954,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -10912,7 +11229,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -11222,6 +11539,34 @@ class Renderer {
     g.save(); g.translate(cx, cy - 6); g.rotate(a + Math.PI); g.scale(esc * pul * k, esc * pul);
     g.drawImage(s, -s.width * 0.4, -s.height / 2);
     g.restore();
+  }
+  // Legios: lanza de caballería — asta negra con anillos de oro, arandela dorada (cono) que protege la mano, punta de hoja
+  // dorada con filo claro y banderín dorado que flamea; ext = cuánto avanza en la estocada, golpe = 0–1 (estela), cargada = brilla
+  lanzaLegios(mx, my, a, ext, golpe, cargada) {
+    const g = this.g, T = this.time, ca = Math.cos(a), sa = Math.sin(a), px = -sa, py = ca;
+    const P = (d, l = 0) => [Math.round(mx + ca * (d + ext) + px * l), Math.round(my + sa * (d + ext) + py * l)];
+    const [bx, by] = P(-12), [tx, ty] = P(32);
+    if (golpe > 0.3) {   // estela de la estocada
+      g.globalAlpha = golpe * 0.6;
+      for (let i = 1; i <= 3; i++) { const [ax, ay] = P(32 - i * 7); this.linea(ax, ay, tx, ty, i === 1 ? PALETA.pergamino2 : PALETA.oro2, 0, 0, 1); }
+      for (let i = 0; i < 4; i++) { const [ax, ay] = P(16 + i * 4, (i % 2 ? 3 : -3)); g.fillStyle = PALETA.oro2; g.fillRect(ax, ay, 1, 1); }
+      g.globalAlpha = 1;
+    }
+    this.linea(bx, by, tx, ty, PALETA.tinta, 0, 0, 4);       // contorno del asta
+    this.linea(bx, by, tx, ty, PALETA.noche, 0, 0, 2);
+    { const [ax, ay] = P(-12, -0.5), [cx2, cy2] = P(28, -0.5); this.linea(ax, ay, cx2, cy2, CHAR['2'], 0, 0, 1); }   // brillo del asta
+    for (const d of [-10, 10, 18, 25]) { const [rx, ry] = P(d); g.fillStyle = PALETA.oro1; g.fillRect(rx - 1, ry - 1, 2, 2); }   // anillos de oro
+    // arandela (cono dorado delante de la mano)
+    for (let i = 0; i < 5; i++) { const w = 1 + i; for (let l = -w; l <= w; l++) { const [ax, ay] = P(3 + i, l * 0.8); g.fillStyle = Math.abs(l) === w ? PALETA.tinta : i > 2 ? PALETA.oro1 : PALETA.oro2; g.fillRect(ax, ay, 1, 1); } }
+    // punta de hoja
+    for (let i = 0; i < 9; i++) { const w = i < 3 ? i : i < 6 ? 2 : 8 - i; for (let l = -w - 1; l <= w + 1; l++) { const [ax, ay] = P(31 + i, l * 0.7); g.fillStyle = Math.abs(l) > w ? PALETA.tinta : l === 0 ? PALETA.pergamino2 : PALETA.oro2; g.fillRect(ax, ay, 1, 1); } }
+    if (cargada) { const [ax, ay] = P(36); g.globalAlpha = 0.5 + 0.5 * Math.sin(T * 8); this.ring(ax, ay, 4, PALETA.pergamino2, 1, 1); g.globalAlpha = 1; }   // destello suave, sin parpadeo
+    // banderín dorado que flamea bajo la punta
+    const ond = 0;   // banderín quieto (Seba 12-11: lanza estática)
+    for (let i = 0; i < 8; i++) for (let l = 1; l <= 4 - (i >> 1); l++) {
+      const [ax, ay] = P(26 - i, l + (i > 3 ? ond * (i - 3) / 4 : 0));
+      g.fillStyle = l === 4 - (i >> 1) || i === 7 ? PALETA.tinta : (i + l) % 3 === 0 ? PALETA.oro1 : PALETA.oro2; g.fillRect(ax, ay, 1, 1);
+    }
   }
   // Zeal: murciélago de sombra (f = 0/1, alas arriba/abajo)
   murcielago(x, y, f) {
@@ -11660,6 +12005,19 @@ class Renderer {
         for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + hash(i, 2, z.id)) % 1, b = hash(i, 5, z.id) * TAU, d = r * 0.8 * hash(i, 9, z.id), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9);
           if (ph < 0.6) { const s = 1 + Math.round(ph * 4); g.fillStyle = PALETA.tinta; g.fillRect(x - (s >> 1) - 1, y - (s >> 1) - 1, s + 2, s + 2); g.fillStyle = PALETA.carmesi1; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); g.fillStyle = PALETA.carmesi2; g.fillRect(x - (s >> 1), y - (s >> 1), 1, 1); }
           else this.gota(x, y - Math.round((ph - 0.6) * 20), 1 - (ph - 0.6) / 0.4); }
+      } else if (z.kind === 'canalRey') {
+        // Legios canaliza Por el Rey: la paloma dorada baja del cielo hacia él, una columna de luz se abre y el radio se dibuja en oro
+        // (barato: solo anillos y unos pocos puntos; sin rellenar el círculo)
+        const g = this.g, T = this.time, k = z.prog;
+        this.ring(cx, cy, Math.round(r * k), PALETA.tinta, 0.6, 2); this.ring(cx, cy, Math.round(r * k), PALETA.oro2, 0.6, 1);
+        this.ring(cx, cy, r, PALETA.oro1, 0.25, 1);
+        const yp = cy - 112 + Math.round(k * 34);   // la paloma baja hasta quedar sobre él
+        g.globalAlpha = 0.35 + 0.4 * k; g.fillStyle = PALETA.oro2;
+        for (let i = -4; i <= 4; i += 2) g.fillRect(cx + i, yp + 6, 1, cy - yp - 8);   // haz de luz hacia abajo
+        g.globalAlpha = 1;
+        const pal = otro('palomaRey', 0); g.drawImage(pal, cx - pal.width, yp - pal.height, pal.width * 2, pal.height * 2);
+        for (let i = 0; i < 6; i++) { const ph = (T * 1.5 + i / 6) % 1; g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(cx - 12 + i * 5, cy - 4 - Math.round(ph * 22), 1, 2); }
+        g.globalAlpha = 1;
       } else if (z.kind === 'canalFestin') {
         // Zeal canalizando el Festín: el radio se marca con un anillo de sangre y murciélagos de sombra que giran
         const g = this.g, T = this.time;
@@ -12017,7 +12375,8 @@ class Renderer {
       g.globalAlpha = 0.4; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       this.llamasAzules(cx, cy + 4 - Math.round(alturaSalto * 0.5), 3, 8);
     }
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto;
+    const esLegios = meta.build.heroe === 'legios' && gigante === 1;   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -12227,6 +12586,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
+    if (esLegios) verArma = false;   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -12249,6 +12609,23 @@ class Renderer {
     if (p.f2 & 8192) this.alasNephilim(cx, Math.round(sy + 12 * gigante) - sube, gigante, moviendo);   // Nephilim: alas grandes detrás
     if (arma && detras) { dibArma(); if (dosArmas) sable2(); }
     if (meta.muneco) g.drawImage(this.spriteMuneco(), sx - 1, sy - 2);   // Arena de entrenamiento: muñeco de paja
+    if (esLegios) {
+      // galope: alterna los cuadros 1 y 2 y el conjunto sube y baja un píxel
+      const fr = moviendo ? 1 + (Math.floor(this.time * 10) % 2) : 0, bob2 = 0;   // Seba (12-11): sin rebote (el modelo tiritaba)
+      const lg = legiosGrande(fr)[izq ? 'izq' : 'der'], lx = cx - 19, ly = cy + 8 - 38 - sube + bob2;
+      g.drawImage(lg, lx, ly);
+      // mano del jinete en el lienzo (26,13 mirando a la derecha) + 1 por el contorno
+      const mx = lx + 1 + (izq ? 35 - 26 : 26), my = ly + 1 + 13;
+      // Seba (12-11): la lanza queda estática, al frente y un poco alzada; solo se mueve en la estocada (eso se mantiene)
+      let la = izq ? Math.PI + 0.32 : -0.32, ext = 0, golpe = 0;
+      if (sw && sw.t > 0) {   // estocada: echa la lanza atrás y la clava hacia adelante con estela dorada
+        const k = 1 - Math.max(0, sw.t) / (sw.T || 0.18);
+        la = sw.a; golpe = Math.sin(Math.PI * Math.min(1, k * 1.15));
+        ext = k < 0.25 ? -5 * (k / 0.25) : -5 + 21 * Math.min(1, (k - 0.25) / 0.35);
+        if (k > 0.75) ext *= 1 - (k - 0.75) / 0.25 * 0.8;
+      }
+      this.lanzaLegios(mx, my, la, ext, golpe, p.lc && (p.lc - 1) / 10 >= 3);
+    }
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
     if (p.f2 & 134217728) { this.llama(cx - 4, cy + 7, 0.75, 'rojo', 1); this.llama(cx + 4, cy + 7, 0.75, 'rojo', 3); }   // Ash cargando la patada: pies en llamas
@@ -12289,6 +12666,70 @@ class Renderer {
       for (let i = 0; i < 5; i++) { const ph = (T * 1.6 + i / 5) % 1, x = cx - 6 + ((i * 5) % 12); g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, cy - 22 - sube - Math.round(ph * 10), 1, 1); }
       if (Math.floor(T * 5) % 3 === 0) { g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 3, cy - 21 - sube, 1, 1); g.fillRect(cx + 2, cy - 19 - sube, 1, 1); }
       g.globalAlpha = 1;
+    }
+    if (p.lc > 0) {   // Legios con la Carga: aura dorada a los pies que crece con cada segundo, chispas de oro que suben, estela dorada y 3 marcas sobre la cabeza
+      const T = this.time, el = (p.lc - 1) / 10, s = Math.min(3, Math.floor(el + 1e-6)), atr = izq ? 1 : -1, yTop = esLegios ? cy - 50 : cy - 36;
+      const ra = 16 + s * 3;
+      this.ring(cx, cy + 4, ra, PALETA.tinta, 0.7, 2); this.ring(cx, cy + 4, ra, s >= 3 ? PALETA.pergamino2 : PALETA.oro2, 0.7, 1);
+      // Seba (12-11): ondas doradas que salen de Legios una tras otra (más seguidas cuanto más cargó)
+      const nOnd = 2 + s, cyo = esLegios ? cy - 10 : cy - 6;
+      for (let i = 0; i < nOnd; i++) {
+        const ph = (T * (0.9 + s * 0.2) + i / nOnd) % 1, ro = Math.round(18 + ph * (22 + s * 6));
+        g.globalAlpha = (1 - ph) * 0.9;
+        this.ring(cx, cyo, ro, PALETA.tinta, 0.8, 2); this.ring(cx, cyo, ro, ph < 0.35 ? PALETA.pergamino2 : PALETA.oro2, 0.8, 1);
+      }
+      g.globalAlpha = 1;
+      for (let i = 0; i < 4 + s * 3; i++) { const ph = (T * 1.6 + i / (4 + s * 3)) % 1, x = cx - 16 + ((i * 11) % 33); g.globalAlpha = 1 - ph; g.fillStyle = i % 3 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, cy + 2 - Math.round(ph * (20 + s * 6)), 1, 2); }   // chispas que suben
+      for (let i = 0; i < 4 + s * 2; i++) { const ph = (T * 3 + i / 6) % 1; g.globalAlpha = (1 - ph) * 0.8; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.oro1; g.fillRect(Math.round(cx + atr * (14 + ph * 22)), cy - 2 + (i % 5) * 2 - 4, 4, 1); }   // estela
+      g.globalAlpha = 1;
+      for (let i = 0; i < 3; i++) {
+        const x = cx - 7 + i * 6, y = yTop, lleno = i < s;
+        g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 5, 5);
+        g.fillStyle = lleno ? PALETA.oro2 : PALETA.noche; g.fillRect(x, y, 3, 3);
+        if (lleno && Math.floor(T * 8 + i) % 2) { g.fillStyle = PALETA.pergamino2; g.fillRect(x, y, 1, 1); }
+      }
+    }
+    if (p.la & 12) {   // enemigo golpeado por la Carga (silenciado y frenado): sello dorado que gira bajo los pies y lanza dorada clavada sobre la cabeza que late
+      const T = this.time, s = (p.la >> 2) & 3, pul = 0.5 + 0.5 * Math.sin(T * 9);
+      this.ring(cx, cy + 5, 12, PALETA.tinta, 1, 3); this.ring(cx, cy + 5, 12, pul > 0.5 ? PALETA.oro2 : PALETA.oro1, 1, 1);
+      for (let i = 0; i < 3; i++) { const b = T * 3 + i * TAU / 3, x = Math.round(cx + Math.cos(b) * 12), y = Math.round(cy + 5 + Math.sin(b) * 5); g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 5, 4); g.fillStyle = PALETA.oro2; g.fillRect(x - 1, y - 1, 3, 2); g.fillStyle = PALETA.pergamino2; g.fillRect(x, y - 1, 1, 1); }
+      const yl = cy - 58 - Math.round(pul * 2);   // lanza dorada de punta hacia abajo con cruz (silencio)
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 4, yl - 1, 9, 14);
+      g.fillStyle = PALETA.oro1; g.fillRect(cx, yl, 1, 8); g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, yl + 2, 7, 1);
+      g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, yl + 8, 3, 2); g.fillRect(cx, yl + 10, 1, 2);
+      for (let i = 0; i < s; i++) { g.fillStyle = PALETA.oro2; g.fillRect(cx + 6, yl + 1 + i * 3, 2, 2); }   // puntos: cuánto cargado llegó (1–3)
+      if (pul > 0.8) { g.globalAlpha = 0.6; this.ring(cx, yl + 6, 8, PALETA.oro2, 1, 1); g.globalAlpha = 1; }
+    }
+    if (p.lr >= 2) {   // Por el Rey activo (todos lo ven): paloma dorada sobre Legios, luz que baja hacia él y el radio marcado en oro
+      const T = this.time, R = Math.round(HABILIDADES.porElRey.radio * ESC), yp = cy - 78 + Math.round(Math.sin(T * 3) * 2);
+      this.ring(cx, cy, R, PALETA.tinta, 0.7, 2); this.ring(cx, cy, R, PALETA.oro1, 0.7, 1); this.ring(cx, cy, R - 3, PALETA.oro2, 0.3, 1);   // solo bordes (barato), dorado
+      for (let i = 0; i < 12; i++) { const b = hash(i, 4, 9) * TAU, d = R * (0.2 + 0.75 * hash(i, 8, 3)), ph = (T * 0.6 + hash(i, 1, 5)) % 1; g.globalAlpha = Math.sin(Math.PI * ph) * 0.8; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d) - Math.round(ph * 10), 1, 2); }   // chispas de luz que suben dentro del radio
+      g.globalAlpha = 1;
+      for (let i = 0; i < 10; i++) { const b = T * 0.8 + i * TAU / 10; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.oro1; g.fillRect(Math.round(cx + Math.cos(b) * R), Math.round(cy + Math.sin(b) * R), 2, 2); }   // motas que recorren el borde
+      g.globalAlpha = 0.28 + 0.1 * Math.sin(T * 5); g.fillStyle = PALETA.oro2;
+      for (let i = -4; i <= 4; i += 2) g.fillRect(cx + i, yp + 8, 1, cy - yp - 10);   // haz de luz de la paloma hacia él
+      g.globalAlpha = 1;
+      const pal = otro('palomaRey', 0), aleteo = Math.floor(T * 4) % 2;
+      g.drawImage(pal, cx - pal.width, yp - pal.height + aleteo, pal.width * 2, pal.height * 2);   // paloma dorada al doble, sobre el nombre
+    }
+    if (p.la & 1) {   // aliado bendecido por el Rey: corona dorada chica sobre la cabeza
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 4, cy - 41, 9, 5);
+      g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, cy - 38, 7, 1); g.fillRect(cx - 3, cy - 40, 1, 2); g.fillRect(cx, cy - 40, 1, 2); g.fillRect(cx + 3, cy - 40, 1, 2);
+    }
+    if (p.la & 2) {   // enemigo debilitado por el Rey: espada dorada quebrada hacia abajo
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, cy - 42, 5, 8);
+      g.fillStyle = PALETA.oro1; g.fillRect(cx, cy - 41, 1, 3); g.fillRect(cx - 1, cy - 38, 3, 1); g.fillStyle = PALETA.carmesi1; g.fillRect(cx, cy - 37, 1, 2);
+    }
+    if (p.le) {   // escudos de Legios (todos lo ven): Juramento = escudo dorado al frente que late; Rey = halo dorado alrededor
+      const T = this.time, pul = 0.5 + 0.5 * Math.sin(T * 6);
+      const rr = esLegios ? 24 : 15, cyy = esLegios ? cy - 12 : cy - 8;
+      if (p.le & 2) { this.ring(cx, cyy, rr, PALETA.tinta, 0.9, 3); this.ring(cx, cyy, rr, pul > 0.5 ? PALETA.oro2 : PALETA.oro1, 0.9, 1); }
+      if (p.le & 1) {   // Escudo del juramento activo: cúpula dorada con 6 runas que giran y el escudo en el brazo libre
+        const rj = rr + 4;
+        this.ring(cx, cyy, rj, PALETA.tinta, 0.8, 2); this.ring(cx, cyy, rj, pul > 0.5 ? PALETA.oro2 : PALETA.pergamino2, 0.8, 1);
+        for (let i = 0; i < 6; i++) { const b = T * 1.5 + i * TAU / 6, x = Math.round(cx + Math.cos(b) * rj), y = Math.round(cyy + Math.sin(b) * rj); g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 4, 4); g.fillStyle = PALETA.oro2; g.fillRect(x - 1, y - 1, 2, 2); }
+        const gl = otro('escudoLegios', 0), fx = cx + (izq ? 14 : -14); g.globalAlpha = 0.8 + 0.2 * pul; g.drawImage(gl, fx - (gl.width >> 1), cy - 22); g.globalAlpha = 1;
+      }
     }
     if (p.zc === 2) {   // Zeal canalizando el Festín de sangre (infrenable): aura carmesí que late y murciélagos alrededor
       const T = this.time, pul = 0.5 + 0.5 * Math.sin(T * 10);
@@ -13743,6 +14184,60 @@ class Renderer {
             const b = i * TAU / 9 + (f.i || 0), d = r * 0.75, x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.85), h2 = Math.round((6 + (i % 3) * 3) * sube2);
             if (h2 < 1) continue;
             g.fillStyle = PALETA.tinta; g.fillRect(x - 3, y - h2 - 1, 7, h2 + 2); g.fillStyle = PALETA.piedra1; g.fillRect(x - 2, y - h2, 5, h2); g.fillStyle = PALETA.piedra3; g.fillRect(x - 1, y - h2, 1, h2); g.fillStyle = PALETA.piedra2; g.fillRect(x, y - h2 - 1, 1, 1);
+          }
+          break;
+        }
+        case 'cargaLegios': {   // Legios empieza la carga: el caballo levanta polvo dorado
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro1 : PALETA.oro2; g.fillRect(Math.round(cx + Math.cos(b) * (6 + t * 18)), Math.round(cy + 4 + Math.sin(b) * (3 + t * 8)), 2, 1); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'etapaLegios': {   // cada segundo de carga: anillo dorado que se abre
+          this.ring(cx, cy - 8, Math.round(8 + t * 14), PALETA.tinta, 1 - t, 3); this.ring(cx, cy - 8, Math.round(8 + t * 14), f.s >= 2.5 ? PALETA.pergamino2 : PALETA.oro2, 1 - t, 1);
+          break;
+        }
+        case 'golpeLegios': {   // golpe cargado: estallido dorado con rayos y el radio pequeño donde también silencia
+          const R = Math.round(8 + f.s * 5), rr = Math.round((f.r || 60) * ESC);
+          this.ring(cx, cy, Math.round(rr * Math.min(1, t * 2.2)), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(rr * Math.min(1, t * 2.2)), PALETA.oro2, 1 - t, 1);
+          for (let i = 0; i < 10; i++) { const b = i * TAU / 10; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * rr * t), Math.round(cy + Math.sin(b) * rr * t * 0.9) - 2, 2, 2); } g.globalAlpha = 1;
+          this.ring(cx, cy - 8, Math.round(R * t), PALETA.tinta, 1 - t, 3); this.ring(cx, cy - 8, Math.round(R * t), PALETA.oro2, 1 - t, 1);
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + 0.4; this.linea(cx, cy - 8, Math.round(cx + Math.cos(b) * R * (0.4 + t)), Math.round(cy - 8 + Math.sin(b) * R * (0.4 + t)), i % 2 ? PALETA.oro1 : PALETA.pergamino2, 0, 0, 1); }
+          break;
+        }
+        case 'escudoLegios': {   // Escudo del juramento: columna de luz dorada, anillo que se cierra sobre él y el escudo que aparece
+          const k = Math.min(1, t * 3);
+          g.globalAlpha = (1 - t) * 0.7; g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, cy - 60, 7, 60); g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, cy - 60, 3, 60); g.globalAlpha = 1;
+          this.ring(cx, cy - 10, Math.round(34 - 14 * k), PALETA.tinta, 1 - t, 3); this.ring(cx, cy - 10, Math.round(34 - 14 * k), PALETA.oro2, 1 - t, 1);
+          const gl = otro('escudoLegios', 0); g.globalAlpha = 1 - Math.max(0, t - 0.6) * 2.5; g.drawImage(gl, cx - gl.width, cy - 52 - Math.round(k * 4), gl.width * 2, gl.height * 2); g.globalAlpha = 1;
+          break;
+        }
+        case 'juramentoLegios': {   // el escudo se rompe a tiempo: estallido de luz dorada en su radio
+          const r = Math.round(f.r * ESC);
+          this.ring(cx, cy, Math.round(r * t), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * t), PALETA.oro2, 1 - t, 1); this.ring(cx, cy, Math.round(r * t * 0.7), PALETA.pergamino2, (1 - t) * 0.7, 1);
+          for (let i = 0; i < 12; i++) { const b = i * TAU / 12; this.linea(Math.round(cx + Math.cos(b) * r * t * 0.5), Math.round(cy + Math.sin(b) * r * t * 0.5), Math.round(cx + Math.cos(b) * r * t), Math.round(cy + Math.sin(b) * r * t), PALETA.oro1, 0, 0, 1); }
+          break;
+        }
+        case 'porElRey': {   // Por el Rey: destello y la paloma se abre en luz
+          const r = Math.round(f.r * ESC);
+          this.ring(cx, cy, Math.round(r * Math.min(1, t * 2)), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * Math.min(1, t * 2)), PALETA.pergamino2, 1 - t, 1);
+          g.globalAlpha = 1 - t; g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, cy - 60, 3, 50); g.globalAlpha = 1;
+          break;
+        }
+        case 'juicioLegios': {   // Juicio Real (Seba 12-11): una lanza dorada grande cae del cielo (60% más lenta que antes) y se clava con estallido de luz
+          const caida = 0.61, k = Math.min(1, t / caida), yTip = cy - 6 - Math.round((1 - k * k) * 70);   // cae acelerando
+          if (t < caida) {
+            g.globalAlpha = 0.35 * k; this.ring(cx, cy, Math.round(12 - 6 * k), PALETA.oro2, 1, 1); g.globalAlpha = 1;   // aviso en el suelo
+            g.globalAlpha = 0.5; g.fillStyle = PALETA.oro2; g.fillRect(cx - 1, yTip - 44, 3, 18); g.fillStyle = PALETA.pergamino2; g.fillRect(cx, yTip - 40, 1, 12); g.globalAlpha = 1;   // estela de luz
+            g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, yTip - 26, 5, 22);   // asta
+            g.fillStyle = PALETA.oro1; g.fillRect(cx - 1, yTip - 25, 3, 20); g.fillStyle = PALETA.oro2; g.fillRect(cx - 1, yTip - 25, 1, 20);
+            g.fillStyle = PALETA.tinta; g.fillRect(cx - 4, yTip - 8, 9, 3); g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, yTip - 7, 7, 1);   // cruz de la guarda
+            for (let i = 0; i < 6; i++) { const w = i < 3 ? i + 1 : 6 - i; g.fillStyle = PALETA.tinta; g.fillRect(cx - w - 1, yTip - 5 + i, w * 2 + 3, 1); g.fillStyle = i < 4 ? PALETA.pergamino2 : PALETA.oro2; g.fillRect(cx - w, yTip - 5 + i, w * 2 + 1, 1); }   // punta
+            g.fillStyle = PALETA.pergamino2; g.fillRect(cx, yTip + 1, 1, 2);
+          } else {
+            const u = (t - caida) / (1 - caida);
+            g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, cy - 28, 5, 22); g.globalAlpha = 1 - u; g.fillStyle = PALETA.oro2; g.fillRect(cx - 1, cy - 27, 3, 20); g.globalAlpha = 1;   // queda clavada y se desvanece
+            this.ring(cx, cy, Math.round(6 + u * 22), PALETA.tinta, 1 - u, 3); this.ring(cx, cy, Math.round(6 + u * 22), PALETA.oro2, 1 - u, 1);
+            for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + 0.2; this.linea(cx, cy - 4, Math.round(cx + Math.cos(b) * (6 + u * 16)), Math.round(cy - 4 + Math.sin(b) * (4 + u * 10)), i % 2 ? PALETA.oro2 : PALETA.pergamino2, 0, 0, 1); }
           }
           break;
         }
@@ -15318,6 +15813,13 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.3', f: '12-11-2026', n: [
+    'Nuevo héroe: Legios (Aliados, tanque · apoyo), caballero de armadura negra y oro montado a caballo, con lanza (cuerpo a cuerpo).',
+    'Legios — Juicio Real (pasiva): cuando lo golpea directamente una habilidad, cae una lanza de luz dorada sobre un enemigo al azar cerca: 25 de daño y 10% más lento por 2,5 s. Una vez cada 2,5 s.',
+    'Legios — Carga de caballería: carga 3 s mientras se mueve y ataca; cada segundo suma +20% de velocidad y su siguiente básico gana +15 de daño, 1 s de silencio y −20% de velocidad (hasta 3 veces). El golpe cargado afecta también a los enemigos pegados al golpeado.',
+    'Legios — Escudo del juramento: escudo de 75 por 4 s; si se rompe antes, estalla (50 de daño alrededor) y Legios recupera 50.',
+    'Legios — Por el Rey (ulti): tras un aviso de 0,5 s, por 8 s los aliados en un gran radio alrededor de Legios ganan un escudo de 50, +25% de velocidad y +25% de daño; los enemigos dentro hacen 25% menos de daño y reciben 5% más.',
+  ] },
   { v: 'V6.2', f: '11-11-2026', n: [
     'Zeal: la barra de la Sed arcana es más chica, va unos píxeles más abajo de los pies y con fondo tenue (ya no parece un hoyo negro bajo el modelo).',
   ] },
