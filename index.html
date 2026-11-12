@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.5</title>
+<title>LOLA V6.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.5</p>
+        <p class="sub version">LOLA V6.6</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -9370,7 +9370,7 @@ class Game {
         fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : fx.ascension ? fx.ascension.quedan : 0, HEROES[p.build.heroe]?.pasiva === 'templeEnano' ? (fx.templeAldor || this.combatTime < (p.templeCd || 0) ? -1 : Math.round(p.medidor || 0)) : 0, (fx.ascension ? 1 : 0) | (HEROES[p.build.heroe]?.pasiva === 'cartuchoDoble' && ((p.tirosEscopeta || 0) + 1) % 4 === 0 ? 2 : 0),
         p.esMuneco ? Math.round(p.cuenta) : 0, p.esMuneco && p.cuentaDesde !== null ? Math.ceil(CONFIG.ENTRENO.ventana - (this.combatTime - p.cuentaDesde)) : 0, p.esMuneco && this.combatTime - p.cuentaFinalT < CONFIG.ENTRENO.muestra ? p.cuentaFinal : -1,
         fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
-        fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0)]);   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0]);   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -11034,7 +11034,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -12854,6 +12854,14 @@ class Renderer {
       g.fillStyle = PALETA.noche; g.fillRect(bx, by, 18, 2);
       if (p.f3 & 536870912) { g.fillStyle = Math.floor(T * 8) % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(bx, by, 18, 2); }
       else if (p.md > 0) { g.fillStyle = PALETA.oro1; g.fillRect(bx, by, Math.max(1, Math.round(18 * Math.min(100, p.md) / 100)), 2); }
+      // Seba (12-11, V6.6): golpes acertados hacia el empuje (3 marcas bajo el medidor); con 3, el próximo básico empuja: el martillo brilla verde y las marcas laten
+      const listo = p.ga >= PASIVAS.templeEnano.cada - 1, lat = Math.floor(T * 6) % 2;
+      for (let i = 0; i < PASIVAS.templeEnano.cada - 1; i++) { const x = bx + 2 + i * 6; g.fillStyle = PALETA.tinta; g.fillRect(x - 1, by + 3, 4, 4); g.fillStyle = i < p.ga ? (listo && lat ? PALETA.pergamino2 : PALETA.bosque2) : PALETA.noche; g.fillRect(x, by + 4, 2, 2); }
+      if (listo) {
+        const mx = Math.round(hx + ex + Math.cos(ang) * 10), my = Math.round(hy - sube + ey + Math.sin(ang) * 10), r = 6 + (lat ? 1 : 0);   // alrededor de la cabeza del martillo
+        this.ring(mx, my, r, PALETA.tinta, 0.8, 3); this.ring(mx, my, r, PALETA.bosque2, 0.9, 1);
+        for (let i = 0; i < 4; i++) { const a = T * 6 + i * TAU / 4; g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.pergamino2; g.fillRect(Math.round(mx + Math.cos(a) * (r + 2)), Math.round(my + Math.sin(a) * (r + 2)), 1, 1); }
+      }
       if (p.f3 & 536870912) for (let i = 0; i < 6; i++) { const ph = (T * 1.5 + i / 6) % 1, x = cx - 8 + ((i * 7) % 17); g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, cy + 4 - Math.round(ph * 24) - sube, 1, 2); }
       g.globalAlpha = 1;
     }
@@ -15923,6 +15931,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.6', f: '12-11-2026', n: [
+    'Aldor: indicador del empuje. Bajo el medidor del Temple hay 3 marcas que se llenan con cada básico que acierta (los golpes al aire no cuentan). Con las 3 llenas, el próximo básico que acierte empuja: las marcas laten y la cabeza del martillo brilla en verde.',
+  ] },
   { v: 'V6.5', f: '12-11-2026', n: [
     'Aldor, Temple de enano: además del medidor, cada 4.º básico que golpea empuja un poco al enemigo (40). Mientras vuela no puede moverse y se le cortan las canalizaciones que se pueden cortar; no aturde, no silencia ni frena.',
     'Aldor: un enemigo empujado por Aldor que choca contra el borde del mapa o un muro (muro de Aldor, muro de Maidas, Arena de la estepa de Kazaro…) recibe 40 de daño y queda aturdido 1 s.',
