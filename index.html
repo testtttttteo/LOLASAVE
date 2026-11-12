@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.3</title>
+<title>LOLA V6.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.3</p>
+        <p class="sub version">LOLA V6.4</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1857,7 +1857,7 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Una mano del infierno brota a tus pies y avanza hasta distancia ${DIST(HABILIDADES.manoInfierno.alcance)}; tras una pausa vuelve barriendo el suelo: a cada enemigo que toca a la vuelta le hace ${n.dano} de daño, lo arrastra hacia donde la lanzaste y lo deja ${Math.round(n.lento * 100)}% más lento por ${HABILIDADES.manoInfierno.lentoDur} s.`,
                    n1: { dano: 75, lento: 0.25 }, n2: { dano: 75, lento: 0.25 } },
   pozoSangre:    { nombre: 'Pozo de sangre', glifo: 'pozoSangre', cd: 14, cdFijo: true, canal: 1.5, alcance: 280, radio: 110, dur: 4, gotaDur: 2, contagio: 110,   // Seba: canal 1,5 s visible, lento 25% dentro, gota 2 s → 50, contagio 25 y luego 10; (C) alcance, radio, duración del pozo, radio de contagio, recarga
-                   desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}: la marca se llena de sangre durante ${fmtN(HABILIDADES.pozoSangre.canal)} s a la vista de todos (tú puedes seguir moviéndote) y entonces se abre un pozo de sangre de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s: los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota de sangre que a los ${HABILIDADES.pozoSangre.gotaDur} s estalla por ${n.danos[0]} (una vez por enemigo en cada pozo). Cada estallido contagia una gota a los enemigos cercanos, por ${n.danos[1]}, y esas por ${n.danos[2]}.`,
+                   desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}: la marca se llena de sangre durante ${fmtN(HABILIDADES.pozoSangre.canal)} s a la vista de todos (tú puedes seguir moviéndote) y entonces se abre un pozo de sangre de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s: los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota de sangre que a los ${HABILIDADES.pozoSangre.gotaDur} s estalla por ${n.danos[0]} (una vez por enemigo en cada pozo). Cada estallido contagia una gota a los enemigos cercanos, por ${n.danos[1]}, y esas por ${n.danos[2]}. Cada enemigo recibe cada gota una vez por pozo.`,
                    n1: { lento: 0.25, danos: [50, 25, 10] }, n2: { lento: 0.25, danos: [50, 25, 10] } },
   festinSangre:  { nombre: 'Festín de sangre', glifo: 'festinSangre', cd: 50, cdFijo: true, ulti: true, canal: 1, radio: 150, dur: 5, cada: 1, alcance: 90, escudoDur: 4,   // Seba: canal 1 s infrenable, escudo 75 y status 5 s a aliados y a él, 8%/s de la vida máxima, al final escudo del 25% de lo consumido; (C) radios, recarga, duración de los escudos
                    desc: (n) => `Canalizas ${HABILIDADES.festinSangre.canal} s sin que nada te detenga. Tú y los aliados en un radio ${RADIO(HABILIDADES.festinSangre.radio)} ganan un escudo de ${n.escudo} y, por ${HABILIDADES.festinSangre.dur} s, cada segundo le quitan el ${Math.round(n.pct * 100)}% de la vida máxima a los enemigos a distancia ${DIST(HABILIDADES.festinSangre.alcance)}. Al terminar, cada uno gana un escudo del ${Math.round(n.escudoFin * 100)}% de la vida que consumió.`,
@@ -5445,7 +5445,7 @@ class Game {
       p.cd = [0, 0, 0, CONFIG.ULTI_INICIO || 0, 0];   // Seba (28-10): ulti en espera 45 s al empezar
       p.ultiAvisada = false;
       p.habCargas = {};   // Torreta: parte con sus 2 cargas
-      p.fx = {}; p.sedZeal = 0; p.sedCd = 0;   // Zeal: la Sed arcana parte de cero cada ronda
+      p.fx = {}; p.sedZeal = 0; p.sedCd = 0; p.gotasZeal = null; p.colaGota = null;   // Zeal: la Sed arcana parte de cero cada ronda
       p.kbx = p.kby = 0;
       p.hidden = false; p.revelado = 0;
       p.dmgRound = 0; p.killsRound = 0; p.muertes = 0; p.curaHecha = 0; p.racha = 0; p.caido = false; p.revive = 0; p.respawn = 0;
@@ -6088,15 +6088,26 @@ class Game {
     return [Math.round(p.sedZeal), Math.ceil(P.ventana - (ahora - p.sedIni))];
   }
   // Zeal: estalla una gota de sangre (Seba 11-11): daño y contagio a los enemigos cercanos (50 → 25 → 10); un enemigo lleva una gota a la vez
+  // Seba (12-11, V6.4): cada enemigo recibe cada gota (50, 25, 10) una vez por pozo. Si ya lleva una, la nueva espera su turno (cola) y se pone cuando estalla la que tiene.
+  ponerGota(q, nivel, f) {
+    const clave = f.cadena + ':' + nivel;
+    if (!q.gotasZeal) q.gotasZeal = new Set();
+    if (q.gotasZeal.has(clave)) return;
+    q.gotasZeal.add(clave);
+    const g = { t: HABILIDADES.pozoSangre.gotaDur, nivel, n: f.n, src: f.src, cadena: f.cadena };
+    if (q.fx.gotaZeal) (q.colaGota || (q.colaGota = [])).push(g);
+    else this.aplicarEfecto(q, 'gotaZeal', g);
+  }
   estallaGota(e, f) {
     const H = HABILIDADES.pozoSangre, p = this.players.get(f.src), danos = f.n.danos;
     this.emit({ k: 'gotaZeal', x: e.x | 0, y: e.y | 0, r: H.contagio, n: f.nivel });
     if (e.alive) this.damage(e, danos[f.nivel], p, { tipo: 'mag', desde: e });
+    if (e.alive && e.colaGota && e.colaGota.length) { e.colaGota.sort((x, y) => x.nivel - y.nivel); this.aplicarEfecto(e, 'gotaZeal', e.colaGota.shift()); }
     if (f.nivel >= danos.length - 1 || !p) return;
     for (const q of this.enemigos(p.id, false)) {
-      if (q === e || q.fx.gotaZeal || (q.esUnidad && UNIDADES[q.kind]?.invulnerable)) continue;
+      if (q === e || !q.alive || (q.esUnidad && UNIDADES[q.kind]?.invulnerable)) continue;
       if (dist(q, e) > H.contagio + (q.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
-      this.aplicarEfecto(q, 'gotaZeal', { t: H.gotaDur, nivel: f.nivel + 1, n: f.n, src: f.src });
+      this.ponerGota(q, f.nivel + 1, f);
     }
   }
   sumaEscudoZel(p, v, dur, sangre = false) {   // los escudos de Zel y Zeal se suman al que ya tiene; sangre = burbuja visible de Zeal
@@ -7348,14 +7359,14 @@ class Game {
           fin: (z) => {
             if (z.cancelado || !p.alive) return;
             this.emit({ k: 'pozoZeal', x: c.x | 0, y: c.y | 0, r: h.radio });
-            const yaGota = new Set();   // Seba (11-11, V6.0): cada pozo le pone la gota de 50 una sola vez a cada enemigo (los contagios sí se repiten)
+            const yaGota = new Set(), cadena = this.nextId++;   // Seba (11-11, V6.0): cada pozo le pone la gota de 50 una sola vez a cada enemigo (los contagios sí se repiten)
             this.zones.push({ id: this.nextId++, kind: 'pozoZeal', x: c.x, y: c.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id,
               tick: (zp) => {
                 for (const e of this.enemigos(p.id, false)) {
                   if (e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
                   if (dist(e, c) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
                   this.aplicarEfecto(e, 'slow', { t: 0.3, mult: 1 - n.lento, k: 'pozoZeal' });
-                  if (!e.fx.gotaZeal && !yaGota.has(e.id)) { yaGota.add(e.id); this.aplicarEfecto(e, 'gotaZeal', { t: h.gotaDur, nivel: 0, n, src: p.id }); }
+                  if (!yaGota.has(e.id)) { yaGota.add(e.id); this.ponerGota(e, 0, { n, src: p.id, cadena }); }
                 }
               } });
           } };
@@ -15813,6 +15824,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.4', f: '12-11-2026', n: [
+    'Zeal, Pozo de sangre: en un grupo, todos reciben las tres gotas (50, después 25 y después 10), una de cada una por pozo. Antes, si un enemigo ya llevaba gota cuando estallaba la de un vecino, se quedaba sin la de 25 o la de 10; ahora la gota nueva espera su turno y se pone cuando estalla la que lleva.',
+  ] },
   { v: 'V6.3', f: '12-11-2026', n: [
     'Nuevo héroe: Legios (Aliados, tanque · apoyo), caballero de armadura negra y oro montado a caballo, con lanza (cuerpo a cuerpo).',
     'Legios — Juicio Real (pasiva): cuando lo golpea directamente una habilidad, cae una lanza de luz dorada sobre un enemigo al azar cerca: 25 de daño y 10% más lento por 2,5 s. Una vez cada 2,5 s.',
