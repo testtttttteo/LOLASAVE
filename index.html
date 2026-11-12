@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.0</title>
+<title>LOLA V6.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.0</p>
+        <p class="sub version">LOLA V6.1</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1929,7 +1929,8 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
-  sedArcana: { nombre: 'Sed arcana', glifo: 'sedArcana', cada: 100, cura: 50, escudo: 25, escudoDur: 4, desc: 'Cada 100 de daño que haces con habilidades recuperas 50 de vida. Si eso te pasa de tu vida máxima, aunque sea por 1, ganas un escudo de 25.' },   // Seba (11-11); nombre y 4 s (C)
+  sedArcana: { nombre: 'Sed arcana', glifo: 'sedArcana', cada: 100, cura: 50, escudo: 25, escudoDur: 4, ventana: 15, cd: 10,   // Seba (11-11, V6.1): 100 de daño en 15 s; recarga 10 s
+    desc: 'Si haces 100 de daño con habilidades en 15 s (desde el primer golpe), recuperas 50 de vida. Si eso te pasa de tu vida máxima, aunque sea por 1, ganas un escudo de 25. Luego la pasiva se recarga 10 s. La barra bajo tus pies muestra cuánto llevas.' },   // Seba (11-11); nombre y 4 s (C)
   templeEnano: { nombre: 'Temple de enano', glifo: 'templeEnano', desc: 'Cada 100 de daño que recibes (sin contar escudos) llena tu medidor. Lleno, durante 3 s ganas +5% de velocidad, +5% de daño y 5% de resistencia al control; luego se recarga 5 s. Si no se llena, se vacía de a poco.' },   // Seba (09-11); nombre (C)
   flotar: { nombre: 'Flotar', glifo: 'flotar', desc: 'Cada 3 habilidades que usas ganas +5% de velocidad por 4 s (recarga de 8 s; mientras recarga, no cuentan).' },   // Seba (05-11)
   pielBrasa: { nombre: 'Piel de brasa', glifo: 'pielBrasa', desc: 'Recibes 10% menos de daño de ataques básicos.' },
@@ -5229,7 +5230,7 @@ class Game {
       p.cd = [0, 0, 0, CONFIG.ULTI_INICIO || 0, 0];   // Seba (28-10): ulti en espera 45 s al empezar
       p.ultiAvisada = false;
       p.habCargas = {};   // Torreta: parte con sus 2 cargas
-      p.fx = {};
+      p.fx = {}; p.sedZeal = 0; p.sedCd = 0;   // Zeal: la Sed arcana parte de cero cada ronda
       p.kbx = p.kby = 0;
       p.hidden = false; p.revelado = 0;
       p.dmgRound = 0; p.killsRound = 0; p.muertes = 0; p.curaHecha = 0; p.racha = 0; p.caido = false; p.revive = 0; p.respawn = 0;
@@ -5820,17 +5821,27 @@ class Game {
   // Zeal: Sed arcana (Seba 11-11) — cada 100 de daño con habilidades cura 50; si se pasa de la vida máxima, escudo de 25
   sedZeal(atacante, real, o) {
     if (!atacante || !atacante.alive || o.basico || !(real > 0) || HEROES[atacante.build?.heroe]?.pasiva !== 'sedArcana') return;
-    const P = PASIVAS.sedArcana;
-    atacante.sedZeal = (atacante.sedZeal || 0) + real;
-    while (atacante.sedZeal >= P.cada) {
-      atacante.sedZeal -= P.cada;
-      const falta = atacante.st.vidaMax - atacante.hp;
-      if (falta < P.cura) {
-        if (falta > 0) this.heal(atacante, falta, atacante);
-        this.sumaEscudoZel(atacante, P.escudo, P.escudoDur, true);
-        this.emit({ k: 'sedZeal', x: atacante.x | 0, y: atacante.y | 0, esc: 1 }); this.emit({ k: 'txt', x: atacante.x | 0, y: atacante.y | 0, s: 'ESCUDO', id: atacante.id });
-      } else { this.heal(atacante, P.cura, atacante); this.emit({ k: 'sedZeal', x: atacante.x | 0, y: atacante.y | 0, esc: 0 }); this.emit({ k: 'txt', x: atacante.x | 0, y: atacante.y | 0, s: '+' + P.cura, id: atacante.id }); }
-    }
+    const P = PASIVAS.sedArcana, ahora = this.combatTime;
+    // Seba (11-11, V6.1): hay que llegar a 100 en 15 s desde el primer golpe; tras el efecto, 10 s de recarga (lo de ese rato no cuenta)
+    if (ahora < (atacante.sedCd || 0)) return;
+    if (!(atacante.sedZeal > 0) || ahora - (atacante.sedIni || 0) > P.ventana) { atacante.sedZeal = 0; atacante.sedIni = ahora; }
+    atacante.sedZeal += real;
+    if (atacante.sedZeal < P.cada) return;
+    atacante.sedZeal = 0; atacante.sedCd = ahora + P.cd;
+    const falta = atacante.st.vidaMax - atacante.hp;
+    if (falta < P.cura) {
+      if (falta > 0) this.heal(atacante, falta, atacante);
+      this.sumaEscudoZel(atacante, P.escudo, P.escudoDur, true);
+      this.emit({ k: 'sedZeal', x: atacante.x | 0, y: atacante.y | 0, esc: 1 }); this.emit({ k: 'txt', x: atacante.x | 0, y: atacante.y | 0, s: 'ESCUDO', id: atacante.id });
+    } else { this.heal(atacante, P.cura, atacante); this.emit({ k: 'sedZeal', x: atacante.x | 0, y: atacante.y | 0, esc: 0 }); this.emit({ k: 'txt', x: atacante.x | 0, y: atacante.y | 0, s: '+' + P.cura, id: atacante.id }); }
+  }
+  // Seba (11-11, V6.1): medidor de la Sed arcana para el snapshot: −1 en recarga; si no, lo acumulado (0 si venció la ventana)
+  medidorSed(p) {
+    if (HEROES[p.build?.heroe]?.pasiva !== 'sedArcana') return [0, 0];
+    const P = PASIVAS.sedArcana, ahora = this.combatTime;
+    if (ahora < (p.sedCd || 0)) return [-1, Math.ceil(p.sedCd - ahora)];
+    if (!(p.sedZeal > 0) || ahora - (p.sedIni || 0) > P.ventana) return [0, 0];
+    return [Math.round(p.sedZeal), Math.ceil(P.ventana - (ahora - p.sedIni))];
   }
   // Zeal: estalla una gota de sangre (Seba 11-11): daño y contagio a los enemigos cercanos (50 → 25 → 10); un enemigo lleva una gota a la vez
   estallaGota(e, f) {
@@ -8965,7 +8976,7 @@ class Game {
         (p.vacioT && this.combatTime - p.vacioT < 1.2 ? p.vacioN : 0), (p.resonancia && this.combatTime - p.resonancia.t <= 4 ? p.resonancia.n : 0),
         fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : fx.ascension ? fx.ascension.quedan : 0, HEROES[p.build.heroe]?.pasiva === 'templeEnano' ? (fx.templeAldor || this.combatTime < (p.templeCd || 0) ? -1 : Math.round(p.medidor || 0)) : 0, (fx.ascension ? 1 : 0) | (HEROES[p.build.heroe]?.pasiva === 'cartuchoDoble' && ((p.tirosEscopeta || 0) + 1) % 4 === 0 ? 2 : 0),
         p.esMuneco ? Math.round(p.cuenta) : 0, p.esMuneco && p.cuentaDesde !== null ? Math.ceil(CONFIG.ENTRENO.ventana - (this.combatTime - p.cuentaDesde)) : 0, p.esMuneco && this.combatTime - p.cuentaFinalT < CONFIG.ENTRENO.muestra ? p.cuentaFinal : -1,
-        fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0]);   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p)]);   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -10626,7 +10637,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -11207,7 +11218,7 @@ class Renderer {
   }
   // Zeal: mano del infierno — garra roja gigante vista desde arriba, con 4 dedos en garra, nudillos y uñas oscuras; apunta en la dirección a (hacia donde barre)
   manoInfierno(cx, cy, a, w, k, T) {
-    const g = this.g, s = otro('manoInfierno', 0), esc = (w * 1.5) / s.width,   /* Seba (11-11, V6.0): garra ~20% más chica para calzar con el golpe (el golpe no cambia) */ pul = 1 + 0.06 * Math.sin(T * 10);
+    const g = this.g, s = otro('manoInfierno', 0), esc = (w * 1.15) / s.width,   /* Seba (11-11, V6.0–6.1): garra más chica para calzar con el golpe (el golpe no cambia) */ pul = 1 + 0.06 * Math.sin(T * 10);
     g.save(); g.translate(cx, cy - 6); g.rotate(a + Math.PI); g.scale(esc * pul * k, esc * pul);
     g.drawImage(s, -s.width * 0.4, -s.height / 2);
     g.restore();
@@ -11841,7 +11852,7 @@ class Renderer {
 
     this.drawGuia();
     if (view.zo) this.drawFlechasObjetivos(view.zo);
-    this.drawFx(dt, myId);
+    this.drawFx(dt, myId); this.g.globalAlpha = 1;   // Seba (11-11, V6.1): por si el último efecto dejó transparencia
 
     // Tormenta
     if (view.ar < CONFIG.RADIO_ARENA - 1) this.drawStorm(view.ar);
@@ -12155,7 +12166,7 @@ class Renderer {
       const T = Math.floor(this.time * 10);
       for (let i = 0; i < 4; i++) { const x = cx - 3 + i * 2 + (izq ? 1 : 0), h = 1 + ((T + i * 3) % 3); g.fillStyle = (T + i) % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, sy + 1 - h, 1, h); }
     }
-    if (p.f2 & 134217728) {   // cargando la patada: el círculo crece hasta el alcance del salto y se queda ahí
+    if ((p.f2 & 134217728) && this.esAliado(p.id)) {   // Seba (11-11, V6.1): solo Ash y aliados ven el alcance y la apuntada — cargando la patada: el círculo crece hasta el alcance del salto y se queda ahí
       const H = HABILIDADES.patadaFenix, rr = Math.round((H.min + (H.max - H.min) * (p.cp || 0)) * ESC), lleno = (p.cp || 0) >= 1;
       this.ring(cx, cy + 4, rr, PALETA.tinta, 1, 3); this.ring(cx, cy + 4, rr, lleno && Math.floor(this.time * 8) % 2 ? PALETA.oro2 : PALETA.antorcha, 1, 1);
       for (let i = 0; i < 10; i++) { const a = this.time * 1.5 + i * (TAU / 10); g.fillStyle = i % 2 ? PALETA.carmesi2 : PALETA.oro2; g.fillRect(Math.round(cx + Math.cos(a) * rr), Math.round(cy + 4 + Math.sin(a) * rr) - 1, 1, 2); }
@@ -12309,6 +12320,13 @@ class Renderer {
       g.restore();
       if (latido > 1.2) { this.ring(cx, y, Math.round(5 * s), PALETA.carmesi2, 0.8, 1); }   // onda de cada latido
       if (prog > 0.75 && Math.floor(T * 14) % 2) this.ring(cx, y, Math.round(7 * s), PALETA.pergamino2, 1, 1);   // por estallar
+    }
+    if (meta.build.heroe === 'zeal') {   // Seba (11-11, V6.1): medidor de la Sed arcana bajo los pies (lo ven todos): se llena hasta 100; en recarga, se vacía en gris
+      const bx = cx - 9, by = cy + 9, P = PASIVAS.sedArcana;
+      g.fillStyle = PALETA.tinta; g.fillRect(bx - 1, by - 1, 20, 4);
+      g.fillStyle = PALETA.noche; g.fillRect(bx, by, 18, 2);
+      if (p.sd < 0) { g.fillStyle = PALETA.piedra2; g.fillRect(bx, by, Math.max(1, Math.round(18 * (1 - p.sds / P.cd))), 2); }
+      else if (p.sd > 0) { g.fillStyle = p.sds <= 3 && Math.floor(this.time * 8) % 2 ? PALETA.carmesi2 : PALETA.carmesi1; g.fillRect(bx, by, Math.max(1, Math.round(18 * Math.min(100, p.sd) / P.cada)), 2); }
     }
     if (meta.build.heroe === 'aldor') {   // Aldor: medidor del Temple bajo los pies (lo ven todos) y brasas de bronce con el Temple activo
       const T = this.time, bx = cx - 9, by = cy + 9;
@@ -13281,6 +13299,7 @@ class Renderer {
       f.age += dt;
       const t = f.age / f.dur;
       if (t >= 1) continue;
+      g.globalAlpha = 1;   // Seba (11-11, V6.1): ningún efecto deja su transparencia puesta para el siguiente
       const cx = this.gx(f.x || 0), cy = this.gy(f.y || 0);
       const colJ = f.c === 'morado' ? PALETA.magia : f.c !== undefined && f.c >= 0 && COLOR_JUGADOR[f.c] ? CHAR[COLOR_JUGADOR[f.c].z] : PALETA.pergamino2;
       switch (f.k) {
@@ -13736,7 +13755,7 @@ class Renderer {
         }
         case 'garraZeal': {   // Zeal: un enemigo atrapado por la mano — marcas de uñas rojas
           for (let i = -1; i <= 1; i++) { const x0 = cx - 6 + i * 5, y0 = cy - 14; this.linea(x0, y0, x0 + 3, y0 + 12, PALETA.tinta, 0, 0, 3); this.linea(x0, y0, x0 + 3, y0 + 12, PALETA.carmesi2, 0, 0, 1); }
-          g.globalAlpha = 1 - t;
+          g.globalAlpha = 1;   // Seba (11-11, V6.1): antes quedaba la transparencia puesta y pintaba de rojo toda la pantalla
           break;
         }
         case 'pozoZeal': {   // Zeal: se abre el pozo — onda roja y gotas que saltan
@@ -15300,6 +15319,12 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.1', f: '11-11-2026', n: [
+    'Zeal, Sed arcana: hay que hacer los 100 de daño con habilidades en 15 s desde el primer golpe (si no, el conteo vuelve a cero). Tras curar o dar escudo, la pasiva se recarga 10 s. Nueva barra bajo los pies de Zeal: se llena en rojo con el daño hecho (parpadea en los últimos 3 s) y en gris mientras recarga.',
+    'Zeal, Mano del infierno: la garra se dibuja aún más chica, al tamaño de la zona que golpea.',
+    'Arreglado: al arrastrar con la Mano del infierno se teñía de rojo toda la pantalla (un efecto dejaba su transparencia puesta). Ningún efecto puede dejarla ya.',
+    'Ash, Patada del fénix: el alcance y la apuntada mientras carga solo los ven Ash y sus aliados.',
+  ] },
   { v: 'V6.0', f: '11-11-2026', n: [
     'Zeal, Pozo de sangre: cada pozo le pone la gota de 50 una sola vez a cada enemigo (antes, al estallar, quien seguía dentro recibía otra). Los contagios de otras gotas sí se pueden repetir.',
     'Zeal, Mano del infierno: la garra se dibuja más chica para que calce con la zona que golpea (el golpe no cambia).',
