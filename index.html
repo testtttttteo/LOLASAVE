@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.1</title>
+<title>LOLA V6.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.1</p>
+        <p class="sub version">LOLA V6.2</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -12321,12 +12321,11 @@ class Renderer {
       if (latido > 1.2) { this.ring(cx, y, Math.round(5 * s), PALETA.carmesi2, 0.8, 1); }   // onda de cada latido
       if (prog > 0.75 && Math.floor(T * 14) % 2) this.ring(cx, y, Math.round(7 * s), PALETA.pergamino2, 1, 1);   // por estallar
     }
-    if (meta.build.heroe === 'zeal') {   // Seba (11-11, V6.1): medidor de la Sed arcana bajo los pies (lo ven todos): se llena hasta 100; en recarga, se vacía en gris
-      const bx = cx - 9, by = cy + 9, P = PASIVAS.sedArcana;
-      g.fillStyle = PALETA.tinta; g.fillRect(bx - 1, by - 1, 20, 4);
-      g.fillStyle = PALETA.noche; g.fillRect(bx, by, 18, 2);
-      if (p.sd < 0) { g.fillStyle = PALETA.piedra2; g.fillRect(bx, by, Math.max(1, Math.round(18 * (1 - p.sds / P.cd))), 2); }
-      else if (p.sd > 0) { g.fillStyle = p.sds <= 3 && Math.floor(this.time * 8) % 2 ? PALETA.carmesi2 : PALETA.carmesi1; g.fillRect(bx, by, Math.max(1, Math.round(18 * Math.min(100, p.sd) / P.cada)), 2); }
+    if (meta.build.heroe === 'zeal') {   // Seba (11-11, V6.1–6.2): medidor de la Sed arcana bajo los pies (lo ven todos): más chico y más abajo, con fondo tenue
+      const W = 12, bx = cx - 6, by = cy + 15, P = PASIVAS.sedArcana;
+      g.globalAlpha = 0.55; g.fillStyle = PALETA.tinta; g.fillRect(bx - 1, by - 1, W + 2, 3); g.globalAlpha = 1;
+      if (p.sd < 0) { g.fillStyle = PALETA.piedra2; g.fillRect(bx, by, Math.max(1, Math.round(W * (1 - p.sds / P.cd))), 1); }
+      else if (p.sd > 0) { g.fillStyle = p.sds <= 3 && Math.floor(this.time * 8) % 2 ? PALETA.carmesi2 : PALETA.carmesi1; g.fillRect(bx, by, Math.max(1, Math.round(W * Math.min(100, p.sd) / P.cada)), 1); }
     }
     if (meta.build.heroe === 'aldor') {   // Aldor: medidor del Temple bajo los pies (lo ven todos) y brasas de bronce con el Temple activo
       const T = this.time, bx = cx - 9, by = cy + 9;
@@ -15319,6 +15318,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.2', f: '11-11-2026', n: [
+    'Zeal: la barra de la Sed arcana es más chica, va unos píxeles más abajo de los pies y con fondo tenue (ya no parece un hoyo negro bajo el modelo).',
+  ] },
   { v: 'V6.1', f: '11-11-2026', n: [
     'Zeal, Sed arcana: hay que hacer los 100 de daño con habilidades en 15 s desde el primer golpe (si no, el conteo vuelve a cero). Tras curar o dar escudo, la pasiva se recarga 10 s. Nueva barra bajo los pies de Zeal: se llena en rojo con el daño hecho (parpadea en los últimos 3 s) y en gris mientras recarga.',
     'Zeal, Mano del infierno: la garra se dibuja aún más chica, al tamaño de la zona que golpea.',
