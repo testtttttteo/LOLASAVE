@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.3</title>
+<title>LOLA V8.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.3</p>
+        <p class="sub version">LOLA V8.4</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -14202,7 +14202,7 @@ class Renderer {
     const esGaia = meta.build.heroe === 'gaia';   // Gaia flota sobre su vestido (sin nube)
     const bob = flota ? Math.round(Math.sin(this.time * 3 + (p.id.length % 5)) * 1.5) - 3 : esGaia ? Math.round(Math.sin(this.time * 2.4 + (p.id.length % 5)) * 1) - 2 : 0;
     // Trelgon en Sobrecrecimiento: 1,5 veces más grande (los pies quedan en el mismo lugar)
-    const gigante = (p.flags & 134217728) ? 1.6 : (p.f2 & 8192) ? 1.3 : meta.build.heroe === 'trelgon' ? 1.15 : meta.build.heroe === 'tektal' ? 1.2 : 1;   // Tek'Tal también es más grande   // Trelgon es más grande que el resto
+    const gigante = (p.flags & 134217728) ? 1.6 : (p.f2 & 8192) ? 1.3 : meta.build.heroe === 'trelgon' ? 1.35 : meta.build.heroe === 'tektal' ? 1.2 : 1;   // Tek'Tal también es más grande   // Trelgon es más grande que el resto
     const enAire = p.flags & 1073741824;   // Biteroi con el jetpack: sube y deja sombra y llamas
     // Kazaro saltando a su lanza (Seba 29-10): sube en arco por el aire, con sombra y estela de fuego azul
     const alturaSalto = p.salto > 0 ? Math.round(Math.sin(Math.PI * p.salto) * 34) : 0;
@@ -14213,7 +14213,7 @@ class Renderer {
     const esLegios = meta.build.heroe === 'legios' && gigante === 1;
     const esGol = meta.build.heroe === 'golagore' && gigante === 1;
     const esBam = meta.build.heroe === 'bambaa' && gigante === 1;   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 10 : 0);
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -14477,7 +14477,15 @@ class Renderer {
       this.lanzaLegios(mx, my, la, ext, golpe, p.lc && (p.lc - 1) / 10 >= 3);
     }
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
-    else if (esBam) this.dibujaBambaa(p, cx, cy, izq, moviendo, sube);
+    else if (esBam) {   // Seba (13-11, V8.4): Bambaa es una viejita — mismo diseño, dibujado a escala 0,75 (alto como Vatrius/Maidas); se pinta a 1× en un lienzo aparte y se reduce sin suavizar
+      const S = 0.75, W = 64, H = 80, c = this._lienzoBam || (this._lienzoBam = nuevoCanvas(W, H)), cg = c.getContext('2d');
+      cg.setTransform(1, 0, 0, 1, 0, 0); cg.clearRect(0, 0, W, H); cg.imageSmoothingEnabled = false; cg.globalAlpha = 1;
+      const g0 = this.g; this.g = cg;
+      try { this.dibujaBambaa(p, 32, 56, izq, moviendo, sube); } finally { this.g = g0; }
+      const s0 = g0.imageSmoothingEnabled; g0.imageSmoothingEnabled = false;
+      g0.drawImage(c, Math.round(cx - 32 * S), Math.round(cy + 8 - 64 * S), Math.round(W * S), Math.round(H * S));
+      g0.imageSmoothingEnabled = s0;
+    }
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
     if (p.f2 & 134217728) { this.llama(cx - 4, cy + 7, 0.75, 'rojo', 1); this.llama(cx + 4, cy + 7, 0.75, 'rojo', 3); }   // Ash cargando la patada: pies en llamas
@@ -18519,6 +18527,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.4', f: '13-11-2026', n: [
+    'Bambaa: el modelo se ve más pequeño (tamaño de Vatrius o Maidas); el diseño no cambia.',
+    'Trelgon: el modelo se ve más grande (×1,15 → ×1,35).',
+  ] },
   { v: 'V8.3', f: '13-11-2026', n: [
     'Bambaa, Ancestro olvidado: el radio del tótem crece un 10% (320 → 352).',
   ] },
