@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.1</title>
+<title>LOLA V7.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -950,6 +950,39 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
 #b-cancel.canal { display: flex !important; opacity: 1; pointer-events: auto; background: var(--carm1); box-shadow: inset 3px 3px 0 var(--carm2), inset -3px -3px 0 var(--tinta); animation: xPulso .5s steps(2) infinite; }
 @keyframes xPulso { 50% { transform: scale(1.1); } }
 
+/* ---------------- Seba (13-11, V7.2): menú inicial con puertas ---------------- */
+.puertas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.puerta { appearance: none; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 4px; min-height: 74px; padding: 10px 10px 10px 14px;
+  background: var(--noche); color: var(--perg2); border: 3px solid var(--tinta); position: relative;
+  box-shadow: inset 3px 3px 0 var(--piedra0), inset -3px -3px 0 var(--tinta); }
+.puerta::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--pc, var(--oro1)); box-shadow: inset -2px 0 0 var(--tinta); }
+.puerta b { font: 600 18px var(--f-titulo); line-height: 1; text-shadow: 2px 2px 0 var(--tinta); }
+.puerta small { font: 9px var(--f-num); color: var(--piedra3); line-height: 1.3; }
+.puerta:hover, .puerta:focus-visible { background: var(--piedra0); outline: none; }
+.puerta:hover b, .puerta:focus-visible b { color: var(--oro2); }
+.puerta:active { transform: translate(0, 2px); }
+.p-online { --pc: var(--acero1); } .p-bots { --pc: var(--carm2); } .p-entreno { --pc: var(--bosq2); } .p-pve { --pc: var(--oro2); }
+.sub-panel { display: flex; flex-direction: column; gap: 10px; }
+.sp-head { display: flex; align-items: center; gap: 10px; }
+.sp-head span { font: 600 20px var(--f-titulo); color: var(--madera0); }
+.sp-nota { font: 9px var(--f-num); color: var(--madera1); text-align: center; margin: 0; }
+.opt-fila { display: flex; flex-direction: column; gap: 4px; }
+.opt-t { font: 10px var(--f-num); color: var(--madera1); text-transform: uppercase; letter-spacing: 1px; }
+.seg { display: flex; border: 3px solid var(--tinta); background: var(--perg0); }
+.seg button { appearance: none; cursor: pointer; flex: 1; min-width: 0; padding: 9px 4px; font: 600 16px var(--f-titulo); color: var(--madera1);
+  background: transparent; border: 0; border-right: 3px solid var(--tinta); }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { color: var(--madera0); background: var(--perg1); }
+.seg button.on { background: var(--noche); color: var(--oro2); text-shadow: 2px 2px 0 var(--tinta); box-shadow: inset 0 -4px 0 var(--oro1); }
+.seg button:disabled { opacity: .35; cursor: default; background: transparent; color: var(--madera1); box-shadow: none; }
+.seg button:focus-visible { outline: 3px solid var(--oro2); outline-offset: -3px; }
+.mapa-ficha { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; padding: 8px; background: var(--perg2); border: 3px solid var(--tinta); }
+.mapa-ficha canvas { width: 76px; height: 76px; image-rendering: pixelated; border: 2px solid var(--tinta); background: var(--noche); }
+.mapa-ficha b { font: 600 17px var(--f-titulo); color: var(--madera0); display: block; }
+.mapa-ficha p { font: 9px var(--f-num); color: var(--madera1); margin: 3px 0 0; line-height: 1.4; }
+.sp-acciones { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+.menu-pie { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; border-top: 3px dashed var(--perg0); padding-top: 10px; }
+
 
 .demo-note{font-size:14px;color:var(--madera1);text-align:center;line-height:1.4}
 .demo-note b{color:var(--carm1)}
@@ -1018,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.1</p>
+        <p class="sub version">LOLA V7.2</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1026,32 +1059,59 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
           <span>Tu nombre</span>
           <input id="in-name" maxlength="14" autocomplete="off" placeholder="Ej: Seba">
         </label>
-        <div class="online-tit">Jugar con amigos (online)</div>
-        <button class="btn gold" id="b-create">Crear sala</button>
-        <div class="join-row">
-          <input id="in-code" maxlength="4" autocomplete="off" placeholder="CÓDIGO" autocapitalize="characters">
-          <button class="btn" id="b-join">Unirse</button>
+        <!-- Seba (13-11, V7.2): menú inicial con pocas puertas. Cada una abre su propio panel con las opciones. -->
+        <div class="puertas" id="puertas">
+          <button class="puerta p-online" data-p="online"><b>Jugar online</b><small>Crea una sala o únete con un código</small></button>
+          <button class="puerta p-bots" data-p="bots"><b>Jugar con bots</b><small>Elige modo, mapa y draft</small></button>
+          <button class="puerta p-entreno" id="b-entreno-h"><b>Arena de entrenamiento</b><small>Prueba héroes contra muñecos</small></button>
+          <button class="puerta p-pve" data-p="pve"><b>Aventura</b><small>Mundo 1: El pueblo saqueado</small></button>
         </div>
-        <div class="online-tit">Contra bots</div>
-        <div class="modos">
-          <button class="btn gold" id="b-1v1">1v1</button>
-          <button class="btn gold" id="b-2v2">2v2</button>
-          <button class="btn gold" id="b-3v3">3v3</button>
-          <button class="btn gold" id="b-practice">Todos contra todos</button>
-          <button class="btn" id="b-entreno">Arena de entrenamiento</button>
-          <button class="btn draft-tg" id="b-draftmodo" aria-pressed="false">Draft: libre</button>
+
+        <div class="sub-panel hidden" id="sp-online">
+          <div class="sp-head"><button class="btn small sp-volver">Volver</button><span>Jugar online</span></div>
+          <button class="btn gold" id="b-create">Crear sala</button>
+          <div class="join-row">
+            <input id="in-code" maxlength="4" autocomplete="off" placeholder="CÓDIGO" autocapitalize="characters">
+            <button class="btn" id="b-join">Unirse</button>
+          </div>
+          <p class="sp-nota">En la sala eliges el modo, el mapa y el draft.</p>
         </div>
-        <div class="pve-box">
-          <button class="btn gold" id="b-pve">PvE · Mundo 1: El pueblo saqueado</button>
+
+        <div class="sub-panel hidden" id="sp-bots">
+          <div class="sp-head"><button class="btn small sp-volver">Volver</button><span>Jugar con bots</span></div>
+          <div class="opt-fila"><span class="opt-t">Modo</span>
+            <div class="seg" id="seg-modo"><button data-v="1v1">1v1</button><button data-v="2v2">2v2</button><button data-v="3v3">3v3</button><button data-v="ffa">Todos</button></div></div>
+          <div class="opt-fila"><span class="opt-t">Mapa</span>
+            <div class="seg" id="seg-mapa"><button data-v="claro">Claro</button><button data-v="volcan">Volcán</button></div></div>
+          <div class="mapa-ficha" id="mapa-ficha"></div>
+          <div class="opt-fila"><span class="opt-t">Draft</span>
+            <div class="seg" id="seg-draft"><button data-v="libre">Libre</button><button data-v="ban">Con baneos</button></div></div>
+          <div class="sp-acciones">
+            <button class="btn gold" id="b-bots-ir">¡A la arena!</button>
+            <button class="btn" id="b-azar" title="Modo y mapa al azar">Sorpréndeme</button>
+          </div>
+        </div>
+
+        <div class="sub-panel hidden" id="sp-pve">
+          <div class="sp-head"><button class="btn small sp-volver">Volver</button><span>Aventura</span></div>
           <div class="pve-opts">
             <label class="field"><span>Aliados bot</span>
               <select id="in-aliados"><option value="0">Ninguno (solo)</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option></select></label>
             <label class="field"><span>Seed (opcional)</span><input id="in-seed" maxlength="9" autocomplete="off" inputmode="numeric" placeholder="Al azar"></label>
           </div>
+          <button class="btn gold" id="b-pve">Comenzar: El pueblo saqueado</button>
         </div>
-        <button class="btn" id="b-coleccion">Colección de héroes</button>
-        <button class="btn" id="b-patch">Patch Notes</button>
-        <button class="btn" id="b-sonido">Sonido: sí</button>
+
+        <div class="menu-pie">
+          <button class="btn small" id="b-coleccion">Colección</button>
+          <button class="btn small" id="b-patch">Patch Notes</button>
+          <button class="btn small" id="b-sonido">Sonido: sí</button>
+        </div>
+        <!-- botones viejos: siguen existiendo (ocultos) porque el menú nuevo los usa por dentro -->
+        <div class="hidden" aria-hidden="true">
+          <button id="b-1v1"></button><button id="b-2v2"></button><button id="b-3v3"></button><button id="b-practice"></button>
+          <button id="b-entreno"></button><button id="b-draftmodo"></button><button id="b-mapa"></button>
+        </div>
         <p class="demo-note solo-pc"><b>Moverse</b> WASD · <b>Apuntar</b> con el mouse · <b>Atacar</b> clic o Espacio<br><b>Habilidades</b> 1 y 2 · <b>Ulti</b> 3 (se llena haciendo daño)<br>El ataque tiene 3 cargas que se recuperan solas.<br><b>1v1 y 2v2</b>: a los 25 s se abren dos círculos neutrales, uno al norte y otro al sur (no son de ningún equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
         <p class="demo-note solo-cel">Gira el celular en horizontal.<br><b>Moverse</b>: arrastra el dedo en la mitad izquierda.<br><b>Atacar</b>: arrastra el botón rojo para apuntar y suelta; tocar sin arrastrar apunta solo, pero gasta 1 de tus 3 cargas.<br><b>Ulti</b> (botón dorado): se llena haciendo daño.<br><b>1v1 y 2v2</b>: a los 25 s se abren dos círculos neutrales, uno al norte y otro al sur (no son de ningún equipo). Los dos círculos empiezan libres: gana el equipo que tenga los dos tomados y 10 kills a la vez (30 en 3v3).</p>
       </div>
@@ -1091,6 +1151,10 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
         <button class="btn small" data-m="3v3">3v3</button>
         <button class="btn small" data-m="entreno">Arena</button>
         <button class="btn small" data-m="ffa">Todos contra todos</button>
+      </div>
+      <div class="sala-modos sala-draft" id="sala-mapa">
+        <button class="btn small" data-mapa="claro">Mapa: Claro</button>
+        <button class="btn small" data-mapa="volcan">Mapa: Volcán</button>
       </div>
       <div class="sala-modos sala-draft" id="sala-draft">
         <button class="btn small" data-d="libre">Draft libre</button>
@@ -1300,6 +1364,25 @@ const CONFIG = {
   RADIO_COPA: 44,
   RADIO_ESCONDITE: 30,
   ARBOLES: [[0, -175], [-250, -70], [250, -90], [-150, 230], [170, 240], [0, 175]],
+  // ---- Mapa «Volcán» (Seba 13-11): un segundo mapa de arena para 1v1 / 2v2 / 3v3, elegible en el menú y la sala.
+  // Misma base del claro del bosque, 20% más amplio, con rocas (terreno sólido: frenan cuerpos y proyectiles, con las mismas
+  // excepciones del muro de Aldor) y lava (no se cruza caminando ni con dash; los proyectiles, el jetpack, los parpadeos,
+  // la 1.ª de Takichi y la vuelta de la estocada de Vatrius sí). Círculos al noroeste y al sureste; jefe neutral al centro.
+  // Coordenadas de una mitad; la otra es el reflejo por el centro (x, y) → (−x, −y). Nombre y números (C).
+  VOLCAN: {
+    radio: 624,   // 520 × 1,2 (el borde es un mar de lava, no bosque)
+    reaparecer: 0.85,   // Seba (13-11): reaparecer más atrás que en el Claro (0,68 del radio) para no calzar con una roca
+    puntos: [[-330, -290, 'N'], [330, 290, 'S']],   // círculos: noroeste y sureste (por dentro siguen siendo N y S)
+    rocas: [[-440, -110, 38], [-200, 75, 34], [-130, -210, 30], [-470, 250, 44], [-40, -440, 40], [170, -190, 30]],   // [x, y, radio]
+    lava: [[-330, 420, -170, 500, 55], [-360, 40, -300, 150, 48]],   // [x1, y1, x2, y2, radio] (cápsulas)
+    arboles: [[0, -210], [-290, -60], [-180, 290]],
+    // Jefe del centro (Seba: «un objetivo al centro que dé un buff»). Pelea con quien lo ataca; si lo alejas, vuelve y se cura.
+    // El equipo que da el último golpe gana el bufo (C: el mismo del Fantasma del modo Líneas, sin escudo).
+    // Seba (13-11): golpea en área (golpe de lava con preparación visible).
+    jefe: { x: 0, y: 0, primera: 60, reaparece: 90, aviso: 15, vida: 1500, dano: 40, cada: 1.6, carga: 0.55, area: 85, alcance: 40, vel: 110, radio: 22,
+      correa: 260, regen: 0.15,
+      bufo: { t: 60, cura: 5, dano: 0.05 } },   // Seba (13-11): +5 de vida por segundo a todo el equipo por 1 min y +5% de daño de todas las fuentes
+  },
 
   // ---- Reglas comunes ----
   REGEN_VIDA: 10,               // por segundo   // Seba (05-11): 2 → 10, pero solo tras 1,5 s sin recibir daño
@@ -1511,6 +1594,16 @@ Object.assign(HEROES, {
     ataque: { tipo: 'melee', rango: 60, arco: 110 },   // (C) cimitarra
     habs: ['tajoKiro', 'pozoArena', 'tormentaArena'],
     pasiva: 'pasoEnFalso',
+  },
+// Seba (13-11): Golagore, gólem berserker infernal (Renegados). Tanque pesado de hacha doble con magma dentro. Números (C) salvo los que fijó Seba.
+  golagore: {
+    casa: 'renegados',
+    nombre: 'Golagore', rol: 'Tanque / berserker', fondo: 'golagore', arma: 'hachaGolagore',
+    desc: 'Gólem berserker del infierno, de roca y armadura con magma dentro. Lento y pesadísimo: embiste, carga un hachazo que aturde y se planta como una fortaleza que devuelve el daño.',
+    vida: 410, dano: 34, recarga: 1.4, ultiCarga: 300, velocidad: 155,   // Seba (13-11): vida 410 y velocidad de Trelgon; (C) daño 34, recarga 1,4, carga de ulti
+    ataque: { tipo: 'melee', rango: 70, arco: 130 },   // (C) hacha doble
+    habs: ['cargaGolagore', 'hachazoGolagore', 'fortalezaGolagore'],
+    pasiva: 'corazaMagma',
   },
 });
 
@@ -1886,6 +1979,17 @@ Object.assign(HABILIDADES, {
                    ancho: 162, confusion: 2.5,   // Seba: 3 básicos potenciados en 10 s (se pueden fallar); tornado 10% menos ancho y 25% más rápido que la Tormenta de Rasho, largo, 50/s, arrastra, al final −33% 1,5 s; (C) largo 380, recarga
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
+  // ---- Golagore (Seba, 13-11; números (C) salvo los que fijó Seba)
+  cargaGolagore:     { nombre: 'Embestida ígnea', glifo: 'cargaGolagore', cd: 12, cdFijo: true, dur: 3.5, vel: 0.2, aturde: 0.5, radio: 70,   // Seba: +20% velocidad, en línea recta sin control, 50 y aturdido 0,5 s; (Seba 13-11) 3,5 s; el golpe sale en un radio al chocar, al terminar o al volver a apretar; (C) radio 70, recarga 12, los muros la terminan, un aturdido la corta sin golpe
+                       desc: (n) => `Cargas envuelto en fuego en línea recta hacia donde apuntas hasta ${fmtN(HABILIDADES.cargaGolagore.dur)} s con +${Math.round(HABILIDADES.cargaGolagore.vel * 100)}% de velocidad, sin poder girar. Al chocar con un enemigo o un muro, al terminar, o si vuelves a apretar, golpeas en un radio ${RADIO(HABILIDADES.cargaGolagore.radio)}: ${n.dano} de daño y aturdido ${fmtN(HABILIDADES.cargaGolagore.aturde)} s. Un aturdido te corta sin golpe.`,
+                       n1: { dano: 50 }, n2: { dano: 50 } },
+  hachazoGolagore:   { nombre: 'Hachazo volcánico', glifo: 'hachazoGolagore', cd: 14, cdFijo: true, alcance: 220, salto: 0.8, radio: 90, centro: 40, aturde: 1.5,   // Seba (13-11) rework: salto corto y pesado que termina en un hachazo: 100 en un radio; al centro 120 y aturdido 1,5 s; (C) alcance 220, 0,8 s en el aire, radio 90, centro 40, recarga 14, inmune al control en el aire
+                       desc: (n) => `Saltas pesadamente hacia un punto a distancia ${DIST(HABILIDADES.hachazoGolagore.alcance)} (${fmtN(HABILIDADES.hachazoGolagore.salto)} s en el aire; todos ven dónde caerás) y caes con un hachazo: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hachazoGolagore.radio)}; los enemigos del centro reciben ${n.centro} y quedan aturdidos ${fmtN(HABILIDADES.hachazoGolagore.aturde)} s. En el aire no te afecta el control.`,
+                       n1: { dano: 100, centro: 120 }, n2: { dano: 100, centro: 120 } },
+  fortalezaGolagore: { nombre: 'Núcleo de magma', glifo: 'fortalezaGolagore', cd: 60, cdFijo: true, ulti: true, canal: 4, radio: 150, lento: 0.5, red: 0.6, mueve: 0.5,   // Seba (13-11): puede moverse al 50% (el radio lo sigue (C))
+                         // Seba: canal hasta 4 s, recast lo corta, −50% en el radio, −60% de daño recibido, explota 50 +50/s y el 100% del daño recibido (sin el −60%) repartido entre los enemigos dentro; (Seba 13-11) quieto y radio fijo; (C) radio 150, recarga, un aturdido o silencio lo hace explotar antes
+                       desc: (n) => `Canalizas hasta ${HABILIDADES.fortalezaGolagore.canal} s caminando al ${Math.round(HABILIDADES.fortalezaGolagore.mueve * 100)}% de velocidad, con el radio a tu alrededor (vuelve a apretar para explotar antes). Los enemigos en un radio ${RADIO(HABILIDADES.fortalezaGolagore.radio)} se frenan ${Math.round(HABILIDADES.fortalezaGolagore.lento * 100)}% y tú recibes ${Math.round(HABILIDADES.fortalezaGolagore.red * 100)}% menos daño. Al terminar, el radio explota: ${n.dano} de daño +${n.porSeg} por segundo canalizado, más todo el daño que recibiste (contado sin la reducción) repartido en partes iguales entre los enemigos dentro (héroes e invocaciones). Si te aturden o silencian, explota en ese momento.`,
+                       n1: { dano: 50, porSeg: 25 }, n2: { dano: 50, porSeg: 25 } },   // Seba (13-11): +50 → +25 por segundo
   // ---- Ora (Seba, 12-11; números (C) salvo los que fijó Seba)
   olaOra:     { nombre: 'Invocar ola', glifo: 'olaOra', cd: 10, cdFijo: true, alcance: 280, largo: 300, ancho: 110, vel: 281,   // Seba (12-11): 33% más lenta (420 → 281)
                 espera: 2, empuje: 40, lentoDur: 3, velDur: 3,   // Seba: 70, −33% 3 s, aliados +25%, arrastra levemente; dos arrastres (dónde nace y hacia dónde corre); (C) alcances, ancho, velocidad, empuje 40, espera 2 s, recarga
@@ -2013,6 +2117,7 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 20, dur: 4, quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 20 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
   pasoEnFalso: { nombre: 'Paso en falso', glifo: 'pasoEnFalso', chance: 0.05, cd: 3, desc: 'Tienes 5% de probabilidad de esquivar por completo un ataque básico enemigo (de héroes o invocaciones). Tras esquivar, 3 s sin poder volver a hacerlo.' },   // Seba (13-11)
   gotasOra: { nombre: 'Gotas suspendidas', glifo: 'gotasOra', cada: 3, cura: 15, radio: 200, desc: 'Cada 3 ataques básicos que aciertan, te curas 15 y curas 15 a un aliado cercano (hasta distancia media).' },   // Seba (12-11): solo un aliado cercano, radio corto a mediano (200)
   juicioDorado: { nombre: 'Juicio Real', glifo: 'juicioDorado', cd: 2.5, radio: 110, dano: 25,   // Seba (12-11): 50 → 25
@@ -2051,6 +2156,7 @@ const UNIDADES = {
   almaErrante: { vel: 0, invulnerable: true },
   totemGaia: { vel: 0, invulnerable: true },
   enemigo:   { vel: 0 },
+  jefeVolcan: { vel: 0 },   // Seba (13-11): jefe del centro del Volcán (lo mueve mapas.js)
 };
 
 // Distancias y radios en palabras para los textos (Seba 09-11: «corta, media, larga» en vez de números)
@@ -2152,6 +2258,7 @@ const GUIAS = {
   impactoRunico: { tipo: 'punto', alcance: 300, r: 70 }, ondaRunica: { tipo: 'propio', r: 200 }, vacio: { tipo: 'punto', alcance: 380, r: 132 },
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
   tajoKiro: { tipo: 'linea', alcance: 128, ancho: 34 }, pozoArena: { tipo: 'propio', r: 126 }, tormentaArena: { tipo: 'propio', r: 30 },
+  cargaGolagore: { tipo: 'linea', alcance: 370, ancho: 40 }, hachazoGolagore: { tipo: 'punto', alcance: 220, r: 90 }, fortalezaGolagore: { tipo: 'propio', r: 150 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -3804,7 +3911,8 @@ function armaRotada(key, idx) {
   if (cacheArma.has(k)) return cacheArma.get(k);
   const def = ARMAS_SPR[key];
   const W = def.rows[0].length;   // Kazaro: su lanza es más larga (15 de ancho)
-  const src = matrizVacia(W, 12);
+  const HA = def.rows.length > 12 ? def.rows.length : 12;   // Golagore: el hacha doble es más alta (17)
+  const src = matrizVacia(W, HA);
   pintar(src, def.rows);
   const S = def.S || 27, C = (S - 1) >> 1;   // Tenebris: la guadaña es más grande (lienzo 31)
   const dst = matrizVacia(S, S);
@@ -3815,7 +3923,7 @@ function armaRotada(key, idx) {
     // rotación inversa
     const sx = Math.round(dx * ca + dy * sa + def.g[0]);
     const sy = Math.round(-dx * sa + dy * ca + def.g[1]);
-    if (sx >= 0 && sx < W && sy >= 0 && sy < 12 && src[sy][sx]) dst[y][x] = src[sy][sx];
+    if (sx >= 0 && sx < W && sy >= 0 && sy < HA && src[sy][sx]) dst[y][x] = src[sy][sx];
   }
   const c = aCanvas(contornear(dst));
   cacheArma.set(k, c);
@@ -5180,6 +5288,177 @@ function legiosGrande(frame) {
   return r;
 }
 
+// Seba (13-11): Golagore — gólem berserker infernal, compacto y pesadísimo: roca oscura con armadura de placas, magma que brilla en las juntas
+// y un núcleo ardiente en el pecho, yelmo con cuernos de fuego y visor encendido, hombreras con púas, puños de roca, taparrabo rojo.
+// Modelo grande (lienzo 32×30) que se dibuja aparte en render; el chico (20×22) es para menús y retratos. Hacha doble de filo fundido.
+Object.assign(CAPAS, {
+  cuerpoGolagore: L({
+    0: '.........y..y.......',
+    1: '.........f..f.......',
+    2: '.........fr.fr......',
+    3: '.....y..k1221R...f..',
+    4: '...f.f..k1111Rfr.fR.',
+    5: '..r221r.knfyyr22222.',
+    6: '..1n1nnnnnRRnn11111R',
+    7: '..nRfRnnnnnnnnnRfRnR',
+    8: '.rnnnnn1nffn1nnnnnn.',
+    9: '.nnRn.nnfyyfn1nnRn1.',
+    10: '.nnfn.nnnffRnn.nfnn.',
+    11: '.RRRR.nRnnnnRn.RRRRR',
+    12: '.n222.rfn1n1nf.2222R',
+    13: 'n1211nrnnynnnrn2n221',
+    14: 'nnnnRnnnnRRnnnnnRnnn',
+    15: '.rnnn.nnneeRn1.nnnnr',
+    16: '.....nnnnRRRnnn.....',
+    17: '....nnnnnRR.nnnR....',
+    18: '....rRfnrRR.nfRR....',
+    19: '....nny1n...1ynR....',
+    20: '....n1nnr...nnnnR...',
+    21: '...r22nn....22rnr...',
+  }),
+});
+Object.assign(APARIENCIA, {
+  golagore: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoGolagore'], ['cuerpoGolagore']], cabeza: [[], []] },
+});
+Object.assign(ARMAS_SPR, {
+  // hacha doble: mango de madera con anillos dorados; dos hojas de roca oscura con el filo fundido (naranja y dorado) y vetas de magma en el centro
+  hachaGolagore: { g: [2, 8], S: 61, rows: [   // Seba (13-11): mango más largo y hojas un poco más anchas
+    '..................ffyyyyyyff...',
+    '................ffy1nnnnnn1yff.',
+    '...............fy11nnnRRnnn11yf',
+    '...............f.r1nnnnnnnn1r.f',
+    '.................r1nnnnnnnn1r..',
+    '..................r1nnnnnn1r...',
+    '...................rnnnnnnr....',
+    '...................RRRffRRR....',
+    'kWWyWWmWWyWWmWWyWWOOyfqqfyOOWWk',
+    '...................RRRffRRR....',
+    '...................rnnnnnnr....',
+    '..................r1nnnnnn1r...',
+    '.................r1nnnnnnnn1r..',
+    '...............f.r1nnnnnnnn1r.f',
+    '...............fy11nnnRRnnn11yf',
+    '................ffy1nnnnnn1yff.',
+    '..................ffyyyyyyff...',
+  ] },
+});
+Object.assign(GLIFOS, {
+  cargaGolagore:     ['.....f...', '....fyf..', 'ff.fyqyf.', '.fyyqqqyf', 'ff.fyqyf.', '....fyf..', '.....f...', '.nnnnnn..', 'nnnnnnnn.'],
+  hachazoGolagore:   ['..ffyff..', '.fy1n1yf.', '..r1n1r..', '...rfr...', '....W....', '...rfr...', '..r1n1r..', '.fy1n1yf.', '..ffyff..'],
+  fortalezaGolagore: ['..fffff..', '.f.....f.', 'f..RRR..f', 'f.RfyfR.f', 'f.RyqyR.f', 'f.RfyfR.f', 'f..RRR..f', '.f.....f.', '..fffff..'],
+  corazaMagma:       ['.nnnnnnn.', 'n1nnfnn1n', 'nnnfyfnnn', 'nnfyqyfnn', 'nnnfyfnnn', '.nnnfnnn.', '..nnnnn..', '...nnn...', '....n....'],
+});
+Object.assign(FONDOS, { golagore: ['n', 'R'] });
+// cuadros: 0 quieto, 1 adelanta la pierna de adelante, 2 adelanta la de atrás
+const GOLAGORE_GRANDE = [   // Seba (13-11): sin antebrazos ni puños — se dibujan en render tomando el hacha a dos manos
+  [
+    '..............y....y............',
+    '..............fy...f............',
+    '..............rfr..fr...........',
+    '.............rr2222rRk.y...y....',
+    '.....y..y...kr122221Rk.f...f....',
+    '....rf.rf...kn111111Rkrfr.rfR...',
+    '...r22221rr.knnkfyyyrr2222222R..',
+    '..r1111111nrkrnRRRRnr122222221R.',
+    '..n1nn11nnnnnnnrRRrnn111111111R.',
+    '..nnRRfRRnnnn1nnnnnnnnnRRfRRnnR.',
+    '..rnnnnnnnn1nnRRRnn1rnnnnnnnnrR.',
+    '.r1nnnnn.nnnnRfyfRnnn.nnnn1nnR..',
+    '.n1nRnnn.n1nRfyqyfRn1nnnnRnn1R..',
+    '.nnnfnn..nnnnRfyfRnnnn.nnfnnnR..',
+    '.rnnRnnr.n1nRnRfRnRn1n.rnnRnnR..',
+    '.rnnnnnr.nnRnnnRnnnRnn..rnnnnnr.',
+    '.........rnfnn1nn1nnfn..........',
+    '.........rrnnnnnnnnnnr..........',
+    '.........rRRRoyyoRRRRr..........',
+    '.........nnnnnRRRnnnnn..........',
+    '.........n1nnReeeRnn1n..........',
+    '........nnnnnRReRRnnnnn.........',
+    '......rn1nnnnRReRRnnnn1nR.......',
+    '......nnnnnnn.ReR.nnnnnnR.......',
+    '......r1RfRnr.R.R.rnRfR1R.......',
+    '......n1nyn1n.....n1nyn1R.......',
+    '......nnnnnnn.....nnnnnnR.......',
+    '.....rnn1nnnr.....rnn1nnnR......',
+    '....n2222nnnn.....n2222nnnR.....',
+    '....rrrrrrrrr.....rrrrrrrrrr....',
+  ],
+  [
+    '..............y....y............',
+    '..............fy...f............',
+    '..............rfr..fr...........',
+    '.............rr2222rRk.y...y....',
+    '.....y..y...kr122221Rk.f...f....',
+    '....rf.rf...kn111111Rkrfr.rfR...',
+    '...r22221rr.knnkfyyyrr2222222R..',
+    '..r1111111nrkrnRRRRnr122222221R.',
+    '..n1nn11nnnnnnnrRRrnn111111111R.',
+    '..nnRRfRRnnnn1nnnnnnnnnRRfRRnnR.',
+    '..rnnnnnnnn1nnRRRnn1rnnnnnnnnrR.',
+    '.r1nnnnn.nnnnRfyfRnnn.nnnn1nnR..',
+    '.n1nRnnn.n1nRfyqyfRn1nnnnRnn1R..',
+    '.nnnfnn..nnnnRfyfRnnnn.nnfnnnR..',
+    '.rnnRnnr.n1nRnRfRnRn1n.rnnRnnR..',
+    '.rnnnnnr.nnRnnnRnnnRnn..rnnnnnr.',
+    '.........rnfnn1nn1nnfn..........',
+    '.........rrnnnnnnnnnnr..........',
+    '.........rRRRoyyoRRRRr..........',
+    '.........nnnnnRRRnnnnn..........',
+    '.........n1nnReeeRnn1n..........',
+    '........nnnnnRReRRnnnnn.........',
+    '......rn1nnnnRReRR.nnnn1nR......',
+    '......nnnnnnn.ReR..rnRfR1R......',
+    '......r1RfRnr.R.R..n1nyn1R......',
+    '......n1nyn1n......nnnnnnR......',
+    '......nnnnnnn......rnn1nnnR.....',
+    '.....rnn1nnnr......n2222nnnR....',
+    '....n2222nnnn......rrrrrrrrrr...',
+    '....rrrrrrrrr...................',
+  ],
+  [
+    '..............y....y............',
+    '..............fy...f............',
+    '..............rfr..fr...........',
+    '.............rr2222rRk.y...y....',
+    '.....y..y...kr122221Rk.f...f....',
+    '....rf.rf...kn111111Rkrfr.rfR...',
+    '...r22221rr.knnkfyyyrr2222222R..',
+    '..r1111111nrkrnRRRRnr122222221R.',
+    '..n1nn11nnnnnnnrRRrnn111111111R.',
+    '..nnRRfRRnnnn1nnnnnnnnnRRfRRnnR.',
+    '..rnnnnnnnn1nnRRRnn1rnnnnnnnnrR.',
+    '.r1nnnnn.nnnnRfyfRnnn.nnnn1nnR..',
+    '.n1nRnnn.n1nRfyqyfRn1nnnnRnn1R..',
+    '.nnnfnn..nnnnRfyfRnnnn.nnfnnnR..',
+    '.rnnRnnr.n1nRnRfRnRn1n.rnnRnnR..',
+    '.rnnnnnr.nnRnnnRnnnRnn..rnnnnnr.',
+    '.........rnfnn1nn1nnfn..........',
+    '.........rrnnnnnnnnnnr..........',
+    '.........rRRRoyyoRRRRr..........',
+    '.........nnnnnRRRnnnnn..........',
+    '.........n1nnReeeRnn1n..........',
+    '........nnnnnRReRRnnnnn.........',
+    '.....rn1nnnn.RReRRnnnn1nR.......',
+    '.....r1RfRnr..ReR.nnnnnnR.......',
+    '.....n1nyn1n..R.R.rnRfR1R.......',
+    '.....nnnnnnn......n1nyn1R.......',
+    '....rnn1nnnr......nnnnnnR.......',
+    '...n2222nnnn......rnn1nnnR......',
+    '...rrrrrrrrr......n2222nnnR.....',
+    '..................rrrrrrrrrr....',
+  ],
+];
+const cacheGolagore = new Map();
+function golagoreGrande(frame) {
+  if (cacheGolagore.has(frame)) return cacheGolagore.get(frame);
+  const m = matrizVacia(32, 30);
+  pintar(m, GOLAGORE_GRANDE[frame]);
+  const der = aCanvas(contornear(m));
+  const r = { der, izq: espejo(der) };
+  cacheGolagore.set(frame, r);
+  return r;
+}
+
 // Seba (11-11): Zeal, mago vampírico — pelo oscuro largo con mechas castañas, cara pálida con ojos rojos, cuello alto y capa roja, camisa blanca con chorrera, levita y pantalón oscuros, botas.
 Object.assign(CAPAS, {
   cuerpoZeal: L({
@@ -5266,7 +5545,6 @@ Object.assign(APARIENCIA, {
 Object.assign(GLIFOS, {
   ascensionElfica: ['....y....', '...yqy...', '..y.l.y..', '.y..l..y.', 'l...l...l', '.l.lll.l.', '..l.l.l..', '....l....', '...lll...'],
 });
-
 // ===== sim.js =====
 // =====================================================================
 //  LOLA — SIMULACIÓN AUTORITATIVA (corre en el anfitrión / modo práctica)
@@ -5360,9 +5638,10 @@ class Game {
 
   // ================================================================ 1v1 / 2v2
   // equipos: { idJugador: 'A' | 'B' }. Gana la partida el primer equipo con RONDAS_PARA_GANAR.
-  startEquipos(equipos) {
+  startEquipos(equipos, mapa = null) {
     if (this.players.size < 2) return false;
     this.modo = 'equipos';
+    this.mapa = mapa === 'volcan' ? 'volcan' : null;   // Seba (13-11): mapa de la arena (Claro o Volcán)
     this.equipos = equipos;
     this.marcador = { A: 0, B: 0 };
     for (const p of this.players.values()) p.colorIdx = equipos[p.id] === 'A' ? 1 : 0;   // azul vs rojo
@@ -5413,6 +5692,8 @@ class Game {
 
   start() {
     if (this.players.size < (this.modo === 'entreno' ? 1 : 2)) return false;
+    if (this.modo !== 'equipos') this.mapa = null;
+    usarMapa(this.mapa);
     for (const p of this.players.values()) {
       p.lives = CONFIG.VIDAS_INICIALES; p.puntos = 0; p.build = nuevaBuild(); p.st = statsDe(p.build); p.ready = false;
     }
@@ -5617,6 +5898,7 @@ class Game {
       p.sincronizar = true;   // el primer input de la partida solo fija los contadores (no dispara ni lanza nada)
     });
     this.projectiles = []; this.units = []; this.zones = []; this.events = [];   // Seba (05-11): el mapa se limpia cada ronda (dagas clavadas, zonas, sellos...)
+    this.iniciarVolcan();   // Seba (13-11): jefe del centro del Volcán
     if (this.modo === 'entreno') this.crearMunecos();
     this.deathOrder = [];
     // 1v1 / 2v2: objetivos norte y sur (se abren a los 25 s)
@@ -5795,6 +6077,7 @@ class Game {
     if (esJugador && target.fx && target.fx.luzMina) amt *= 1 - target.fx.luzMina.red;
     if (esJugador && target.fx && target.fx.danzaCarmesi) amt *= 1 - target.fx.danzaCarmesi.n.red;   // Vatrius: −30% en la ulti   // Jürgen: Lámpara de mina   // Vario: Polvo de estrellas
     if (esJugador && target.fx && target.fx.vendaval && !o.pct) amt *= 1 - target.fx.vendaval.n.red;   // Lei: Ojo del vendaval (Seba 05-11: el daño por % de vida mantiene su efecto)
+    if (esJugador && target.fx && target.fx.canalGolagore) { target.fx.canalGolagore.recibido += amt; amt *= 1 - HABILIDADES.fortalezaGolagore.red; }   // Golagore: Núcleo de magma — guarda el daño crudo (sin el −60%) y recibe 60% menos
     if (esJugador && target.fx && target.fx.manto) amt *= 1 - target.fx.manto.reduce;   // Shai: Manto de luz (todas las fuentes)
     if (esJugador && target.fx && target.fx.juramento && (!o.basico || (src && src.esUnidad))) {   // Legios (Seba 12-11, V6.5): −40% al daño de habilidades e invocaciones; guarda lo recibido para el escudo final
       amt *= 1 - HABILIDADES.escudoJuramento.reduce; target.fx.juramento.rec += amt;
@@ -5803,6 +6086,9 @@ class Game {
     if (amt <= 0) return 0;
 
     const atacante = src ? (src.esUnidad ? this.players.get(src.owner) : src) : null;
+    if (this.vc) {   // Seba (13-11): Volcán — el jefe persigue a quien lo ataca; bendición del jefe (+5% de daño de todas las fuentes)
+      if (atacante) { this.vcAgro(target, atacante); if (this.vcBufo(atacante) && this.teamOf(atacante.id) !== this.teamOf(target.esUnidad ? target.owner : target.id)) amt *= 1 + VC.jefe.bufo.dano; }
+    }
     if (atacante && atacante.fx && atacante.fx.templeAldor && !o.pct) amt *= 1.05;   // Aldor: Temple de enano, +5% de daño
 
     // Escudo de musgo (Trelgon): absorbe el daño antes que la vida (la tormenta lo atraviesa)
@@ -5928,6 +6214,9 @@ class Game {
     if (t.fx.templeAldor && val && CONTROL.has(key)) { val = Object.assign({}, val); if (Number.isFinite(val.t)) val.t *= 0.95; if (key === 'slow' && Number.isFinite(val.mult)) val.mult = 1 - (1 - val.mult) * 0.95; }
     // Un aturdimiento corta la canalización del Sablazo
     // Seba (28-10): aturdimiento y silencio cortan las canalizaciones (Sablazo y Jetpack)
+    if ((key === 'aturdido' || key === 'silence') && t.fx.canalGolagore) this.explotaGolagore(t);   // Golagore (C): aturdido o silencio hacen explotar el Núcleo antes
+    if (key === 'aturdido' && t.fx.cargaGolagore) { delete t.fx.cargaGolagore; this.emit({ k: 'chocaGolagore', x: t.x | 0, y: t.y | 0 }); }   // Golagore (C): un aturdido corta la Embestida (sin golpe)
+    if (t.fx.saltoGol && CONTROL.has(key)) return;   // Golagore (C): en el aire no le afecta el control
     const canal = (key === 'aturdido' || key === 'silence' || key === 'encantado') && (CANALES.find(k => k !== 'embateGiro' && t.fx[k]) || null);
     if (canal) {
       const z = t.fx[canal].zona; if (z) { z.cancelado = true; z.t = 0; }
@@ -6064,6 +6353,7 @@ class Game {
     this.emit({ k: 'poof', x: u.x | 0, y: u.y | 0, c: u.kind === 'muro' ? 'hielo' : undefined });
     if (u.enemigo) { this.alMatarEnemigo(u, killer); return; }
     if (u.kind === 'cucko') { this.alMatarCucko(u, killer); return; }
+    if (u.mapaU) { this.vcMuere(u, killer); return; }
     const own = this.players.get(u.owner);
     if (!own || !matado) return;
     // Cosecha de almas (Nigromante)
@@ -6081,7 +6371,7 @@ class Game {
   }
 
   knock(t, fromX, fromY, force) {
-    if (t.esUnidad && (t.kind === 'torreta' || t.kind === 'torretaBrasas' || t.kind === 'muro' || t.kind === 'golem' || t.kind === 'cucko')) return;
+    if (t.esUnidad && (t.mapaU || t.kind === 'torreta' || t.kind === 'torretaBrasas' || t.kind === 'muro' || t.kind === 'golem' || t.kind === 'cucko')) return;
     if (t.fx && (t.fx.vendaval || t.fx.canalEcosAldor || t.fx.canalFestin)) return;   // Lei: no la mueve nada mientras levita; Aldor: tampoco mientras canaliza la ulti
     const dx = t.x - fromX, dy = t.y - fromY, d = Math.hypot(dx, dy) || 1;
     t.kbx = (t.kbx || 0) + dx / d * force;
@@ -6243,6 +6533,59 @@ class Game {
   // Kiro: usar una habilidad lo revela (y vuelve a esperar 0,75 s en el pozo)
   revelarKiro(p) { p.kiroOculto = 0; if (p.fx.invisible && p.fx.invisible.kiro) { delete p.fx.invisible; this.emit({ k: 'humo', x: p.x | 0, y: p.y | 0, chico: true }); } }
   // Kiro: suma una acumulación (cada una dura 3 s); con 3, aturdido 1 s y se limpian
+  // Golagore: Coraza de magma — alcanzar a 2 o más enemigos con una habilidad da un escudo de 20 por 4 s (no se acumula: se renueva)
+  corazaMagma(p, n) {
+    if (n < 2 || HEROES[p.build?.heroe]?.pasiva !== 'corazaMagma') return;
+    const P = PASIVAS.corazaMagma, e = p.fx.escudo;
+    if (e && e.magma) { e.v = Math.max(e.v, P.escudo); e.max = Math.max(e.max || 0, e.v); e.t = Math.max(e.t, P.dur); }
+    else if (e && e.v > 0) { e.v += P.escudo; e.max = (e.max || 0) + P.escudo; e.t = Math.max(e.t, P.dur); e.magma = true; }
+    else this.aplicarEfecto(p, 'escudo', { t: P.dur, v: P.escudo, max: P.escudo, de: p.id, magma: true });
+    p.magmaQuema = true;   // Seba (13-11): la siguiente habilidad quema
+    this.emit({ k: 'corazaMagma', x: p.x | 0, y: p.y | 0, id: p.id });
+  }
+  quemaMagma(p, e, q) { if (q && e.alive && e.kind !== 'muro') this.aplicarEfecto(e, 'burn', { t: PASIVAS.corazaMagma.quemaDur, dps: PASIVAS.corazaMagma.quema / PASIVAS.corazaMagma.quemaDur, src: p.id, k: 'corazaMagma' }); }
+  enemigosGol(p) { return this.enemigos(p.id, false).filter(e => e.alive && e.kind !== 'muro' && !(e.esUnidad && UNIDADES[e.kind]?.invulnerable)); }
+  // Golagore: golpe de la Embestida en un radio frente a él (al chocar, al terminar o al volver a apretar)
+  golpeEmbestida(p) {
+    const v = p.fx.cargaGolagore; if (!v) return;
+    delete p.fx.cargaGolagore;
+    const H = HABILIDADES.cargaGolagore, c = { x: p.x + Math.cos(v.a) * 16, y: p.y + Math.sin(v.a) * 16 };
+    let n = 0;
+    for (const e of this.enemigosGol(p)) if (dist(e, c) <= H.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) { this.damage(e, v.n.dano, p, { tipo: 'fis', desde: p }); if (e.alive) this.aplicarEfecto(e, 'aturdido', { t: H.aturde }); this.quemaMagma(p, e, v.quema); n++; }
+    p.kbx = p.kby = 0;
+    this.emit({ k: 'impactoGolagore', x: c.x | 0, y: c.y | 0, r: H.radio, a: +v.a.toFixed(2) });
+    this.corazaMagma(p, n);
+  }
+  // Golagore: cae del salto con el hachazo — 100 en el radio; en el centro 120 y aturdido 1,5 s
+  caeSaltoGol(p) {
+    const v = p.fx.saltoGol; if (!v) return;
+    delete p.fx.saltoGol;
+    p.x = v.x1; p.y = v.y1; this.clampWall(p);
+    const H = HABILIDADES.hachazoGolagore; let n = 0;
+    for (const e of this.enemigosGol(p)) {
+      const d = dist(e, p), rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR;
+      if (d > H.radio + rr) continue;
+      if (d <= H.centro + rr * 0.5) { this.damage(e, v.n.centro, p, { tipo: 'fis', desde: p }); if (e.alive) this.aplicarEfecto(e, 'aturdido', { t: H.aturde }); }
+      else this.damage(e, v.n.dano, p, { tipo: 'fis', desde: p });
+      this.quemaMagma(p, e, v.quema);
+      n++;
+    }
+    this.emit({ k: 'hachazoGolagore', x: p.x | 0, y: p.y | 0, r: H.radio, c: H.centro, a: +v.a.toFixed(2) });
+    this.corazaMagma(p, n);
+  }
+  // Golagore: explota el Núcleo de magma — 50 +50 por segundo y todo el daño crudo recibido repartido entre los enemigos dentro
+  explotaGolagore(p) {
+    const c = p.fx.canalGolagore; if (!c) return;
+    delete p.fx.canalGolagore; if (c.zona) { c.zona.cancelado = true; c.zona.t = 0; }
+    c.x = p.x; c.y = p.y;   // Seba (13-11): se mueve con el radio; explota donde está
+    const H = HABILIDADES.fortalezaGolagore, seg = Math.min(H.canal, this.combatTime - c.inicio), base = c.n.dano + c.n.porSeg * seg;
+    const dentro = this.enemigosGol(p).filter(e => dist(e, c) <= H.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR));
+    const extra = dentro.length ? c.recibido / dentro.length : 0;
+    for (const e of dentro) { this.damage(e, base + extra, p, { tipo: 'mag', desde: c }); this.quemaMagma(p, e, c.quema); }
+    const sl = HEROES[p.build.heroe]?.habs.indexOf('fortalezaGolagore'); if (sl >= 0) p.cd[sl + 1] = H.cd;
+    this.emit({ k: 'explotaGolagore', x: c.x | 0, y: c.y | 0, r: H.radio, v: Math.round(base + extra) });
+    this.corazaMagma(p, dentro.length);
+  }
   acumKiro(e, p) {
     const H = HABILIDADES.tajoKiro, now = this.combatTime;
     e.kiroAc = (e.kiroAc || []).filter(t => t > now); e.kiroAc.push(now + H.acumDur);
@@ -6736,8 +7079,11 @@ class Game {
     p.ulti = Math.min(1, p.ulti + cant / p.st.ultiCarga);
   }
   velocidadDe(p) {
+    if (!p.fx.aturdido && p.fx.cargaGolagore) return this.velocidadBase(p) * (1 + HABILIDADES.cargaGolagore.vel);   // Golagore: Embestida +20%
+    if (p.fx.saltoGol) return 0;   // Golagore: en el aire lo mueve el salto
+    if (!p.fx.aturdido && p.fx.canalGolagore) return this.velocidadBase(p) * HABILIDADES.fortalezaGolagore.mueve;   // Golagore (Seba 13-11): camina al 50% en el Núcleo
     if (p.esMuneco) return 0;
-    if (p.fx.aturdido || p.fx.empujeAldor || p.fx.dashKiro || canalizando(p.fx) || p.fx.canalLluvia || p.fx.jetpack || p.fx.saltoLanza || p.fx.saltoPatada || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval) return 0;   // Lei: quieta en el aire
+    if (p.fx.aturdido || p.fx.empujeAldor || p.fx.dashKiro || p.fx.saltoGol || canalizando(p.fx) || p.fx.canalLluvia || p.fx.jetpack || p.fx.saltoLanza || p.fx.saltoPatada || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval) return 0;   // Lei: quieta en el aire
     if (p.build && HEROES[p.build.heroe]?.pasiva === 'pasoSigiloso' && this.combatTime - (p.ultimoDano ?? -99) >= 3) return this.velocidadBase(p) * 1.1;   // Takichi
     return this.velocidadBase(p);
   }
@@ -6780,7 +7126,7 @@ class Game {
 
   basicAttack(p, ang = null, dd = null) {
     if (p.esMuneco) return;
-    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
+    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
     const at = p.st.ataque;
     p.cd[0] = CONFIG.CADENCIA;
     p.cargas = Math.max(0, p.cargas - 1);
@@ -7271,6 +7617,9 @@ class Game {
     if (p.fx.encantado) return;   // Vario: encantado no usa habilidades
     if (p.fx.polvo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'EN EL POLVO', id: p.id }); return; }   // Vario: con el polvo no usa otras habilidades
     if (key === 'patadaFenix' && p.fx.canalPatada) { this.soltarPatada(p); return; }   // Ash: segunda apretada = saltar
+    if (key === 'cargaGolagore' && p.fx.cargaGolagore) { if (p.fx.cargaGolagore.edad >= 0.2) this.golpeEmbestida(p); return; }   // Golagore (Seba 13-11): segunda apretada = golpe anticipado
+    if (key === 'fortalezaGolagore' && p.fx.canalGolagore) { if (this.combatTime - p.fx.canalGolagore.inicio >= 0.3) this.explotaGolagore(p); return; }   // Golagore: segunda apretada = explotar antes
+    if (p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol) return;   // Golagore: embistiendo, saltando o en el Núcleo no usa otras habilidades
     if (key === 'estocada' && p.vueltaVat && this.combatTime < p.vueltaVat.hasta) {   // Vatrius: segunda apretada = estocada de regreso
       if (!p.fx.aturdido && !p.fx.silence && !p.fx.estocadaV && !canalizando(p.fx)) { const v = p.vueltaVat; p.vueltaVat = null; this.lanzarEstocada(p, v.x, v.y, v.n.dano / 2, v.n); }
       return;
@@ -7677,6 +8026,34 @@ class Game {
         this.emit({ k: 'tajoKiro', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), paso });
         if (paso < 3) { p.kiroPaso = paso; p.kiroVence = this.combatTime + T + h.ventana; p.cd[slot + 1] = T + 0.12; }
         else { p.kiroPaso = 0; p.kiroVence = 0; }
+        break;
+      }
+      case 'cargaGolagore': {
+        const { a } = this.aim(p, 370);
+        p.facing = a; p.disparo = null;
+        this.aplicarEfecto(p, 'cargaGolagore', { t: h.dur + 1, a, n, px: p.x, py: p.y, edad: 0, quema: !!p.magmaQuema }); p.magmaQuema = false;   // la duración la cuenta edad
+        this.emit({ k: 'cargaGolagore', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
+        break;
+      }
+      case 'hachazoGolagore': {   // Seba (13-11): salto pesado que termina en un hachazo en radio
+        const { a, t } = this.aim(p, h.alcance);
+        const d = this._apunte ? this.distApunte(h.alcance) : t ? Math.min(h.alcance, Math.max(0, dist(t, p) - 10)) : h.alcance;
+        const fin = { x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d }; this.clampWall(fin);
+        p.facing = a; p.disparo = null;
+        this.aplicarEfecto(p, 'saltoGol', { t: h.salto + 1, T: h.salto, e: 0, a, n, x0: p.x, y0: p.y, x1: fin.x, y1: fin.y, quema: !!p.magmaQuema }); p.magmaQuema = false;
+        this.zones.push({ id: this.nextId++, kind: 'marcaSaltoGol', x: fin.x, y: fin.y, r: h.radio, w: h.centro, t: h.salto, total: h.salto, owner: p.id });
+        this.emit({ k: 'saltaGolagore', x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'fortalezaGolagore': {
+        const c = { x: p.x, y: p.y };
+        const zona = { id: this.nextId++, kind: 'nucleoGolagore', x: c.x, y: c.y, r: h.radio, t: h.canal, total: h.canal, owner: p.id, sigue: p,
+          tick: (z) => { for (const e of this.enemigos(p.id, false)) if (e.alive && e.kind !== 'muro' && dist(e, z) <= h.radio) this.aplicarEfecto(e, 'slow', { t: 0.3, mult: 1 - h.lento, k: 'nucleoGolagore' }); },
+          fin: (z) => { if (!z.cancelado && p.fx.canalGolagore) this.explotaGolagore(p); } };
+        this.zones.push(zona);
+        this.aplicarEfecto(p, 'canalGolagore', { t: h.canal + 0.3, n, zona, inicio: this.combatTime, recibido: 0, x: c.x, y: c.y, quema: !!p.magmaQuema }); p.magmaQuema = false;
+        p.cd[slot + 1] = h.cd + h.canal;
+        this.emit({ k: 'nucleoGolagore', x: c.x | 0, y: c.y | 0, r: h.radio });
         break;
       }
       case 'pozoArena': {
@@ -8583,7 +8960,7 @@ class Game {
       u.vx = Math.cos(va) * vel; u.vy = Math.sin(va) * vel;
       const sx = u.vx * dt, sy = u.vy * dt;
       // Seba (09-11): el muro de Aldor la frena como el borde del mapa: la primera vez se da vuelta; la segunda, desaparece
-      const choqueM = this.units.some(m => m.alive && m.bloqueaProy) && this.cruzaRoca(u.x, u.y, u.x + sx, u.y + sy);
+      const choqueM = (this.units.some(m => m.alive && m.bloqueaProy) || ROCAS_MAPA.length > 0) && this.cruzaRoca(u.x, u.y, u.x + sx, u.y + sy);
       if (choqueM) {
         if (!u.vuelve) { u.vuelve = true; u.vx = -u.vx; u.vy = -u.vy; u.recorrido = 0; u.facing += Math.PI; this.emit({ k: 'boom', x: choqueM.x | 0, y: choqueM.y | 0, r: 12, c: 'magia' }); }
         else { u.alive = false; this.emit({ k: 'poof', x: u.x | 0, y: u.y | 0, c: 'magia' }); }
@@ -8778,7 +9155,7 @@ class Game {
       if (u.t >= u.dur) { u.alive = false; this.emit({ k: 'poof', x: u.x | 0, y: u.y | 0, c: 'magia' }); }
     }
     for (const u of this.units) {
-      if (!u.alive || u.enemigo || u.kind === 'orbeVida' || u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'nubeTormenta' || u.kind === 'clon' || u.kind === 'tela' || u.kind === 'lanza' || u.kind === 'arenaEstepa' || u.kind === 'muroRoca' || u.kind === 'almaErrante' || u.kind === 'totemGaia' || u.kind === 'torretaBrasas') continue;
+      if (!u.alive || u.enemigo || u.mapaU || u.kind === 'orbeVida' || u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'nubeTormenta' || u.kind === 'clon' || u.kind === 'tela' || u.kind === 'lanza' || u.kind === 'arenaEstepa' || u.kind === 'muroRoca' || u.kind === 'almaErrante' || u.kind === 'totemGaia' || u.kind === 'torretaBrasas') continue;
       const d = UNIDADES[u.kind];
       const own = this.players.get(u.owner);
       if (u.kind === 'cucko') { this.tickEfectos(u, dt); continue; }   // se mueve en updateCucko
@@ -8890,7 +9267,7 @@ class Game {
         if (p.respawn <= 0) {
           p.respawn = 0;
           const lado = this.teamOf(p.id) === 'A' ? -1 : 1;
-          p.x = lado * CONFIG.RADIO_ARENA * 0.68; p.y = (Math.random() - 0.5) * 120;
+          p.x = lado * CONFIG.RADIO_ARENA * (MAPA_ACTUAL === 'volcan' ? CONFIG.VOLCAN.reaparecer : 0.68); p.y = (Math.random() - 0.5) * 120;
           this.clampWall(p);
           p.alive = true; p.hp = p.st.vidaMax; p.cargas = cargasMax(p); p.fx = { renacer: { t: CONFIG.INVULNERABLE_REAPARECER } }; p.kbx = p.kby = 0;
           p.disparo = null; p.seen = p.input.s.slice(); p.seenD = p.input.d;
@@ -8927,6 +9304,7 @@ class Game {
         if (dd > CONFIG.RADIO_JUGADOR * 2 + 4) { mx = dx / dd * (1 - p.fx.encantado.lento); my = dy / dd * (1 - p.fx.encantado.lento); } else { mx = 0; my = 0; }
       }
       if (p.fx.confusoKiro) { mx = -mx; my = -my; }   // Kiro: confundido, los controles van al revés
+      if (p.fx.cargaGolagore && !p.fx.aturdido) { mx = Math.cos(p.fx.cargaGolagore.a); my = Math.sin(p.fx.cargaGolagore.a); }   // Golagore: la Embestida va recta, sin control
       if (Math.hypot(mx, my) > 0.1) { p.moveX = mx; p.moveY = my; }
       const v = this.velocidadDe(p);
       const x0 = p.x, y0 = p.y;
@@ -9203,6 +9581,21 @@ class Game {
           this.emit({ k: 'cortaKiro', x: e.x | 0, y: e.y | 0, a: +v.a.toFixed(2) });
         }
         if (choca) { delete p.fx.dashKiro; this.emit({ k: 'chocaKiro', x: p.x | 0, y: p.y | 0 }); }
+      }
+      if (p.fx.cargaGolagore) {   // Golagore: Embestida — al chocar con un enemigo o un muro, o al terminar, golpea en un radio
+        const v = p.fx.cargaGolagore, H = HABILIDADES.cargaGolagore, ca = Math.cos(v.a), sa = Math.sin(v.a), R = CONFIG.RADIO_JUGADOR;
+        const movio = Math.hypot(p.x - v.px, p.y - v.py), esperado = this.velocidadDe(p) * dt; v.px = p.x; v.py = p.y; v.edad += dt;
+        let fin = v.edad >= H.dur || this.cruzaRoca(p.x, p.y, p.x + ca * (R + 8), p.y + sa * (R + 8)) || (v.edad > 0.15 && movio < esperado * 0.3);
+        if (!fin) for (const e of this.enemigosGol(p)) {
+          const rr = e.esUnidad ? 10 : R, dx = e.x - p.x, dy = e.y - p.y;
+          if (Math.hypot(dx, dy) <= R + rr + 8 && dx * ca + dy * sa >= -4) { fin = true; break; }
+        }
+        if (fin) this.golpeEmbestida(p);
+      }
+      if (p.fx.saltoGol) {   // Golagore: salto pesado (sube y baja en arco; avanza parejo)
+        const v = p.fx.saltoGol; v.e += dt;
+        const k = Math.min(1, v.e / v.T); p.x = v.x0 + (v.x1 - v.x0) * k; p.y = v.y0 + (v.y1 - v.y0) * k; p.kbx = p.kby = 0;
+        if (k >= 1) this.caeSaltoGol(p);
       }
       if (p.fx.olaMarca && p.fx.olaMarca.t <= dt * 1.5) this.lanzarOla(p, null);   // Ora: sin 2.º arrastre, la ola corre alejándose de ella
       // Legios: Carga de caballería (sube la etapa por segundo) y Por el Rey (aura que lo acompaña)
@@ -9543,6 +9936,7 @@ class Game {
 
     // Círculo central (PvP): un equipo solo dentro por 5 s llena la ulti de todo su equipo
     if (this.modo === 'equipos') this.updateObjetivos(dt);
+    if (this.vc) this.updateVolcan(dt);
     // Avisos y bombas en el aire (en PvE los maneja updateEnemigos)
     for (const z of this.zones) {
       z.t -= dt;
@@ -9829,7 +10223,8 @@ class Game {
         fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
         fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0,
         fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0,
-        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0]);   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
+        (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0]);   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -9840,6 +10235,7 @@ class Game {
       pr: this.projectiles.map(q => [q.id, Math.round(q.x), Math.round(q.y), q.spr, q.colorIdx, +Math.atan2(q.vy, q.vx).toFixed(2), q.owner]),
       z: this.zones.map(z => [z.id, Math.round(z.x), Math.round(z.y), z.r, z.kind, +(1 - z.t / z.total).toFixed(2), +(z.a || 0).toFixed(2), +(z.w || 0).toFixed(2), Math.round(z.ox || 0), Math.round(z.oy || 0), z.owner || 0, +(z.oculto || 0).toFixed(2)]),
       pv: this.modo === 'pve' && this.pve ? this.pveSnap() : null,
+      vc: this.vc ? this.vcSnap() : null,
       zo: this.objetivos ? { ab: Math.max(0, Math.ceil(CONFIG.OBJETIVOS.apertura - this.combatTime)), o: this.objetivos.map(o => [o.x, o.y, this.colorDeEquipo(o.dueno), this.colorDeEquipo(o.equipo), +(o.prog / CONFIG.OBJETIVOS.captura).toFixed(2), o.disputado ? 1 : 0, o.dueno, o.lado]), ck: !CONFIG.CUCKO.activo ? 0 : this.cucko ? -1 : Math.max(0, Math.ceil(this.cuckoT || 0)) } : null,
       ev: events,
     };
@@ -9848,7 +10244,7 @@ class Game {
   meta() {
     this.metaDirty = false;
     return {
-      t: 'm', phase: this.phase, round: this.round, hostId: this.hostId, timer: this.timer, modo: this.modo, pausa: !!this.pausa,
+      t: 'm', phase: this.phase, round: this.round, hostId: this.hostId, timer: this.timer, modo: this.modo, mapa: this.mapa || null, pausa: !!this.pausa,
       draft: this.draft ? { turnos: this.draft.turnos, paso: this.draft.paso } : null, bans: this.bans || [],
       equipos: this.modo === 'equipos' ? this.equipos : null, marcador: this.marcador || null, killsMeta: this.killsMeta(), equipoGanador: this.equipoGanador || null,
       pve: this.modo === 'pve' && this.pve ? this.pveMeta() : null,
@@ -10081,6 +10477,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'tajoKiro': si = d < 200; break;
       case 'pozoArena': si = d < 120; break;
       case 'tormentaArena': si = d < 90 && !target.esUnidad; break;
+      case 'cargaGolagore': si = d < 300 && d > 60; break;
+      case 'hachazoGolagore': si = d < 230 && d > 30; break;
+      case 'fortalezaGolagore': si = d < 110 && !target.esUnidad; break;
       case 'olaOra': si = d < 320; break;
       case 'burbujaOra': si = d < 360; break;
       case 'geiserOra': si = d < 150 && !target.esUnidad; break;
@@ -10665,6 +11064,171 @@ Object.assign(Game.prototype, {
     const pv = this.pve, m = this.mundoPve();
     return { mundo: m.nombre, mapa: m.mapa, nivel: pv.nivel, nombreNivel: this.nivelPve().nombre, niveles: m.niveles.map(n => n.nombre),
       seed: pv.seed, victoria: pv.victoria, reinicios: pv.reinicios };
+  },
+});
+
+// ===== mapas.js =====
+// =====================================================================
+//  LOLA — MAPAS DE LA ARENA (Seba 13-11)
+//  El Claro (el de siempre) y el Volcán: 20% más amplio, con rocas que
+//  frenan todo, lava que no se cruza caminando, círculos al noroeste y
+//  sureste y un jefe neutral al centro que da un bufo al equipo.
+// =====================================================================
+
+const VC = CONFIG.VOLCAN;
+const vcEsp = (a) => [-a[0], -a[1], ...a.slice(2)];
+const MAPA_CLARO = { radio: CONFIG.RADIO_ARENA, arboles: CONFIG.ARBOLES, puntos: CONFIG.OBJETIVOS.puntos };
+const VC_ARBOLES = VC.arboles.flatMap(a => [a, vcEsp(a)]);
+const VC_ROCAS = VC.rocas.flatMap(r => [r, vcEsp(r)]);
+const VC_LAVA = VC.lava.flatMap(l => [l, [-l[0], -l[1], -l[2], -l[3], l[4]]]);
+const NOMBRE_MAPA = { claro: 'Claro', volcan: 'Volcán' };
+let MAPA_ACTUAL = null, ROCAS_MAPA = [], LAVA_MAPA = [];
+
+// El mapa activo cambia el radio de la arena, los árboles, los círculos, las rocas y la lava (simulación, bots y dibujo)
+function usarMapa(m) {
+  MAPA_ACTUAL = m === 'volcan' ? 'volcan' : null;
+  const v = MAPA_ACTUAL === 'volcan';
+  CONFIG.RADIO_ARENA = v ? VC.radio : MAPA_CLARO.radio;
+  CONFIG.ARBOLES = v ? VC_ARBOLES : MAPA_CLARO.arboles;
+  CONFIG.OBJETIVOS.puntos = v ? VC.puntos : MAPA_CLARO.puntos;
+  ROCAS_MAPA = v ? VC_ROCAS : [];
+  LAVA_MAPA = v ? VC_LAVA : [];
+}
+
+// ¿El segmento a→b toca una roca del mapa? Devuelve el primer punto de choque o null
+function vcCruzaRoca(ax, ay, bx, by) {
+  let mejor = null, tm = 2;
+  const dx = bx - ax, dy = by - ay, A = dx * dx + dy * dy;
+  for (const [cx, cy, r] of ROCAS_MAPA) {
+    const fx = ax - cx, fy = ay - cy, C = fx * fx + fy * fy - r * r;
+    if (C <= 0) { if (0 < tm) { tm = 0; mejor = { x: ax, y: ay }; } continue; }   // ya está dentro
+    if (A < 1e-9) continue;
+    const B = 2 * (fx * dx + fy * dy), D = B * B - 4 * A * C;
+    if (D < 0) continue;
+    const t = (-B - Math.sqrt(D)) / (2 * A);
+    if (t >= 0 && t <= 1 && t < tm) { tm = t; mejor = { x: ax + dx * t, y: ay + dy * t }; }
+  }
+  return mejor;
+}
+// Saca un cuerpo de las rocas y de la lava hacia el borde más cercano
+function vcEmpujar(e, rad) {
+  for (const [cx, cy, r] of ROCAS_MAPA) {
+    const dx = e.x - cx, dy = e.y - cy, d = Math.hypot(dx, dy), R = r + rad;
+    if (d >= R) continue;
+    if (d > 0.01) { e.x = cx + dx / d * R; e.y = cy + dy / d * R; } else e.x = cx + R;
+  }
+  for (const [x1, y1, x2, y2, r] of LAVA_MAPA) {
+    const sx = x2 - x1, sy = y2 - y1, L = sx * sx + sy * sy;
+    const t = L ? Math.max(0, Math.min(1, ((e.x - x1) * sx + (e.y - y1) * sy) / L)) : 0;
+    const px = x1 + sx * t, py = y1 + sy * t, dx = e.x - px, dy = e.y - py, d = Math.hypot(dx, dy), R = r + rad;
+    if (d >= R) continue;
+    if (d > 0.01) { e.x = px + dx / d * R; e.y = py + dy / d * R; } else { e.x = px - sy / Math.sqrt(L || 1) * R; e.y = py + sx / Math.sqrt(L || 1) * R; }
+  }
+}
+
+// Las rocas del mapa se suman a las del muro de Aldor: frenan cuerpos, golpes cuerpo a cuerpo, rebotes, dashes y proyectiles
+// (con las mismas excepciones). La lava solo frena cuerpos: los mismos casos que ya no chocan con rocas (jetpack, saltos,
+// la vuelta de la estocada de Vatrius) tampoco chocan con la lava; los parpadeos y teletransportes caen al borde más cercano.
+{
+  const P = Game.prototype, cruza = P.cruzaRoca, chocar = P.chocarRocas, frena = P.frenaMuroAldor;
+  P.cruzaRoca = function (ax, ay, bx, by) { return cruza.call(this, ax, ay, bx, by) || (ROCAS_MAPA.length ? vcCruzaRoca(ax, ay, bx, by) : null); };
+  P.chocarRocas = function (e, rad) { chocar.call(this, e, rad); if (ROCAS_MAPA.length || LAVA_MAPA.length) { vcEmpujar(e, rad); this.clampWall(e); } };
+  P.frenaMuroAldor = function (pr, bx, by) {
+    const r = frena.call(this, pr, bx, by);
+    if (r || !ROCAS_MAPA.length) return r;
+    if (!pr.basico) {   // Seba (13-11): todos los básicos a distancia se frenan en las rocas; el resto, como el muro de Aldor
+      if (pr.deUlti && pr.spr !== 'brasa') return null;
+      if (PASA_MURO_ALDOR.has(pr.spr)) return null;
+    }
+    return vcCruzaRoca(pr.x, pr.y, bx, by);
+  };
+}
+
+Object.assign(Game.prototype, {
+  // ---------------------------------------------------------------- jefe del centro
+  iniciarVolcan() {
+    this.vc = this.mapa === 'volcan' ? { t: VC.jefe.primera, avisado: false, jefe: null, agro: null, bufo: { A: 0, B: 0 } } : null;
+  },
+  updateVolcan(dt) {
+    const V = this.vc;
+    if (!V) return;
+    const J = VC.jefe;
+    // Bendición del volcán: +5 de vida por segundo a todo el equipo mientras dure
+    for (const p of this.players.values()) if (p.alive && this.vcBufo(p)) this.heal(p, J.bufo.cura * dt);
+    if (!V.jefe || !V.jefe.alive) {
+      V.jefe = null;
+      V.t -= dt;
+      if (!V.avisado && V.t <= J.aviso) { V.avisado = true; this.emit({ k: 'anuncio', s: `EL JEFE DEL VOLCÁN APARECE EN ${J.aviso} S`, chico: true }); }
+      if (V.t <= 0) {
+        V.avisado = false; V.agro = null;
+        V.jefe = { id: this.nextId++, kind: 'jefeVolcan', esUnidad: true, mapaU: true, alive: true, owner: 'N', neutral: true, x: J.x, y: J.y,
+          hp: J.vida, maxHp: J.vida, radioU: J.radio, facing: Math.PI / 2, fx: {}, kbx: 0, kby: 0, t: 0, dur: 0, cd: 0, carga: 0, elite: 1, tipo: 'jefe' };
+        this.units.push(V.jefe);
+        this.emit({ k: 'anuncio', s: '¡EL JEFE DEL VOLCÁN HA APARECIDO!' });
+      }
+      return;
+    }
+    const u = V.jefe;
+    this.tickEfectos(u, dt);
+    if (!u.alive) return;
+    u.cd -= dt;
+    // Golpe de lava: se prepara (u.carga, se ve en el dibujo) y golpea en área delante suyo
+    if (u.carga > 0) {
+      u.carga -= dt;
+      if (u.carga <= 0) {
+        u.carga = 0;
+        const gx = u.x + Math.cos(u.facing) * 30, gy = u.y + Math.sin(u.facing) * 30;
+        this.emit({ k: 'boom', x: gx | 0, y: gy | 0, r: J.area });
+        this.emit({ k: 'golpeLava', x: gx | 0, y: gy | 0, r: J.area });
+        for (const q of this.players.values()) if (q.alive && Math.hypot(q.x - gx, q.y - gy) <= J.area + CONFIG.RADIO_JUGADOR) this.damage(q, J.dano, u, { tipo: 'fis' });
+        for (const q of this.units) if (q.alive && q.esUnidad && !q.mapaU && q.kind !== 'muro' && !(UNIDADES[q.kind]?.invulnerable) && Math.hypot(q.x - gx, q.y - gy) <= J.area + 10) this.damage(q, J.dano, u, { tipo: 'fis' });
+      }
+      return;
+    }
+    if (V.agro && (!V.agro.alive || Math.hypot(V.agro.x - J.x, V.agro.y - J.y) > J.correa)) V.agro = null;
+    const quieto = u.fx.aturdido || u.fx.encantado;
+    const vel = quieto ? 0 : J.vel * (u.fx.slow ? u.fx.slow.mult : 1);
+    let vx = 0, vy = 0;
+    const obj = V.agro;
+    if (obj) {
+      const d = dist(obj, u), alcance = J.alcance + CONFIG.RADIO_JUGADOR + J.radio;
+      u.facing = Math.atan2(obj.y - u.y, obj.x - u.x);
+      if (d > alcance - 4) { vx = (obj.x - u.x) / d * vel; vy = (obj.y - u.y) / d * vel; }
+      else if (u.cd <= 0 && !quieto) { u.cd = J.cada; u.carga = J.carga; }   // levanta los puños
+    } else {
+      const d = Math.hypot(J.x - u.x, J.y - u.y);   // vuelve a su lugar y se cura
+      if (d > 6) { const v = J.vel * 1.4; vx = (J.x - u.x) / d * v; vy = (J.y - u.y) / d * v; u.facing = Math.atan2(vy, vx); }
+      if (u.hp < u.maxHp) u.hp = Math.min(u.maxHp, u.hp + u.maxHp * J.regen * dt);
+    }
+    u.x += vx * dt; u.y += vy * dt;
+    vcEmpujar(u, J.radio);
+  },
+  // Al recibir daño de un héroe (o de su invocación), el jefe se le tira encima
+  vcAgro(target, atacante) {
+    if (this.vc && target === this.vc.jefe && atacante && !atacante.esUnidad && (!this.vc.agro || !this.vc.agro.alive)) this.vc.agro = atacante;
+  },
+  vcBufo(p) { return !!(this.vc && p && !p.esUnidad && this.vc.bufo[this.teamOf(p.id)] > this.combatTime); },
+  vcMuere(u, killer) {
+    const V = this.vc;
+    if (!V || u !== V.jefe) return;
+    V.t = VC.jefe.reaparece; V.agro = null;
+    this.emit({ k: 'boom', x: u.x | 0, y: u.y | 0, r: 50 });
+    const eq = killer ? this.teamOf(killer.esUnidad ? killer.owner : killer.id) : null;
+    if (eq !== 'A' && eq !== 'B') return;
+    const B = VC.jefe.bufo;
+    V.bufo[eq] = this.combatTime + B.t;
+    this.emit({ k: 'anuncio', s: `¡${eq === 'A' ? 'AZUL' : 'ROJO'} DERROTA AL JEFE! +${B.cura} VIDA/S Y +${Math.round(B.dano * 100)}% DAÑO` });
+    for (const q of this.players.values()) {
+      if (!q.alive || this.teamOf(q.id) !== eq) continue;
+      this.emit({ k: 'ring', x: q.x | 0, y: q.y | 0, r: 34, c: 'magia' });
+      this.emit({ k: 'txt', x: q.x | 0, y: q.y | 0, s: 'BENDICIÓN DEL VOLCÁN', id: q.id });
+    }
+  },
+  vcSnap() {
+    const V = this.vc;
+    if (!V) return null;
+    const bf = (eq) => Math.max(0, Math.ceil(V.bufo[eq] - this.combatTime));
+    return { t: V.jefe ? 0 : Math.ceil(V.t), bf: [bf('A'), bf('B')] };
   },
 });
 
@@ -11499,7 +12063,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -11512,7 +12076,7 @@ class StateBuffer {
       return { id: pb[0], x: q ? lerp(q[1], pb[1], k) : pb[1], y: q ? lerp(q[2], pb[2], k) : pb[2], spr: pb[3], c: pb[4], a: pb[5], owner: pb[6] };
     });
     const zones = (b.s.z || []).map(z => ({ id: z[0], x: z[1], y: z[2], r: z[3], kind: z[4], prog: z[5], a: z[6], w: z[7], ox: z[8], oy: z[9], owner: z[10] || 0, oculto: z[11] || 0 }));
-    return { players, units, projs, zones, ar: lerp(a.s.ar, b.s.ar, k), zo: b.s.zo || null };
+    return { players, units, projs, zones, ar: lerp(a.s.ar, b.s.ar, k), vc: b.s.vc || null, zo: b.s.zo || null };
   }
 }
 
@@ -11745,9 +12309,10 @@ class Renderer {
     const mapa = this.mapa || 'bosque';
     if (this.arena && this.arenaMapa === mapa) return;
     this.arenaMapa = mapa;
-    this.arena = mapa === 'pueblo' ? generarPueblo() : generarArena();
+    this.arena = mapa === 'pueblo' ? generarPueblo() : mapa === 'volcan' ? generarVolcan() : generarArena();   // Seba (13-11): Volcán
     this.copa = CONFIG.ARBOLES.map((_, i) => generarArbol(100 + i));
     this.copaDither = CONFIG.ARBOLES.map((_, i) => generarArbol(100 + i, true));
+    if (mapa === 'volcan') { this.copa = this.copa.map(c => recolorear(c, ARBOL_QUEMADO)); this.copaDither = this.copaDither.map(c => recolorear(c, ARBOL_QUEMADO)); }   // Seba (13-11): árboles en brasas
     this.sombraSpr = spriteSimple(['.nnnnnnnnnn.', 'nnnnnnnnnnnn', '.nnnnnnnnnn.'], {}, false);
   }
 
@@ -11774,7 +12339,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -11785,7 +12350,9 @@ class Renderer {
     if (ev.k === 'slash' && ev.h === 'aldor') { this.aldorCombo = (this.aldorCombo || 0) + 1; f.lado = this.aldorCombo % 2; f.dur = 0.35; }   // Aldor: martillazo pesado
     if (ev.k === 'slash' && ev.h === 'lei') { this.leiCombo = (this.leiCombo || 0) + 1; f.lado = this.leiCombo % 2; f.dur = 0.3; }   // Lei: el abanico barre de un lado y luego del otro
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
-    if (ev.k === 'slash' && ev.id !== undefined) this.swing.set(ev.id, { t: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, T: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, a: ev.a });
+    if (ev.k === 'slash' && ev.h === 'golagore') f.dur = 0.5;   // Golagore: hachazo pesado
+    if (ev.k === 'slash' && ev.id !== undefined && ev.h === 'golagore') this.swing.set(ev.id, { t: 0.42, T: 0.42, a: ev.a });
+    else if (ev.k === 'slash' && ev.id !== undefined) this.swing.set(ev.id, { t: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, T: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, a: ev.a });
     if (ev.k === 'golemGolpe') { (this.golpesGolem = this.golpesGolem || new Map()).set(ev.id, { t: this.time, x2: ev.x2, y2: ev.y2 }); return; }
     if (ev.k === 'bolt') f.seed = Math.floor(this.time * 1000);
     this.fx.push(f);
@@ -12357,6 +12924,7 @@ class Renderer {
     // Piso
     const A = this.arena;
     g.drawImage(A.canvas, this.ox - A.C, this.oy - A.C);
+    if (this.mapa === 'volcan') this.drawVolcan(view);   // Seba (13-11): lava viva y guarida del jefe
 
     // Llamas de las casas quemadas
     if (A.fuegos) for (const [fx, fy, s] of A.fuegos) {
@@ -12612,6 +13180,25 @@ class Renderer {
         for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + hash(i, 2, z.id)) % 1, b = hash(i, 5, z.id) * TAU, d = r * 0.8 * hash(i, 9, z.id), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9);
           if (ph < 0.6) { const s = 1 + Math.round(ph * 4); g.fillStyle = PALETA.tinta; g.fillRect(x - (s >> 1) - 1, y - (s >> 1) - 1, s + 2, s + 2); g.fillStyle = PALETA.carmesi1; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); g.fillStyle = PALETA.carmesi2; g.fillRect(x - (s >> 1), y - (s >> 1), 1, 1); }
           else this.gota(x, y - Math.round((ph - 0.6) * 20), 1 - (ph - 0.6) / 0.4); }
+      } else if (z.kind === 'marcaSaltoGol') {
+        // Golagore: dónde caerá el salto (lo ven todos) — radio del hachazo y el centro que aturde; un anillo se cierra hasta la caída
+        const g = this.g, T = this.time, rc = Math.round((z.w || 40) * ESC), on = Math.floor(T * 10) % 2;
+        g.globalAlpha = 0.3; this.discDither(cx, cy, r, PALETA.carmesi0, 2, 0); g.globalAlpha = 0.45; this.discDither(cx, cy, rc, PALETA.antorcha, 2, 1); g.globalAlpha = 1;
+        this.ring(cx, cy, r, PALETA.tinta, 0.8, 2); this.ring(cx, cy, r, on ? PALETA.antorcha : PALETA.carmesi1, 0.6, 1);
+        this.ring(cx, cy, rc, PALETA.tinta, 1, 2); this.ring(cx, cy, rc, on ? PALETA.oro2 : PALETA.antorcha, 1, 1);
+        const rr = Math.round(r * (1 - z.prog)); if (rr > rc) this.ring(cx, cy, rr, PALETA.oro2, 0.7, 1);
+      } else if (z.kind === 'nucleoGolagore') {
+        // Golagore: Núcleo de magma — el suelo se agrieta en un radio que se llena de magma, grietas que crecen, borde de llamas y pulsos hacia adentro (lo ven todos)
+        const g = this.g, T = this.time, k = z.prog;
+        g.globalAlpha = 0.3 + 0.3 * k; this.discDither(cx, cy, r, PALETA.carmesi0, 2, 0); g.globalAlpha = 0.2 + 0.35 * k; this.discDither(cx, cy, Math.round(r * (0.35 + 0.4 * k)), PALETA.carmesi1, 3, Math.floor(T * 6)); g.globalAlpha = 1;
+        for (let i = 0; i < 9; i++) {
+          const b = i * TAU / 9 + hash(i, 1, z.id) * 0.4, L = r * (0.35 + 0.6 * Math.min(1, k * 1.3)) * (0.75 + hash(i, 2, z.id) * 0.25), x1 = Math.round(cx + Math.cos(b) * L), y1 = Math.round(cy + Math.sin(b) * L);
+          this.linea(cx, cy, x1, y1, PALETA.tinta, 3, i + z.id, 3); this.linea(cx, cy, x1, y1, (i + Math.floor(T * 6)) % 3 ? PALETA.antorcha : PALETA.oro2, 3, i + z.id, 1);
+        }
+        const pu = (T * 2) % 1; this.ring(cx, cy, Math.round(r * (1 - pu)), PALETA.antorcha, 0.45 * (1 - pu) + 0.1, 1);
+        this.ring(cx, cy, r, PALETA.tinta, 1, 3); this.ring(cx, cy, r, Math.floor(T * 8) % 2 ? PALETA.antorcha : PALETA.carmesi1, 1, 1);
+        for (let i = 0; i < 28; i++) { const b = i * TAU / 28 + T * 0.3, h = 2 + Math.round((Math.sin(T * 9 + i * 1.7) + 1) * (1 + k * 2)), x = Math.round(cx + Math.cos(b) * r), y = Math.round(cy + Math.sin(b) * r);
+          g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - h - 1, 3, h + 2); g.fillStyle = PALETA.antorcha; g.fillRect(x, y - h, 1, h); g.fillStyle = PALETA.oro2; g.fillRect(x, y - h, 1, 1); }
       } else if (z.kind === 'pozoArena') {
         // Kiro: pozo de arena movediza — remolino de arena que gira hacia un centro oscuro, borde de dunas, granos que se hunden (barato: líneas y puntos)
         const g = this.g, T = this.time, C = CHAR;
@@ -13095,8 +13682,9 @@ class Renderer {
       g.globalAlpha = 0.4; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       this.llamasAzules(cx, cy + 4 - Math.round(alturaSalto * 0.5), 3, 8);
     }
-    const esLegios = meta.build.heroe === 'legios' && gigante === 1;   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : 0);
+    const esLegios = meta.build.heroe === 'legios' && gigante === 1;
+    const esGol = meta.build.heroe === 'golagore' && gigante === 1;   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -13306,7 +13894,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios) verArma = false;   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -13359,6 +13947,7 @@ class Renderer {
       }
       this.lanzaLegios(mx, my, la, ext, golpe, p.lc && (p.lc - 1) / 10 >= 3);
     }
+    else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
     if (p.f2 & 134217728) { this.llama(cx - 4, cy + 7, 0.75, 'rojo', 1); this.llama(cx + 4, cy + 7, 0.75, 'rojo', 3); }   // Ash cargando la patada: pies en llamas
@@ -13957,6 +14546,105 @@ class Renderer {
     if (ch < 2) { const [x, y] = B[4]; const sy = y - 2 - ch * 2; this.g.fillStyle = PALETA.tinta; this.g.fillRect(x - 1, sy - 1, 3, 3); this.g.fillStyle = P[2]; this.g.fillRect(x, sy, 1, 1); }
   }
   // n llamas chicas repartidas en un ancho (compatibilidad con los usos de antes)
+  // Golagore: trozo de roca volcánica (contorno, roca oscura, brillo de piedra y una veta de magma)
+  rocaGol(x, y, s = 2, brasa = true) {
+    const g = this.g; x = Math.round(x); y = Math.round(y);
+    g.fillStyle = PALETA.tinta; g.fillRect(x - s - 1, y - s, 2 * s + 2, 2 * s); g.fillRect(x - s, y - s - 1, 2 * s, 2 * s + 2);
+    g.fillStyle = PALETA.noche; g.fillRect(x - s, y - s, 2 * s, 2 * s);
+    g.fillStyle = PALETA.piedra0; g.fillRect(x - s, y - s, Math.max(1, s), 1);
+    if (brasa) { g.fillStyle = PALETA.antorcha; g.fillRect(x + s - 1, y + s - 1, 1, 1); }
+  }
+  // Golagore (Seba 13-11): «la sensación de pesadez es todo» — paso lento con hundimiento y polvo en cada pisada, hacha doble que cuelga
+  // casi hasta el suelo, núcleo del pecho que late y brasas que suben de los hombros. Cada habilidad cambia la pose del hacha.
+  dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, carga = p.gb & 1, salta = p.gb & 2, nucleo = p.gb & 4, dir = izq ? -1 : 1;
+    let fr = 0, bob = 0;
+    if (moviendo && !salta) {
+      const ph = T * (carga ? 7.5 : nucleo ? 2.6 : 4.2), idx = Math.floor(ph) % 4, k = ph % 1;
+      fr = [1, 0, 2, 0][idx];
+      if (fr === 0) {   // pisada: el cuerpo se hunde un píxel y levanta polvo bajo el pie que cae
+        if (k < 0.7) {   // Seba (13-11): sin rebote del cuerpo (mareaba); solo el polvo de la pisada
+          const fx = cx + dir * (idx === 1 ? 6 : -7), fy = cy + 7, e = k / 0.7;
+          g.globalAlpha = 0.75 * (1 - e);
+          for (let i = 0; i < 5; i++) { const d = 3 + e * 7, b = Math.PI + i * Math.PI / 4; this.bolaPixel(Math.round(fx + Math.cos(b) * d), Math.round(fy + Math.sin(b) * d * 0.35), i % 2 ? 2 : 1, i % 2 ? PALETA.piedra1 : PALETA.piedra2); }
+          g.globalAlpha = 1;
+        }
+      }
+    }
+    // Hachazo volcánico (salto): sube y baja en arco pesado, con su sombra en el suelo
+    const ks = salta ? Math.min(1, p.gh / 100) : 0, alto = salta ? Math.round(Math.sin(Math.PI * Math.min(1, ks * 1.05)) * 26) : 0;
+    if (salta) { g.globalAlpha = 0.45; this.discDither(cx, cy + 6, Math.max(4, 10 - Math.round(alto / 5)), PALETA.tinta, 2, 0); g.globalAlpha = 1; }
+    // pose del hacha (ángulo mirando a la derecha; se espeja si mira a la izquierda) y cuánto sube la mano
+    let a = 0.6, atras = false, alzaY = 0;   // Seba (13-11): el hacha no se mece al caminar   // Seba (13-11): a dos manos, cruzada adelante y abajo
+    if (carga) { a = 2.45; atras = true; }
+    if (nucleo) a = 1.45;
+    if (salta) {
+      if (ks < 0.72) { a = -1.62 + Math.sin(T * 30) * 0.03; alzaY = -6; }
+      else { const e = (ks - 0.72) / 0.28; a = -1.62 + 2.5 * e * e; alzaY = Math.round(-6 * (1 - e)); }
+    }
+    if (sw && sw.t > 0 && !carga && !salta && !nucleo) {   // básico de arriba hacia abajo: alza el hacha sobre la cabeza despacio, la sostiene y la deja caer de golpe
+      const t = 1 - Math.max(0, sw.t) / (sw.T || 0.42);
+      if (t < 0.45) { const e = t / 0.45; a = 0.6 + (-1.62 - 0.6) * (1 - (1 - e) * (1 - e)); alzaY = Math.round(-6 * e); }
+      else if (t < 0.55) { a = -1.62 + Math.sin(T * 40) * 0.02; alzaY = -6; }
+      else if (t < 0.75) { const e = (t - 0.55) / 0.2; a = -1.62 + 2.5 * e * e; alzaY = Math.round(-6 * (1 - e)); }
+      else { a = 0.88; bob += 1; }   // el golpe lo hunde
+    }
+    const lx = cx - 17, ly = cy + 8 - 32 - sube + bob - alto;
+    const aa = izq ? Math.PI - a : a;
+    const hx = lx + (izq ? 33 - 25 : 25), hy = ly - bob + 18 + alzaY;   // el hacha no sigue el hundimiento del cuerpo
+    const hacha = armaRotada('hachaGolagore', idxAng(aa));
+    const dibHacha = () => {
+      g.drawImage(hacha, hx - (hacha.width >> 1), hy - (hacha.height >> 1));
+      if (p.gb & 16) { const ca = Math.cos(aa), sa = Math.sin(aa); this.llama(Math.round(hx + ca * 21), Math.round(hy + sa * 21) - 3, 0.8, 'magma', 3.1); this.llama(Math.round(hx + ca * 17), Math.round(hy + sa * 17) - 2, 0.6, 'rojo', 1.3); }   // Coraza de magma: la siguiente habilidad quema — el hacha arde
+    };
+    // Seba (13-11): hacha a dos manos — antebrazos de roca desde los codos hasta dos puños sobre el mango (siguen al hacha en todas las poses)
+    const brazos = (fase) => {   // fase 0: brazo de atrás (detrás del cuerpo); fase 1: su puño y el brazo de adelante con su puño
+      const ca = Math.cos(aa), sa = Math.sin(aa), h1 = { x: Math.round(hx + ca * 3), y: Math.round(hy + sa * 3) }, h2 = { x: Math.round(hx + ca * 9), y: Math.round(hy + sa * 9) };
+      const eB = { x: lx + (izq ? 33 - 5 : 5), y: ly + 16 }, eF = { x: lx + (izq ? 33 - 27 : 27), y: ly + 16 };
+      const brazo = (e, h) => {
+        this.linea(e.x, e.y, h.x, h.y, PALETA.tinta, 0, 0, 7); this.linea(e.x, e.y, h.x, h.y, PALETA.noche, 0, 0, 5);
+        this.linea(e.x, e.y - 2, h.x, h.y - 2, PALETA.piedra0, 0, 0, 1);
+        const mx = Math.round((e.x + h.x) / 2), my = Math.round((e.y + h.y) / 2); g.fillStyle = PALETA.carmesi1; g.fillRect(mx - 1, my, 3, 1); g.fillStyle = PALETA.antorcha; g.fillRect(mx, my, 1, 1);
+      };
+      const puno = (h) => {
+        this.bolaPixel(h.x, h.y, 4, PALETA.tinta); this.bolaPixel(h.x, h.y, 3, PALETA.noche);
+        g.fillStyle = PALETA.piedra1; g.fillRect(h.x - 2, h.y - 2, 3, 1); g.fillStyle = PALETA.piedra0; g.fillRect(h.x - 2, h.y - 1, 1, 2);
+        g.fillStyle = PALETA.carmesi1; g.fillRect(h.x - 1, h.y + 1, 3, 1); g.fillStyle = PALETA.antorcha; g.fillRect(h.x + 1, h.y + 1, 1, 1);
+      };
+      if (fase === 0) brazo(eB, h1); else { puno(h1); brazo(eF, h2); puno(h2); }
+    };
+    if (carga) {   // Embestida: aura de fuego detrás del cuerpo (va antes del cuerpo)
+      g.globalAlpha = 0.35; this.discDither(cx + dir * 6, ly + 16, 16, PALETA.antorcha, 2, Math.floor(T * 10)); g.globalAlpha = 1;
+      for (let i = 0; i < 9; i++) { const ph = (T * 5 + i * 0.11) % 1, y = ly + 4 + i * 3, x = cx - dir * (10 + Math.round(ph * 20)); g.globalAlpha = 1 - ph; g.fillStyle = i % 3 === 0 ? PALETA.oro2 : i % 2 ? PALETA.antorcha : PALETA.carmesi1; g.fillRect(Math.min(x, x + dir * 7), y, 7, 1); }
+      g.globalAlpha = 1;
+    }
+    if (atras) dibHacha();
+    brazos(0);
+    g.drawImage(golagoreGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    // núcleo del pecho que late
+    { const k = (Math.sin(T * 3.2) + 1) / 2, x = lx + (izq ? 33 - 16 : 16), y = ly + 13; g.globalAlpha = 0.35 + 0.45 * k; this.bolaPixel(x, y, 1 + Math.round(k), PALETA.pergamino2); g.globalAlpha = 1; }
+    // brasas que suben de las hombreras
+    for (let i = 0; i < 4; i++) { const ph = (T * 0.8 + i * 0.27) % 1, sx0 = i % 2 ? 7 : 26, x = lx + (izq ? 33 - sx0 : sx0) + Math.round(Math.sin(T * 3 + i) * 1.5), y = ly + 5 - Math.round(ph * 12); g.globalAlpha = 1 - ph; g.fillStyle = ph < 0.4 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, y, 1, 1); }
+    g.globalAlpha = 1;
+    if (!atras) dibHacha();
+    brazos(1);
+    if (carga) {   // Embestida (Seba 13-11: mucho más fuego): llamas por todo el lado del cuerpo que va adelante, del hombro a los pies
+      const fx0 = lx + (izq ? 2 : 31);
+      for (let i = 0; i < 7; i++) this.llama(fx0 + Math.round(Math.sin(T * 9 + i) * 1.5) - dir * (i % 2) * 3, ly + 6 + i * 4, 0.75 + (i % 3) * 0.2, i % 2 ? 'magma' : 'rojo', i * 1.7 + T);
+      this.llamasAzules(lx + (izq ? 33 - 26 : 26), ly + 7, 4, 12, 'magma');
+      for (let i = 0; i < 6; i++) { const ph = (T * 3 + i * 0.19) % 1, x = fx0 + dir * Math.round(2 + ph * 6), y = ly + 8 + ((i * 5) % 22) - Math.round(ph * 8); g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, y, 1, 1); }
+      g.globalAlpha = 1;
+    }
+    if (nucleo) {   // Núcleo de magma: coraza de rocas que giran despacio, aura que late, daño guardado y lo que queda de canal
+      const k = Math.floor(T * 8) % 2;
+      this.ring(cx, cy - 12, 20 + k, PALETA.carmesi1, 0.5, 1); this.ring(cx, cy - 12, 17, PALETA.antorcha, 0.35, 1);
+      for (let i = 0; i < 6; i++) { const b = T * 1.2 + i * TAU / 6; this.rocaGol(cx + Math.cos(b) * 19, cy - 12 + Math.sin(b) * 13, 2); }
+      this.arc(cx, cy + 6, 15, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, p.gu / 40), PALETA.tinta, 3);
+      this.arc(cx, cy + 6, 15, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, p.gu / 40), PALETA.oro2, 1);
+      if (p.gr > 0) { const t2 = texto('+' + p.gr, k ? PALETA.oro2 : PALETA.antorcha); g.drawImage(t2, cx - (t2.width >> 1), cy + 12); }   // daño guardado (bajo los pies)
+    }
+    if (p.gb & 8) for (let i = 0; i < 4; i++) { const b = -T * 2 + i * TAU / 4; this.rocaGol(cx + Math.cos(b) * 15, cy - 8 + Math.sin(b) * 6, 1); }   // Coraza de magma: rocas que giran (escudo)
+  }
   llamasAzules(cx, cy, n, ancho, color = 'azul') {
     for (let i = 0; i < n; i++) {
       const x = n > 1 ? Math.round(cx - ancho / 2 + ancho * i / (n - 1)) : cx;
@@ -14143,7 +14831,7 @@ class Renderer {
         this.arc(cx, cy, r + 2, a0, a0 + TAU * prog, cc, 2);
       }
       if (disputado && t % 2) this.ring(cx, cy, r + 1, PALETA.pergamino2, 1, 1);
-      const rot = cerrado ? String(zo.ab) : lado === 'N' ? 'NORTE' : 'SUR';
+      const rot = cerrado ? String(zo.ab) : lado === 'N' ? (MAPA_ACTUAL === 'volcan' ? 'NOROESTE' : 'NORTE') : (MAPA_ACTUAL === 'volcan' ? 'SURESTE' : 'SUR');
       const s = texto(rot, cerrado ? PALETA.piedra3 : PALETA.pergamino2);
       this.g.drawImage(s, cx - (s.width >> 1), cy + 7);
     });
@@ -14223,6 +14911,7 @@ class Renderer {
     if (u.kind === 'muro') { this.drawMuro(u); return; }
     if (u.kind === 'muroRoca') { this.drawMuroRoca(u); return; }
     if (u.kind === 'enemigo') { this.drawEnemigo(u); return; }
+    if (u.kind === 'jefeVolcan') { this.drawJefeVolcan(u); return; }   // Seba (13-11)
     if (u.kind === 'cucko') { this.drawCucko(u); return; }
     if (u.kind === 'nubeTormenta') { this.drawNubeTormenta(u); return; }
     if (u.kind === 'arenaEstepa') {
@@ -14602,6 +15291,25 @@ class Renderer {
             g.globalAlpha = 1;
             break;
           }
+          if (f.h === 'golagore') {
+            // Golagore (Seba 13-11): hachazo de arriba hacia abajo — el filo cae como una estela de magma y revienta el suelo frente a él
+            const R = Math.round(f.r * ESC * 0.85), ix = Math.round(cx + Math.cos(f.a) * R), iy = Math.round(cy + Math.sin(f.a) * R * 0.8 + 2);
+            if (t > 0.42 && t < 0.66) {   // la caída
+              const e = Math.min(1, (t - 0.42) / 0.2), y0 = iy - 34, y1 = Math.round(y0 + 34 * e);
+              this.linea(ix, y0, ix, y1, PALETA.tinta, 0, 0, 5); this.linea(ix, y0 + 6, ix, y1, PALETA.carmesi1, 0, 0, 3); this.linea(ix, Math.max(y0, y1 - 14), ix, y1, PALETA.antorcha, 0, 0, 3); this.linea(ix, Math.max(y0, y1 - 6), ix, y1, PALETA.oro2, 0, 0, 1);
+            }
+            if (t >= 0.6) {   // el impacto
+              const e = (t - 0.6) / 0.4, a1 = 1 - e;
+              if (e < 0.3) this.bolaPixel(ix, iy, Math.round(5 * (1 - e / 0.3)), PALETA.oro2);
+              g.globalAlpha = a1;
+              this.ring(ix, iy, Math.round(4 + 13 * Math.min(1, e * 1.6)), PALETA.tinta, 1, 3); this.ring(ix, iy, Math.round(4 + 13 * Math.min(1, e * 1.6)), PALETA.antorcha, 1, 1);
+              for (let i = 0; i < 5; i++) { const b = i * TAU / 5 + 0.4, L = 12 * Math.min(1, e * 3); this.linea(ix, iy, Math.round(ix + Math.cos(b) * L), Math.round(iy + Math.sin(b) * L * 0.6), PALETA.antorcha, 2, i, 1); }
+              for (let i = 0; i < 5; i++) { const b = Math.PI + i * Math.PI / 4, d = 5 + e * 12; this.bolaPixel(Math.round(ix + Math.cos(b) * d), Math.round(iy + Math.sin(b) * d * 0.4 - 1), 2 - (i % 2), PALETA.piedra2); }
+              g.globalAlpha = 1;
+              for (let i = 0; i < 3; i++) { const b = -Math.PI * (0.25 + i * 0.25), d = e * 14; this.rocaGol(ix + Math.cos(b) * d, iy - 3 + Math.sin(b) * d + e * e * 14, 1); }
+            }
+            break;
+          }
           if (f.h === 'kiro') {
             // Kiro: tajo de cimitarra — media luna color arena (crema, blanco al filo, ocre atrás) con líneas de velocidad y granos de arena
             const lado = f.lado ? -1 : 1, R = Math.round(f.r * ESC) + 4, yc = cy - 6, abre = Math.min(1, t * 3), sale = Math.max(0, (t - 0.45) / 0.55);
@@ -14915,6 +15623,7 @@ class Renderer {
           g.drawImage(s, cx - (s.width >> 1), cy - 40 - Math.round(t * 8));
           break;
         }
+        case 'golpeLava': { this.drawGolpeLava(f, t); break; }   // Seba (13-11): golpe del jefe del Volcán
         case 'boom': {
           const r = Math.round(f.r * ESC * (0.35 + t * 0.65));
           if (f.c === 'sangre') {   // Vatrius: salpicadura de sangre
@@ -15114,6 +15823,77 @@ class Renderer {
           const k = t < 0.5 ? t * 2 : 2 - t * 2;
           this.ring(cx, cy - 6, Math.round(10 + k * 22), PALETA.tinta, 1, 3); this.ring(cx, cy - 6, Math.round(10 + k * 22), CHAR.P, 1, 1);
           for (let i = 0; i < 12; i++) { const b = i * TAU / 12 + t * 8, d = 10 + k * 22; g.fillStyle = i % 2 ? CHAR.q : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 6 + Math.sin(b) * d * 0.6), 2, 1); }
+          break;
+        }
+        case 'cargaGolagore': {   // arranca la Embestida: polvo y fuego que salen hacia atrás
+          const ca = Math.cos(f.a), sa = Math.sin(f.a);
+          g.globalAlpha = 1 - t;
+          for (let i = 0; i < 7; i++) { const d = 6 + t * 22 + (i % 3) * 3, off = (i - 3) * 4; this.bolaPixel(Math.round(cx - ca * d - sa * off), Math.round(cy + 4 - sa * d * 0.5 + ca * off * 0.5), i % 2 ? 2 : 3, i % 3 === 0 ? PALETA.antorcha : i % 2 ? PALETA.piedra1 : PALETA.piedra2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'chocaGolagore': {   // choca contra un muro (o lo aturden): polvo y piedras
+          this.ring(cx, cy + 2, Math.round(6 + t * 14), PALETA.piedra2, 1 - t, 2);
+          for (let i = 0; i < 5; i++) { const b = -Math.PI * (0.15 + i * 0.17), d = t * 16; this.rocaGol(cx + Math.cos(b) * d, cy - 6 + Math.sin(b) * d + t * t * 14, 1, false); }
+          break;
+        }
+        case 'impactoGolagore': {   // choque de la Embestida: onda de fuego del radio de aturdido, grietas, llamas y rocas que saltan
+          const R = Math.round(f.r * ESC), e = 1 - Math.pow(1 - Math.min(1, t * 2.2), 3), rr = Math.round(6 + (R - 6) * e);
+          g.globalAlpha = 1 - t;
+          this.ring(cx, cy, rr, PALETA.tinta, 1, 3); this.ring(cx, cy, rr, PALETA.antorcha, 1, 1); this.ring(cx, cy, Math.max(2, rr - 3), PALETA.oro2, 0.5, 1);
+          for (let i = 0; i < 6; i++) { const b = i * TAU / 6 + 0.3, L = rr * 0.9; this.linea(cx, cy, Math.round(cx + Math.cos(b) * L), Math.round(cy + Math.sin(b) * L * 0.6), PALETA.antorcha, 2, i, 1); }
+          for (let i = 0; i < 10; i++) { const b = i * TAU / 10, h = Math.round((1 - t) * (5 + (i % 3) * 3)), x = Math.round(cx + Math.cos(b) * rr), y = Math.round(cy + Math.sin(b) * rr * 0.9); if (h > 0) { g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - h - 1, 3, h + 2); g.fillStyle = PALETA.antorcha; g.fillRect(x, y - h, 1, h); g.fillStyle = PALETA.oro2; g.fillRect(x, y - h, 1, 2); } }
+          g.globalAlpha = 1;
+          for (let i = 0; i < 7; i++) { const b = -Math.PI * (0.1 + i * 0.12), d = t * 26; this.rocaGol(cx + Math.cos(b) * d, cy - 8 + Math.sin(b) * d + t * t * 30, 1 + (i % 2)); }
+          if (t < 0.25) this.bolaPixel(cx, cy - 6, Math.round(8 * (1 - t * 4)), PALETA.oro2);
+          break;
+        }
+        case 'alzaHachazo': {   // levanta el hacha: chispas de magma que suben
+          for (let i = 0; i < 6; i++) { const x = cx - 10 + i * 4, y = cy - 20 - Math.round(t * 14) - (i % 2) * 3; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, y, 1, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'saltaGolagore': {   // despega: polvo y piedras bajo los pies
+          g.globalAlpha = 1 - t;
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8, d = 6 + t * 16; this.bolaPixel(Math.round(cx + Math.cos(b) * d), Math.round(cy + 6 + Math.sin(b) * d * 0.4), 2, i % 2 ? PALETA.piedra1 : PALETA.piedra2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'hachazoGolagore': {   // cae del salto con el hachazo: el radio revienta en grietas de magma, el centro arde (aturde) y saltan llamas y rocas
+          const R = Math.round(f.r * ESC), Rc = Math.round(f.c * ESC), e = 1 - Math.pow(1 - Math.min(1, t * 2.5), 3), rr = Math.round(6 + (R - 6) * e), a1 = Math.min(1, (1 - t) * 1.6);
+          if (t < 0.25) { g.globalAlpha = 1 - t * 4; this.bolaPixel(cx, cy - 4, Math.round(Rc * 1.1), PALETA.antorcha); this.bolaPixel(cx, cy - 4, Math.round(Rc * 0.6), PALETA.oro2); g.globalAlpha = 1; }
+          g.globalAlpha = a1;
+          this.discDither(cx, cy, Rc, PALETA.antorcha, 2, Math.floor(t * 20));
+          this.ring(cx, cy, Rc, PALETA.tinta, 1, 3); this.ring(cx, cy, Rc, PALETA.oro2, 1, 1);
+          this.ring(cx, cy, rr, PALETA.tinta, 1, 3); this.ring(cx, cy, rr, PALETA.antorcha, 1, 1); this.ring(cx, cy, Math.max(2, rr - 3), PALETA.carmesi1, 0.5, 1);
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + 0.2, L = rr * 0.95; this.linea(cx, cy, Math.round(cx + Math.cos(b) * L), Math.round(cy + Math.sin(b) * L), PALETA.tinta, 3, i + 3, 3); this.linea(cx, cy, Math.round(cx + Math.cos(b) * L), Math.round(cy + Math.sin(b) * L), i % 2 ? PALETA.antorcha : PALETA.oro2, 3, i + 3, 1); }
+          for (let i = 0; i < 16; i++) { const b = i * TAU / 16, h = Math.round(Math.sin(Math.PI * Math.min(1, t * 1.5)) * (6 + (i % 3) * 3)), x = Math.round(cx + Math.cos(b) * rr), y = Math.round(cy + Math.sin(b) * rr);
+            if (h > 0) { g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - h - 1, 3, h + 2); g.fillStyle = PALETA.antorcha; g.fillRect(x, y - h, 1, h); g.fillStyle = PALETA.oro2; g.fillRect(x, y - h, 1, Math.max(1, h >> 2)); } }
+          g.globalAlpha = 1;
+          for (let i = 0; i < 9; i++) { const b = i * TAU / 9 + 0.3, d = 6 + e * R * 0.8; this.rocaGol(cx + Math.cos(b) * d, cy - 4 + Math.sin(b) * d * 0.8 - Math.sin(Math.PI * t) * 16, 1 + (i % 2)); }
+          break;
+        }
+        case 'nucleoGolagore': {   // se planta: anillo de fuego que cae desde afuera hasta el radio
+          const R = Math.round(f.r * ESC), rr = Math.round(R * (1.3 - 0.3 * Math.min(1, t * 2)));
+          this.ring(cx, cy, rr, PALETA.tinta, 1 - t, 3); this.ring(cx, cy, rr, PALETA.oro2, 1 - t, 1);
+          g.globalAlpha = 1 - t; for (let i = 0; i < 5; i++) { g.fillStyle = i % 2 ? PALETA.antorcha : PALETA.oro2; g.fillRect(cx - 4 + i * 2, cy - 30 - Math.round(t * 20), 1, 14); } g.globalAlpha = 1;
+          break;
+        }
+        case 'explotaGolagore': {   // ¡explota el Núcleo! destello, onda de magma del radio, corona de llamas, rocas que vuelan y el daño hecho
+          const R = Math.round(f.r * ESC), e = 1 - Math.pow(1 - Math.min(1, t * 2), 3), rr = Math.round(R * (0.25 + 0.75 * e)), a1 = Math.min(1, (1 - t) * 1.5);
+          if (t < 0.3) { g.globalAlpha = 1 - t / 0.3; this.bolaPixel(cx, cy - 6, Math.round(R * 0.5 * (1 - t)), PALETA.antorcha); this.bolaPixel(cx, cy - 6, Math.round(R * 0.3 * (1 - t)), PALETA.oro2); this.bolaPixel(cx, cy - 6, Math.round(R * 0.15), PALETA.pergamino2); g.globalAlpha = 1; }
+          g.globalAlpha = a1;
+          this.ring(cx, cy, rr, PALETA.tinta, 1, 4); this.ring(cx, cy, rr, PALETA.carmesi1, 1, 3); this.ring(cx, cy, rr, PALETA.antorcha, 1, 1); this.ring(cx, cy, Math.max(2, rr - 5), PALETA.oro2, 0.4, 1);
+          for (let i = 0; i < 22; i++) { const b = i * TAU / 22 + hash(i, 4, 1) * 0.2, h = Math.round(Math.sin(Math.PI * Math.min(1, t * 1.3)) * (8 + (i % 4) * 4)), x = Math.round(cx + Math.cos(b) * rr), y = Math.round(cy + Math.sin(b) * rr);
+            if (h > 0) { g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - h - 1, 4, h + 2); g.fillStyle = PALETA.antorcha; g.fillRect(x - 1, y - h, 2, h); g.fillStyle = PALETA.oro2; g.fillRect(x - 1, y - h, 1, Math.max(1, h >> 1)); } }
+          g.globalAlpha = 1;
+          for (let i = 0; i < 12; i++) { const b = i * TAU / 12 + 0.2, d = 8 + e * R * 0.95; this.rocaGol(cx + Math.cos(b) * d, cy - 4 + Math.sin(b) * d * 0.8 - Math.sin(Math.PI * t) * 18, 1 + (i % 3 === 0 ? 1 : 0)); }
+          if (f.v > 0) { const tx = texto(String(f.v), PALETA.oro2); g.globalAlpha = Math.min(1, (1 - t) * 2); g.drawImage(tx, cx - (tx.width >> 1), Math.round(cy - 44 - t * 10)); g.globalAlpha = 1; }
+          break;
+        }
+        case 'corazaMagma': {   // Coraza de magma: rocas que se juntan sobre él
+          for (let i = 0; i < 6; i++) { const b = i * TAU / 6 + t * 2, d = 24 * (1 - t) + 10; this.rocaGol(cx + Math.cos(b) * d, cy - 10 + Math.sin(b) * d * 0.6, 1); }
+          this.ring(cx, cy - 10, 12, PALETA.antorcha, 1 - t, 1);
           break;
         }
         case 'arenaGolpe': {   // golpe 1 o 2 de la Tormenta acierta: estallido de arena sobre el golpeado y aviso del efecto
@@ -15597,6 +16377,169 @@ class Renderer {
   }
 }
 
+// ===== render-mapas.js =====
+// =====================================================================
+//  LOLA — DIBUJO DE LOS MAPAS DE LA ARENA (Seba 13-11)
+//  Volcán: el claro del bosque más amplio, con rocas, lava y el jefe.
+// =====================================================================
+
+// Fondo del Volcán (Seba 13-11): textura propia — suelo de ceniza y basalto oscuro con grietas de brasa, un mar de lava
+// como borde (no bosque), pozos de lava y rocas grises claras (contrastan con el suelo oscuro). Se pinta una sola vez.
+function generarVolcan() {
+  const R = CONFIG.RADIO_ARENA, M = 360, S = Math.ceil((R * ESC + M) * 2), C = S / 2;
+  const c = document.createElement('canvas'); c.width = S; c.height = S;
+  const g = c.getContext('2d'), img = g.createImageData(S, S), d = img.data;
+  const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const P = {}; for (const [k, v] of Object.entries(PALETA)) P[k] = hex(v);
+  const fundido = (x, y, n) => { const f = vnoise(x + y * 0.35, y, 11, 33); return f > 0.72 ? P.oro2 : f > 0.4 ? P.antorcha : n > 0.92 ? P.carmesi2 : P.antorcha; };
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const wx = (x - C) / ESC, wy = (y - C) / ESC, n = hash(x, y, 3);
+    const borde = Math.hypot(wx, wy) - R + (vnoise(x, y, 9, 17) - 0.5) * 12;   // > 0: fuera del mapa
+    let col;
+    if (borde > 0) {   // mar de lava
+      col = borde < 4 ? P.tinta : borde < 10 ? ((((x + y) & 1) || n > 0.6) ? P.carmesi0 : P.tinta) : borde < 18 ? (n > 0.8 ? P.carmesi0 : P.carmesi1) : fundido(x, y, n);
+      if (borde > 18 && vnoise(x, y, 26, 51) > 0.78) col = n > 0.5 ? P.carmesi1 : P.carmesi0;   // costras flotando
+    } else {
+      // Suelo (Seba 13-11: invertido para que se vea): ceniza clara en manchas (gris claro / gris / ceniza tibia), motas oscuras
+      const m = vnoise(x, y, 22, 5);
+      col = m > 0.62 ? P.piedra3 : m > 0.35 ? P.piedra2 : (((x + y) & 1) ? P.piedra2 : P.pergamino0);
+      if (m > 0.58 && m < 0.62) col = ((x + y) & 1) ? P.piedra3 : P.piedra2;
+      if (n > 0.985) col = P.piedra1; else if (n < 0.012) col = P.pergamino1;
+      // Grietas de brasa: finas y escasas
+      const gr = Math.abs(vnoise(x, y, 16, 77) - 0.5);
+      if (gr < 0.012 && vnoise(x, y, 40, 91) > 0.45) col = gr < 0.005 ? P.carmesi1 : P.piedra1;
+      // Calor junto al borde
+      if (borde > -22) col = (((x + y) & 1) && n > 0.35) ? P.carmesi1 : col;
+    }
+    const i = (y * S + x) * 4; d[i] = col[0]; d[i + 1] = col[1]; d[i + 2] = col[2]; d[i + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  const pintar = (x0, y0, x1, y1, fn) => {
+    x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0)); x1 = Math.min(S, Math.ceil(x1)); y1 = Math.min(S, Math.ceil(y1));
+    if (x1 <= x0 || y1 <= y0) return;
+    const im = g.getImageData(x0, y0, x1 - x0, y1 - y0), dd = im.data, W = x1 - x0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+      const cc = fn(x, y, (x - C) / ESC, (y - C) / ESC);
+      if (!cc) continue;
+      const k = ((y - y0) * W + (x - x0)) * 4; dd[k] = cc[0]; dd[k + 1] = cc[1]; dd[k + 2] = cc[2];
+    }
+    g.putImageData(im, x0, y0);
+  };
+  // Pozos de lava
+  for (const [x1, y1, x2, y2, r] of LAVA_MAPA) {
+    const sx = x2 - x1, sy = y2 - y1, L = sx * sx + sy * sy, Mg = r + 14;
+    pintar(C + (Math.min(x1, x2) - Mg) * ESC, C + (Math.min(y1, y2) - Mg) * ESC, C + (Math.max(x1, x2) + Mg) * ESC, C + (Math.max(y1, y2) + Mg) * ESC, (x, y, wx, wy) => {
+      const t = L ? Math.max(0, Math.min(1, ((wx - x1) * sx + (wy - y1) * sy) / L)) : 0;
+      const h = r - Math.hypot(wx - (x1 + sx * t), wy - (y1 + sy * t)) - (vnoise(x, y, 6, 21) - 0.5) * 6, n = hash(x, y, 7);
+      if (h < -10) return null;
+      if (h < 0) return (n < 0.5 + h / 20) ? null : (((x + y) & 1) ? P.piedra1 : null);   // suelo chamuscado alrededor
+      if (h < 3) return P.tinta;
+      if (h < 8) return ((x + y) & 1) ? P.carmesi0 : P.tinta;
+      if (h < 13) return n > 0.85 ? P.carmesi0 : P.carmesi1;
+      return fundido(x, y, n);
+    });
+  }
+  // Rocas (invertidas): basalto oscuro con luz arriba a la izquierda, contorno negro y sombra; contrastan con el suelo claro
+  for (const [rx, ry, r] of ROCAS_MAPA) {
+    const Mg = r + 10;
+    pintar(C + (rx - Mg) * ESC, C + (ry - Mg) * ESC, C + (rx + Mg + 6) * ESC, C + (ry + Mg + 8) * ESC, (x, y, wx, wy) => {
+      const dx = wx - rx, dy = wy - ry, dd = Math.hypot(dx, dy) + (vnoise(x, y, 5, 13) - 0.5) * 5, n = hash(x, y, 9);
+      if (dd > r) { const ds = Math.hypot(dx - 5, (dy - 7) * 1.3); return ds < r ? (((x + y) & 1) ? P.piedra1 : P.piedra0) : null; }
+      if (dd > r - 2.5) return P.tinta;
+      const luz = (-dx - dy) / (r * 1.4) + (n - 0.5) * 0.25;
+      if (n > 0.975) return P.carmesi0;   // vetas de brasa
+      return luz > 0.45 ? P.piedra1 : luz > 0.05 ? P.piedra0 : luz > -0.45 ? P.noche : P.tinta;
+    });
+  }
+  return { canvas: c, C };
+}
+
+// Recolorea un lienzo cambiando colores de la paleta (para los árboles quemados y el jefe de lava)
+function recolorear(cv, mapa) {
+  const hex = (h) => (parseInt(h.slice(1, 3), 16) << 16) | (parseInt(h.slice(3, 5), 16) << 8) | parseInt(h.slice(5, 7), 16);
+  const M = new Map(Object.entries(mapa).map(([a, b]) => [hex(PALETA[a]), PALETA[b]]));
+  const out = document.createElement('canvas'); out.width = cv.width; out.height = cv.height;
+  const g = out.getContext('2d'); g.drawImage(cv, 0, 0);
+  const im = g.getImageData(0, 0, cv.width, cv.height), d = im.data;
+  for (let i = 0; i < d.length; i += 4) {
+    if (!d[i + 3]) continue;
+    const to = M.get((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+    if (to) { d[i] = parseInt(to.slice(1, 3), 16); d[i + 1] = parseInt(to.slice(3, 5), 16); d[i + 2] = parseInt(to.slice(5, 7), 16); }
+  }
+  g.putImageData(im, 0, 0);
+  return out;
+}
+const ARBOL_QUEMADO = { bosque0: 'tinta', bosque1: 'carmesi0', bosque2: 'antorcha' };   // copa en brasas
+const JEFE_LAVA = { piedra0: 'carmesi0', piedra1: 'carmesi1', piedra2: 'carmesi2', piedra3: 'antorcha', magia: 'oro2', vacio1: 'oro2', vacio2: 'pergamino2' };
+const cacheJefe = new Map();
+
+Object.assign(Renderer.prototype, {
+  // Burbujas y chispas de la lava (pocas, baratas), y la guarida del jefe con su cuenta regresiva
+  drawVolcan(view) {
+    const g = this.g, T = this.time;
+    LAVA_MAPA.forEach(([x1, y1, x2, y2, r], k) => {
+      for (let i = 0; i < 5; i++) {
+        const ph = (T * 0.6 + hash(k, i, 3)) % 1, t = hash(i, k, 5), off = (hash(k, i, 8) - 0.5) * r;
+        const L = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+        const x = this.gx(x1 + (x2 - x1) * t + nx * off), y = this.gy(y1 + (y2 - y1) * t + ny * off) - Math.round(ph * 4);
+        if (ph < 0.7) { g.fillStyle = ph < 0.4 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, y, ph < 0.35 ? 2 : 1, ph < 0.35 ? 2 : 1); }
+      }
+    });
+    for (let i = 0; i < 16; i++) {   // burbujas del mar de lava del borde
+      const ph = (T * 0.5 + hash(i, 7, 3)) % 1, an = i * TAU / 16 + hash(i, 3, 9), rr = CONFIG.RADIO_ARENA + 40 + hash(i, 5, 2) * 120;
+      if (ph > 0.7) continue;
+      const x = this.gx(Math.cos(an) * rr), y = this.gy(Math.sin(an) * rr) - Math.round(ph * 4);
+      g.fillStyle = ph < 0.4 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, y, ph < 0.35 ? 2 : 1, ph < 0.35 ? 2 : 1);
+    }
+    const vc = view.vc, J = CONFIG.VOLCAN.jefe;
+    const cx = this.gx(J.x), cy = this.gy(J.y);
+    this.ring(cx, cy, 40, PALETA.tinta, 1, 3); this.ring(cx, cy, 40, PALETA.antorcha, 0.6, 1);
+    if (vc && vc.t > 0) {
+      const t1 = texto('JEFE', PALETA.pergamino1), t2 = texto(`${Math.floor(vc.t / 60)}:${String(vc.t % 60).padStart(2, '0')}`, PALETA.antorcha);
+      g.drawImage(t1, cx - (t1.width >> 1), cy - 5); g.drawImage(t2, cx - (t2.width >> 1), cy + 3);
+    }
+  },
+  // Jefe del Volcán (Seba 13-11): el gólem de Karilthal en rojo fuego, con brasas, ojos encendidos y golpe en área
+  drawJefeVolcan(u) {
+    const g = this.g, T = this.time, cx = this.gx(u.x), cy = this.gy(u.y), izq = Math.cos(u.f) < -0.05, carga = u.flags & 512;
+    const prev = this.prevPos.get('u' + u.id), moviendo = prev && Math.hypot(prev.x - u.x, prev.y - u.y) > 0.3;
+    this.prevPos.set('u' + u.id, { x: u.x, y: u.y });
+    const fr = moviendo ? Math.floor(T * 5) % 2 : 0, key = fr + '|' + izq;
+    if (!cacheJefe.has(key)) cacheJefe.set(key, recolorear(otro('golem', fr, izq, 3), JEFE_LAVA));
+    const s = cacheJefe.get(key), k = 1.5, sw = Math.round(s.width * k), sh = Math.round(s.height * k);
+    // charco de lava bajo los pies
+    this.discDither(cx, cy + 6, 18, PALETA.carmesi1, 2, Math.floor(T * 4));
+    // preparando el golpe: se eleva y tiembla; marca del área en el suelo
+    const alza = carga ? 4 + (Math.floor(T * 24) % 2) : 0, temb = carga ? (Math.floor(T * 30) % 2 ? 1 : -1) : 0;
+    if (carga) {
+      const gx = cx + Math.round(Math.cos(u.f) * 30 * ESC), gy = cy + Math.round(Math.sin(u.f) * 30 * ESC), R = Math.round(CONFIG.VOLCAN.jefe.area * ESC);
+      this.ring(gx, gy, R, PALETA.tinta, 0.9, 3); this.ring(gx, gy, R, Math.floor(T * 8) % 2 ? PALETA.oro2 : PALETA.antorcha, 0.9, 1);
+    }
+    g.drawImage(s, cx - (sw >> 1) + temb, cy + 8 - sh - alza, sw, sh);
+    // brasas que suben
+    for (let i = 0; i < 6; i++) {
+      const ph = (T * 0.9 + i / 6) % 1, x = cx - 12 + Math.round(hash(i, u.id, 4) * 24 + Math.sin(T * 3 + i) * 2), y = cy + 2 - Math.round(ph * (sh + 8));
+      if (ph < 0.85) { g.fillStyle = ph < 0.3 ? PALETA.oro2 : ph < 0.6 ? PALETA.antorcha : PALETA.carmesi1; g.fillRect(x, y, 1, 1); }
+    }
+    const bw = 40, by = cy + 8 - sh - 10 - alza;
+    g.fillStyle = PALETA.tinta; g.fillRect(cx - bw / 2 - 1, by - 1, bw + 2, 9);
+    g.fillStyle = PALETA.carmesi0; g.fillRect(cx - bw / 2, by, bw, 7);
+    g.fillStyle = PALETA.antorcha; g.fillRect(cx - bw / 2, by, Math.round(bw * Math.max(0, u.hp / u.mh)), 7);
+    const num = texto(String(Math.ceil(Math.max(0, u.hp))), PALETA.pergamino2); g.drawImage(num, cx - (num.width >> 1), by);
+    const nom = texto('JEFE DEL VOLCÁN', PALETA.antorcha); g.drawImage(nom, cx - (nom.width >> 1), by - 9);
+  },
+  // Golpe de lava: onda que se abre y salpicaduras
+  drawGolpeLava(f, t) {
+    const g = this.g, cx = this.gx(f.x), cy = this.gy(f.y), R = Math.round(f.r * ESC);
+    this.ring(cx, cy, Math.max(2, Math.round(R * (0.4 + t * 0.6))), PALETA.tinta, 1, 3);
+    this.ring(cx, cy, Math.max(2, Math.round(R * (0.4 + t * 0.6))), t < 0.5 ? PALETA.oro2 : PALETA.antorcha, 1, 1);
+    for (let i = 0; i < 10; i++) {
+      const a = i * TAU / 10 + hash(i, f.x | 0, 2), dd = R * (0.3 + t * 0.8), h = Math.sin(t * Math.PI) * 8;
+      g.fillStyle = i % 2 ? PALETA.antorcha : PALETA.oro2; g.fillRect(Math.round(cx + Math.cos(a) * dd), Math.round(cy + Math.sin(a) * dd * 0.8 - h), 2, 2);
+    }
+  },
+});
+
 // ===== main.js =====
 // =====================================================================
 //  LOLA — MAIN: pantallas, simulación local contra bots, dibujo y controles.
@@ -15706,7 +16649,8 @@ function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* sin al
 // ------------------------------------------------------------ estado general
 function applyMeta(m) {
   S.meta = m;
-  renderer.mapa = m.modo === 'pve' && m.pve ? m.pve.mapa : 'bosque';
+  usarMapa(m.mapa);   // Seba (13-11): Claro o Volcán
+  renderer.mapa = m.modo === 'pve' && m.pve ? m.pve.mapa : m.mapa === 'volcan' ? 'volcan' : 'bosque';
   renderer.equipos = m.modo === 'equipos' ? m.equipos : null;
   S.metaById = new Map(m.players.map(p => [p.id, p]));
   if (m.phase !== S.phase) onPhase(m.phase);
@@ -15737,7 +16681,7 @@ function reiniciarPartida() {
   if (S.meta && S.meta.modo === 'pve') { leave(); return; }
   const modo = g.modo, eq = g.equipos ? { ...g.equipos } : null;
   g.resetToLobby();
-  if (modo === 'equipos' && eq) g.startEquipos(eq); else g.start();
+  if (modo === 'equipos' && eq) g.startEquipos(eq, g.mapa); else g.start();
 }
 
 function onPhase(ph) {
@@ -15851,6 +16795,13 @@ function actualizarMarcador(latest) {
   $('mc-t').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   const zo = latest.zo;
   let html = '';
+  const vc = latest.vc;   // Seba (13-11): Volcán — jefe del centro y su bendición
+  if (vc) {
+    let t = vc.t > 0 ? `jefe ${Math.floor(vc.t / 60)}:${String(vc.t % 60).padStart(2, '0')}` : 'jefe vivo';
+    if (vc.bf[0]) t += ` · bendición azul ${vc.bf[0]}`;
+    if (vc.bf[1]) t += ` · bendición roja ${vc.bf[1]}`;
+    html += `<span class="mc-txt">${t}</span>`;
+  }
   if (zo) {
     if (zo.ab > 0) html += `<span class="mc-txt">círculos ${zo.ab}</span>`;
     else for (const o of zo.o) {
@@ -15965,7 +16916,7 @@ function startEquipos(tam) {
   });
   S.phase = null;
   S.game.draftModo = S.draftModo;   // Seba (29-10): draft libre o con baneos
-  S.game.startEquipos(eq);
+  S.game.startEquipos(eq, S.mapaArena === 'volcan' ? 'volcan' : null);   // Seba (13-11): mapa elegido en el menú
   startAuthority();
 }
 
@@ -16010,7 +16961,7 @@ async function createRoom() {
   loading(false);
   S.mode = 'host'; S.host = host; S.code = host.code;
   S.game = new Game(); S.game.hostId = 'host'; S.myId = 'host';
-  S.game.sala = { modo: '2v2', equipos: {}, draft: S.draftModo };
+  S.game.sala = { modo: '2v2', equipos: {}, draft: S.draftModo, mapa: S.mapaArena };
   S.game.addPlayer('host', name);
   asignarEquipos();
   S.phase = null;
@@ -16112,6 +17063,8 @@ function renderLobby() {
     b.disabled = !isAuth();
   });
   $('sala-draft').classList.toggle('hidden', !conEquipos);
+  $('sala-mapa').classList.toggle('hidden', !conEquipos);   // Seba (13-11): Claro o Volcán
+  document.querySelectorAll('#sala-mapa button').forEach(b => { b.classList.toggle('gold', b.dataset.mapa === (sala.mapa || 'claro')); b.disabled = !isAuth(); });
   document.querySelectorAll('#sala-draft button').forEach(b => {
     b.classList.toggle('gold', b.dataset.d === (sala.draft || 'libre'));
     b.disabled = !isAuth();
@@ -16134,7 +17087,7 @@ function empezarSala() {
   if (falta) { toast(falta); return; }
   if (g.sala.modo === 'entreno') { g.modo = 'entreno'; g.equipos = null; [...g.players.values()].forEach((p, i) => { p.colorIdx = i; }); g.start(); }
   else if (g.sala.modo === 'ffa') { g.modo = 'pvp'; g.equipos = null; [...g.players.values()].forEach((p, i) => { p.colorIdx = i; }); g.start(); }
-  else { g.draftModo = g.sala.draft || 'libre'; g.startEquipos({ ...g.sala.equipos }); }
+  else { g.draftModo = g.sala.draft || 'libre'; g.startEquipos({ ...g.sala.equipos }, g.sala.mapa === 'volcan' ? 'volcan' : null); }
 }
 
 async function share() {
@@ -16823,7 +17776,64 @@ $('fi-elegir').onclick = () => { if (fichaAbierta && HEROES[fichaAbierta]) { act
 S.draftModo = lsGet('lola-draft') === 'ban' ? 'ban' : 'libre';
 const pintarDraftModo = () => { const b = $('b-draftmodo'); b.textContent = S.draftModo === 'ban' ? 'Draft: con baneos' : 'Draft: libre'; b.classList.toggle('gold', S.draftModo === 'ban'); b.setAttribute('aria-pressed', S.draftModo === 'ban'); };
 pintarDraftModo();
+// Seba (13-11): mapa de la arena para 1v1 / 2v2 / 3v3
+S.mapaArena = lsGet('lola-mapa') === 'volcan' ? 'volcan' : 'claro';
+const pintarMapa = () => { const b = $('b-mapa'); b.textContent = 'Mapa: ' + NOMBRE_MAPA[S.mapaArena]; b.classList.toggle('gold', S.mapaArena === 'volcan'); };
+pintarMapa();
+$('b-mapa').onclick = () => { S.mapaArena = S.mapaArena === 'volcan' ? 'claro' : 'volcan'; lsSet('lola-mapa', S.mapaArena); pintarMapa(); };
+document.querySelectorAll('#sala-mapa button').forEach(b => { b.onclick = () => { if (!isAuth() || !S.game.sala) return; S.game.sala.mapa = b.dataset.mapa; S.game.metaDirty = true; }; });
 $('b-draftmodo').onclick = () => { S.draftModo = S.draftModo === 'ban' ? 'libre' : 'ban'; lsSet('lola-draft', S.draftModo); pintarDraftModo(); };
+// Seba (13-11, V7.2): menú inicial con puertas (online, bots, entrenamiento, aventura) y paneles con opciones
+{
+  const MAPAS_INFO = {
+    claro: 'El claro del bosque. Árboles para esconderse y dos círculos, al norte y al sur.',
+    volcan: 'Un 20% más amplio. Rocas que frenan cuerpos y disparos, ríos de lava que no se cruzan a pie y un jefe al centro que bendice al equipo que lo derrota.',
+  };
+  S.modoBots = ['1v1', '2v2', '3v3', 'ffa'].includes(lsGet('lola-modo')) ? lsGet('lola-modo') : '2v2';
+  const abrir = (cual) => {
+    $('puertas').classList.toggle('hidden', !!cual);
+    for (const k of ['online', 'bots', 'pve']) $('sp-' + k).classList.toggle('hidden', k !== cual);
+    if (cual === 'bots') pintarBots();
+  };
+  document.querySelectorAll('#puertas [data-p]').forEach(b => { b.onclick = () => abrir(b.dataset.p); });
+  document.querySelectorAll('.sp-volver').forEach(b => { b.onclick = () => abrir(null); });
+  $('b-entreno-h').onclick = () => $('b-entreno').click();
+  const miniaturas = {};
+  const miniatura = (m) => {   // mapa en chico, hecho una sola vez con el mismo generador del juego
+    if (!miniaturas[m]) {
+      try {
+        usarMapa(m === 'volcan' ? 'volcan' : null);
+        const A = m === 'volcan' ? generarVolcan() : generarArena(), c = document.createElement('canvas'); c.width = c.height = 76;
+        const R = (CONFIG.RADIO_ARENA * ESC + 30) * 2, cg = c.getContext('2d'); cg.imageSmoothingEnabled = true;
+        cg.drawImage(A.canvas, A.C - R / 2, A.C - R / 2, R, R, 0, 0, 76, 76);
+        miniaturas[m] = c;
+      } catch (e) { miniaturas[m] = document.createElement('canvas'); }
+      finally { usarMapa(null); }
+    }
+    return miniaturas[m];
+  };
+  const pintarBots = () => {
+    const ffa = S.modoBots === 'ffa';
+    const seg = (id, v) => document.querySelectorAll('#' + id + ' button').forEach(b => { b.classList.toggle('on', b.dataset.v === v); b.setAttribute('aria-pressed', b.dataset.v === v); });
+    seg('seg-modo', S.modoBots); seg('seg-mapa', ffa ? 'claro' : S.mapaArena); seg('seg-draft', ffa ? 'libre' : S.draftModo);
+    document.querySelectorAll('#seg-mapa button, #seg-draft button').forEach(b => { b.disabled = ffa && b.dataset.v !== 'claro' && b.dataset.v !== 'libre'; });
+    const m = ffa ? 'claro' : S.mapaArena, f = $('mapa-ficha');
+    f.innerHTML = `<div></div><div><b>${NOMBRE_MAPA[m]}</b><p>${MAPAS_INFO[m]}${ffa ? ' Todos contra todos se juega en el Claro.' : ''}</p></div>`;
+    f.firstChild.appendChild(miniatura(m));
+  };
+  document.querySelectorAll('#seg-modo button').forEach(b => { b.onclick = () => { S.modoBots = b.dataset.v; lsSet('lola-modo', S.modoBots); pintarBots(); }; });
+  document.querySelectorAll('#seg-mapa button').forEach(b => { b.onclick = () => { S.mapaArena = b.dataset.v; lsSet('lola-mapa', S.mapaArena); pintarMapa(); pintarBots(); }; });
+  document.querySelectorAll('#seg-draft button').forEach(b => { b.onclick = () => { S.draftModo = b.dataset.v; lsSet('lola-draft', S.draftModo); pintarDraftModo(); pintarBots(); }; });
+  const ir = () => { const m = S.modoBots; $(m === 'ffa' ? 'b-practice' : 'b-' + m).click(); };
+  $('b-bots-ir').onclick = ir;
+  $('b-azar').onclick = () => {   // Sorpréndeme: modo y mapa al azar
+    const modos = ['1v1', '2v2', '3v3', 'ffa'], mapas = ['claro', 'volcan'];
+    S.modoBots = modos[Math.floor(Math.random() * modos.length)]; S.mapaArena = mapas[Math.floor(Math.random() * mapas.length)];
+    lsSet('lola-modo', S.modoBots); lsSet('lola-mapa', S.mapaArena); pintarMapa(); pintarBots();
+    toast(`Al azar: ${S.modoBots === 'ffa' ? 'Todos contra todos' : S.modoBots}${S.modoBots === 'ffa' ? '' : ' en el ' + NOMBRE_MAPA[S.mapaArena]}`);
+    setTimeout(ir, 700);
+  };
+}
 document.querySelectorAll('#sala-draft button').forEach(b => { b.onclick = () => { if (!isAuth() || !S.game.sala) return; S.game.sala.draft = b.dataset.d; S.game.metaDirty = true; }; });
 $('b-matriz').onclick = abrirMatriz;
 $('dr-roster').addEventListener('click', (e) => { const b = e.target.closest('[data-h]'); if (b) { S.verDraft = b.dataset.h; renderDraft(); } });
@@ -16865,6 +17875,15 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.2', f: '13-11-2026', n: [
+    'Nuevo héroe: Golagore (Renegados), gigante de roca y magma con un hacha a dos manos.',
+    'Golagore — Coraza de magma (pasiva): si golpea a 2 o más enemigos a la vez, gana un escudo de 20 por 4 s (se renueva, no se acumula) y su siguiente habilidad quema 25 en 2 s a cada enemigo que alcanza.',
+    'Golagore — Embestida: corre en línea recta hasta 3,5 s, 20% más rápido; al chocar con un enemigo o un muro (o al volver a apretar) golpea delante: 50 de daño y 0,5 s aturdido a todos. Un aturdido la corta.',
+    'Golagore — Hachazo: salta hacia un punto (no le afecta el control en el aire) y cae: 100 de daño en el área y 120 + 1,5 s aturdido en el centro.',
+    'Golagore — Núcleo de magma (ulti): camina al 50%, recibe 60% menos de daño y frena 50% a los enemigos cerca; al volver a apretar (o si lo aturden o silencian) explota: 50 + 25 por segundo + el daño que guardó, repartido entre los enemigos dentro.',
+    'Nuevo mapa: Volcán (1v1, 2v2 y 3v3). Un 20% más amplio, con rocas que frenan cuerpos y disparos (como el muro de Aldor), ríos de lava que no se cruzan caminando, círculos al noroeste y al sureste, y un jefe de lava al centro: el equipo que lo derrota gana +5 de vida por segundo y +5% de daño por 1 minuto.',
+    'Menú inicial nuevo: cuatro puertas (Jugar online, Jugar con bots, Arena de entrenamiento y Aventura). En Jugar con bots eliges modo, mapa y draft con botones que se marcan al elegir, con una vista del mapa; Sorpréndeme elige modo y mapa al azar. En la sala online se elige el mapa.',
+  ] },
   { v: 'V7.1', f: '13-11-2026', n: [
     'Rendimiento: las nubes de arena de Kiro (pozo, tajo, tornado, ulti) se pintan una vez y se reusan; antes se calculaban punto por punto en cada cuadro. En un equipo lento, Kiro pasa de ~10 ms a ~5 ms por cuadro y sus tirones de ~40 ms bajan a ~11 ms.',
     'Rendimiento: los arcos grandes (anillos de carga, auras, runas de Æthar, etc.) se recortan de un anillo ya pintado en vez de dibujarse punto por punto.',
