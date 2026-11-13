@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.8</title>
+<title>LOLA V7.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.8</p>
+        <p class="sub version">LOLA V7.9</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1990,8 +1990,10 @@ Object.assign(HABILIDADES, {
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
   // ---- Bambaa (Seba, 13-11; números (C) salvo los que fijó Seba)
   munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 30,
-                      polvo: 4, cada: 0.1, encanto: 2, encantoChoque: 1, lento: 0.5,   // Seba (13-11, V7.7): al activarse (pisado o al topar) deja un polvo vudú 4 s (3 cada 0,1 s) y encanta (2 s plantado, 1 s si topa caminando); sin confusión ni maldición
-                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}) y se planta ahí, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s. Cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, el muñeco estalla en un polvo vudú que dura ${HABILIDADES.munecoVudu.polvo} s: hace ${n.dano} de daño cada ${String(HABILIDADES.munecoVudu.cada).replace('.', ',')} s a quien esté dentro, y los enemigos del radio quedan encantados ${HABILIDADES.munecoVudu.encanto} s (caminan lento hacia el muñeco). Si topa a un enemigo mientras camina, estalla igual, pero el encanto dura ${HABILIDADES.munecoVudu.encantoChoque} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
+                      cada: 0.1, lento: 0.5,
+                      // Seba (13-11, V7.9): dos formas del muñeco — CAMINANDO (topa a un enemigo antes de plantarse) y PLANTADO (trampa invisible que alguien pisa)
+                      formas: { caminando: { polvo: 3, encanto: 1 }, plantado: { polvo: 4, encanto: 2 } },   // Seba (13-11, V7.7): al activarse (pisado o al topar) deja un polvo vudú 4 s (3 cada 0,1 s) y encanta (2 s plantado, 1 s si topa caminando); sin confusión ni maldición
+                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}) y se planta ahí, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s. Cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, el muñeco estalla en un polvo vudú que dura ${HABILIDADES.munecoVudu.formas.plantado.polvo} s: hace ${n.dano} de daño cada ${String(HABILIDADES.munecoVudu.cada).replace('.', ',')} s a quien esté dentro, y los enemigos del radio quedan encantados ${HABILIDADES.munecoVudu.formas.plantado.encanto} s (caminan lento hacia el muñeco). Si topa a un enemigo mientras camina, estalla antes: el polvo dura ${HABILIDADES.munecoVudu.formas.caminando.polvo} s y el encanto ${HABILIDADES.munecoVudu.formas.caminando.encanto} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
                       n1: { dano: 3 }, n2: { dano: 3 } },
   calacaBambaa:     { nombre: 'Calaca de humo', glifo: 'calacaBambaa', cd: 13, cdFijo: true, dur: 3, choque: 16, giro: 3.2, silencio: 2, prisa: 0.25, prisaDur: 2,   // Seba: rastrea hasta 3 s, 100 y silencio 2 s, +25% de velocidad 2 s si alcanza a un héroe; velocidad del alma de Tenebris; (C) recarga, giro
                       desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
@@ -6845,8 +6847,9 @@ class Game {
   }
   // Golagore: Coraza de magma — alcanzar a 2 o más enemigos con una habilidad da un escudo de 20 por 4 s (no se acumula: se renueva)
   // Bambaa (Seba 13-11, V7.7): el muñeco estalla en un polvo vudú (4 s, 3 de daño cada 0,1 s a quien esté dentro) y encanta a los héroes enemigos del radio (caminan lento hacia el muñeco)
-  polvoVudu(p, z, encanto, n) {
-    const h = HABILIDADES.munecoVudu, c = { x: z.x, y: z.y };
+  // forma: 'caminando' (topó a un enemigo antes de plantarse: polvo 3 s, encanto 1 s) o 'plantado' (trampa pisada: polvo 4 s, encanto 2 s)
+  polvoVudu(p, z, forma, n) {
+    const h = HABILIDADES.munecoVudu, F = h.formas[forma], encanto = F.encanto, c = { x: z.x, y: z.y };
     for (const e of this.enemigos(p.id, false)) {
       if (!e.alive || e.esUnidad || dist(e, c) > h.radio + CONFIG.RADIO_JUGADOR) continue;
       this.aplicarEfecto(e, 'encantado', { t: encanto, src: p.id, px: c.x, py: c.y, lento: h.lento, vudu: true });
@@ -6854,7 +6857,7 @@ class Game {
     }
     this.emit({ k: 'munecoActiva', x: c.x | 0, y: c.y | 0, r: h.radio });
     let acc = 0;
-    this.zones.push({ id: this.nextId++, kind: 'polvoVudu', x: c.x, y: c.y, r: h.radio, t: h.polvo, total: h.polvo, owner: p.id,
+    this.zones.push({ id: this.nextId++, kind: 'polvoVudu', x: c.x, y: c.y, r: h.radio, t: F.polvo, total: F.polvo, owner: p.id, forma,
       tick: (zz, dt) => {
         acc += dt;
         while (acc >= h.cada) {
@@ -8393,19 +8396,23 @@ class Game {
         const enemigosV = () => this.enemigos(p.id, false).filter(e => e.alive && e.kind !== 'muro' && !(e.esUnidad && UNIDADES[e.kind]?.invulnerable));
         const z = { id: this.nextId++, kind: 'munecoVudu', x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, r: h.radio, t: h.dur + h.alcance / h.vel + 1, total: h.dur + h.alcance / h.vel + 1, owner: p.id, a, w: 0, rec: 0, oculto: 0,
           tick: (z, dt) => {
-            if (z.w === 0) {   // caminando
+            if (z.w === 0) {   // ---- forma CAMINANDO (z.w = 0): avanza hasta el punto elegido
               const st = Math.min(h.vel * dt, lejos - z.rec), nx = z.x + Math.cos(a) * st, ny = z.y + Math.sin(a) * st, q = { x: nx, y: ny };
               this.clampWall(q);
               const trabado = Math.hypot(q.x - nx, q.y - ny) > 0.5 || this.cruzaRoca(z.x, z.y, nx, ny);
               if (!trabado) { z.x = nx; z.y = ny; z.rec += st; }
-              for (const e of enemigosV()) if (dist(e, z) <= h.choque + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) {   // Seba (13-11, V7.7): al topar estalla igual (encanto de 1 s)
-                this.polvoVudu(p, z, h.encantoChoque, n); z.done = true; return;
+              for (const e of enemigosV()) if (dist(e, z) <= h.choque + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) {   // forma CAMINANDO: topa a un enemigo → polvo 3 s + encanto 1 s
+                this.polvoVudu(p, z, 'caminando', n); z.done = true; return;
               }
-              if (trabado || z.rec >= lejos - 0.5) { z.w = 1; z.oculto = 1; z.t = h.dur; z.total = h.dur; this.emit({ k: 'munecoPlanta', x: z.x | 0, y: z.y | 0, id: p.id }); }
-            } else {   // plantado (invisible para los enemigos): si alguien entra en el radio, confunde y maldice a todos los del radio
+              if (trabado || z.rec >= lejos - 0.5) {
+                // llegó: si ya hay un héroe enemigo en el radio, sigue siendo la forma CAMINANDO (estalla con polvo 3 s y encanto 1 s); si no, pasa a PLANTADO
+                if (enemigosV().some(e => !e.esUnidad && dist(e, z) <= h.radio + CONFIG.RADIO_JUGADOR)) { this.polvoVudu(p, z, 'caminando', n); z.done = true; return; }
+                z.w = 1; z.oculto = 1; z.t = h.dur; z.total = h.dur; this.emit({ k: 'munecoPlanta', x: z.x | 0, y: z.y | 0, id: p.id });
+              }
+            } else {   // ---- forma PLANTADO (z.w = 1): invisible para los enemigos; si un héroe enemigo entra en el radio, estalla
               const dentro = enemigosV().filter(e => dist(e, z) <= h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR));
               if (!dentro.some(e => !e.esUnidad)) return;
-              this.polvoVudu(p, z, h.encanto, n); z.done = true;   // Seba (13-11, V7.7): polvo vudú + encanto 2 s
+              this.polvoVudu(p, z, 'plantado', n); z.done = true;   // forma PLANTADO: polvo 4 s + encanto 2 s
             }
           },
           fin: (z) => this.emit({ k: 'munecoSeVa', x: z.x | 0, y: z.y | 0 }) };
@@ -13648,7 +13655,7 @@ class Renderer {
       } else if (z.kind === 'canalAncestro') {
         // Bambaa canaliza la ulti: círculo rúnico bajo sus pies que se dibuja y chispas moradas que suben
         const T = this.time, k = z.prog;
-        this.circuloRunico(cx, cy, Math.round(10 + 16 * k), T * 2, PALETA.vacio2, 0.6 + 0.4 * k);
+        this.circuloVudu(cx, cy, Math.round(10 + 16 * k), T * 2, PALETA.vacio2, 0.6 + 0.4 * k);
         for (let i = 0; i < 6; i++) { const ph = (T * 1.5 + i / 6) % 1, b = i * TAU / 6; this.g.globalAlpha = 1 - ph; this.g.fillStyle = i % 2 ? PALETA.magia : PALETA.vacio2; this.g.fillRect(Math.round(cx + Math.cos(b) * 18), Math.round(cy + Math.sin(b) * 12 - ph * 26), 1, 3); }
         this.g.globalAlpha = 1;
       } else if (z.kind === 'totemBambaa') {
@@ -13658,7 +13665,7 @@ class Renderer {
         this.ring(cx, cy, r, PALETA.tinta, 0.9, 3); this.ring(cx, cy, r, Math.floor(T * 4) % 2 ? PALETA.vacio2 : PALETA.magia, 0.9, 1);
         for (let i = 0; i < 24; i++) { const b = i * TAU / 24 + T * 0.25, x = Math.round(cx + Math.cos(b) * (r - 5)), y = Math.round(cy + Math.sin(b) * (r - 5)); g.fillStyle = i % 3 ? PALETA.vacio2 : PALETA.magia; g.fillRect(x, y - 1, 1, 3); if (i % 3 === 0) g.fillRect(x - 1, y, 3, 1); }
         const pu = (T * 0.7) % 1; this.ring(cx, cy, Math.round(20 + (r - 20) * pu), PALETA.vacio2, 0.22 * (1 - pu), 1);
-        this.circuloRunico(cx, cy + 2, 26, -T * 0.8, PALETA.vacio2, 0.9);
+        this.circuloVudu(cx, cy + 2, 26, -T * 0.8, PALETA.vacio2, 0.9);
         if (k > 0.8 && Math.floor(T * 8) % 2) this.ring(cx, cy, r, PALETA.pergamino2, 0.5, 1);   // por terminar
       } else if (z.kind === 'marcaSaltoGol') {
         // Golagore: dónde caerá el salto (lo ven todos) — radio del hachazo y el centro que aturde; un anillo se cierra hasta la caída
@@ -15068,7 +15075,7 @@ class Renderer {
   // n llamas chicas repartidas en un ancho (compatibilidad con los usos de antes)
   esAliadoDe(id) { return id === this._myId || !!(this.equipos && this.equipos[id] && this.equipos[id] === this.equipos[this._myId]); }
   // Bambaa: círculo rúnico (anillos, estrella de cinco puntas y runas), como el de la referencia
-  circuloRunico(cx, cy, r, rot, col = PALETA.vacio2, a = 1) {
+  circuloVudu(cx, cy, r, rot, col = PALETA.vacio2, a = 1) {   // Bambaa (renombrado V7.9: antes pisaba el circuloRunico de Æthar)
     const g = this.g; g.globalAlpha = a;
     this.ring(cx, cy, r, PALETA.tinta, 1, 3); this.ring(cx, cy, r, col, 1, 1); this.ring(cx, cy, Math.max(2, r - 4), PALETA.vacio1, 1, 1);
     const P = []; for (let i = 0; i < 5; i++) { const b = rot + i * TAU / 5 - Math.PI / 2; P.push([Math.round(cx + Math.cos(b) * (r - 4)), Math.round(cy + Math.sin(b) * (r - 4) * 0.9)]); }
@@ -18493,6 +18500,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.9', f: '13-11-2026', n: [
+    'Bambaa, Muñeco vudú: dos formas bien separadas. Caminando (topa a un enemigo, o llega a su punto con un enemigo ya en el radio): polvo 3 s y encanto 1 s. Plantado (trampa invisible que alguien pisa después): polvo 4 s y encanto 2 s. Antes, un muñeco tirado encima de un enemigo se plantaba y estallaba al instante con el encanto de 2 s.',
+    'Arreglado: el círculo de runas de Æthar (sello y ulti) se dibujaba con el pentagrama del tótem de Bambaa.',
+  ] },
   { v: 'V7.8', f: '13-11-2026', n: [
     'Vario, Encanto: el corazón central encanta 2 s (antes 1,5) y los laterales 1 s (antes 0,75).',
   ] },
