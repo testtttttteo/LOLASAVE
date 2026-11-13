@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.9</title>
+<title>LOLA V7.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.9</p>
+        <p class="sub version">LOLA V7.0</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1501,6 +1501,19 @@ Object.assign(HEROES, {
   },
 });
 
+// Seba (13-11): Kiro, guerrero del desierto (Errantes). Asesino ágil de cimitarra y arena. Números (C) salvo los que fijó Seba.
+Object.assign(HEROES, {
+  kiro: {
+    casa: 'errantes',
+    nombre: 'Kiro', rol: 'Asesino', fondo: 'kiro', arma: 'cimitarraKiro',
+    desc: 'Guerrero del desierto de cabello rojo y cimitarra curva. Se mueve como el viento entre tajos, se esconde en la arena y desata la tormenta.',
+    vida: 365, dano: 30, recarga: 1.0, ultiCarga: 280, velocidad: 160,   // Seba: vida de Takichi, daño 30, velocidad de Shai; (C) recarga de Shai/Takichi
+    ataque: { tipo: 'melee', rango: 60, arco: 110 },   // (C) cimitarra
+    habs: ['tajoKiro', 'pozoArena', 'tormentaArena'],
+    pasiva: 'pasoEnFalso',
+  },
+});
+
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
 Object.assign(HEROES, {
   ora: {
@@ -1858,6 +1871,21 @@ Object.assign(HABILIDADES, {
   // ---- Driiar (Seba, 30-10)
   // ---- Lei (Seba, 05-11; números (C) salvo los que fijó Seba)
   // ---- Boa (Seba, 06-11; números (C) salvo los que fijó Seba)
+  // ---- Kiro (Seba, 13-11; números (C) salvo los que fijó Seba)
+  tajoKiro:      { nombre: 'Tajo del viento', glifo: 'tajoKiro', cd: 12, cdFijo: true, alcance: 128,   // Seba (13-11): −15% (150 → 128)
+                   vel: 900, ancho: 34, ventana: 2, acumDur: 3, aturde: 1, danoAturde: 25,   // Seba (13-11): el aturdido de las 3 acumulaciones hace +25
+                     // Seba: hasta 3 veces, 2 s por tajo, dash físico (lo frenan los muros de Aldor y Maidas), 45 a todos los que cruza, 1 acumulación (3 s cada una), con 3 aturdido 1 s; (C) distancia 150, velocidad, ancho, recarga
+                   desc: (n) => `Hasta 3 veces (tienes ${HABILIDADES.tajoKiro.ventana} s para cada una): corres a toda velocidad a distancia ${DIST(HABILIDADES.tajoKiro.alcance)} con un tajo que hace ${n.dano} de daño a todos los que cruzas y les suma una acumulación (dura ${HABILIDADES.tajoKiro.acumDur} s). Con 3 acumulaciones el enemigo queda aturdido ${HABILIDADES.tajoKiro.aturde} s y recibe ${HABILIDADES.tajoKiro.danoAturde} de daño extra. Es una carrera, no un salto: los muros te frenan.`,
+                   n1: { dano: 45 }, n2: { dano: 45 } },
+  pozoArena:     { nombre: 'Pozo de arena', glifo: 'pozoArena', cd: 14, cdFijo: true, radio: 126, dur: 4.5,   // Seba (13-11): +0,5 s y +5% de radio
+                   cada: 0.1, oculta: 0.75, emboscada: 10, embosMax: 3,   // Seba (13-11): al volverse invisible, el siguiente básico hace +10 (hasta 3 veces por pozo)
+                     // Seba: bajo sus pies, radio medio, 4 s, 1 de daño cada 0,1 s, −10% cada 0,5 s dentro (tope 40%), invisible dentro tras 0,75 s; (C) radio 120, recarga
+                   desc: (n) => `A tus pies se abre un pozo de arena movediza de radio ${RADIO(HABILIDADES.pozoArena.radio)} por ${HABILIDADES.pozoArena.dur} s. Los enemigos dentro reciben ${n.dano} de daño cada ${fmtN(HABILIDADES.pozoArena.cada)} s y se frenan ${Math.round(n.lento * 100)}% más cada 0,5 s (hasta ${Math.round(n.tope * 100)}%). Dentro, tras ${fmtN(HABILIDADES.pozoArena.oculta)} s quieto en las sombras, eres invisible para el rival; atacar, usar una habilidad o salir te revela. Cada vez que te vuelves invisible, tu siguiente ataque básico hace +${HABILIDADES.pozoArena.emboscada} de daño (hasta ${HABILIDADES.pozoArena.embosMax} veces por pozo).`,
+                   n1: { dano: 1, lento: 0.10, tope: 0.40 }, n2: { dano: 1, lento: 0.10, tope: 0.40 } },
+  tormentaArena: { nombre: 'Tormenta de arena', glifo: 'tormentaArena', cd: 50, cdFijo: true, ulti: true, dur: 10, largo: 380, vel: 144.4,   // Seba (13-11): tornado 5% más rápido (137,5 → 144,4)
+                   ancho: 162, confusion: 2.5,   // Seba: 3 básicos potenciados en 10 s (se pueden fallar); tornado 10% menos ancho y 25% más rápido que la Tormenta de Rasho, largo, 50/s, arrastra, al final −33% 1,5 s; (C) largo 380, recarga
+                   desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
+                   n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
   // ---- Ora (Seba, 12-11; números (C) salvo los que fijó Seba)
   olaOra:     { nombre: 'Invocar ola', glifo: 'olaOra', cd: 10, cdFijo: true, alcance: 280, largo: 300, ancho: 110, vel: 281,   // Seba (12-11): 33% más lenta (420 → 281)
                 espera: 2, empuje: 40, lentoDur: 3, velDur: 3,   // Seba: 70, −33% 3 s, aliados +25%, arrastra levemente; dos arrastres (dónde nace y hacia dónde corre); (C) alcances, ancho, velocidad, empuje 40, espera 2 s, recarga
@@ -1985,6 +2013,7 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  pasoEnFalso: { nombre: 'Paso en falso', glifo: 'pasoEnFalso', chance: 0.05, cd: 3, desc: 'Tienes 5% de probabilidad de esquivar por completo un ataque básico enemigo (de héroes o invocaciones). Tras esquivar, 3 s sin poder volver a hacerlo.' },   // Seba (13-11)
   gotasOra: { nombre: 'Gotas suspendidas', glifo: 'gotasOra', cada: 3, cura: 15, radio: 200, desc: 'Cada 3 ataques básicos que aciertan, te curas 15 y curas 15 a un aliado cercano (hasta distancia media).' },   // Seba (12-11): solo un aliado cercano, radio corto a mediano (200)
   juicioDorado: { nombre: 'Juicio Real', glifo: 'juicioDorado', cd: 2.5, radio: 110, dano: 25,   // Seba (12-11): 50 → 25
                   lento: 0.10, lentoDur: 2.5, desc: 'Cuando te golpea una habilidad, una lanza dorada cae sobre un enemigo al azar cerca de ti: 25 de daño y 10% más lento por 2,5 s. Una vez cada 2,5 s.' },   // Seba (11-11); nombre (C)
@@ -2122,6 +2151,7 @@ const GUIAS = {
   castigo: { tipo: 'linea', alcance: 450, ancho: 24 }, pozoMaldito: { tipo: 'punto', alcance: 300, r: 90 }, chaos: { tipo: 'rumble', alcance: 600, largo: 366, r: 66 },
   impactoRunico: { tipo: 'punto', alcance: 300, r: 70 }, ondaRunica: { tipo: 'propio', r: 200 }, vacio: { tipo: 'punto', alcance: 380, r: 132 },
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
+  tajoKiro: { tipo: 'linea', alcance: 128, ancho: 34 }, pozoArena: { tipo: 'propio', r: 126 }, tormentaArena: { tipo: 'propio', r: 30 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -4923,6 +4953,56 @@ Object.assign(OTROS, {
   palomaRey: ['y.........y', 'yy.......yy', '.yyy.q.yyy.', '..yyyqyyy..', '....yyy....', '....yOy....', '...y.y.y...'],
 });
 
+// Seba (13-11): Kiro, guerrero del desierto — fiel a la referencia 8 bit: cabello rojo intenso despeinado y puntiagudo con mechones que caen
+// a los lados, cara curtida, torso descubierto con chaleco oscuro abierto de ribetes dorados, brazaletes dorados y muñequeras oscuras,
+// faja roja anudada al frente, bombachos color crema anchos, vendas oscuras con bandas doradas y pies descalzos.
+// La cinta roja de la cabeza (coleta) y la tela roja que ondea detrás se dibujan aparte en render (se mueven con el viento y al atacar).
+Object.assign(CAPAS, {
+  cuerpoKiro: L({
+    3: '......r.R.Rr.r......',
+    4: '.....rRReRRRRRr.....',
+    5: '....rRRReRRRReRRr...',
+    6: '....RrRkmmmkRRrR....',
+    7: '....RPqkmmmqkPRr....',
+    8: '....rPPPPPPPPPRr....',
+    9: '....R.pPPpPPp..Rr...',
+    10: '.....OnnnpnnnO......',
+    11: '....pOnnpppnnOp.....',
+    12: '....pnOnpmpnOnp.....',
+    13: '....OnOnpppnOnO.....',
+    14: '....nnRRRRRRRnn.....',
+    15: '....p.PRRrRRP.p.....',
+    16: '....PPPPPrPPPPP.....',
+    17: '...PPPpPPrPPpPPP....',
+  }),
+  piernasKiro0: L({
+    18: '...PPpPPP.PPPpPP....',
+    19: '....PPPP...PPPP.....',
+    20: '....OwwO...OwwO.....',
+    21: '....pppk...kppp.....',
+  }),
+  piernasKiro1: L({
+    18: '..PPpPPP...PPPpPP...',
+    19: '..PPPP.......PPPP...',
+    20: '..OwwO.......OwwO...',
+    21: '..pppk.......kppp...',
+  }),
+});
+Object.assign(APARIENCIA, {
+  kiro: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoKiro'], ['cuerpoKiro']], cabeza: [[], []], quieto: 'piernasKiro0', paso: 'piernasKiro1' },
+});
+Object.assign(ARMAS_SPR, {
+  // cimitarra curva: hoja plateada que se ensancha y curva hacia la punta, filo claro, guarda y pomo dorados, empuñadura oscura
+  cimitarraKiro: { g: [1, 6], S: 31, rows: ['................', '................', '................', '...............q', '.............4q3', '...y.......44q3.', 'wwwOyq444443333.', '...y.33333......', '................', '................', '................', '................'] },
+});
+Object.assign(GLIFOS, {
+  tajoKiro:      ['........q', '......4q.', '....44q..', '..443....', 'P.33.....', '.P...P...', 'P.P.P.P..', '.P.P.P...', 'PPPPPPPPP'],
+  pozoArena:     ['.........', '..PPPPP..', '.PpppppP.', 'PpmmmmmpP', 'PpmwwwmpP', 'PpmmmmmpP', '.PpppppP.', '..PPPPP..', '.........'],
+  tormentaArena: ['PPPPPPPPP', '.PpppppP.', '..PpppP..', '..PpmpP..', '...PpP...', '...PmP...', '....P....', '...P.P...', '..P...P..'],
+  pasoEnFalso:   ['...RR....', '..RRRe...', '..Rpp....', '..nOn....', '.P.R..PP.', 'P..P.P..P', '..P.P..P.', '.P...P...', 'P.....P..'],
+});
+Object.assign(FONDOS, { kiro: ['r', 'p'] });
+
 // Seba (12-11): Ora, oráculo de las mareas — fiel a la referencia 8 bit: aro dorado flotante con gema celeste sobre la cabeza, cabello azul
 // marino largo y suelto con mechones azules, cara clara con ojos celestes, cuello dorado con gema, túnica azul marino al centro con gemas
 // celestes, mangas anchas blancas forradas en celeste, sobretodo blanco con ribetes dorados, botas oscuras con detalles de oro.
@@ -5675,6 +5755,11 @@ class Game {
     if (!esJugador && UNIDADES[target.kind].invulnerable) return 0;
 
     if (esJugador && target.fx && target.fx.jetpack) return 0;   // Biteroi en el aire: nada lo daña (Seba)
+    if (esJugador && o.basico && src && src !== target && HEROES[target.build?.heroe]?.pasiva === 'pasoEnFalso' && this.combatTime >= (target.pasoCd || 0) && Math.random() < PASIVAS.pasoEnFalso.chance) {
+      target.pasoCd = this.combatTime + PASIVAS.pasoEnFalso.cd;   // Kiro: Paso en falso — esquiva el básico entero
+      this.emit({ k: 'esquivaKiro', x: target.x | 0, y: target.y | 0, id: target.id });
+      return 0;
+    }
     if (esJugador && !o.basico && !o.tick && !o.silencioso && !o.juicio && src && src !== target && HEROES[target.build?.heroe]?.pasiva === 'juicioDorado') this.juicioLegios(target);   // Legios: Juicio dorado
     // Escudo frontal (escudero): bloquea lo que viene de frente
     if (target.escudo && o.tipo !== 'puro' && !o.silencioso) {
@@ -6155,6 +6240,46 @@ class Game {
     if (p) this.damage(e, P.choque, p, { tipo: 'fis', desde: { x: x0, y: y0 } });
     if (e.alive) { this.aplicarEfecto(e, 'aturdido', { t: P.choqueAturde }); if (!e.esUnidad) this.emit({ k: 'txt', x: e.x | 0, y: e.y | 0, s: 'ATURDIDO', id: e.id }); }
   }
+  // Kiro: usar una habilidad lo revela (y vuelve a esperar 0,75 s en el pozo)
+  revelarKiro(p) { p.kiroOculto = 0; if (p.fx.invisible && p.fx.invisible.kiro) { delete p.fx.invisible; this.emit({ k: 'humo', x: p.x | 0, y: p.y | 0, chico: true }); } }
+  // Kiro: suma una acumulación (cada una dura 3 s); con 3, aturdido 1 s y se limpian
+  acumKiro(e, p) {
+    const H = HABILIDADES.tajoKiro, now = this.combatTime;
+    e.kiroAc = (e.kiroAc || []).filter(t => t > now); e.kiroAc.push(now + H.acumDur);
+    if (e.kiroAc.length >= 3) { e.kiroAc = []; this.aplicarEfecto(e, 'aturdido', { t: H.aturde }); if (p) this.damage(e, H.danoAturde, p, { tipo: 'mag', desde: p }); this.emit({ k: 'aturdeKiro', x: e.x | 0, y: e.y | 0 }); }   // Seba (13-11): el aturdido hace +25
+  }
+  // Kiro: tornado de arena del 3.er golpe — avanza recto; atrapa a los enemigos que toca y los lleva consigo (50/s); al soltarlos, −33% 1,5 s
+  tornadoKiro(p, a, n) {
+    const H = HABILIDADES.tormentaArena, v = H.vel * RITMO.movimiento, T = H.largo / v, ca = Math.cos(a), sa = Math.sin(a);
+    const atrap = new Map(), r = H.ancho / 2, inmune = (e) => e.fx && (e.fx.decimar || e.fx.embateGiro || e.fx.danzaCarmesi || e.fx.vendaval || e.fx.canalEcosAldor || e.fx.canalFestin);
+    let prev = T, prox = 0.5;
+    this.emit({ k: 'tornadoSale', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
+    this.zones.push({ id: this.nextId++, kind: 'tornadoKiro', x: p.x + ca * 20, y: p.y + sa * 20, a, r, t: T, total: T, owner: p.id,
+      tick: (z) => {
+        const dt = Math.max(0, prev - z.t); prev = z.t;
+        const nx = z.x + ca * v * dt, ny = z.y + sa * v * dt, dx = nx - z.x, dy = ny - z.y;
+        z.x = nx; z.y = ny;
+        for (const e of this.enemigos(p.id, false)) {
+          if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (!atrap.has(e.id) && dist(e, z) <= r + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR) && !inmune(e)) atrap.set(e.id, e);
+        }
+        for (const e of atrap.values()) {   // los lleva: avanzan con el tornado y giran hacia su centro
+          if (!e.alive) continue;
+          if (inmune(e)) { atrap.delete(e.id); continue; }
+          e.x += dx; e.y += dy;
+          const ex = z.x - e.x, ey = z.y - e.y, d = Math.hypot(ex, ey);
+          if (d > 12) { e.x += ex / d * Math.min(d - 12, 90 * dt); e.y += ey / d * Math.min(d - 12, 90 * dt); }
+          if (e.fx) e.fx.tornadoKiro = { t: 0.15 };
+          if (e.kbx !== undefined) { e.kbx = 0; e.kby = 0; }
+        }
+        prox -= dt;
+        if (prox <= 0) { prox += 0.5; for (const e of atrap.values()) if (e.alive) this.damage(e, n.dps * 0.5, p, { tipo: 'mag', ulti: true, desde: z }); }   // 50 por segundo en 2 golpes
+      },
+      fin: (z) => {
+        this.emit({ k: 'tornadoFin', x: z.x | 0, y: z.y | 0, r });
+        for (const e of atrap.values()) if (e.alive) this.aplicarEfecto(e, 'slow', { t: 1.5, mult: 1 - n.lento3, k: 'tormentaKiro3' });
+      } });
+  }
   // Ora: Gotas suspendidas — cada 3 básicos que aciertan, 15 a ella y al aliado más cercano
   gotasOra(p) {
     if (!p.alive) return;
@@ -6612,7 +6737,7 @@ class Game {
   }
   velocidadDe(p) {
     if (p.esMuneco) return 0;
-    if (p.fx.aturdido || p.fx.empujeAldor || canalizando(p.fx) || p.fx.canalLluvia || p.fx.jetpack || p.fx.saltoLanza || p.fx.saltoPatada || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval) return 0;   // Lei: quieta en el aire
+    if (p.fx.aturdido || p.fx.empujeAldor || p.fx.dashKiro || canalizando(p.fx) || p.fx.canalLluvia || p.fx.jetpack || p.fx.saltoLanza || p.fx.saltoPatada || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval) return 0;   // Lei: quieta en el aire
     if (p.build && HEROES[p.build.heroe]?.pasiva === 'pasoSigiloso' && this.combatTime - (p.ultimoDano ?? -99) >= 3) return this.velocidadBase(p) * 1.1;   // Takichi
     return this.velocidadBase(p);
   }
@@ -6655,7 +6780,7 @@ class Game {
 
   basicAttack(p, ang = null, dd = null) {
     if (p.esMuneco) return;
-    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
+    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
     const at = p.st.ataque;
     p.cd[0] = CONFIG.CADENCIA;
     p.cargas = Math.max(0, p.cargas - 1);
@@ -6762,6 +6887,16 @@ class Game {
   }
 
   meleeArc(p, a, rango, arcoDeg, dmg) {
+    // Kiro: atacar lo revela en el pozo (vuelve a esperar 0,75 s) y gasta un golpe de la Tormenta de arena (aunque falle)
+    p.kiroOculto = 0;
+    p._kiroUlti = 0;
+    if (p.kiroEmbos) { p.kiroEmbos = false; dmg += HABILIDADES.pozoArena.emboscada; this.emit({ k: 'emboscadaKiro', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) }); }   // Kiro: emboscada desde el pozo (se gasta aunque falle)
+    if (p.fx && p.fx.tormentaKiro) {
+      const v = p.fx.tormentaKiro; v.golpe++; p._kiroUlti = v.golpe;
+      if (v.golpe === 1) dmg += v.n.extra;
+      if (v.golpe >= 3) { delete p.fx.tormentaKiro; this.tornadoKiro(p, a, v.n); }
+      this.emit({ k: 'golpeTormenta', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), g: v.golpe });
+    }
     // Legios: el básico gasta la carga acumulada (si ataca durante la carga, gasta lo que lleva)
     // Seba (12-11): solo se gasta si el básico golpea a un enemigo
     p._golpeCarga = null;
@@ -6778,6 +6913,12 @@ class Game {
       if (hizo > 0 && HEROES[p.build?.heroe]?.pasiva === 'templeEnano') {   // Aldor (Seba 12-11, V6.5): cada 4.º básico que golpea empuja
         const P = PASIVAS.templeEnano; p.golpesAldor = (p.golpesAldor || 0) + 1;
         if (p.golpesAldor >= P.cada) { p.golpesAldor = 0; if (q.alive) this.empujeAldor(p, q, p.x, p.y, P.empuje, P.empujeDur); }
+      }
+      if (p._kiroUlti && hizo > 0 && q.alive) {   // Kiro: efectos de los golpes 1 y 2 de la Tormenta de arena
+        const N = HABILIDADES.tormentaArena.n1;
+        this.emit({ k: 'arenaGolpe', x: q.x | 0, y: q.y | 0, g: p._kiroUlti });
+        if (p._kiroUlti === 1) { this.aplicarEfecto(q, 'slow', { t: 5, mult: 1 - N.lento1, k: 'tormentaKiro1' }); this.aplicarEfecto(q, 'arenadoKiro', { t: 5 }); }
+        if (p._kiroUlti === 2) { if (!q.esUnidad) this.aplicarEfecto(q, 'confusoKiro', { t: HABILIDADES.tormentaArena.confusion }); this.aplicarEfecto(q, 'slow', { t: HABILIDADES.tormentaArena.confusion, mult: 1 - N.lento2, k: 'tormentaKiro2' }); }
       }
       if (cg && hizo > 0) {   // Legios: golpe cargado — silencio y lento al golpeado y a los enemigos en un radio pequeño alrededor (+daño a esos también)
         p._golpeCarga = null; delete p.fx.cargaLegios;
@@ -7126,6 +7267,7 @@ class Game {
     }
     if (key === 'olaOra' && p.fx.olaMarca) { if (!p.fx.aturdido && !p.fx.silence) this.lanzarOla(p, this._apunte ? this._apunte.a : null); return; }   // Ora: 2.º arrastre = hacia dónde corre la ola
     if (p.fx.vendaval) return;   // Lei (C): mientras levita no usa otras habilidades
+    if (p.fx.saltoZel || p.fx.dashKiro) return;   // Zel (C): en el aire no usa habilidades; Kiro: durante el tajo tampoco
     if (p.fx.encantado) return;   // Vario: encantado no usa habilidades
     if (p.fx.polvo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'EN EL POLVO', id: p.id }); return; }   // Vario: con el polvo no usa otras habilidades
     if (key === 'patadaFenix' && p.fx.canalPatada) { this.soltarPatada(p); return; }   // Ash: segunda apretada = saltar
@@ -7521,6 +7663,53 @@ class Game {
         this.zones.push(zona);
         this.aplicarEfecto(p, 'canalArmario', { t: h.canal + 0.1, zona });
         this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'CAJA MAGICA' });
+        break;
+      }
+      // ---------------------------------------------------------- Kiro (Seba 13-11)
+      case 'tajoKiro': {
+        // Seba: dash físico rapidísimo (no blink), hasta 3 veces con 2 s de plazo para cada una; los muros lo frenan
+        let { a } = this.aim(p, h.alcance + 60);
+        if (!this._apunte && (p.moveX || p.moveY) && !this.target(p, h.alcance + 60)) a = Math.atan2(p.moveY, p.moveX);
+        p.facing = a; p.disparo = null;
+        this.revelarKiro(p);
+        const paso = (p.kiroPaso || 0) + 1, T = h.alcance / h.vel;
+        this.aplicarEfecto(p, 'dashKiro', { t: T, a, ox: p.x, oy: p.y, n, golpes: new Set(), paso });
+        this.emit({ k: 'tajoKiro', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), paso });
+        if (paso < 3) { p.kiroPaso = paso; p.kiroVence = this.combatTime + T + h.ventana; p.cd[slot + 1] = T + 0.12; }
+        else { p.kiroPaso = 0; p.kiroVence = 0; }
+        break;
+      }
+      case 'pozoArena': {
+        this.revelarKiro(p);
+        const c = { x: p.x, y: p.y };
+        const dentro = new Map();   // tiempo dentro de cada enemigo
+        let prox = 0, embos = 0;   // emboscadas dadas por este pozo
+        this.emit({ k: 'pozoArena', x: c.x | 0, y: c.y | 0, r: h.radio });
+        this.zones.push({ id: this.nextId++, kind: 'pozoArena', x: c.x, y: c.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id, prevT: h.dur,
+          tick: (z) => {
+            const dt = Math.max(0, z.prevT - z.t); z.prevT = z.t; prox -= dt;
+            const golpe = prox <= 0; if (golpe) prox += h.cada;
+            for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              if (dist(e, c) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) { dentro.delete(e.id); continue; }
+              const td = (dentro.get(e.id) || 0) + dt; dentro.set(e.id, td);
+              if (golpe) this.damage(e, n.dano, p, { tipo: 'mag', tick: true, silencioso: true, desde: c });
+              const lento = Math.min(n.tope, n.lento * (1 + Math.floor(td / 0.5)));
+              if (e.alive) { this.aplicarEfecto(e, 'slow', { t: 0.2, mult: 1 - lento, k: 'pozoArena' }); if (e.fx) e.fx.arenaKiro = { t: 0.2, n: Math.round(lento * 10) }; }
+            }
+            // Kiro dentro: tras 0,75 s sin atacar ni usar habilidades, invisible para el rival
+            if (p.alive && dist(p, c) <= h.radio) {
+              p.kiroOculto = (p.kiroOculto || 0) + dt;
+              if (p.kiroOculto >= h.oculta) { if (!p.fx.invisible) { this.emit({ k: 'kiroSeOculta', x: p.x | 0, y: p.y | 0 }); if (!p.kiroEmbos && embos < h.embosMax) { embos++; p.kiroEmbos = true; } } p.fx.invisible = { t: 0.15, kiro: true }; }   // Seba (13-11): emboscada, +10 al siguiente básico
+            } else if (p.kiroOculto) { p.kiroOculto = 0; if (p.fx.invisible && p.fx.invisible.kiro) { delete p.fx.invisible; this.emit({ k: 'humo', x: p.x | 0, y: p.y | 0, chico: true }); } }
+          },
+          fin: () => { if (p.fx.invisible && p.fx.invisible.kiro) delete p.fx.invisible; p.kiroOculto = 0; } });
+        break;
+      }
+      case 'tormentaArena': {
+        this.revelarKiro(p);
+        this.aplicarEfecto(p, 'tormentaKiro', { t: h.dur, golpe: 0, n });
+        this.emit({ k: 'tormentaArena', x: p.x | 0, y: p.y | 0 });
         break;
       }
       // ---------------------------------------------------------- Ora (Seba 12-11)
@@ -8737,6 +8926,7 @@ class Game {
         const v0 = this.players.get(p.fx.encantado.src), dx = v0 ? v0.x - p.x : 0, dy = v0 ? v0.y - p.y : 0, dd = Math.hypot(dx, dy);
         if (dd > CONFIG.RADIO_JUGADOR * 2 + 4) { mx = dx / dd * (1 - p.fx.encantado.lento); my = dy / dd * (1 - p.fx.encantado.lento); } else { mx = 0; my = 0; }
       }
+      if (p.fx.confusoKiro) { mx = -mx; my = -my; }   // Kiro: confundido, los controles van al revés
       if (Math.hypot(mx, my) > 0.1) { p.moveX = mx; p.moveY = my; }
       const v = this.velocidadDe(p);
       const x0 = p.x, y0 = p.y;
@@ -8987,6 +9177,33 @@ class Game {
           }
         }
       }
+      if (p.kiroVence && this.combatTime > p.kiroVence) { p.kiroVence = 0; p.kiroPaso = 0; const sl = HEROES[p.build.heroe]?.habs.indexOf('tajoKiro'); if (sl >= 0) p.cd[sl + 1] = HABILIDADES.tajoKiro.cd; }   // Kiro: no usó el siguiente tajo a tiempo
+      if (p.fx.dashKiro) {   // Kiro: el tajo avanza a 900/s; los muros de Aldor (roca) y de Maidas lo frenan; golpea a todos los que cruza
+        const v = p.fx.dashKiro, H = HABILIDADES.tajoKiro, ca = Math.cos(v.a), sa = Math.sin(v.a);
+        const x0 = p.x, y0 = p.y; let x1 = p.x + ca * H.vel * dt, y1 = p.y + sa * H.vel * dt, choca = false;
+        const roca = this.cruzaRoca(x0, y0, x1 + ca * CONFIG.RADIO_JUGADOR, y1 + sa * CONFIG.RADIO_JUGADOR);
+        if (roca) { x1 = roca.x - ca * (CONFIG.RADIO_JUGADOR + 2); y1 = roca.y - sa * (CONFIG.RADIO_JUGADOR + 2); choca = true; }
+        for (const u of this.units) {   // muro de hielo de Maidas: segmento largo 108, grosor 14
+          if (!u.alive || u.kind !== 'muro' || choca) continue;
+          const L = (u.largo || UNIDADES.muro.largo) / 2, fa = u.facing || 0, mx1 = u.x - Math.cos(fa) * L, my1 = u.y - Math.sin(fa) * L, mx2 = u.x + Math.cos(fa) * L, my2 = u.y + Math.sin(fa) * L;
+          const bx = x1 + ca * (CONFIG.RADIO_JUGADOR + 7), by = y1 + sa * (CONFIG.RADIO_JUGADOR + 7), d = (bx - x0) * (my2 - my1) - (by - y0) * (mx2 - mx1);
+          if (Math.abs(d) < 1e-6) continue;
+          const t = ((mx1 - x0) * (my2 - my1) - (my1 - y0) * (mx2 - mx1)) / d, w = ((mx1 - x0) * (by - y0) - (my1 - y0) * (bx - x0)) / d;
+          if (t >= 0 && t <= 1 && w >= -0.1 && w <= 1.1) { const px = x0 + (bx - x0) * t, py = y0 + (by - y0) * t; x1 = px - ca * (CONFIG.RADIO_JUGADOR + 8); y1 = py - sa * (CONFIG.RADIO_JUGADOR + 8); choca = true; }
+        }
+        const c = { x: x1, y: y1 }; this.clampWall(c); p.x = c.x; p.y = c.y;
+        for (const e of this.enemigos(p.id, false)) {
+          if (v.golpes.has(e.id) || !e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          const ex = e.x - v.ox, ey = e.y - v.oy, al = ex * ca + ey * sa, lat = Math.abs(-ex * sa + ey * ca), rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR;
+          const hecho = (p.x - v.ox) * ca + (p.y - v.oy) * sa;
+          if (al < -rr || al > hecho + rr || lat > H.ancho / 2 + rr) continue;
+          v.golpes.add(e.id);
+          this.damage(e, v.n.dano, p, { tipo: 'mag', desde: p });
+          if (e.alive) this.acumKiro(e, p);
+          this.emit({ k: 'cortaKiro', x: e.x | 0, y: e.y | 0, a: +v.a.toFixed(2) });
+        }
+        if (choca) { delete p.fx.dashKiro; this.emit({ k: 'chocaKiro', x: p.x | 0, y: p.y | 0 }); }
+      }
       if (p.fx.olaMarca && p.fx.olaMarca.t <= dt * 1.5) this.lanzarOla(p, null);   // Ora: sin 2.º arrastre, la ola corre alejándose de ella
       // Legios: Carga de caballería (sube la etapa por segundo) y Por el Rey (aura que lo acompaña)
       if (p.fx.cargaLegios) {
@@ -9190,6 +9407,7 @@ class Game {
     for (let i = 0; i < alive.length; i++) for (let j = i + 1; j < alive.length; j++) {
       const a = alive[i], b = alive[j];
       if (!a.alive || !b.alive) continue;
+      if ((a.fx && (a.fx.dashKiro || a.fx.tornadoKiro)) || (b.fx && (b.fx.dashKiro || b.fx.tornadoKiro))) continue;   // Kiro: el tajo atraviesa cuerpos; el tornado lleva a los atrapados juntos
       const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
       if (d > 0 && d < R * 2) {
         const push = (R * 2 - d) / 2;
@@ -9610,7 +9828,8 @@ class Game {
         p.esMuneco ? Math.round(p.cuenta) : 0, p.esMuneco && p.cuentaDesde !== null ? Math.ceil(CONFIG.ENTRENO.ventana - (this.combatTime - p.cuentaDesde)) : 0, p.esMuneco && this.combatTime - p.cuentaFinalT < CONFIG.ENTRENO.muestra ? p.cuentaFinal : -1,
         fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
         fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0,
-        fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0]);   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0,
+        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0]);   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -9859,6 +10078,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'encanto': si = d < 300 && !target.esUnidad; break;
       case 'polvoEstrellas': si = d < 140; break;
       case 'armario': si = d < 340 && !target.esUnidad; break;
+      case 'tajoKiro': si = d < 200; break;
+      case 'pozoArena': si = d < 120; break;
+      case 'tormentaArena': si = d < 90 && !target.esUnidad; break;
       case 'olaOra': si = d < 320; break;
       case 'burbujaOra': si = d < 360; break;
       case 'geiserOra': si = d < 150 && !target.esUnidad; break;
@@ -11277,7 +11499,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -11552,12 +11774,14 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
     }
     if (ev.k === 'hit' || ev.k === 'cura') f.ox = Math.round((hash(ev.x | 0, ev.y | 0, this.time * 1000 | 0) - 0.5) * 10);
+    if (ev.k === 'slash' && ev.h === 'kiro') { this.kiroCombo = (this.kiroCombo || 0) + 1; f.lado = this.kiroCombo % 2; f.dur = 0.26; }   // Kiro: tajo de cimitarra que alterna de lado
+    if (ev.k === 'slash' && ev.h === 'zel') { this.zelCombo = (this.zelCombo || 0) + 1; f.lado = this.zelCombo % 2; f.dur = 0.34; }   // Zel: zarpazo que alterna de lado
     if (ev.k === 'slash' && ev.h === 'aldor') { this.aldorCombo = (this.aldorCombo || 0) + 1; f.lado = this.aldorCombo % 2; f.dur = 0.35; }   // Aldor: martillazo pesado
     if (ev.k === 'slash' && ev.h === 'lei') { this.leiCombo = (this.leiCombo || 0) + 1; f.lado = this.leiCombo % 2; f.dur = 0.3; }   // Lei: el abanico barre de un lado y luego del otro
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
@@ -11889,6 +12113,41 @@ class Renderer {
     for (let i = 0; i < 8; i++) for (let l = 1; l <= 4 - (i >> 1); l++) {
       const [ax, ay] = P(26 - i, l + (i > 3 ? ond * (i - 3) / 4 : 0));
       g.fillStyle = l === 4 - (i >> 1) || i === 7 ? PALETA.tinta : (i + l) % 3 === 0 ? PALETA.oro1 : PALETA.oro2; g.fillRect(ax, ay, 1, 1);
+    }
+  }
+  // Kiro: nube de arena (Seba 13-11: "parecen papas"): sin contorno, varios lóbulos irregulares, borde tramado de granos sueltos,
+  // sombra ocre abajo, brillo crema arriba, granos oscuros dentro, una veta de viento y granos que vuelan
+  nubeArena(x, y, r, seed = 0) {
+    const g = this.g; x = Math.round(x); y = Math.round(y); r = Math.max(1, Math.round(r));
+    const t = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
+    const h = (a, b) => { let v = (a * 374761393 + b * 668265263 + seed * 2246822519) | 0; v = (v ^ (v >>> 13)) * 1274126177 | 0; return ((v ^ (v >>> 16)) >>> 0) / 4294967296; };
+    const L = [[0, 0, r], [-r * 0.8, r * 0.25, r * (0.5 + h(1, 1) * 0.25)], [r * 0.85, r * 0.2, r * (0.45 + h(2, 2) * 0.3)], [(h(3, 3) - 0.5) * r, -r * 0.55, r * 0.5]];
+    const x0 = x - Math.ceil(r * 1.9), x1 = x + Math.ceil(r * 1.9), y0 = y - Math.ceil(r * 1.3), y1 = y + Math.ceil(r * 1.1);
+    for (let py = y0; py <= y1; py++) {
+      let run = null, rx = 0, rl = 0;
+      const flush = () => { if (run) { g.fillStyle = run; g.fillRect(rx, py, rl, 1); } run = null; rl = 0; };
+      for (let px = x0; px <= x1; px++) {
+        let d = 0;
+        for (const [lx, ly, lr] of L) { const dx = (px - x - lx) / lr, dy = (py - y - ly) / (lr * 0.8), q = 1 - Math.sqrt(dx * dx + dy * dy); if (q > d) d = q; }
+        let c = null;
+        if (d > 0) {
+          const n = h(px, py), rel = (py - y) / r;
+          if (d < 0.22) c = n < 0.45 ? (rel > 0.1 ? CHAR.m : CHAR.p) : null;   // borde tramado: granos sueltos
+          else if (rel > 0.35 && d < 0.5) c = n < 0.7 ? CHAR.m : CHAR.p;   // sombra ocre abajo
+          else if (rel < -0.25 && d > 0.45) c = n < 0.15 ? CHAR.q : CHAR.P;   // brillo arriba
+          else c = n < 0.1 ? CHAR.m : n < 0.22 ? CHAR.P : CHAR.p;   // cuerpo con granos
+        }
+        if (c !== run) { flush(); if (c) { run = c; rx = px; } }
+        if (c) rl++;
+      }
+      flush();
+    }
+    if (r >= 3) { g.fillStyle = CHAR.P; const vy = y - Math.round(r * 0.2), vx = x - r + Math.round(((t * 9 + seed * 3) % (r * 2)) * 0.5); g.fillRect(vx, vy, Math.max(2, r), 1); }   // veta de viento
+    const ng = 2 + Math.min(4, r >> 1);
+    for (let i = 0; i < ng; i++) {   // granos que vuelan con el viento
+      const ph = (t * (0.6 + h(i, 7) * 0.6) + h(i, 9)) % 1;
+      const gx = Math.round(x - r * 1.4 + ph * r * 3.2), gy = Math.round(y - r * 0.9 + h(i, 5) * r * 1.6 - Math.sin(ph * Math.PI) * 2);
+      g.fillStyle = i % 3 === 0 ? CHAR.m : i % 3 === 1 ? CHAR.p : CHAR.P; g.fillRect(gx, gy, 1, 1);
     }
   }
   // Zeal: murciélago de sombra (f = 0/1, alas arriba/abajo)
@@ -12328,6 +12587,44 @@ class Renderer {
         for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + hash(i, 2, z.id)) % 1, b = hash(i, 5, z.id) * TAU, d = r * 0.8 * hash(i, 9, z.id), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9);
           if (ph < 0.6) { const s = 1 + Math.round(ph * 4); g.fillStyle = PALETA.tinta; g.fillRect(x - (s >> 1) - 1, y - (s >> 1) - 1, s + 2, s + 2); g.fillStyle = PALETA.carmesi1; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); g.fillStyle = PALETA.carmesi2; g.fillRect(x - (s >> 1), y - (s >> 1), 1, 1); }
           else this.gota(x, y - Math.round((ph - 0.6) * 20), 1 - (ph - 0.6) / 0.4); }
+      } else if (z.kind === 'pozoArena') {
+        // Kiro: pozo de arena movediza — remolino de arena que gira hacia un centro oscuro, borde de dunas, granos que se hunden (barato: líneas y puntos)
+        const g = this.g, T = this.time, C = CHAR;
+        g.globalAlpha = 0.6; this.discDither(cx, cy, r, C.p, 2, 5); g.globalAlpha = 0.4; this.discDither(cx, cy, r - 2, C.P, 3, 7); g.globalAlpha = 0.55; this.discDither(cx, cy, Math.round(r * 0.5), C.m, 2, 6); g.globalAlpha = 1;
+        this.ring(cx, cy, r, PALETA.tinta, 0.8, 2); this.ring(cx, cy, r, C.P, 1, 1); this.ring(cx, cy, r - 3, C.m, 0.5, 1);
+        for (let arm = 0; arm < 4; arm++) {   // brazos del remolino
+          let px0 = null, py0 = null;
+          for (let k = 0; k <= 14; k++) { const d = r * (1 - k / 15), b = arm * TAU / 4 - T * 1.6 + k * 0.32; const x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9); if (px0 !== null) this.linea(px0, py0, x, y, k > 9 ? C.w : arm % 2 ? C.m : C.P, 0, 0, k > 9 ? 2 : 1); px0 = x; py0 = y; }
+        }
+        g.fillStyle = C.w; g.fillRect(cx - 3, cy - 2, 7, 4); g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, cy - 1, 5, 2);   // centro hundido
+        for (let i = 0; i < 12; i++) { const ph = (T * 0.5 + hash(i, z.id, 2)) % 1, b = hash(i, 4, z.id) * TAU - ph * 3, d = r * (1 - ph); g.globalAlpha = 0.5 + 0.5 * (1 - ph); g.fillStyle = i % 3 ? C.P : C.q; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.9), 1, 1); }
+        g.globalAlpha = 1;
+        for (let i = 0; i < 7; i++) { const ph = (T * 0.35 + i / 7) % 1, b = i * TAU / 7 - T * 1.2 - ph * 2.5, d = r * (0.85 - ph * 0.7); this.nubeArena(cx + Math.cos(b) * d, cy + Math.sin(b) * d * 0.9, 5 - ph * 3, i); }   // montones de arena que giran y se hunden
+        for (let i = 0; i < 16; i++) { const b = i * TAU / 16 + 0.2, rr = 3 + (i % 2); this.nubeArena(cx + Math.cos(b) * r, cy + Math.sin(b) * r * 0.95, rr, i); }   // dunas del borde (nubes de arena)
+        g.globalAlpha = 1;
+      } else if (z.kind === 'tornadoKiro') {
+        // Kiro (Seba 13-11, más robusto y arenoso): embudo hecho de nubes de arena que giran (atrás primero, adelante después),
+        // borde de elipses, vetas claras, escombros y una nube de polvo grande en la base
+        const g = this.g, T = this.time, C = CHAR, alto = 74, n = 11, rTop = Math.round(r * 0.55);
+        g.globalAlpha = 0.35; this.discDither(cx, cy, Math.round(r * 0.6), C.p, 3, 7); g.globalAlpha = 1;
+        const elipse = (ex, ey, rx, ry, col, paso, fase, gro) => { for (let b2 = 0; b2 < TAU; b2 += paso) { g.fillStyle = col; g.fillRect(Math.round(ex + Math.cos(b2 + fase) * rx), Math.round(ey + Math.sin(b2 + fase) * ry), gro, gro); } };
+        for (let i = 0; i < 9; i++) { const b2 = T * 2 + i * TAU / 9; this.nubeArena(cx + Math.cos(b2) * (12 + (i % 3) * 5), cy + 2 + Math.sin(b2) * 5, 5 + (i % 2) * 2, i); }   // polvo en la base
+        const capas = [];
+        for (let i = 0; i < n; i++) {
+          const k = i / (n - 1), yy = cy - 6 - Math.round(k * alto), rx = Math.round(7 + k * k * rTop + k * 8), ry = Math.max(2, Math.round(rx * 0.3)), wob = Math.round(Math.sin(T * 5 + i * 0.6) * (2 + k * 4));
+          capas.push([k, yy, rx, ry, wob, i]);
+        }
+        for (const delante of [false, true]) for (const [k, yy, rx, ry, wob, i] of capas) {   // nubes de arena sobre cada elipse
+          if (!delante) { elipse(cx + wob, yy, rx + 1, ry + 1, PALETA.tinta, Math.max(0.15, 2.4 / rx), 0, 2); elipse(cx + wob, yy, rx, ry, i % 2 ? C.m : C.p, Math.max(0.15, 2.4 / rx), 0, 2); }
+          const nb = 3 + Math.round(k * 5);
+          for (let j = 0; j < nb; j++) {
+            const b2 = T * (6 - k * 3) + j * TAU / nb + i * 0.8, fr = Math.sin(b2) > 0;
+            if (fr !== delante) continue;
+            this.nubeArena(cx + wob + Math.cos(b2) * rx, yy + Math.sin(b2) * ry, 2 + k * 3 + (j % 2), i + j);
+          }
+          if (delante) for (let j = 0; j < 2; j++) { const b2 = T * 8 + j * Math.PI + i; g.fillStyle = C.q; g.fillRect(Math.round(cx + wob + Math.cos(b2) * rx * 0.6), Math.round(yy + Math.sin(b2) * ry * 0.6), 3, 1); }   // vetas claras
+        }
+        for (let i = 0; i < 10; i++) { const b2 = T * 4 + i * TAU / 10, d = 16 + (i % 4) * 9; g.fillStyle = i % 2 ? C.w : C.m; g.fillRect(Math.round(cx + Math.cos(b2) * d), Math.round(cy - 10 - (i * 9) % 56 + Math.sin(b2) * 4), 2, 2); }   // escombros
       } else if (z.kind === 'olaOra') {
         // Ora: ola — cresta curva perpendicular a su avance (azul marino, azul, celeste y espuma blanca), estela de agua detrás y salpicaduras
         const g = this.g, T = this.time, ca = Math.cos(z.a), sa = Math.sin(z.a), w = Math.round(z.r * ESC), ox = this.gx(z.ox), oy = this.gy(z.oy);
@@ -12733,7 +13030,7 @@ class Renderer {
     const moviendo = prev && Math.hypot(prev.x - p.x, prev.y - p.y) > 0.4 && !(p.flags & 2048);
     this.prevPos.set(p.id, { x: p.x, y: p.y });
     // Ritmo de la animación según la velocidad: rápido (Locura/Fuga) se nota, lento también
-    const rapido = p.flags & (4096 | 16384), lento = p.flags & 32;
+    const rapido = (p.flags & (4096 | 16384)) || (p.kb & 4), lento = p.flags & 32;   // Kiro: el tajo deja copias detrás (estela)
     const pasoAnim = rapido ? 16 : lento ? 5 : 9;
     const frame = moviendo ? Math.floor(this.time * pasoAnim) % 2 : 0;
     // Estela: copias que se desvanecen detrás de quien va rápido
@@ -13007,6 +13304,19 @@ class Renderer {
     if (p.f2 & 8192) this.alasNephilim(cx, Math.round(sy + 12 * gigante) - sube, gigante, moviendo);   // Nephilim: alas grandes detrás
     if (arma && detras) { dibArma(); if (dosArmas) sable2(); }
     if (meta.muneco) g.drawImage(this.spriteMuneco(), sx - 1, sy - 2);   // Arena de entrenamiento: muñeco de paja
+    if (meta.build.heroe === 'kiro' && gigante === 1) {
+      // Kiro: la cinta roja de la cabeza (coleta) y la tela roja de la faja ondean detrás, hacia el lado contrario al que mira;
+      // con el tajo o la tormenta se estiran más (las dibuja antes del cuerpo: quedan detrás)
+      const T = this.time, atr = izq ? 1 : -1, rapido = 0.25, largo = 12;   // Seba (13-11): más estáticas (no cambian al moverse, como Legios)
+      const cinta = (x0, y0, L, ancho, fase) => {
+        const pts = [];
+        for (let i = 0; i <= L; i += 2) { const k = i / L; pts.push([x0 + atr * i, y0 + Math.round(Math.sin(T * 3 + fase - i * 0.35) * k * 1.2) + Math.round(k * 2)]); }
+        for (const [x, y] of pts) { g.fillStyle = PALETA.tinta; g.fillRect(Math.round(x) - 1, Math.round(y) - 1, 3, ancho + 2); }
+        pts.forEach(([x, y], i) => { g.fillStyle = i % 3 === 0 ? CHAR.e : CHAR.R; g.fillRect(Math.round(x), Math.round(y), 2, ancho); if (i % 2) { g.fillStyle = CHAR.r; g.fillRect(Math.round(x), Math.round(y) + ancho - 1, 2, 1); } });
+      };
+      cinta(cx + atr * 5, sy - sube + 6, largo, 2, 0);            // coleta / cinta de la cabeza
+      cinta(cx + atr * 5, sy - sube + 17, Math.round(largo * 0.8), 3, 1.7);   // tela roja de la faja
+    }
     if (esLegios) {
       // galope: alterna los cuadros 1 y 2 y el conjunto sube y baja un píxel
       const fr = moviendo ? 1 + (Math.floor(this.time * 10) % 2) : 0, bob2 = 0;   // Seba (12-11): sin rebote (el modelo tiritaba)
@@ -13064,6 +13374,70 @@ class Renderer {
       for (let i = 0; i < 5; i++) { const ph = (T * 1.6 + i / 5) % 1, x = cx - 6 + ((i * 5) % 12); g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, cy - 22 - sube - Math.round(ph * 10), 1, 1); }
       if (Math.floor(T * 5) % 3 === 0) { g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 3, cy - 21 - sube, 1, 1); g.fillRect(cx + 2, cy - 19 - sube, 1, 1); }
       g.globalAlpha = 1;
+    }
+    if (meta.build.heroe === 'kiro') {   // Kiro (Seba 13-11): cada tajo deja trazos rojos y arena por donde pasa
+      this.kiroTrazo = this.kiroTrazo || new Map();
+      let tr = this.kiroTrazo.get(p.id); if (!tr) { tr = []; this.kiroTrazo.set(p.id, tr); }
+      if (p.kb & 4) { const u = tr[tr.length - 1]; if (!u || Math.hypot(u.x - p.x, u.y - p.y) > 4 || this.time - u.t > 0.05) tr.push({ x: p.x, y: p.y, t: this.time, n: tr.length }); }
+      while (tr.length && this.time - tr[0].t > 0.45) tr.shift();
+      if (tr.length > 1) {
+        for (let i = 1; i < tr.length; i++) {
+          const A = tr[i - 1], B = tr[i]; if (Math.hypot(A.x - B.x, A.y - B.y) > 60) continue;   // otro tajo
+          const k = 1 - (this.time - B.t) / 0.45, ax = this.gx(A.x), ay = this.gy(A.y) - 8, bx = this.gx(B.x), by = this.gy(B.y) - 8;
+          const dx = bx - ax, dy = by - ay, d = Math.hypot(dx, dy) || 1, nx = -dy / d, ny = dx / d;
+          g.globalAlpha = Math.max(0, k);
+          for (const [off, col, gro] of [[0, PALETA.tinta, 4], [0, CHAR.R, 2], [-4, CHAR.e, 1], [4, CHAR.r, 1]]) this.linea(Math.round(ax + nx * off), Math.round(ay + ny * off), Math.round(bx + nx * off), Math.round(by + ny * off), col, 0, 0, gro);   // trazos rojos
+          this.nubeArena(bx - nx * 6, by + 10 + ny * 2, 3 + k * 3, B.n);   // arena levantada
+        }
+        g.globalAlpha = 1;
+      }
+    }
+    if (p.ka > 0) {   // acumulaciones de los tajos de Kiro: 1 a 3 medias lunas color arena sobre la cabeza (la 3.ª aturde)
+      const T = this.time;
+      for (let i = 0; i < 3; i++) { const x = cx - 8 + i * 6, y = cy - 40, on = i < p.ka; g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 5, 5); g.fillStyle = on ? CHAR.P : PALETA.noche; g.fillRect(x, y, 3, 3); if (on) { g.fillStyle = CHAR.q; g.fillRect(x + 2, y, 1, 1); g.fillStyle = CHAR.m; g.fillRect(x, y + 2, 1, 1); } }
+      if (p.ka >= 2 && Math.floor(T * 10) % 2) this.ring(cx, cy - 38, 11, CHAR.P, 1, 1);   // a una del aturdido
+    }
+    if (p.kb & 1) {   // confundido por Kiro (Seba 13-11): estrellas de arena que giran sobre la cabeza (como el aturdido, pero color arena y al revés), con un «?»
+      const T = this.time;
+      for (let i = 0; i < 4; i++) {
+        const b = -T * 6 + i * TAU / 4, x = Math.round(cx + Math.cos(b) * 11), y = Math.round(cy - 25 + Math.sin(b) * 4);
+        g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 1, 5, 3); g.fillRect(x - 1, y - 2, 3, 5);
+        g.fillStyle = i % 2 ? CHAR.P : CHAR.p; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3); g.fillStyle = CHAR.q; g.fillRect(x, y, 1, 1);
+      }
+      for (let i = 0; i < 6; i++) { const b = -T * 9 + i * TAU / 6; g.fillStyle = i % 2 ? CHAR.m : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * 15), Math.round(cy - 25 + Math.sin(b) * 5), 1, 1); }   // granos que giran
+      const q2 = texto('?', CHAR.P); g.drawImage(q2, cx - (q2.width >> 1), cy - 46 + Math.round(Math.sin(T * 6) * 1));
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 9, cy + 6, 19, 3); g.fillStyle = CHAR.P; g.fillRect(cx - 8, cy + 7, 6, 1); g.fillRect(cx + 3, cy + 7, 6, 1); g.fillRect(cx - 8, cy + 6, 1, 3); g.fillRect(cx + 8, cy + 6, 1, 3);   // ⇄ bajo los pies
+    }
+    if (p.kb & 128) {   // arenado por el 1.er golpe de la Tormenta (lento 5 s): nubecita de arena sobre la cabeza que suelta granos
+      const T = this.time;
+      this.nubeArena(cx, cy - 27 + Math.round(Math.sin(T * 3)), 4, p.id);
+      for (let i = 0; i < 4; i++) { const ph = (T * 1.2 + i / 4) % 1; g.fillStyle = i % 2 ? CHAR.P : CHAR.m; g.fillRect(cx - 4 + i * 3, Math.round(cy - 23 + ph * 10), 1, 1); }
+    }
+    if (p.kb & 2) {   // atrapado por el tornado: líneas de arena que giran alrededor del cuerpo
+      const T = this.time;
+      for (let i = 0; i < 8; i++) { const b = T * 10 + i * TAU / 8; g.fillStyle = i % 2 ? CHAR.P : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * 12), Math.round(cy - 8 + Math.sin(b) * 5 - (i % 3) * 4), 3, 1); }
+    }
+    if (p.kb & 56) {   // hundiéndose en el pozo de arena: montículo de arena que sube por los pies según cuánto lleva dentro
+      const lv = Math.min(4, (p.kb & 56) >> 3), h = 2 + lv;
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 8, cy + 8 - h, 17, h + 1);
+      g.fillStyle = CHAR.p; g.fillRect(cx - 7, cy + 9 - h, 15, h); g.fillStyle = CHAR.P; g.fillRect(cx - 6, cy + 9 - h, 13, 1);
+    }
+    if (meta.build.heroe === 'kiro') {
+      const T = this.time;
+      if (p.ku > 0) {   // Tormenta de arena activa: viento de arena que gira a su alrededor, la cimitarra brilla y 1–3 marcas de golpes que quedan
+        for (let i = 0; i < 3; i++) { const b = T * 4 + i * TAU / 3; this.ring(cx + Math.round(Math.cos(b) * 2), cy - 8 + i * 4, 14 - i * 2, CHAR.P, 0.35, 1); }
+        for (let i = 0; i < 10; i++) { const b = T * 6 + i * TAU / 10, d = 13 + (i % 3) * 2; g.fillStyle = i % 2 ? CHAR.q : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 8 + Math.sin(b) * d * 0.5), 2, 1); }
+        for (let i = 0; i < 3; i++) { const x = cx - 8 + i * 6, y = cy - 40, on = i < p.ku; g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 5, 5); g.fillStyle = on ? (i === p.ku - 1 && Math.floor(T * 8) % 2 ? CHAR.q : CHAR.P) : PALETA.noche; g.fillRect(x, y, 3, 3); }
+      }
+      if (p.kb & 64) {   // emboscada lista (+10 al siguiente básico): media luna de arena que late sobre la cabeza
+        const k = Math.floor(T * 6) % 2, x = cx, y = cy - 48;
+        g.fillStyle = PALETA.tinta; g.fillRect(x - 4, y - 1, 9, 4); g.fillStyle = k ? CHAR.q : CHAR.P; g.fillRect(x - 3, y, 7, 1); g.fillRect(x - 2, y + 1, 5, 1); g.fillStyle = CHAR.m; g.fillRect(x - 3, y + 2, 1, 1); g.fillRect(x + 3, y + 2, 1, 1);
+      }
+      const aliadoK = p.id === this._myId || (this.equipos && this.equipos[p.id] && this.equipos[p.id] === this.equipos[this._myId]);
+      if (p.ko > 0 && aliadoK) {   // fundiéndose con la arena (lo ven él y sus aliados): velo de arena que sube por el cuerpo
+        const k = p.ko / 100, h = Math.round(k * 26);
+        g.globalAlpha = 0.5; g.fillStyle = CHAR.P; for (let yy = 0; yy < h; yy += 2) g.fillRect(cx - 8 + ((yy * 3) % 4), cy + 6 - yy, 16, 1); g.globalAlpha = 1;
+      }
     }
     if (meta.build.heroe === 'ora') {   // Ora: gotas de agua que flotan siempre a su alrededor (como en la referencia) y, con la pasiva, las que lleva juntadas
       const T = this.time;
@@ -14203,6 +14577,54 @@ class Renderer {
             g.globalAlpha = 1;
             break;
           }
+          if (f.h === 'kiro') {
+            // Kiro: tajo de cimitarra — media luna color arena (crema, blanco al filo, ocre atrás) con líneas de velocidad y granos de arena
+            const lado = f.lado ? -1 : 1, R = Math.round(f.r * ESC) + 4, yc = cy - 6, abre = Math.min(1, t * 3), sale = Math.max(0, (t - 0.45) / 0.55);
+            const a0 = f.a - lado * 1.15, a1 = f.a + lado * 1.15, am = a0 + (a1 - a0) * abre;
+            const capas = [[R + 2, PALETA.tinta, 4], [R + 1, CHAR.m, 3], [R, CHAR.P, 3], [R - 1, CHAR.q, 1]];
+            for (const [rr, col, gro] of capas) {
+              let px0 = null, py0 = null;
+              for (let k = 0; k <= 12; k++) {
+                const b = a0 + (am - a0) * k / 12, ww = Math.sin(Math.PI * k / 12), rad = rr - (1 - ww) * 4;
+                if (k / 12 < sale) { px0 = null; continue; }
+                const x = Math.round(cx + Math.cos(b) * rad), y = Math.round(yc + Math.sin(b) * rad * 0.85);
+                if (px0 !== null) this.linea(px0, py0, x, y, col, 0, 0, Math.max(1, Math.round(gro * (0.5 + ww * 0.7))));
+                px0 = x; py0 = y;
+              }
+            }
+            for (let i = 0; i < 6; i++) { const b = a0 + (am - a0) * hash(i, f.x | 0, 7), d = R + 3 + t * 10; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.P : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(yc + Math.sin(b) * d * 0.85), 1, 1); }
+            g.globalAlpha = 1;
+            break;
+          }
+          if (f.h === 'zel') {
+            // Zel: zarpazo interdimensional — tres desgarros paralelos en el aire que abren el vacío (borde rosa, fondo morado oscuro),
+            // con chispas que el desgarro se traga; se cierran al final. Alterna la diagonal en cada golpe.
+            const lado = f.lado ? -1 : 1, R = Math.round(f.r * ESC), ca = Math.cos(f.a), sa = Math.sin(f.a), yc = cy - 6;
+            const mx = cx + ca * R * 0.62, my = yc + sa * R * 0.62, L = R * 0.95;
+            const da = f.a + Math.PI / 2 + lado * 0.55, dx = Math.cos(da), dy = Math.sin(da);
+            const abre = Math.min(1, t * 3.2), cierra = t > 0.55 ? 1 - (t - 0.55) / 0.45 : 1;
+            for (let i = 0; i < 3; i++) {
+              const off = (i - 1) * 5, ox = mx + ca * off, oy = my + sa * off, Li = L * (i === 1 ? 1 : 0.78);
+              const k = Math.max(0, Math.min(1, abre * 1.3 - i * 0.15));
+              if (k <= 0) continue;
+              const x0 = Math.round(ox - dx * Li / 2), y0 = Math.round(oy - dy * Li / 2), x1 = Math.round(ox - dx * Li / 2 + dx * Li * k), y1 = Math.round(oy - dy * Li / 2 + dy * Li * k);
+              const w = Math.max(1, Math.round(4 * cierra));
+              g.globalAlpha = Math.min(1, cierra * 1.4);
+              this.linea(x0, y0, x1, y1, PALETA.tinta, 0, 0, w + 2);
+              this.linea(x0, y0, x1, y1, PALETA.magenta1, 0, 0, w + 1);
+              this.linea(x0, y0, x1, y1, PALETA.vacio0, 0, 0, Math.max(1, w - 1));
+              if (cierra > 0.5) this.linea(Math.round((x0 + x1) / 2 - dx * 2), Math.round((y0 + y1) / 2 - dy * 2), Math.round((x0 + x1) / 2 + dx * 2), Math.round((y0 + y1) / 2 + dy * 2), PALETA.magenta2, 0, 0, 1);
+              g.fillStyle = PALETA.pergamino2; g.fillRect(x1, y1, 1, 1);
+            }
+            g.globalAlpha = 1;
+            for (let i = 0; i < 7; i++) {   // chispas que el desgarro se traga
+              const b = hash(i, f.x | 0, f.y | 0) * TAU, d0 = 6 + hash(i, 3, f.y | 0) * 10, d = d0 * (1 - t);
+              g.globalAlpha = 1 - t; g.fillStyle = i % 3 === 0 ? PALETA.magenta2 : i % 3 === 1 ? PALETA.vacio2 : PALETA.magia;
+              g.fillRect(Math.round(mx + Math.cos(b) * d), Math.round(my + Math.sin(b) * d * 0.8), 1, 1);
+            }
+            g.globalAlpha = 1;
+            break;
+          }
           if (f.h === 'aldor') {
             // Aldor: martillazo pesado — media luna ancha de polvo y piedra que baja con fuerza, golpe seco al final con astillas de roca
             const lado = f.lado ? -1 : 1, R0 = Math.round(f.r * ESC) + 3, e = 1 - Math.pow(1 - Math.min(1, t * 2.2), 3), yc = cy - 6;
@@ -14629,6 +15051,71 @@ class Renderer {
             if (h2 < 1) continue;
             g.fillStyle = PALETA.tinta; g.fillRect(x - 3, y - h2 - 1, 7, h2 + 2); g.fillStyle = PALETA.piedra1; g.fillRect(x - 2, y - h2, 5, h2); g.fillStyle = PALETA.piedra3; g.fillRect(x - 1, y - h2, 1, h2); g.fillStyle = PALETA.piedra2; g.fillRect(x, y - h2 - 1, 1, 1);
           }
+          break;
+        }
+        case 'tajoKiro': {   // Kiro sale disparado (Seba 13-11): explosión de nubes de arena donde parte
+          g.globalAlpha = 1 - t * 0.8;
+          for (let i = 0; i < 6; i++) { const b = f.a + Math.PI + (i - 2.5) * 0.45, d = 4 + t * 18; this.nubeArena(cx + Math.cos(b) * d, cy + 4 + Math.sin(b) * d * 0.5 - t * 4, (4 - t * 3) * (i % 2 ? 1 : 0.8), i); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'cortaKiro': {   // un enemigo cruzado por el tajo: corte en cruz color arena con filo blanco
+          const ca = Math.cos(f.a), sa = Math.sin(f.a), L = 12 * (1 - t * 0.3);
+          for (const s2 of [-1, 1]) { const px = -sa * s2 * 4, py = ca * s2 * 4; this.linea(Math.round(cx - ca * L + px), Math.round(cy - 8 - sa * L + py), Math.round(cx + ca * L - px), Math.round(cy - 8 + sa * L - py), PALETA.tinta, 0, 0, 3); this.linea(Math.round(cx - ca * L + px), Math.round(cy - 8 - sa * L + py), Math.round(cx + ca * L - px), Math.round(cy - 8 + sa * L - py), t < 0.4 ? CHAR.q : CHAR.P, 0, 0, 1); }
+          break;
+        }
+        case 'chocaKiro': {   // el tajo choca con un muro: polvo
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.P : CHAR.m; g.fillRect(Math.round(cx + Math.cos(b) * t * 12), Math.round(cy - 4 + Math.sin(b) * t * 8), 2, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'aturdeKiro': {   // 3 acumulaciones: estallido de arena
+          this.ring(cx, cy - 8, Math.round(6 + t * 16), PALETA.tinta, 1 - t, 3); this.ring(cx, cy - 8, Math.round(6 + t * 16), CHAR.P, 1 - t, 1);
+          for (let i = 0; i < 10; i++) { const b = i * TAU / 10; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.q : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * (6 + t * 18)), Math.round(cy - 8 + Math.sin(b) * (4 + t * 12)), 2, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'pozoArena': {   // se abre el pozo: la arena se hunde con un anillo
+          const r = Math.round(f.r * ESC);
+          this.ring(cx, cy, Math.round(r * t), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * t), CHAR.P, 1 - t, 1);
+          break;
+        }
+        case 'kiroSeOculta': {   // Kiro se funde con la arena
+          for (let i = 0; i < 10; i++) { const ph = t + i * 0.05; g.globalAlpha = Math.max(0, 1 - ph); g.fillStyle = i % 2 ? CHAR.P : CHAR.p; g.fillRect(cx - 8 + (i * 7) % 17, cy - 20 + Math.round(ph * 20), 1, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'tormentaArena': {   // Kiro activa la Tormenta: anillo de viento de arena que se abre y se cierra sobre él
+          const k = t < 0.5 ? t * 2 : 2 - t * 2;
+          this.ring(cx, cy - 6, Math.round(10 + k * 22), PALETA.tinta, 1, 3); this.ring(cx, cy - 6, Math.round(10 + k * 22), CHAR.P, 1, 1);
+          for (let i = 0; i < 12; i++) { const b = i * TAU / 12 + t * 8, d = 10 + k * 22; g.fillStyle = i % 2 ? CHAR.q : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 6 + Math.sin(b) * d * 0.6), 2, 1); }
+          break;
+        }
+        case 'arenaGolpe': {   // golpe 1 o 2 de la Tormenta acierta: estallido de arena sobre el golpeado y aviso del efecto
+          for (let i = 0; i < 5; i++) { const b = i * TAU / 5 + f.g, d = 4 + t * 12; this.nubeArena(cx + Math.cos(b) * d, cy - 8 + Math.sin(b) * d * 0.6 - t * 6, 3 - t * 2, i); }
+          const tx = texto(f.g === 1 ? 'LENTO' : 'CONFUSO', CHAR.P); g.globalAlpha = 1 - t * t; g.drawImage(tx, cx - (tx.width >> 1), Math.round(cy - 52 - t * 8)); g.globalAlpha = 1;
+          break;
+        }
+        case 'emboscadaKiro': {   // golpe desde las sombras del pozo: tajo de arena hacia adelante y «+10»
+          const ca = Math.cos(f.a), sa = Math.sin(f.a);
+          for (let i = 0; i < 4; i++) this.nubeArena(cx + ca * (10 + i * 7 + t * 10), cy - 6 + sa * (10 + i * 7 + t * 10), 3 - t * 2, i);
+          const tx = texto('+10', CHAR.q); g.globalAlpha = 1 - t; g.drawImage(tx, cx - (tx.width >> 1), Math.round(cy - 50 - t * 8)); g.globalAlpha = 1;
+          break;
+        }
+        case 'golpeTormenta': {   // golpe potenciado: ráfaga de arena hacia adelante (más grande en cada golpe)
+          { const tx = texto(['', 'I', 'II', 'III'][Math.min(3, f.g)] || '', CHAR.q); if (tx.width) { g.globalAlpha = 1 - t; g.drawImage(tx, cx - (tx.width >> 1), Math.round(cy - 56 - t * 6)); g.globalAlpha = 1; } }   // número del golpe
+          const ca = Math.cos(f.a), sa = Math.sin(f.a), L = 20 + f.g * 8;
+          for (let i = 0; i < 6 + f.g * 3; i++) { const off = (i - 4) * 3, d = t * L + (i % 3) * 4; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.P : CHAR.p; g.fillRect(Math.round(cx + ca * d - sa * off), Math.round(cy - 6 + sa * d + ca * off), 3, 1); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'tornadoSale': case 'tornadoFin': {   // el tornado nace / se deshace: polvo en anillo
+          this.ring(cx, cy, Math.round(10 + t * 30), PALETA.tinta, 1 - t, 2); this.ring(cx, cy, Math.round(10 + t * 30), CHAR.P, 1 - t, 1);
+          break;
+        }
+        case 'esquivaKiro': {   // Paso en falso: se aparta en un borrón de arena y aparece «ESQUIVA»
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.P : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * (4 + t * 12)), Math.round(cy - 8 + Math.sin(b) * (3 + t * 8)), 2, 1); }
+          const tx = texto('ESQUIVA', PALETA.oro2); g.globalAlpha = 1 - t; g.drawImage(tx, cx - (tx.width >> 1), cy - 40 - Math.round(t * 10)); g.globalAlpha = 1;
           break;
         }
         case 'olaMarca': {   // Ora marca dónde nace la ola: remolino de agua
@@ -16353,6 +16840,13 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.0', f: '13-11-2026', n: [
+    'Nuevo héroe: Kiro (Errantes, asesino), espadachín del desierto con cimitarra y máscara.',
+    'Kiro — Paso en falso (pasiva): 5% de esquivar por completo un ataque básico enemigo; tras esquivar, 3 s sin poder volver a hacerlo.',
+    'Kiro — Tajo del viento: hasta 3 carreras cortas (2 s para cada una) que hacen 45 a todos los que cruza y suman una acumulación; con 3, aturdido 1 s y 25 de daño extra. Los muros lo frenan.',
+    'Kiro — Pozo de arena: arena movediza a sus pies por 4,5 s que daña y frena cada vez más (hasta 40%). Dentro, tras 0,8 s quieto se vuelve invisible; cada vez que se oculta, su siguiente básico hace +10 (hasta 3 por pozo).',
+    'Kiro — Tormenta de arena (ulti): sus próximos 3 básicos (en 10 s) se potencian: +10 y lento; confusión 2,5 s (controles al revés); y un tornado de arena que arrastra, daña y al soltar deja 33% más lento.',
+  ] },
   { v: 'V6.9', f: '12-11-2026', n: [
     'Aldor, Muralla de piedra: frena los disparos de las torretas, tanto las brasas de la torreta de Jürgen (aunque sea ulti) como los virotes de la torreta de Lire.',
   ] },
