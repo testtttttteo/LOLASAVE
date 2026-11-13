@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.2</title>
+<title>LOLA V8.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.2</p>
+        <p class="sub version">LOLA V8.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1998,7 +1998,8 @@ Object.assign(HABILIDADES, {
   calacaBambaa:     { nombre: 'Calaca de humo', glifo: 'calacaBambaa', cd: 13, cdFijo: true, dur: 3, choque: 16, giro: 3.2, silencio: 2, prisa: 0.25, prisaDur: 2,   // Seba: rastrea hasta 3 s, 100 y silencio 2 s, +25% de velocidad 2 s si alcanza a un héroe; velocidad del alma de Tenebris; (C) recarga, giro
                       desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
                       n1: { dano: 100 }, n2: { dano: 100 } },
-  ancestroOlvidado: { nombre: 'Ancestro olvidado', glifo: 'ancestroOlvidado', cd: 55, cdFijo: true, ulti: true, canal: 1, radio: 320, dur: 10,   // Seba: canal 1 s, tótem de radio muy amplio; castear dentro: 100, +75 por cada otra; alcanzado por habilidades aliadas: 25, +25 por instancia; el rayo nunca falla; (Seba 13-11) 10 s, indestructible, cuentan las habilidades de Bambaa y sus aliados; (C) radio 320, recarga 55
+  // Seba (13-11, V8.3): radio del tótem 320 → 352 (+10%)
+  ancestroOlvidado: { nombre: 'Ancestro olvidado', glifo: 'ancestroOlvidado', cd: 55, cdFijo: true, ulti: true, canal: 1, radio: 352, dur: 10,   // Seba: canal 1 s, tótem de radio muy amplio; castear dentro: 100, +75 por cada otra; alcanzado por habilidades aliadas: 25, +25 por instancia; el rayo nunca falla; (Seba 13-11) 10 s, indestructible, cuentan las habilidades de Bambaa y sus aliados; (C) radio 320, recarga 55
                       desc: (n) => `Canalizas ${HABILIDADES.ancestroOlvidado.canal} s y levantas un tótem maldito por ${HABILIDADES.ancestroOlvidado.dur} s con un radio muy amplio (${RADIO(HABILIDADES.ancestroOlvidado.radio)}). Cada vez que un enemigo dentro del radio lanza una habilidad, el tótem le dispara un rayo: ${n.casteo} de daño, +${n.casteoInc} por cada habilidad que ya lanzó. Cada habilidad tuya o de un aliado que alcanza a un enemigo dentro del radio dispara otro rayo (cada habilidad aliada lo hace una sola vez por enemigo mientras dure el tótem, aunque la vuelvan a lanzar): ${n.golpe} de daño, +${n.golpeInc} por cada vez anterior. Los rayos nunca fallan. Atacar con básicos (aunque estén potenciados) no cuenta.`,
                       n1: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 }, n2: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 } },
   // ---- Golagore (Seba, 13-11; números (C) salvo los que fijó Seba)
@@ -2282,7 +2283,7 @@ const GUIAS = {
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
   tajoKiro: { tipo: 'linea', alcance: 128, ancho: 34 }, pozoArena: { tipo: 'propio', r: 126 }, tormentaArena: { tipo: 'propio', r: 30 },
   cargaGolagore: { tipo: 'linea', alcance: 370, ancho: 40 }, hachazoGolagore: { tipo: 'punto', alcance: 220, r: 90 }, fortalezaGolagore: { tipo: 'propio', r: 150 },
-  munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 320 },
+  munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 352 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -18518,6 +18519,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.3', f: '13-11-2026', n: [
+    'Bambaa, Ancestro olvidado: el radio del tótem crece un 10% (320 → 352).',
+  ] },
   { v: 'V8.2', f: '13-11-2026', n: [
     'Bambaa, Ancestro olvidado: cada habilidad aliada activa el tótem una sola vez por enemigo mientras el tótem dure. Volver a lanzar la misma habilidad (o sus golpes siguientes: giros de Driiar, polvo de Vario, corazones…) no lo activa de nuevo; hace falta un tótem nuevo. Del lado enemigo no cambia: cada habilidad que lancen dentro del radio dispara su rayo.',
   ] },
