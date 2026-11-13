@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.7</title>
+<title>LOLA V7.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.7</p>
+        <p class="sub version">LOLA V7.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1953,7 +1953,7 @@ Object.assign(HABILIDADES, {
   // ---- Vario (Seba, 02-11)
   encanto:       { nombre: 'Encanto', glifo: 'encanto', cd: 16, cdFijo: true, alcance: 320, vel: 285, abre: 25,   // Seba (02-11): corazones 25% más lentos
                    desc: (n) => `Lanzas 3 corazones en abanico; cada rival recibe solo uno (cuerpo a cuerpo, siempre el central). El central hace ${n.dano} de daño y encanta ${fmtN(n.dur)} s: el rival camina hacia ti ${Math.round(n.lento * 100)}% más lento, sin atacar ni usar habilidades. Los laterales tienen la mitad del efecto.`,
-                   n1: { dano: 70, dur: 1.5, lento: 0.5 }, n2: { dano: 70, dur: 1.5, lento: 0.5 } },
+                   n1: { dano: 70, dur: 2, lento: 0.5 }, n2: { dano: 70, dur: 2, lento: 0.5 } },   // Seba (13-11, V7.8): encanto 1,5 → 2 s (laterales 1 s)
   polvoEstrellas: { nombre: 'Polvo de estrellas', glifo: 'polvoEstrellas', cd: 16, cdFijo: true, dur: 5, nube: 3.9, radio: 30, cada: 0.15,   // Seba (02-11): dura 5 s; el polvo queda 3,9 s en el piso
                    desc: (n) => `Durante ${HABILIDADES.polvoEstrellas.dur} s dejas un rastro de polvo de estrellas. Por cada 0,5 s que un enemigo sigue dentro, recibe más daño (de ${n.dps0} a ${n.dpsMax} por segundo) y más lentitud (de ${Math.round(n.lento0 * 100)}% a ${Math.round(n.lentoMax * 100)}%); si sale 0,5 s, vuelve a empezar. El polvo queda en el piso y afecta a invocaciones. Mientras lo sueltas no atacas ni usas otras habilidades, recibes ${Math.round(n.red * 100)}% menos de daño y vas ${Math.round(n.vel * 100)}% más rápido.`,
                    n1: { dps0: 10, inc: 10, dpsMax: 40, lento0: 0.1, lentoInc: 0.1, lentoMax: 0.5, red: 0.25, vel: 0.25 }, n2: { dps0: 10, inc: 10, dpsMax: 40, lento0: 0.1, lentoInc: 0.1, lentoMax: 0.5, red: 0.25, vel: 0.25 } },
@@ -18493,6 +18493,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.8', f: '13-11-2026', n: [
+    'Vario, Encanto: el corazón central encanta 2 s (antes 1,5) y los laterales 1 s (antes 0,75).',
+  ] },
   { v: 'V7.7', f: '13-11-2026', n: [
     'Bambaa, Muñeco vudú (rework): ya no confunde ni maldice. Al activarse deja un polvo vudú por 4 s que hace 3 de daño cada 0,1 s (30 por segundo) a quien esté dentro, y encanta a los héroes enemigos del radio: caminan al 50% hacia el muñeco. Plantado y pisado: encanto de 2 s. Si topa a un enemigo mientras camina, estalla igual, pero el encanto dura 1 s. Siguen siendo 2 muñecos como máximo y la recarga empieza con el segundo.',
   ] },
