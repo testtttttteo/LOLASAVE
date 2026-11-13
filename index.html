@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.4</title>
+<title>LOLA V8.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.4</p>
+        <p class="sub version">LOLA V8.5</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -14477,8 +14477,8 @@ class Renderer {
       this.lanzaLegios(mx, my, la, ext, golpe, p.lc && (p.lc - 1) / 10 >= 3);
     }
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
-    else if (esBam) {   // Seba (13-11, V8.4): Bambaa es una viejita — mismo diseño, dibujado a escala 0,75 (alto como Vatrius/Maidas); se pinta a 1× en un lienzo aparte y se reduce sin suavizar
-      const S = 0.75, W = 64, H = 80, c = this._lienzoBam || (this._lienzoBam = nuevoCanvas(W, H)), cg = c.getContext('2d');
+    else if (esBam) {   // Seba (13-11, V8.4): Bambaa es una viejita — mismo diseño, dibujado a escala 0,7 (V8.5: un poco más alta que Karilthal); se pinta a 1× en un lienzo aparte y se reduce sin suavizar
+      const S = 0.7, W = 64, H = 80, c = this._lienzoBam || (this._lienzoBam = nuevoCanvas(W, H)), cg = c.getContext('2d');
       cg.setTransform(1, 0, 0, 1, 0, 0); cg.clearRect(0, 0, W, H); cg.imageSmoothingEnabled = false; cg.globalAlpha = 1;
       const g0 = this.g; this.g = cg;
       try { this.dibujaBambaa(p, 32, 56, izq, moviendo, sube); } finally { this.g = g0; }
@@ -18527,6 +18527,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.5', f: '13-11-2026', n: [
+    'Bambaa: el modelo se achica un poco más (×0,75 → ×0,7), apenas más alta que Karilthal.',
+  ] },
   { v: 'V8.4', f: '13-11-2026', n: [
     'Bambaa: el modelo se ve más pequeño (tamaño de Vatrius o Maidas); el diseño no cambia.',
     'Trelgon: el modelo se ve más grande (×1,15 → ×1,35).',
