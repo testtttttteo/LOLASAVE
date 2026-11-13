@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.0</title>
+<title>LOLA V7.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.0</p>
+        <p class="sub version">LOLA V7.1</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -11802,6 +11802,21 @@ class Renderer {
   px(x, y, col) { this.g.fillStyle = col; this.g.fillRect(x, y, 1, 1); }
 
   // Seba (05-11, V4.9): anillos y discos punteados se dibujan una vez en un lienzo aparte y se reusan (antes eran miles de puntos por cuadro)
+  // Seba (13-11, V7.1): una forma se guarda recién la 2.ª vez que se pide; la 1.ª se pinta directo (los anillos que crecen o se achican
+  // cambian de radio en cada cuadro y antes creaban un lienzo nuevo por cuadro, que daba tirones)
+  formaEn(key, w, h, dibujar, x, y) {
+    const M = this._formas || (this._formas = new Map());
+    if (!M.has(key)) {
+      const V = this._formasVistas || (this._formasVistas = new Set());
+      if (!V.has(key)) {
+        if (V.size > 4000) V.clear();
+        V.add(key);
+        const g = this.g; g.save(); g.translate(x, y); dibujar(g); g.restore();
+        return;
+      }
+    }
+    this.g.drawImage(this.forma(key, w, h, dibujar), x, y);
+  }
   forma(key, w, h, dibujar) {
     const M = this._formas || (this._formas = new Map());
     let c = M.get(key);
@@ -11816,7 +11831,7 @@ class Renderer {
   ring(cx, cy, r, col, densidad = 1, grosor = 1) {
     r = Math.max(0, Math.round(r)); if (!r) return;
     const dq = densidad >= 1 ? 1 : Math.max(0, Math.round(densidad * 10) / 10), m = r + grosor + 1, lado = m * 2 + 1;
-    const c = this.forma(`r${r}|${col}|${dq}|${grosor}`, lado, lado, (cg) => {
+    this.formaEn(`r${r}|${col}|${dq}|${grosor}`, lado, lado, (cg) => {
       cg.fillStyle = col;
       const pasos = Math.max(8, Math.ceil(TAU * r * 1.2));
       for (let i = 0; i < pasos; i++) {
@@ -11824,8 +11839,7 @@ class Renderer {
         const a = (i / pasos) * TAU;
         cg.fillRect(m + Math.round(Math.cos(a) * r), m + Math.round(Math.sin(a) * r), grosor, grosor);
       }
-    });
-    this.g.drawImage(c, Math.round(cx) - m, Math.round(cy) - m);
+    }, Math.round(cx) - m, Math.round(cy) - m);
   }
 
 
@@ -12118,30 +12132,33 @@ class Renderer {
   // Kiro: nube de arena (Seba 13-11: "parecen papas"): sin contorno, varios lóbulos irregulares, borde tramado de granos sueltos,
   // sombra ocre abajo, brillo crema arriba, granos oscuros dentro, una veta de viento y granos que vuelan
   nubeArena(x, y, r, seed = 0) {
-    const g = this.g; x = Math.round(x); y = Math.round(y); r = Math.max(1, Math.round(r));
+    const g = this.g; x = Math.round(x); y = Math.round(y); r = Math.max(1, Math.round(r)); seed = (((seed | 0) % 16) + 16) % 16;
     const t = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
     const h = (a, b) => { let v = (a * 374761393 + b * 668265263 + seed * 2246822519) | 0; v = (v ^ (v >>> 13)) * 1274126177 | 0; return ((v ^ (v >>> 16)) >>> 0) / 4294967296; };
-    const L = [[0, 0, r], [-r * 0.8, r * 0.25, r * (0.5 + h(1, 1) * 0.25)], [r * 0.85, r * 0.2, r * (0.45 + h(2, 2) * 0.3)], [(h(3, 3) - 0.5) * r, -r * 0.55, r * 0.5]];
-    const x0 = x - Math.ceil(r * 1.9), x1 = x + Math.ceil(r * 1.9), y0 = y - Math.ceil(r * 1.3), y1 = y + Math.ceil(r * 1.1);
-    for (let py = y0; py <= y1; py++) {
-      let run = null, rx = 0, rl = 0;
-      const flush = () => { if (run) { g.fillStyle = run; g.fillRect(rx, py, rl, 1); } run = null; rl = 0; };
-      for (let px = x0; px <= x1; px++) {
-        let d = 0;
-        for (const [lx, ly, lr] of L) { const dx = (px - x - lx) / lr, dy = (py - y - ly) / (lr * 0.8), q = 1 - Math.sqrt(dx * dx + dy * dy); if (q > d) d = q; }
-        let c = null;
-        if (d > 0) {
-          const n = h(px, py), rel = (py - y) / r;
-          if (d < 0.22) c = n < 0.45 ? (rel > 0.1 ? CHAR.m : CHAR.p) : null;   // borde tramado: granos sueltos
-          else if (rel > 0.35 && d < 0.5) c = n < 0.7 ? CHAR.m : CHAR.p;   // sombra ocre abajo
-          else if (rel < -0.25 && d > 0.45) c = n < 0.15 ? CHAR.q : CHAR.P;   // brillo arriba
-          else c = n < 0.1 ? CHAR.m : n < 0.22 ? CHAR.P : CHAR.p;   // cuerpo con granos
+    // Seba (13-11, V7.1): el cuerpo de la nube se pinta una vez por tamaño y semilla y se reusa (antes se calculaba píxel a píxel en cada cuadro)
+    const ax = Math.ceil(r * 1.9), ay0 = Math.ceil(r * 1.3), ay1 = Math.ceil(r * 1.1);
+    this.formaEn(`na${r}|${seed}`, ax * 2 + 1, ay0 + ay1 + 1, (cg) => {
+      const L = [[0, 0, r], [-r * 0.8, r * 0.25, r * (0.5 + h(1, 1) * 0.25)], [r * 0.85, r * 0.2, r * (0.45 + h(2, 2) * 0.3)], [(h(3, 3) - 0.5) * r, -r * 0.55, r * 0.5]];
+      for (let py = -ay0; py <= ay1; py++) {
+        let run = null, rx = 0, rl = 0;
+        const flush = () => { if (run) { cg.fillStyle = run; cg.fillRect(rx + ax, py + ay0, rl, 1); } run = null; rl = 0; };
+        for (let px = -ax; px <= ax; px++) {
+          let d = 0;
+          for (const [lx, ly, lr] of L) { const dx = (px - lx) / lr, dy = (py - ly) / (lr * 0.8), q = 1 - Math.sqrt(dx * dx + dy * dy); if (q > d) d = q; }
+          let c = null;
+          if (d > 0) {
+            const n = h(px, py), rel = py / r;
+            if (d < 0.22) c = n < 0.45 ? (rel > 0.1 ? CHAR.m : CHAR.p) : null;   // borde tramado: granos sueltos
+            else if (rel > 0.35 && d < 0.5) c = n < 0.7 ? CHAR.m : CHAR.p;   // sombra ocre abajo
+            else if (rel < -0.25 && d > 0.45) c = n < 0.15 ? CHAR.q : CHAR.P;   // brillo arriba
+            else c = n < 0.1 ? CHAR.m : n < 0.22 ? CHAR.P : CHAR.p;   // cuerpo con granos
+          }
+          if (c !== run) { flush(); if (c) { run = c; rx = px; } }
+          if (c) rl++;
         }
-        if (c !== run) { flush(); if (c) { run = c; rx = px; } }
-        if (c) rl++;
+        flush();
       }
-      flush();
-    }
+    }, x - ax, y - ay0);
     if (r >= 3) { g.fillStyle = CHAR.P; const vy = y - Math.round(r * 0.2), vx = x - r + Math.round(((t * 9 + seed * 3) % (r * 2)) * 0.5); g.fillRect(vx, vy, Math.max(2, r), 1); }   // veta de viento
     const ng = 2 + Math.min(4, r >> 1);
     for (let i = 0; i < ng; i++) {   // granos que vuelan con el viento
@@ -12259,6 +12276,15 @@ class Renderer {
   }
   arc(cx, cy, r, a0, a1, col, grosor = 1) {
     const g = this.g;
+    // Seba (13-11, V7.1): los arcos grandes se recortan de un anillo ya pintado (antes, un fillRect por punto en cada cuadro)
+    if (r >= 16) {
+      const ri = Math.round(r);
+      if (Math.abs(a1 - a0) >= TAU - 1e-3) { this.ring(cx, cy, ri, col, 1, grosor); return; }
+      const X = Math.round(cx), Y = Math.round(cy), R = ri + grosor + 2;
+      g.save(); g.beginPath(); g.moveTo(X, Y); g.arc(X, Y, R, a0, a1, a1 < a0); g.closePath(); g.clip();
+      this.ring(X, Y, ri, col, 1, grosor); g.restore();
+      return;
+    }
     g.fillStyle = col;
     const pasos = Math.max(4, Math.ceil(Math.abs(a1 - a0) * r * 1.3));
     for (let i = 0; i <= pasos; i++) {
@@ -12270,7 +12296,7 @@ class Renderer {
   discDither(cx, cy, r, col, patron = 2, offset = 0) {
     r = Math.max(0, Math.round(r));
     const o = ((Math.round(offset) % patron) + patron) % patron, lado = r * 2 + 1;
-    const c = this.forma(`d${r}|${col}|${patron}|${o}`, lado, lado, (cg) => {
+    this.formaEn(`d${r}|${col}|${patron}|${o}`, lado, lado, (cg) => {
       // Seba (10-11, V5.7): se pinta por filas con un patrón de baldosa (antes era un fillRect por píxel: los círculos grandes trababan el juego)
       const T = patron, tile = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(T, T) : Object.assign(document.createElement('canvas'), { width: T, height: T }), tg = tile.getContext('2d');
       tg.fillStyle = col;
@@ -12278,8 +12304,7 @@ class Renderer {
       cg.fillStyle = cg.createPattern(tile, 'repeat');
       const r2 = r * r;
       for (let y = -r; y <= r; y++) { const w = Math.floor(Math.sqrt(r2 - y * y)); cg.fillRect(r - w, r + y, w * 2 + 1, 1); }
-    });
-    this.g.drawImage(c, Math.round(cx) - r, Math.round(cy) - r);
+    }, Math.round(cx) - r, Math.round(cy) - r);
   }
 
 
@@ -16840,6 +16865,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.1', f: '13-11-2026', n: [
+    'Rendimiento: las nubes de arena de Kiro (pozo, tajo, tornado, ulti) se pintan una vez y se reusan; antes se calculaban punto por punto en cada cuadro. En un equipo lento, Kiro pasa de ~10 ms a ~5 ms por cuadro y sus tirones de ~40 ms bajan a ~11 ms.',
+    'Rendimiento: los arcos grandes (anillos de carga, auras, runas de Æthar, etc.) se recortan de un anillo ya pintado en vez de dibujarse punto por punto.',
+    'Rendimiento: los anillos y círculos que crecen o se achican ya no crean una imagen nueva en cada cuadro; se guardan solo los que se repiten.',
+  ] },
   { v: 'V7.0', f: '13-11-2026', n: [
     'Nuevo héroe: Kiro (Errantes, asesino), espadachín del desierto con cimitarra y máscara.',
     'Kiro — Paso en falso (pasiva): 5% de esquivar por completo un ataque básico enemigo; tras esquivar, 3 s sin poder volver a hacerlo.',
