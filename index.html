@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.7</title>
+<title>LOLA V8.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.7</p>
+        <p class="sub version">LOLA V8.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1989,7 +1989,8 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
   // ---- Bambaa (Seba, 13-11; números (C) salvo los que fijó Seba)
-  munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 30,
+  munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 15,   // Seba (13-11, V8.8): dura 30 → 15 s
+                     
                       cada: 0.1, lento: 0.5,
                       // Seba (13-11, V7.9): dos formas del muñeco — CAMINANDO (topa a un enemigo antes de plantarse) y PLANTADO (trampa invisible que alguien pisa)
                       formas: { caminando: { polvo: 3, encanto: 1 }, plantado: { polvo: 4, encanto: 2 } },   // Seba (13-11, V7.7): al activarse (pisado o al topar) deja un polvo vudú 4 s (3 cada 0,1 s) y encanta (2 s plantado, 1 s si topa caminando); sin confusión ni maldición
@@ -18543,6 +18544,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.8', f: '13-11-2026', n: [
+    'Bambaa, Muñeco vudú: dura 15 s en vez de 30 (sigue invisible y con 2 cargas).',
+  ] },
   { v: 'V8.7', f: '13-11-2026', n: [
     'Bambaa, Calaca de humo: el daño baja de 100 a 75.',
   ] },
