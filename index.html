@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.6</title>
+<title>LOLA V7.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.6</p>
+        <p class="sub version">LOLA V7.7</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1989,9 +1989,10 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
   // ---- Bambaa (Seba, 13-11; números (C) salvo los que fijó Seba)
-  munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 30, confusion: 3,   // Seba: camina; si topa a un enemigo lo maldice 30/s por 2 s; si no, se planta invisible al final; si un enemigo entra en su radio, todos los del radio quedan confundidos 3 s y malditos 30/s por 3 s; tope 2; 2 cargas; (Seba 13-11) dura 30 s plantado; (C) recarga, alcance, velocidad, radio
-                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}). Si topa a un enemigo, lo maldice: ${n.dps} de daño por segundo por ${n.dur} s. Si no topa a nadie, se planta en ese punto, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s: cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, todos los enemigos del radio quedan confundidos ${HABILIDADES.munecoVudu.confusion} s (controles al revés) y malditos ${n.dps} por segundo por ${n.durTrampa} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
-                      n1: { dps: 30, dur: 2, durTrampa: 3 }, n2: { dps: 30, dur: 2, durTrampa: 3 } },
+  munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 30,
+                      polvo: 4, cada: 0.1, encanto: 2, encantoChoque: 1, lento: 0.5,   // Seba (13-11, V7.7): al activarse (pisado o al topar) deja un polvo vudú 4 s (3 cada 0,1 s) y encanta (2 s plantado, 1 s si topa caminando); sin confusión ni maldición
+                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}) y se planta ahí, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s. Cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, el muñeco estalla en un polvo vudú que dura ${HABILIDADES.munecoVudu.polvo} s: hace ${n.dano} de daño cada ${String(HABILIDADES.munecoVudu.cada).replace('.', ',')} s a quien esté dentro, y los enemigos del radio quedan encantados ${HABILIDADES.munecoVudu.encanto} s (caminan lento hacia el muñeco). Si topa a un enemigo mientras camina, estalla igual, pero el encanto dura ${HABILIDADES.munecoVudu.encantoChoque} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
+                      n1: { dano: 3 }, n2: { dano: 3 } },
   calacaBambaa:     { nombre: 'Calaca de humo', glifo: 'calacaBambaa', cd: 13, cdFijo: true, dur: 3, choque: 16, giro: 3.2, silencio: 2, prisa: 0.25, prisaDur: 2,   // Seba: rastrea hasta 3 s, 100 y silencio 2 s, +25% de velocidad 2 s si alcanza a un héroe; velocidad del alma de Tenebris; (C) recarga, giro
                       desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
                       n1: { dano: 100 }, n2: { dano: 100 } },
@@ -6843,6 +6844,30 @@ class Game {
     }
   }
   // Golagore: Coraza de magma — alcanzar a 2 o más enemigos con una habilidad da un escudo de 20 por 4 s (no se acumula: se renueva)
+  // Bambaa (Seba 13-11, V7.7): el muñeco estalla en un polvo vudú (4 s, 3 de daño cada 0,1 s a quien esté dentro) y encanta a los héroes enemigos del radio (caminan lento hacia el muñeco)
+  polvoVudu(p, z, encanto, n) {
+    const h = HABILIDADES.munecoVudu, c = { x: z.x, y: z.y };
+    for (const e of this.enemigos(p.id, false)) {
+      if (!e.alive || e.esUnidad || dist(e, c) > h.radio + CONFIG.RADIO_JUGADOR) continue;
+      this.aplicarEfecto(e, 'encantado', { t: encanto, src: p.id, px: c.x, py: c.y, lento: h.lento, vudu: true });
+      if (e.fx.encantado) this.emit({ k: 'txt', x: e.x | 0, y: e.y | 0, s: 'ENCANTADO' });
+    }
+    this.emit({ k: 'munecoActiva', x: c.x | 0, y: c.y | 0, r: h.radio });
+    let acc = 0;
+    this.zones.push({ id: this.nextId++, kind: 'polvoVudu', x: c.x, y: c.y, r: h.radio, t: h.polvo, total: h.polvo, owner: p.id,
+      tick: (zz, dt) => {
+        acc += dt;
+        while (acc >= h.cada) {
+          acc -= h.cada;
+          for (const e of this.enemigos(p.id, false)) {
+            if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+            if (dist(e, zz) > zz.r + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+            this.damage(e, n.dano, p, { tipo: 'mag', desde: zz, tick: true, silencioso: true });
+            if (e.alive) e.enPolvoVudu = this.combatTime;
+          }
+        }
+      } });
+  }
   // Golagore (Seba 13-11, V7.5): llama del rastro de la Embestida. Cada enemigo recibe 25 por cada segundo que pisa el fuego (un solo reloj por enemigo aunque pise varias llamas)
   fuegoGolagore(p, x, y) {
     const H = HABILIDADES.cargaGolagore;
@@ -8373,21 +8398,14 @@ class Game {
               this.clampWall(q);
               const trabado = Math.hypot(q.x - nx, q.y - ny) > 0.5 || this.cruzaRoca(z.x, z.y, nx, ny);
               if (!trabado) { z.x = nx; z.y = ny; z.rec += st; }
-              for (const e of enemigosV()) if (dist(e, z) <= h.choque + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) {
-                this.aplicarEfecto(e, 'dot', { t: n.dur, dps: n.dps, src: p.id, k: 'vudu', maldicion: true });
-                this.emit({ k: 'munecoMaldice', x: z.x | 0, y: z.y | 0, x2: e.x | 0, y2: e.y | 0 });
-                z.done = true; return;
+              for (const e of enemigosV()) if (dist(e, z) <= h.choque + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) {   // Seba (13-11, V7.7): al topar estalla igual (encanto de 1 s)
+                this.polvoVudu(p, z, h.encantoChoque, n); z.done = true; return;
               }
               if (trabado || z.rec >= lejos - 0.5) { z.w = 1; z.oculto = 1; z.t = h.dur; z.total = h.dur; this.emit({ k: 'munecoPlanta', x: z.x | 0, y: z.y | 0, id: p.id }); }
             } else {   // plantado (invisible para los enemigos): si alguien entra en el radio, confunde y maldice a todos los del radio
               const dentro = enemigosV().filter(e => dist(e, z) <= h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR));
               if (!dentro.some(e => !e.esUnidad)) return;
-              for (const e of dentro) {
-                this.aplicarEfecto(e, 'dot', { t: n.durTrampa, dps: n.dps, src: p.id, k: 'vudu', maldicion: true });
-                if (!e.esUnidad) this.aplicarEfecto(e, 'confusoKiro', { t: h.confusion, bruja: true });
-              }
-              this.emit({ k: 'munecoActiva', x: z.x | 0, y: z.y | 0, r: h.radio });
-              z.done = true;
+              this.polvoVudu(p, z, h.encanto, n); z.done = true;   // Seba (13-11, V7.7): polvo vudú + encanto 2 s
             }
           },
           fin: (z) => this.emit({ k: 'munecoSeVa', x: z.x | 0, y: z.y | 0 }) };
@@ -9715,7 +9733,7 @@ class Game {
       // Movimiento
       let { mx, my } = p.input;
       if (p.fx.encantado) {   // Vario: el encantado camina hacia Vario (más lento) sin control propio
-        const v0 = this.players.get(p.fx.encantado.src), dx = v0 ? v0.x - p.x : 0, dy = v0 ? v0.y - p.y : 0, dd = Math.hypot(dx, dy);
+        const en = p.fx.encantado, v0 = en.px !== undefined ? { x: en.px, y: en.py } : this.players.get(en.src), dx = v0 ? v0.x - p.x : 0, dy = v0 ? v0.y - p.y : 0, dd = Math.hypot(dx, dy);   // Bambaa: el encanto del muñeco lleva hacia el muñeco
         if (dd > CONFIG.RADIO_JUGADOR * 2 + 4) { mx = dx / dd * (1 - p.fx.encantado.lento); my = dy / dd * (1 - p.fx.encantado.lento); } else { mx = 0; my = 0; }
       }
       if (p.fx.confusoKiro) { mx = -mx; my = -my; }   // Kiro: confundido, los controles van al revés
@@ -10643,7 +10661,7 @@ class Game {
         fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0,
         p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro && !fx.confusoKiro.bruja ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
         (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0,
-        (fx.confusoKiro && fx.confusoKiro.bruja ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (fx.dotsInst && Object.values(fx.dotsInst).some(d => d.key === 'vudu') ? 8 : 0)]);   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.encantado && fx.encantado.vudu ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (p.enPolvoVudu && this.combatTime - p.enPolvoVudu < 0.25 ? 8 : 0)]);   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -13528,6 +13546,14 @@ class Renderer {
         const yy = cy - Math.round((1 - k) * 70), xx = cx - Math.round((1 - k) * 20);
         this.linea(xx - 10, yy - 24, xx, yy, PALETA.tinta, 0, 0, 8); this.linea(xx - 10, yy - 24, xx, yy, PALETA.espectro0, 0, 0, 6); this.linea(xx - 6, yy - 14, xx, yy, PALETA.espectro1, 0, 0, 3);
         this.bolaPixel(xx, yy, 7, PALETA.tinta); this.bolaPixel(xx, yy, 6, PALETA.espectro1); this.bolaPixel(xx - 1, yy - 1, 4, PALETA.espectro2); this.calaveraVerde(xx, yy, 2);
+      } else if (z.kind === 'polvoVudu') {   // Bambaa (Seba 13-11, V7.7): polvo vudú — mezcla de la arena de Kiro y el polvo de Vario, en morado: base punteada, humo que gira y granos que suben
+        const g = this.g, T = this.time, vida = 1 - z.prog, fade = Math.min(1, vida * 4);
+        g.globalAlpha = 0.45 * fade; this.discDither(cx, cy, r, PALETA.vacio1, 2, Math.floor(T * 6) % 2); g.globalAlpha = 0.3 * fade; this.discDither(cx, cy, Math.round(r * 0.6), PALETA.magia, 3, 1); g.globalAlpha = 1;
+        this.ring(cx, cy, r, PALETA.vacio2, 0.5 * fade, 1);
+        g.globalAlpha = 0.85 * fade;
+        for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + T * 0.9, d = r * (0.35 + 0.45 * ((i * 37) % 10) / 10); this.humoMorado(cx + Math.cos(b) * d, cy + Math.sin(b) * d * 0.8, 3 + (i % 3), i); }
+        for (let i = 0; i < 14; i++) { const ph = (T * 0.8 + hash(i, z.id, 5)) % 1, b = hash(i, 3, z.id) * TAU, d = r * Math.sqrt(hash(i, 9, z.id)); g.globalAlpha = fade * (1 - ph); g.fillStyle = i % 3 ? PALETA.vacio2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.8 - ph * 14), 1, 1); }
+        g.globalAlpha = 1;
       } else if (z.kind === 'fuegoGolagore') {   // Golagore (Seba 13-11, V7.5): rastro de fuego de la Embestida — brasas en el suelo y 2 llamas que se apagan
         const vida = 1 - z.prog, g = this.g;
         g.globalAlpha = 0.35 + 0.3 * vida; this.discDither(cx, cy, r, PALETA.antorcha, 2, z.id % 2); g.globalAlpha = 1;
@@ -18467,6 +18493,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.7', f: '13-11-2026', n: [
+    'Bambaa, Muñeco vudú (rework): ya no confunde ni maldice. Al activarse deja un polvo vudú por 4 s que hace 3 de daño cada 0,1 s (30 por segundo) a quien esté dentro, y encanta a los héroes enemigos del radio: caminan al 50% hacia el muñeco. Plantado y pisado: encanto de 2 s. Si topa a un enemigo mientras camina, estalla igual, pero el encanto dura 1 s. Siguen siendo 2 muñecos como máximo y la recarga empieza con el segundo.',
+  ] },
   { v: 'V7.6', f: '13-11-2026', n: [
     'Golagore, Coraza de magma: el escudo de la pasiva sube de 20 a 30.',
   ] },
