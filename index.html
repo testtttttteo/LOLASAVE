@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.2</title>
+<title>LOLA V7.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -980,7 +980,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
 .mapa-ficha canvas { width: 76px; height: 76px; image-rendering: pixelated; border: 2px solid var(--tinta); background: var(--noche); }
 .mapa-ficha b { font: 600 17px var(--f-titulo); color: var(--madera0); display: block; }
 .mapa-ficha p { font: 9px var(--f-num); color: var(--madera1); margin: 3px 0 0; line-height: 1.4; }
-.sp-acciones { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; }
+.sp-acciones { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .menu-pie { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; border-top: 3px dashed var(--perg0); padding-top: 10px; }
 
 
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.2</p>
+        <p class="sub version">LOLA V7.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1088,7 +1088,6 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
             <div class="seg" id="seg-draft"><button data-v="libre">Libre</button><button data-v="ban">Con baneos</button></div></div>
           <div class="sp-acciones">
             <button class="btn gold" id="b-bots-ir">¡A la arena!</button>
-            <button class="btn" id="b-azar" title="Modo y mapa al azar">Sorpréndeme</button>
           </div>
         </div>
 
@@ -17826,13 +17825,6 @@ $('b-draftmodo').onclick = () => { S.draftModo = S.draftModo === 'ban' ? 'libre'
   document.querySelectorAll('#seg-draft button').forEach(b => { b.onclick = () => { S.draftModo = b.dataset.v; lsSet('lola-draft', S.draftModo); pintarDraftModo(); pintarBots(); }; });
   const ir = () => { const m = S.modoBots; $(m === 'ffa' ? 'b-practice' : 'b-' + m).click(); };
   $('b-bots-ir').onclick = ir;
-  $('b-azar').onclick = () => {   // Sorpréndeme: modo y mapa al azar
-    const modos = ['1v1', '2v2', '3v3', 'ffa'], mapas = ['claro', 'volcan'];
-    S.modoBots = modos[Math.floor(Math.random() * modos.length)]; S.mapaArena = mapas[Math.floor(Math.random() * mapas.length)];
-    lsSet('lola-modo', S.modoBots); lsSet('lola-mapa', S.mapaArena); pintarMapa(); pintarBots();
-    toast(`Al azar: ${S.modoBots === 'ffa' ? 'Todos contra todos' : S.modoBots}${S.modoBots === 'ffa' ? '' : ' en el ' + NOMBRE_MAPA[S.mapaArena]}`);
-    setTimeout(ir, 700);
-  };
 }
 document.querySelectorAll('#sala-draft button').forEach(b => { b.onclick = () => { if (!isAuth() || !S.game.sala) return; S.game.sala.draft = b.dataset.d; S.game.metaDirty = true; }; });
 $('b-matriz').onclick = abrirMatriz;
@@ -17875,6 +17867,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.3', f: '13-11-2026', n: [
+    'Menú: se quita el botón Sorpréndeme de Jugar con bots.',
+  ] },
   { v: 'V7.2', f: '13-11-2026', n: [
     'Nuevo héroe: Golagore (Renegados), gigante de roca y magma con un hacha a dos manos.',
     'Golagore — Coraza de magma (pasiva): si golpea a 2 o más enemigos a la vez, gana un escudo de 20 por 4 s (se renueva, no se acumula) y su siguiente habilidad quema 25 en 2 s a cada enemigo que alcanza.',
