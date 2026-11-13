@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.9</title>
+<title>LOLA V8.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.9</p>
+        <p class="sub version">LOLA V8.0</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1993,8 +1993,8 @@ Object.assign(HABILIDADES, {
                       cada: 0.1, lento: 0.5,
                       // Seba (13-11, V7.9): dos formas del muñeco — CAMINANDO (topa a un enemigo antes de plantarse) y PLANTADO (trampa invisible que alguien pisa)
                       formas: { caminando: { polvo: 3, encanto: 1 }, plantado: { polvo: 4, encanto: 2 } },   // Seba (13-11, V7.7): al activarse (pisado o al topar) deja un polvo vudú 4 s (3 cada 0,1 s) y encanta (2 s plantado, 1 s si topa caminando); sin confusión ni maldición
-                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}) y se planta ahí, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s. Cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, el muñeco estalla en un polvo vudú que dura ${HABILIDADES.munecoVudu.formas.plantado.polvo} s: hace ${n.dano} de daño cada ${String(HABILIDADES.munecoVudu.cada).replace('.', ',')} s a quien esté dentro, y los enemigos del radio quedan encantados ${HABILIDADES.munecoVudu.formas.plantado.encanto} s (caminan lento hacia el muñeco). Si topa a un enemigo mientras camina, estalla antes: el polvo dura ${HABILIDADES.munecoVudu.formas.caminando.polvo} s y el encanto ${HABILIDADES.munecoVudu.formas.caminando.encanto} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
-                      n1: { dano: 3 }, n2: { dano: 3 } },
+                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}) y se planta ahí, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s. Cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, el muñeco estalla en un polvo vudú que dura ${HABILIDADES.munecoVudu.formas.plantado.polvo} s: hace ${String(n.dano).replace('.', ',')} de daño cada ${String(HABILIDADES.munecoVudu.cada).replace('.', ',')} s a quien esté dentro, y los enemigos del radio quedan encantados ${HABILIDADES.munecoVudu.formas.plantado.encanto} s (caminan lento hacia el muñeco). Si topa a un enemigo mientras camina, estalla antes: el polvo dura ${HABILIDADES.munecoVudu.formas.caminando.polvo} s y el encanto ${HABILIDADES.munecoVudu.formas.caminando.encanto} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
+                      n1: { dano: 1.5 }, n2: { dano: 1.5 } },   // Seba (13-11, V8.0): 3 → 1,5 cada 0,1 s (15 por segundo)
   calacaBambaa:     { nombre: 'Calaca de humo', glifo: 'calacaBambaa', cd: 13, cdFijo: true, dur: 3, choque: 16, giro: 3.2, silencio: 2, prisa: 0.25, prisaDur: 2,   // Seba: rastrea hasta 3 s, 100 y silencio 2 s, +25% de velocidad 2 s si alcanza a un héroe; velocidad del alma de Tenebris; (C) recarga, giro
                       desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
                       n1: { dano: 100 }, n2: { dano: 100 } },
@@ -18500,6 +18500,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.0', f: '13-11-2026', n: [
+    'Bambaa, Muñeco vudú: el polvo hace 1,5 de daño cada 0,1 s (antes 3): 15 por segundo, hasta 45 caminando y 60 plantado.',
+  ] },
   { v: 'V7.9', f: '13-11-2026', n: [
     'Bambaa, Muñeco vudú: dos formas bien separadas. Caminando (topa a un enemigo, o llega a su punto con un enemigo ya en el radio): polvo 3 s y encanto 1 s. Plantado (trampa invisible que alguien pisa después): polvo 4 s y encanto 2 s. Antes, un muñeco tirado encima de un enemigo se plantaba y estallaba al instante con el encanto de 2 s.',
     'Arreglado: el círculo de runas de Æthar (sello y ulti) se dibujaba con el pentagrama del tótem de Bambaa.',
