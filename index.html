@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.8</title>
+<title>LOLA V6.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.8</p>
+        <p class="sub version">LOLA V6.9</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -6362,7 +6362,7 @@ class Game {
   // ¿Un proyectil choca con un muro de Aldor? (los de las ultis lo atraviesan, salvo la flecha del Tiro del bosque de Lire)
   frenaMuroAldor(pr, bx, by) {
     if (!this.units.some(m => m.alive && m.bloqueaProy)) return null;
-    if (pr.deUlti) return null;   // Seba (09-11): los proyectiles de ultis lo atraviesan (también las flechas de la Ascensión élfica)
+    if (pr.deUlti && pr.spr !== 'brasa') return null;   // Seba (12-11, V6.9): los disparos de torretas (Jürgen y Lire) sí los frena el muro   // Seba (09-11): los proyectiles de ultis lo atraviesan (también las flechas de la Ascensión élfica)
     if (PASA_MURO_ALDOR.has(pr.spr)) return null;   // Seba (09-11): el muro frena lo físico; la magia y lo que vuela pasan
     for (const m of this.units) {
       if (!m.alive || !m.bloqueaProy) continue;
@@ -16353,6 +16353,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.9', f: '12-11-2026', n: [
+    'Aldor, Muralla de piedra: frena los disparos de las torretas, tanto las brasas de la torreta de Jürgen (aunque sea ulti) como los virotes de la torreta de Lire.',
+  ] },
   { v: 'V6.8', f: '12-11-2026', n: [
     'Ora, Burbuja de marea: los disparos de invocaciones de ultis (las brasas de la torreta de Jürgen) ya no se reducen, como el resto de lo que viene de ultis. Las invocaciones que no son de ulti (la torreta de Lire, por ejemplo) sí se reducen. Lo que se dispara desde dentro de la burbuja también se reduce.',
     'Por la misma regla, las brasas de la torreta de Jürgen ahora atraviesan el muro de Aldor (todo lo de ultis lo atraviesa).',
