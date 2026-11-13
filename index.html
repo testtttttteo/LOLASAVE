@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.6</title>
+<title>LOLA V6.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.6</p>
+        <p class="sub version">LOLA V6.7</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1207,6 +1207,8 @@ const PALETA = {
   antorcha: '#ff8a2b', magia: '#b66cff',
   magenta0: '#5a1650', magenta1: '#b3288f', magenta2: '#ff5fd2',   // Seba (02-11): Vario (Errantes)
   espectro0: '#1e5248', espectro1: '#3fae8a', espectro2: '#9cf2c8',   // Seba (05-11): fuego verde fantasmal de Fatum
+  vacio0: '#241044', vacio1: '#4a2590', vacio2: '#7e48d8',
+  marea0: '#151a3c', marea1: '#24357a', marea2: '#4aa8e8',   // Seba (12-11): Ora, oráculo de las mareas (azul marino, azul, celeste agua)   // Seba (10-11): Zel, bestia del vacío (morados; magia hace de brillo)
 };
 
 // Un carácter por color, para escribir sprites como texto.
@@ -1222,6 +1224,8 @@ const CHAR = {
   f: PALETA.antorcha, v: PALETA.magia,
   N: PALETA.magenta0, M: PALETA.magenta1, h: PALETA.magenta2,
   j: PALETA.espectro0, J: PALETA.espectro1, u: PALETA.espectro2,
+  A: PALETA.vacio0, D: PALETA.vacio1, I: PALETA.vacio2,
+  E: PALETA.marea0, F: PALETA.marea1, H: PALETA.marea2,
 };
 
 // Colores de jugador (x = sombra, X = base, z = luz), en orden de asiento.
@@ -1494,6 +1498,19 @@ Object.assign(HEROES, {
     ataque: { tipo: 'proyectil', proj: 'cartaVario', vel: 520, alcance: 300, radio: 6 },   // Seba: cartas, alcance menor que Lire y los demás tiradores
     habs: ['encanto', 'polvoEstrellas', 'armario'],
     pasiva: 'actoFinal',
+  },
+});
+
+// Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
+Object.assign(HEROES, {
+  ora: {
+    casa: 'errantes',
+    nombre: 'Ora', rol: 'Control · apoyo', fondo: 'ora', arma: 'ninguna',
+    desc: 'Oráculo de las mareas: elegante, serena y poderosa. Controla el agua con las manos: olas que arrastran, burbujas que protegen y géiseres que levantan a sus enemigos.',
+    vida: 360, dano: 26, recarga: 1.4, ultiCarga: 300, velocidad: 144,   // (C) vida 360, daño 26, 1,75 s y 110 en juego
+    ataque: { tipo: 'proyectil', proj: 'orbeAgua', vel: 440, alcance: 380, radio: 6 },   // (C) esfera de agua
+    habs: ['olaOra', 'burbujaOra', 'geiserOra'],
+    pasiva: 'gotasOra',
   },
 });
 
@@ -1841,6 +1858,20 @@ Object.assign(HABILIDADES, {
   // ---- Driiar (Seba, 30-10)
   // ---- Lei (Seba, 05-11; números (C) salvo los que fijó Seba)
   // ---- Boa (Seba, 06-11; números (C) salvo los que fijó Seba)
+  // ---- Ora (Seba, 12-11; números (C) salvo los que fijó Seba)
+  olaOra:     { nombre: 'Invocar ola', glifo: 'olaOra', cd: 10, cdFijo: true, alcance: 280, largo: 300, ancho: 110, vel: 281,   // Seba (12-11): 33% más lenta (420 → 281)
+                espera: 2, empuje: 40, lentoDur: 3, velDur: 3,   // Seba: 70, −33% 3 s, aliados +25%, arrastra levemente; dos arrastres (dónde nace y hacia dónde corre); (C) alcances, ancho, velocidad, empuje 40, espera 2 s, recarga
+                desc: (n) => `Primero marcas dónde nace la ola (en ti o hasta distancia ${DIST(HABILIDADES.olaOra.alcance)}) y luego hacia dónde corre (si no eliges en ${HABILIDADES.olaOra.espera} s, corre alejándose de ti). Recorre distancia ${DIST(HABILIDADES.olaOra.largo)}: a los enemigos les hace ${n.dano} de daño, los arrastra un poco y quedan ${Math.round(n.lento * 100)}% más lentos por ${HABILIDADES.olaOra.lentoDur} s; los aliados que toca ganan +${Math.round(n.vel * 100)}% de velocidad por ${HABILIDADES.olaOra.velDur} s.`,
+                n1: { dano: 70, lento: 0.33, vel: 0.25 }, n2: { dano: 70, lento: 0.33, vel: 0.25 } },
+  burbujaOra: { nombre: 'Burbuja de marea', glifo: 'burbujaOra', cd: 14, cdFijo: true, alcance: 300, radio: 110, canal: 2, dur: 4.5, lentoDur: 2,   // Seba (12-11): radio +10% (100 → 110)
+                  // Seba: canal 2 s visible y sin frenar, 4,5 s, −50% a proyectiles enemigos (no ultis), al reventar cura 75 / 40 y −33%; (C) alcance, radio, lento 2 s, recarga
+                desc: (n) => `Marcas un punto a distancia ${DIST(HABILIDADES.burbujaOra.alcance)}: la burbuja se forma durante ${HABILIDADES.burbujaOra.canal} s a la vista de todos (puedes moverte) y dura ${fmtN(HABILIDADES.burbujaOra.dur)} s, radio ${RADIO(HABILIDADES.burbujaOra.radio)}. Los proyectiles enemigos que la cruzan o salen de dentro hacen ${Math.round(n.reduce * 100)}% menos de daño (no los de ultis). Al reventar, cura ${n.cura} a los aliados dentro y hace ${n.dano} de daño y ${Math.round(n.lento * 100)}% de lentitud a los enemigos dentro.`,
+                n1: { reduce: 0.5, cura: 75, dano: 40, lento: 0.33 }, n2: { reduce: 0.5, cura: 75, dano: 40, lento: 0.33 } },
+  geiserOra:  { nombre: 'Géiser', glifo: 'geiserOra', cd: 55, cdFijo: true, ulti: true, canal: 0.5, radio: 200, dur: 6, aviso: 0.44,   // Seba (12-11): 4,5 → 6 s
+                rGeiser: 40, base: 1.5, sube: 0.75, apunta: 0.4,   // Seba (12-11): el radio va bajo Ora y la sigue; canal 0,5 s cortable; géiseres 25% más lentos (1,5/s +0,75 cada segundo, aviso 0,44 s)
+                  // Seba: radio amplio, 50, levanta 1,5 s, luego −33% 2 s, la frecuencia sube cada segundo, 4,5 s; (C) alcance, radios, 2 géiseres/s +1 por segundo, aviso 0,35 s, 40% caen sobre un enemigo, recarga
+                desc: (n) => `Canalizas ${fmtN(HABILIDADES.geiserOra.canal)} s (un aturdido o un silencio lo cortan). Luego, en un radio ${RADIO(HABILIDADES.geiserOra.radio)} que te acompaña, brotan géiseres durante ${fmtN(HABILIDADES.geiserOra.dur)} s, cada segundo más seguidos. Cada uno hace ${n.dano} de daño y levanta a los enemigos ${fmtN(n.aturde)} s (aturdidos); al caer quedan ${Math.round(n.lento * 100)}% más lentos por ${n.lentoDur} s.`,
+                n1: { dano: 50, aturde: 1.5, lento: 0.33, lentoDur: 2 }, n2: { dano: 50, aturde: 1.5, lento: 0.33, lentoDur: 2 } },
   // ---- Legios (Seba, 11-11; números (C) salvo los que fijó Seba)
   cargaLegios:     { nombre: 'Carga de caballería', glifo: 'cargaLegios', cd: 12, cdFijo: true, dur: 3, espera: 4.5, lentoDur: 2, radio: 60,   // Seba (12-11): canal 3 s, hasta 3 veces (1 por segundo), el beneficio dura 4,5 s o hasta golpear a 1 enemigo, efecto en un radio pequeño alrededor del golpeado, recarga 12 s; +20% velocidad, +15, 1 s de silencio, −20% por segundo; (C) radio 60, lento 2 s
                      desc: (n) => `Cargas durante ${HABILIDADES.cargaLegios.dur} s sin detenerte (nada te corta). Cada segundo suma, hasta 3 veces: +${Math.round(n.vel * 100)}% de velocidad y tu siguiente básico hace +${n.dano} de daño, silencia ${n.silencio} s y frena ${Math.round(n.lento * 100)}% por ${HABILIDADES.cargaLegios.lentoDur} s, también a los enemigos en un radio ${RADIO(HABILIDADES.cargaLegios.radio)} alrededor del golpeado. Lo acumulado dura ${fmtN(HABILIDADES.cargaLegios.espera)} s o hasta que golpees a un enemigo; si golpeas durante la carga, gastas lo que llevas.`,
@@ -1954,6 +1985,7 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  gotasOra: { nombre: 'Gotas suspendidas', glifo: 'gotasOra', cada: 3, cura: 15, radio: 200, desc: 'Cada 3 ataques básicos que aciertan, te curas 15 y curas 15 a un aliado cercano (hasta distancia media).' },   // Seba (12-11): solo un aliado cercano, radio corto a mediano (200)
   juicioDorado: { nombre: 'Juicio Real', glifo: 'juicioDorado', cd: 2.5, radio: 110, dano: 25,   // Seba (12-11): 50 → 25
                   lento: 0.10, lentoDur: 2.5, desc: 'Cuando te golpea una habilidad, una lanza dorada cae sobre un enemigo al azar cerca de ti: 25 de daño y 10% más lento por 2,5 s. Una vez cada 2,5 s.' },   // Seba (11-11); nombre (C)
   sedArcana: { nombre: 'Sed arcana', glifo: 'sedArcana', cada: 100, cura: 50, escudo: 25, escudoDur: 4, ventana: 15, cd: 10,   // Seba (11-11, V6.1): 100 de daño en 15 s; recarga 10 s
@@ -2090,6 +2122,7 @@ const GUIAS = {
   castigo: { tipo: 'linea', alcance: 450, ancho: 24 }, pozoMaldito: { tipo: 'punto', alcance: 300, r: 90 }, chaos: { tipo: 'rumble', alcance: 600, largo: 366, r: 66 },
   impactoRunico: { tipo: 'punto', alcance: 300, r: 70 }, ondaRunica: { tipo: 'propio', r: 200 }, vacio: { tipo: 'punto', alcance: 380, r: 132 },
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
+  olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
   giroMartillo: { tipo: 'propio', r: 90 }, muroAldor: { tipo: 'muro', alcance: 163, largo: 160 }, ecosMartillo: { tipo: 'linea', alcance: 380, ancho: 140 },
@@ -4890,6 +4923,52 @@ Object.assign(OTROS, {
   palomaRey: ['y.........y', 'yy.......yy', '.yyy.q.yyy.', '..yyyqyyy..', '....yyy....', '....yOy....', '...y.y.y...'],
 });
 
+// Seba (12-11): Ora, oráculo de las mareas — fiel a la referencia 8 bit: aro dorado flotante con gema celeste sobre la cabeza, cabello azul
+// marino largo y suelto con mechones azules, cara clara con ojos celestes, cuello dorado con gema, túnica azul marino al centro con gemas
+// celestes, mangas anchas blancas forradas en celeste, sobretodo blanco con ribetes dorados, botas oscuras con detalles de oro.
+// (Distinta de Lei: Lei es celeste/blanca con abanicos; Ora es azul marino, blanco y dorado, sin arma.)
+Object.assign(CAPAS, {
+  cuerpoOra: L({
+    3: '......OOOHHOOO......',
+    4: '......O.EFFE.O......',
+    5: '.......EFFFFE.......',
+    6: '.....EFFFFFFFFE.....',
+    7: '....EFFFqFFqFFFE....',
+    8: '....EFPHPPPPHPFE....',
+    9: '...EFFPPPPPPPPFFE...',
+    10: '...EFB.PPPpPP.BFE...',
+    11: '..EFB..OqqqqO..BFE..',
+    12: '..EFB.qcOOHOOcq.BFE.',
+    13: '.EFB.qqcEFHFEcqq.BF.',
+    14: '.EF.qqcqEFFFEqcqq.FE',
+    15: '.E..qcqOEFHFEOqcq..E',
+    16: '....cq.qOEFEOq.qc...',
+    17: '.....qOqqEFEqqOq....',
+    18: '......OqqEFEqqO.....',
+  }),
+  piernasOra0: L({
+    19: '.......OEEFEEO......',
+    20: '.......EF..FE.......',
+    21: '......kOk..kOk......',
+  }),
+  piernasOra1: L({
+    19: '.......OEEFEEO......',
+    20: '......EF....FE......',
+    21: '.....kOk....kOk.....',
+  }),
+});
+Object.assign(APARIENCIA, {
+  ora: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoOra'], ['cuerpoOra']], cabeza: [[], []], quieto: 'piernasOra0', paso: 'piernasOra1' },
+});
+Object.assign(GLIFOS, {
+  olaOra:     ['.........', '....HHH..', '..HHcqcH.', '.HH...cH.', 'HH....H..', 'H...HH...', 'H.HHcH...', 'HHcqqcHH.', 'FFFFFFFFF'],
+  burbujaOra: ['..HHHHH..', '.H.....H.', 'H.qq....H', 'H.q.....H', 'H.......H', 'H.......H', 'H......cH', '.H....cH.', '..HHHHH..'],
+  geiserOra:  ['...q.q...', '..qcqcq..', '...cHc...', '...HHH...', '...HcH...', '..HHcHH..', '..HcHcH..', '.HHHcHHH.', 'FFFFFFFFF'],
+  gotasOra:   ['....H....', '...HcH...', '..HcqcH..', '..HcccH..', '...HHH...', '.H.....H.', 'HcH...HcH', 'HHH...HHH', '.H.....H.'],
+});
+Object.assign(FONDOS, { ora: ['E', 'F'] });
+Object.assign(OTROS, { orbeAgua: ['.HH.', 'HqcH', 'HccH', '.HH.'] });
+
 // Seba (11-11, ronda 2): Legios grande — el caballo ya mide como un héroe normal y el caballero va encima (lienzo 36×36):
 // yelmo cerrado con visor en cruz y penacho dorado ancho, hombreras redondas con borde de oro, peto con cruz dorada, cinturón,
 // greba con espuela dorada, capa corta que ondea; caballo café con crin oscura, bridas doradas, paño negro con borde de oro bajo la silla.
@@ -5125,7 +5204,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 // Seba (09-11): proyectiles que atraviesan el muro de Aldor (magia y lo que vuela). Todo lo demás (físico) se frena.
 // Fatum entero, sombra de Karilthal, orbes de Monh, Rasho, runas de Æthar, orbe de Driiar, corazones de Vario (C) y lo de las ultis.
@@ -5661,6 +5740,7 @@ class Game {
       this.actoFinal(atacante, target, o); this.resonar(atacante, target, o); this.gotear(atacante, target, o);
       if (atacante && target.enemigo) this.sumarStat(atacante, 'dano', Math.min(amt, Math.max(0, target.hp)));
       this.sedZeal(atacante, Math.min(amt, Math.max(0, target.hp)), o);
+      if (o.basico && atacante && HEROES[atacante.build?.heroe]?.pasiva === 'gotasOra') this.gotasOra(atacante);
       if (atacante && this.teamOf(atacante.id) !== this.teamOf(target.owner) && target.kind !== 'muro') this.cargarUlti(atacante, Math.min(amt, Math.max(0, target.hp)), src, o);
       if (atacante && atacante.fx && atacante.fx.llama && this.teamOf(atacante.id) !== this.teamOf(target.owner)) atacante.fx.llama.dano += Math.min(amt, Math.max(0, target.hp));
       target.hp -= amt;
@@ -5672,6 +5752,7 @@ class Game {
     this.actoFinal(atacante, target, o); this.resonar(atacante, target, o); this.gotear(atacante, target, o);
     const real = Math.min(amt, Math.max(0, target.hp));
     if (atacante !== target) this.sedZeal(atacante, real, o);
+    if (o.basico && atacante && atacante !== target && real > 0 && HEROES[atacante.build?.heroe]?.pasiva === 'gotasOra') this.gotasOra(atacante);   // Ora: Gotas suspendidas
     // Festín (Aracnida): recuerda quién la dañó hace poco
     if (atacante && atacante !== target && HEROES[atacante.build?.heroe]?.pasiva === 'festin') (target.golpesFestin = target.golpesFestin || {})[atacante.id] = this.combatTime;
     if (target.esMuneco) {   // Arena de entrenamiento: el muñeco no pierde vida; cuenta el daño de 10 s desde el primer golpe
@@ -6074,6 +6155,108 @@ class Game {
     if (p) this.damage(e, P.choque, p, { tipo: 'fis', desde: { x: x0, y: y0 } });
     if (e.alive) { this.aplicarEfecto(e, 'aturdido', { t: P.choqueAturde }); if (!e.esUnidad) this.emit({ k: 'txt', x: e.x | 0, y: e.y | 0, s: 'ATURDIDO', id: e.id }); }
   }
+  // Ora: Gotas suspendidas — cada 3 básicos que aciertan, 15 a ella y al aliado más cercano
+  gotasOra(p) {
+    if (!p.alive) return;
+    const P = PASIVAS.gotasOra;
+    p.gotasOra = (p.gotasOra || 0) + 1;
+    if (p.gotasOra < P.cada) return;
+    p.gotasOra = 0;
+    this.heal(p, P.cura, p);
+    let al = null, bd = P.radio;
+    for (const q of this.players.values()) { if (q === p || !q.alive || this.teamOf(q.id) !== this.teamOf(p.id)) continue; const d = dist(q, p); if (d < bd) { bd = d; al = q; } }
+    if (al) this.heal(al, P.cura, p);
+    this.emit({ k: 'gotasOra', x: p.x | 0, y: p.y | 0, x2: al ? al.x | 0 : p.x | 0, y2: al ? al.y | 0 : p.y | 0 });
+  }
+  // Ora: suelta la ola desde la marca (S) hacia el ángulo a (si no hay, alejándose de Ora; si nació en Ora, hacia donde mira)
+  lanzarOla(p, a) {
+    const v = p.fx.olaMarca; if (!v) return;
+    delete p.fx.olaMarca;
+    const h = HABILIDADES.olaOra, n = v.n, sx = v.x, sy = v.y;
+    if (a == null) { const dx = sx - p.x, dy = sy - p.y; a = Math.hypot(dx, dy) > 20 ? Math.atan2(dy, dx) : p.facing; }
+    const ca = Math.cos(a), sa = Math.sin(a), T = h.largo / h.vel, golpes = new Set(), eq = this.teamOf(p.id);
+    p.facing = a;
+    this.emit({ k: 'olaSale', x: sx | 0, y: sy | 0, a: +a.toFixed(2) });
+    this.zones.push({ id: this.nextId++, kind: 'olaOra', x: sx, y: sy, ox: sx, oy: sy, a, r: h.ancho / 2, t: T, total: T, owner: p.id,
+      tick: (z) => {
+        const d = h.largo * Math.min(1, (z.total - z.t) / z.total);
+        z.x = sx + ca * d; z.y = sy + sa * d;
+        const banda = (e, rr) => { const ex = e.x - sx, ey = e.y - sy, al = ex * ca + ey * sa, lat = Math.abs(-ex * sa + ey * ca); return al > d - 30 - rr && al < d + 12 + rr && lat < h.ancho / 2 + rr; };
+        for (const e of this.enemigos(p.id, false)) {
+          if (golpes.has(e.id) || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (!banda(e, e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          golpes.add(e.id);
+          this.damage(e, n.dano, p, { tipo: 'mag', desde: z });
+          if (!e.alive) continue;
+          this.aplicarEfecto(e, 'slow', { t: h.lentoDur, mult: 1 - n.lento, k: 'olaOra' });
+          this.aplicarEfecto(e, 'arrastre', { t: 0.3, tx: e.x + ca * h.empuje, ty: e.y + sa * h.empuje });
+        }
+        for (const q of this.players.values()) {
+          if (!q.alive || golpes.has(q.id) || this.teamOf(q.id) !== eq || !banda(q, CONFIG.RADIO_JUGADOR)) continue;
+          golpes.add(q.id);
+          q.fx.olaVel = { t: h.velDur, v: n.vel };
+        }
+      } });
+  }
+  // Ora: burbuja enemiga — un proyectil que la cruza (o sale de dentro) hace 50% menos (no los de ultis)
+  // Ora: ¿el tramo (x0,y0)→(x1,y1) cruza una burbuja enemiga del dueño? Devuelve cuánto reduce (0 si no)
+  cruzaBurbuja(owner, x0, y0, x1, y1) {
+    const eq = this.teamOf(owner);
+    for (const z of this.zones) {
+      if (z.kind !== 'burbujaOra' || z.done || this.teamOf(z.owner) === eq) continue;
+      const dx = x1 - x0, dy = y1 - y0, L2 = dx * dx + dy * dy || 1, k = Math.max(0, Math.min(1, ((z.x - x0) * dx + (z.y - y0) * dy) / L2));
+      if (Math.hypot(x0 + dx * k - z.x, y0 + dy * k - z.y) <= z.r) return z.reduce;
+    }
+    return 0;
+  }
+  mojaBurbuja(pr) {
+    if (pr.deUlti || pr.mojado) return;
+    const eq = this.teamOf(pr.owner);
+    for (const z of this.zones) {
+      if (z.kind !== 'burbujaOra' || z.done || this.teamOf(z.owner) === eq) continue;
+      if (Math.hypot(pr.x - z.x, pr.y - z.y) > z.r) continue;
+      pr.mojado = true; pr.dmg *= 1 - z.reduce;
+      this.emit({ k: 'mojado', x: pr.x | 0, y: pr.y | 0 });
+      return;
+    }
+  }
+  // Ora: campo de géiseres bajo Ora, que la sigue (Seba 12-11); 1,5 géiseres/s y +0,75 cada segundo (25% más lento)
+  campoGeiser(p, h, n) {
+    let acum = 0;
+    this.emit({ k: 'geiserCampo', x: p.x | 0, y: p.y | 0, r: h.radio });
+    this.zones.push({ id: this.nextId++, kind: 'geiserCampo', x: p.x, y: p.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id, sigue: p,
+      tick: (z, dt) => {
+        if (!p.alive) { z.t = 0; return; }
+        const el = z.total - z.t, ritmo = h.base + h.sube * Math.floor(el);
+        acum += ritmo * (dt || 1 / 30);
+        while (acum >= 1) {
+          acum -= 1;
+          let gx, gy;
+          const dentro = this.enemigos(p.id, false).filter(e => e.alive && e.kind !== 'muro' && !(e.fx && e.fx.geiserOra) && dist(e, z) <= h.radio);
+          if (dentro.length && Math.random() < h.apunta) { const e = dentro[Math.floor(Math.random() * dentro.length)]; gx = e.x + (Math.random() - 0.5) * 30; gy = e.y + (Math.random() - 0.5) * 30; }
+          else { const b = Math.random() * Math.PI * 2, rr = Math.sqrt(Math.random()) * h.radio; gx = z.x + Math.cos(b) * rr; gy = z.y + Math.sin(b) * rr; }
+          this.geiserOra(p, gx, gy, n);
+        }
+      } });
+    p.geiserHasta = this.combatTime + h.dur;
+  }
+  // Ora: un géiser — aviso corto y chorro: 50, levanta 1,5 s y luego frena 33% 2 s (no levanta a quien ya está en el aire)
+  geiserOra(p, x, y, n) {
+    const H = HABILIDADES.geiserOra, c = { x, y };
+    this.zones.push({ id: this.nextId++, kind: 'geiserAviso', x, y, r: H.rGeiser, t: H.aviso, total: H.aviso, owner: p.id,
+      fin: () => {
+        this.emit({ k: 'geiser', x: x | 0, y: y | 0, r: H.rGeiser });
+        for (const e of this.enemigos(p.id, false)) {
+          if (e.kind === 'muro' || !e.alive || (e.esUnidad && UNIDADES[e.kind]?.invulnerable) || (e.fx && e.fx.geiserOra)) continue;
+          if (dist(e, c) > H.rGeiser + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          this.damage(e, n.dano, p, { tipo: 'mag', ulti: true, desde: c });
+          if (!e.alive) continue;
+          this.aplicarEfecto(e, 'aturdido', { t: n.aturde });
+          if (e.fx) { if (e.fx.aturdido) e.fx.levantado = { t: n.aturde }; e.fx.geiserOra = { t: n.aturde }; }
+          this.aplicarEfecto(e, 'slow', { t: n.aturde + n.lentoDur, mult: 1 - n.lento, k: 'geiserOra' });   // frena 2 s al caer (mientras está en el aire no se mueve igual)
+        }
+      } });
+  }
   // Legios: etapa de la Carga de caballería — 1 por segundo cumplido y 0,5 por los 0,5 s finales (0, 1, 2, 2,5)
   etapaCarga(c) { return Math.min(3, Math.floor((c.el || 0) + 1e-6)); }   // Seba (12-11): 1 por segundo cumplido, hasta 3
   // Legios: Escudo del juramento roto antes de 4 s — estalla (50 en radio) y cura 50
@@ -6447,6 +6630,7 @@ class Game {
     if (p.fx.flotar) v *= 1.05;   // Lei: Flotar
     if (p.fx.cargaLegios) v *= 1 + HABILIDADES.cargaLegios.n1.vel * this.etapaCarga(p.fx.cargaLegios);   // Legios: +20% por segundo de carga
     if (p.fx.auraRey) v *= 1 + p.fx.auraRey.vel;   // Legios: Por el Rey
+    if (p.fx.olaVel) v *= 1 + p.fx.olaVel.v;   // Ora: la ola acelera a los aliados
     if (p.fx.templeAldor) v *= 1.05;   // Aldor: Temple de enano
     if (p.fx.ascension) v *= 1 + p.fx.ascension.n.vel;   // Lire: Ascensión élfica
     if (p.fx.luzMina) v *= 1 + p.fx.luzMina.vel;   // Jürgen: Lámpara de mina   // Vario: Polvo de estrellas
@@ -6555,8 +6739,14 @@ class Game {
   lanzarParabola(p, x, y, t, r, dmg, tipo, extra = {}) {
     const fin = { x, y };
     this.clampWall(fin);
+    const ox = p.x, oy = p.y, owner = p.esUnidad ? p.owner : p.id;
     this.zones.push({ id: this.nextId++, kind: 'bomba', x: fin.x, y: fin.y, ox: p.x, oy: p.y - 10, r, t, total: t,
-      fin: () => this.explotar(p, fin.x, fin.y, r, dmg, tipo, extra) });
+      fin: () => {
+        // Ora (12-11): una bomba en parábola que cruza o cae en una burbuja enemiga también se debilita (no las de ultis)
+        const red = extra.ulti ? 0 : this.cruzaBurbuja(owner, ox, oy, fin.x, fin.y);
+        if (red) this.emit({ k: 'mojado', x: fin.x | 0, y: fin.y | 0 });
+        this.explotar(p, fin.x, fin.y, r, dmg * (1 - red), tipo, extra);
+      } });
   }
 
   explotar(p, x, y, r, dmg, tipo, o = {}) {
@@ -6933,6 +7123,7 @@ class Game {
       if (!v.lanzada) this.ruedaLei(p); else if (this.combatTime - v.lanzadaT >= HABILIDADES.ojoVendaval.minRecast) delete p.fx.vendaval;
       return;
     }
+    if (key === 'olaOra' && p.fx.olaMarca) { if (!p.fx.aturdido && !p.fx.silence) this.lanzarOla(p, this._apunte ? this._apunte.a : null); return; }   // Ora: 2.º arrastre = hacia dónde corre la ola
     if (p.fx.vendaval) return;   // Lei (C): mientras levita no usa otras habilidades
     if (p.fx.encantado) return;   // Vario: encantado no usa habilidades
     if (p.fx.polvo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'EN EL POLVO', id: p.id }); return; }   // Vario: con el polvo no usa otras habilidades
@@ -7329,6 +7520,50 @@ class Game {
         this.zones.push(zona);
         this.aplicarEfecto(p, 'canalArmario', { t: h.canal + 0.1, zona });
         this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'CAJA MAGICA' });
+        break;
+      }
+      // ---------------------------------------------------------- Ora (Seba 12-11)
+      case 'olaOra': {
+        // 1.er arrastre: dónde nace (en Ora si casi no se arrastra); queda la marca 2 s esperando el 2.º arrastre
+        let x = p.x, y = p.y;
+        if (this._apunte) { const d = this.distApunte(h.alcance); if (d > 30) { x = p.x + Math.cos(this._apunte.a) * d; y = p.y + Math.sin(this._apunte.a) * d; } }
+        const c = { x, y }; this.clampWall(c);
+        this.aplicarEfecto(p, 'olaMarca', { t: h.espera, x: c.x, y: c.y, n });
+        this.emit({ k: 'olaMarca', x: c.x | 0, y: c.y | 0 });
+        if (!this._apunte) { const t = this.target(p, h.largo + 40); this.lanzarOla(p, t ? Math.atan2(t.y - p.y, t.x - p.x) : null); }   // bots / sin apuntar: sale al tiro
+        break;
+      }
+      case 'burbujaOra': {
+        let x, y;
+        if (this._apunte) { const d = this.distApunte(h.alcance); x = p.x + Math.cos(this._apunte.a) * d; y = p.y + Math.sin(this._apunte.a) * d; }
+        else { const t = this.target(p, h.alcance + 50); if (t) { const d = Math.min(h.alcance, Math.hypot(t.x - p.x, t.y - p.y) * 0.6), a = Math.atan2(t.y - p.y, t.x - p.x); x = p.x + Math.cos(a) * d; y = p.y + Math.sin(a) * d; } else { x = p.x; y = p.y; } }
+        const c = { x, y }; this.clampWall(c);
+        // Seba: se canaliza como el sello de Æthar (Ora se mueve) pero la ven todos; a los 2 s se forma la burbuja
+        this.zones.push({ id: this.nextId++, kind: 'canalBurbuja', x: c.x, y: c.y, r: h.radio, t: h.canal, total: h.canal, owner: p.id,
+          fin: () => {
+            if (!p.alive) return;
+            this.emit({ k: 'burbujaSale', x: c.x | 0, y: c.y | 0, r: h.radio });
+            this.zones.push({ id: this.nextId++, kind: 'burbujaOra', x: c.x, y: c.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id, reduce: n.reduce,
+              fin: () => {   // revienta
+                this.emit({ k: 'burbujaRevienta', x: c.x | 0, y: c.y | 0, r: h.radio });
+                const eq = this.teamOf(p.id);
+                for (const q of this.players.values()) if (q.alive && this.teamOf(q.id) === eq && dist(q, c) <= h.radio + CONFIG.RADIO_JUGADOR) this.heal(q, n.cura, p);
+                for (const e of this.enemigos(p.id, false)) {
+                  if (e.kind === 'muro' || !e.alive || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+                  if (dist(e, c) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+                  this.damage(e, n.dano, p, { tipo: 'mag', desde: c });
+                  if (e.alive) this.aplicarEfecto(e, 'slow', { t: h.lentoDur, mult: 1 - n.lento, k: 'burbujaOra' });
+                }
+              } });
+          } });
+        break;
+      }
+      case 'geiserOra': {
+        // Seba (12-11): canaliza 0,5 s (aturdido o silencio lo cortan); el radio va bajo Ora y la sigue
+        this.aplicarEfecto(p, 'canalGeiser', { t: h.canal });
+        const zc = { id: this.nextId++, kind: 'canalGeiser', x: p.x, y: p.y, r: h.radio, t: h.canal, total: h.canal, owner: p.id, sigue: p,
+          fin: (zz) => { if (!zz.cancelado && p.alive) this.campoGeiser(p, h, n); } };
+        this.zones.push(zc); p.fx.canalGeiser.zona = zc;
         break;
       }
       // ---------------------------------------------------------- Legios (Seba 11-11)
@@ -7995,7 +8230,8 @@ class Game {
             let hit = null, bd = h.area + CONFIG.RADIO_JUGADOR;
             for (const e of this.jugadoresEnemigos(p.id)) { const d = dist(e, fin); if (d < bd) { bd = d; hit = e; } }
             if (!hit) { this.emit({ k: 'poof', x: fin.x | 0, y: fin.y | 0 }); return; }
-            this.aplicarEfecto(hit, 'bombaPegada', { t: n.dur, dano: n.dano, src: p.id });
+            const red = this.cruzaBurbuja(p.id, p.x, p.y, fin.x, fin.y);   // Ora: también se moja
+            this.aplicarEfecto(hit, 'bombaPegada', { t: n.dur, dano: n.dano * (1 - red), src: p.id });
             this.aplicarEfecto(hit, 'slow', { t: n.dur, mult: 0.5, k: 'pegajosa' });
             if (!hit.esUnidad) this.emit({ k: 'txt', x: hit.x | 0, y: hit.y | 0, s: '¡BOMBA PEGADA!' });
           } });
@@ -8750,6 +8986,7 @@ class Game {
           }
         }
       }
+      if (p.fx.olaMarca && p.fx.olaMarca.t <= dt * 1.5) this.lanzarOla(p, null);   // Ora: sin 2.º arrastre, la ola corre alejándose de ella
       // Legios: Carga de caballería (sube la etapa por segundo) y Por el Rey (aura que lo acompaña)
       if (p.fx.cargaLegios) {
         const c = p.fx.cargaLegios, H = HABILIDADES.cargaLegios;
@@ -8964,6 +9201,7 @@ class Game {
 
     // Proyectiles
     for (const pr of this.projectiles) {
+      if (!pr.mojado && !pr.deUlti) this.mojaBurbuja(pr);   // Ora: burbuja enemiga (todos los proyectiles que no son de ultis, también los abanicos de Lei)
       // Lei: rueda del Ojo del vendaval — avanza hasta su alcance (125 a cada enemigo que alcanza) y queda girando 5 s (25 por segundo a quien siga dentro)
       if (pr.rueda) {
         const W = pr.rueda, H = HABILIDADES.ojoVendaval, own = this.players.get(pr.owner);
@@ -9370,7 +9608,8 @@ class Game {
         fx.cargaCastigo ? +Math.min(1, (this.combatTime - fx.cargaCastigo.inicio) / HABILIDADES.castigo.max).toFixed(2) : 0, 0, fx.furiaPozo ? fx.furiaPozo.extra : 0, fx.mecha ? +Math.min(1, (this.combatTime - fx.mecha.inicio) / HABILIDADES.mechaCorta.dur).toFixed(2) : 0, this.gotasDe(p), p.vueltaVat ? Math.round(p.vueltaVat.x) : 0, p.vueltaVat ? Math.round(p.vueltaVat.y) : 0, fx.vendaval ? 0 : fx.abanicosViento ? fx.abanicosViento.quedan : fx.ascension ? fx.ascension.quedan : 0, HEROES[p.build.heroe]?.pasiva === 'templeEnano' ? (fx.templeAldor || this.combatTime < (p.templeCd || 0) ? -1 : Math.round(p.medidor || 0)) : 0, (fx.ascension ? 1 : 0) | (HEROES[p.build.heroe]?.pasiva === 'cartuchoDoble' && ((p.tirosEscopeta || 0) + 1) % 4 === 0 ? 2 : 0),
         p.esMuneco ? Math.round(p.cuenta) : 0, p.esMuneco && p.cuentaDesde !== null ? Math.ceil(CONFIG.ENTRENO.ventana - (this.combatTime - p.cuentaDesde)) : 0, p.esMuneco && this.combatTime - p.cuentaFinalT < CONFIG.ENTRENO.muestra ? p.cuentaFinal : -1,
         fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
-        fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0]);   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0,
+        fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0]);   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -9619,6 +9858,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'encanto': si = d < 300 && !target.esUnidad; break;
       case 'polvoEstrellas': si = d < 140; break;
       case 'armario': si = d < 340 && !target.esUnidad; break;
+      case 'olaOra': si = d < 320; break;
+      case 'burbujaOra': si = d < 360; break;
+      case 'geiserOra': si = d < 150 && !target.esUnidad; break;
       case 'cargaLegios': si = d < 420 && d > 120; break;
       case 'escudoJuramento': si = d < 120; break;
       case 'porElRey': si = d < 220 && !target.esUnidad; break;
@@ -11034,7 +11276,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -11309,7 +11551,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -12085,6 +12327,81 @@ class Renderer {
         for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + hash(i, 2, z.id)) % 1, b = hash(i, 5, z.id) * TAU, d = r * 0.8 * hash(i, 9, z.id), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9);
           if (ph < 0.6) { const s = 1 + Math.round(ph * 4); g.fillStyle = PALETA.tinta; g.fillRect(x - (s >> 1) - 1, y - (s >> 1) - 1, s + 2, s + 2); g.fillStyle = PALETA.carmesi1; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); g.fillStyle = PALETA.carmesi2; g.fillRect(x - (s >> 1), y - (s >> 1), 1, 1); }
           else this.gota(x, y - Math.round((ph - 0.6) * 20), 1 - (ph - 0.6) / 0.4); }
+      } else if (z.kind === 'olaOra') {
+        // Ora: ola — cresta curva perpendicular a su avance (azul marino, azul, celeste y espuma blanca), estela de agua detrás y salpicaduras
+        const g = this.g, T = this.time, ca = Math.cos(z.a), sa = Math.sin(z.a), w = Math.round(z.r * ESC), ox = this.gx(z.ox), oy = this.gy(z.oy);
+        const px = -sa, py = ca, C = CHAR;
+        for (let i = 1; i <= 4; i++) {   // estela: líneas de agua que se desvanecen detrás
+          const bx = cx - ca * i * 9, by = cy - sa * i * 9; if ((bx - ox) * ca + (by - oy) * sa < 0) break;
+          g.globalAlpha = 0.5 - i * 0.1; this.linea(Math.round(bx - px * w * 0.9), Math.round(by - py * w * 0.9), Math.round(bx + px * w * 0.9), Math.round(by + py * w * 0.9), i % 2 ? PALETA.marea1 : PALETA.marea2, 1, z.id + i, 2);
+        }
+        g.globalAlpha = 1;
+        // Seba (12-11): ola más larga — cuerpo de agua detrás de la cresta (bandas azul marino → azul que se aclaran hacia la cresta), con vetas de espuma
+        for (let off = -50; off <= -16; off += 4) {   // Seba (12-11): 15% más larga
+          const k = (off + 50) / 34;   // 0 atrás → 1 junto a la cresta
+          g.globalAlpha = 0.45 + 0.5 * k;
+          let px0 = null, py0 = null;
+          for (let s = -w; s <= w; s += 3) {
+            const ww = w * (0.8 + 0.2 * k), ss = s * ww / w, cur = (1 - (s / w) ** 2) * 6 * k;
+            const x = Math.round(cx + px * ss + ca * (cur + off * 0.8)), y = Math.round(cy + py * ss + sa * (cur + off * 0.8) + off * 0.15 - Math.sin(T * 8 + s * 0.25 + off * 0.3) * 1);
+            if (px0 !== null) this.linea(px0, py0, x, y, k < 0.35 ? PALETA.marea0 : k < 0.75 ? PALETA.marea1 : PALETA.marea2, 0, 0, 5);
+            px0 = x; py0 = y;
+          }
+        }
+        g.globalAlpha = 1;
+        for (let i = 0; i < 9; i++) {   // vetas de espuma sobre el cuerpo
+          const s = (hash(i, 4, z.id) * 2 - 1) * w * 0.8, off = -16 - hash(i, 9, z.id) * 32, x = Math.round(cx + px * s + ca * off * 0.8), y = Math.round(cy + py * s + sa * off * 0.8 + off * 0.15);
+          g.globalAlpha = 0.7; g.fillStyle = i % 3 ? C.c : C.q; g.fillRect(x, y, 3, 1);
+        }
+        g.globalAlpha = 1;
+        const capas = [[-14, PALETA.tinta, 8], [-14, PALETA.marea0, 7], [-10, PALETA.marea1, 7], [-6, PALETA.marea1, 6], [-3, PALETA.marea2, 5], [0, PALETA.tinta, 4], [0, PALETA.marea2, 3], [1, C.c, 2], [2, C.q, 1]];   // cuerpo de agua grueso detrás y espuma blanca al frente
+        for (const [off, col, gro] of capas) {   // la cresta se curva: el centro adelantado
+          let px0 = null, py0 = null;
+          for (let s = -w; s <= w; s += 3) {
+            const cur = (1 - (s / w) ** 2) * 6, x = Math.round(cx + px * s + ca * (cur + off * 0.8)), y = Math.round(cy + py * s + sa * (cur + off * 0.8) + Math.min(0, off) * 0.15 - (off >= 0 ? 3 : 0) - Math.sin(T * 10 + s * 0.3) * 1);
+            if (px0 !== null) this.linea(px0, py0, x, y, col, 0, 0, gro);
+            px0 = x; py0 = y;
+          }
+        }
+        for (let i = 0; i < 14; i++) { const s = (hash(i, z.id, 3) * 2 - 1) * w, ph = (T * 2.5 + hash(i, 7, z.id)) % 1; g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? C.q : C.c; g.fillRect(Math.round(cx + px * s + ca * (6 + ph * 8)), Math.round(cy + py * s + sa * (6 + ph * 8) - 6 - ph * 12), i % 3 ? 1 : 2, 2); }   // salpicaduras que saltan adelante
+        for (let s = -w + 4; s <= w - 4; s += 7) { const cur = (1 - (s / w) ** 2) * 6, x = Math.round(cx + px * s + ca * (cur + 2)), y = Math.round(cy + py * s + sa * (cur + 2) - 4); g.globalAlpha = 1; g.fillStyle = C.q; g.fillRect(x - 1, y - 1, 3, 2); }   // crestas de espuma
+        g.globalAlpha = 1;
+      } else if (z.kind === 'canalBurbuja') {
+        // Ora: la burbuja se está formando (visible para todos): contorno punteado que titila y gotas que se juntan hacia el centro
+        const g = this.g, T = this.time, k = z.prog, C = CHAR;
+        this.ring(cx, cy, r, PALETA.tinta, 0.5, 2); this.ring(cx, cy, r, Math.floor(T * 6) % 2 ? PALETA.marea2 : PALETA.marea1, 0.5, 1);
+        this.ring(cx, cy, Math.max(4, Math.round(r * k)), C.c, 0.8, 1);   // la burbuja crece
+        for (let i = 0; i < 10; i++) { const b = i * TAU / 10 + T * 0.8, d = r * (1 - ((T * 1.2 + i / 10) % 1)); g.fillStyle = i % 2 ? PALETA.marea2 : C.c; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d), 2, 2); }
+        if (k > 0.8 && Math.floor(T * 10) % 2) this.ring(cx, cy, r + 2, C.q, 1, 1);
+      } else if (z.kind === 'burbujaOra') {
+        // Ora (Seba 12-11, mejorada): esfera de agua — relleno celeste translúcido muy ralo (barato), borde doble que ondula, brillo blanco grande
+        // arriba a la izquierda y uno chico, luz celeste abajo a la derecha, gotas que orbitan por el borde y burbujitas que suben adentro
+        const g = this.g, T = this.time, C = CHAR, on = Math.round(Math.sin(T * 3) * 1.5);
+        g.globalAlpha = 0.22; this.discDither(cx, cy, r, PALETA.marea2, 3, 1); g.globalAlpha = 0.12; this.discDither(cx, cy, Math.round(r * 0.7), C.c, 4, 2); g.globalAlpha = 1;
+        this.ring(cx, cy, r + on, PALETA.tinta, 1, 3); this.ring(cx, cy, r + on, PALETA.marea2, 1, 2); this.ring(cx, cy, r + on - 3, PALETA.marea1, 0.6, 1); this.ring(cx, cy, r - on - 6, C.c, 0.25, 1);
+        for (let i = 0; i < 14; i++) { const b = -2.55 + i * 0.075, d = r - 8; g.fillStyle = i > 2 && i < 11 ? C.q : C.c; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d), 3, 2); }   // brillo grande
+        g.fillStyle = C.q; g.fillRect(Math.round(cx - r * 0.42), Math.round(cy - r * 0.42), 4, 3); g.fillRect(Math.round(cx - r * 0.3), Math.round(cy - r * 0.55), 2, 2);   // destellos
+        for (let i = 0; i < 10; i++) { const b = 0.5 + i * 0.07, d = r - 6; g.fillStyle = C.c; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d), 2, 1); }   // luz de abajo
+        for (let i = 0; i < 6; i++) { const b = T * 0.9 + i * TAU / 6, x = Math.round(cx + Math.cos(b) * (r + on)), y = Math.round(cy + Math.sin(b) * (r + on)); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 3, 3); g.fillStyle = C.q; g.fillRect(x, y, 1, 1); }   // gotas en el borde
+        for (let i = 0; i < 10; i++) { const ph = (T * 0.45 + hash(i, 2, z.id)) % 1, x = Math.round(cx + (hash(i, 5, z.id) * 2 - 1) * r * 0.6 + Math.sin(T * 3 + i) * 2), y = Math.round(cy + r * 0.65 - ph * r * 1.3); g.globalAlpha = Math.sin(Math.PI * ph); this.ring(x, y, 1 + (i % 3), i % 2 ? C.q : C.c, 1, 1); }
+        g.globalAlpha = 1;
+        if (z.prog > 0.85 && Math.floor(T * 12) % 2) this.ring(cx, cy, r + 5, C.q, 1, 1);   // por reventar
+      } else if (z.kind === 'geiserCampo') {
+        // Ora: radio del Géiser, visible para todos: borde azul con olas pequeñas que lo recorren
+        const g = this.g, T = this.time;
+        this.ring(cx, cy, r + 1, PALETA.marea1, 0.9, 1); this.ring(cx, cy, r, PALETA.marea2, 1, 1); this.ring(cx, cy, r - 3, CHAR.c, 0.35, 1);   // radio bajo Ora, visible para todos (sin borde negro punteado)
+        for (let i = 0; i < 12; i++) { const b = T * 0.6 + i * TAU / 12; g.fillStyle = i % 2 ? CHAR.c : CHAR.q; g.fillRect(Math.round(cx + Math.cos(b) * r), Math.round(cy + Math.sin(b) * r) - 1, 2, 2); }
+      } else if (z.kind === 'geiserAviso') {
+        // Ora: aviso de un géiser — charco que se oscurece, burbujas que revientan y un anillo que se cierra
+        const g = this.g, T = this.time, k = z.prog;
+        g.globalAlpha = 0.3 + 0.4 * k; this.discDither(cx, cy, r, PALETA.marea1, 2, 3); g.globalAlpha = 1;
+        this.ring(cx, cy, r, PALETA.tinta, 0.9, 2); this.ring(cx, cy, Math.round(r * (1 - 0.6 * k)), PALETA.marea2, 1, 1);
+        for (let i = 0; i < 6; i++) { const b = hash(i, z.id, 1) * TAU, d = r * 0.7 * hash(i, 3, z.id); this.ring(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d), 1 + Math.floor((T * 8 + i) % 3), CHAR.c, 1, 1); }
+      } else if (z.kind === 'canalGeiser') {
+        // Ora canaliza el Géiser (0,5 s): el radio se dibuja creciendo desde ella y el agua empieza a girar
+        const g = this.g, T = this.time, k = z.prog;
+        this.ring(cx, cy, Math.round(r * k) + 1, PALETA.marea1, 0.9, 1); this.ring(cx, cy, Math.round(r * k), PALETA.marea2, 1, 1);
+        for (let i = 0; i < 10; i++) { const b = T * 4 + i * TAU / 10, d = r * k * 0.9; g.fillStyle = i % 2 ? CHAR.c : CHAR.q; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d), 2, 2); }
       } else if (z.kind === 'canalRey') {
         // Legios canaliza Por el Rey: la paloma dorada baja del cielo hacia él, una columna de luz se abre y el radio se dibuja en oro
         // (barato: solo anillos y unos pocos puntos; sin rellenar el círculo)
@@ -12746,6 +13063,44 @@ class Renderer {
       for (let i = 0; i < 5; i++) { const ph = (T * 1.6 + i / 5) % 1, x = cx - 6 + ((i * 5) % 12); g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(x, cy - 22 - sube - Math.round(ph * 10), 1, 1); }
       if (Math.floor(T * 5) % 3 === 0) { g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 3, cy - 21 - sube, 1, 1); g.fillRect(cx + 2, cy - 19 - sube, 1, 1); }
       g.globalAlpha = 1;
+    }
+    if (meta.build.heroe === 'ora') {   // Ora: gotas de agua que flotan siempre a su alrededor (como en la referencia) y, con la pasiva, las que lleva juntadas
+      const T = this.time;
+      for (let i = 0; i < 3; i++) { const b = T * 1.2 + i * TAU / 3, x = Math.round(cx + Math.cos(b) * 13), y = Math.round(cy - 10 + Math.sin(b) * 4 + Math.sin(T * 3 + i) * 2); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 3, 3); g.fillStyle = i === 0 ? CHAR.c : PALETA.marea2; g.fillRect(x, y, 1, 1); }
+      for (let i = 0; i < p.og; i++) { const x = cx - 3 + i * 6, y = cy - 36 + Math.round(Math.sin(T * 4 + i) * 1); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 4, 5); g.fillStyle = PALETA.marea2; g.fillRect(x, y, 2, 3); g.fillStyle = CHAR.q; g.fillRect(x, y, 1, 1); }   // gotas juntadas (1–2)
+      if (p.om) { const mx = this.gx(p.om.x), my = this.gy(p.om.y); this.ring(mx, my, 10, PALETA.tinta, 1, 2); this.ring(mx, my, 10, Math.floor(T * 8) % 2 ? CHAR.c : PALETA.marea2, 1, 1); for (let i = 0; i < 4; i++) { const b = T * 5 + i * TAU / 4; g.fillStyle = CHAR.q; g.fillRect(Math.round(mx + Math.cos(b) * 7), Math.round(my + Math.sin(b) * 5), 1, 1); } }   // marca donde nace la ola
+    }
+    if (p.oe & 4) {   // Ora canalizando el Géiser: columna de agua que gira alrededor, anillos que suben y gotas hacia arriba
+      const T = this.time;
+      for (let k2 = 0; k2 < 3; k2++) { const yy = cy + 4 - k2 * 9 - Math.round((T * 30) % 9), rx = 15 - k2 * 2; g.globalAlpha = 0.85 - k2 * 0.2; this.ring(cx, yy, rx, PALETA.tinta, 0.8, 2); this.ring(cx, yy, rx, k2 % 2 ? CHAR.c : PALETA.marea2, 0.8, 1); }
+      for (let i = 0; i < 8; i++) { const ph = (T * 2 + i / 8) % 1, b = i * TAU / 8 + T * 5; g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? CHAR.q : CHAR.c; g.fillRect(Math.round(cx + Math.cos(b) * 12), Math.round(cy - ph * 34), 2, 2); }
+      g.globalAlpha = 1;
+    }
+    if (p.oe & 8) {   // Ora con el Géiser activo (Seba 12-11: aura celeste hasta que termina): resplandor celeste en el cuerpo, chispas que suben,
+      // aura de agua que late a sus pies, 4 esferas orbitando, el aro dorado brillando y un status sobre la cabeza (gota celeste con corona)
+      const T = this.time, pul = 0.5 + 0.5 * Math.sin(T * 6);
+      g.globalAlpha = 0.28 + 0.12 * pul; this.discDither(cx, cy - 8, 17, CHAR.c, 3, Math.floor(T * 6) % 3); g.globalAlpha = 1;
+      this.ring(cx, cy - 8, 17 + Math.round(pul), CHAR.c, 0.7, 1);
+      for (let i = 0; i < 7; i++) { const ph = (T * 1.4 + i / 7) % 1; g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? CHAR.c : CHAR.q; g.fillRect(cx - 12 + ((i * 7) % 25), cy + 2 - Math.round(ph * 30), 1, 2); }
+      g.globalAlpha = 1;
+      { const yi = cy - 46 + Math.round(Math.sin(T * 3) * 1);   // status: gota celeste con corona dorada
+        g.fillStyle = PALETA.tinta; g.fillRect(cx - 4, yi - 3, 9, 12);
+        g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, yi - 2, 7, 1); g.fillRect(cx - 3, yi - 3, 1, 1); g.fillRect(cx, yi - 3, 1, 1); g.fillRect(cx + 3, yi - 3, 1, 1);
+        g.fillStyle = PALETA.marea2; g.fillRect(cx - 1, yi, 3, 2); g.fillRect(cx - 2, yi + 2, 5, 3); g.fillRect(cx - 1, yi + 5, 3, 2);
+        g.fillStyle = CHAR.q; g.fillRect(cx - 1, yi + 2, 1, 2); }
+      this.ring(cx, cy + 4, 13 + Math.round(pul * 2), PALETA.tinta, 1, 2); this.ring(cx, cy + 4, 13 + Math.round(pul * 2), PALETA.marea2, 1, 1);
+      for (let i = 0; i < 4; i++) { const b = T * 2.2 + i * TAU / 4, x = Math.round(cx + Math.cos(b) * 15), y = Math.round(cy - 8 + Math.sin(b) * 6); g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 5, 5); g.fillStyle = PALETA.marea2; g.fillRect(x - 1, y - 1, 3, 3); g.fillStyle = CHAR.q; g.fillRect(x - 1, y - 1, 1, 1); }
+      if (pul > 0.6) { g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, cy - 27, 7, 1); }
+    }
+    if (p.oe & 1) {   // acelerado por la ola: espiral de agua a los pies
+      const T = this.time;
+      for (let i = 0; i < 6; i++) { const b = T * 6 + i * TAU / 6; g.fillStyle = i % 2 ? CHAR.c : PALETA.marea2; g.fillRect(Math.round(cx + Math.cos(b) * 10), Math.round(cy + 5 + Math.sin(b) * 3), 2, 1); }
+    }
+    if (p.oe & 2) {   // levantado por un géiser: chorro de agua bajo los pies
+      const T = this.time, alto = 14 + Math.round(Math.sin(T * 12) * 2);
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 5, cy + 6 - alto, 11, alto + 1);
+      g.fillStyle = PALETA.marea2; g.fillRect(cx - 4, cy + 6 - alto, 9, alto); g.fillStyle = CHAR.c; g.fillRect(cx - 1, cy + 6 - alto, 2, alto);
+      for (let i = 0; i < 4; i++) { const ph = (T * 2 + i / 4) % 1; g.fillStyle = CHAR.q; g.fillRect(cx - 6 + i * 4, cy + 6 - alto - 2 + Math.round(ph * 10), 1, 2); }
     }
     if (p.lc > 0) {   // Legios con la Carga: aura dorada a los pies que crece con cada segundo, chispas de oro que suben, estela dorada y 3 marcas sobre la cabeza
       const T = this.time, el = (p.lc - 1) / 10, s = Math.min(3, Math.floor(el + 1e-6)), atr = izq ? 1 : -1, yTop = esLegios ? cy - 50 : cy - 36;
@@ -13808,7 +14163,7 @@ class Renderer {
     else s = otro(p.spr, Math.floor(this.time * 8));
     // Estela: puntos detrás del proyectil, en el color de su tipo
     const col = { cartaVario: PALETA.magenta2, corazonVario: PALETA.magenta2, corazonVarioChico: PALETA.magenta2, flecha: PALETA.pergamino2, flechaBosque: PALETA.bosque2, flechaElfica: PALETA.oro2, virote: PALETA.pergamino1, sombra: PALETA.magia,
-      orbeFuego: PALETA.antorcha, orbeSangre: PALETA.carmesi2, bolaFuego: PALETA.antorcha, piedra: PALETA.piedra3, rocaGrande: PALETA.piedra3, rayoBola: PALETA.acero2, rayoBolaCargada: PALETA.oro2, trueno: PALETA.acero2, telaGancho: PALETA.pergamino2, petaloGaia: PALETA.magia, ganchoShai: PALETA.acero2, discoGaia: PALETA.carmesi2, grillete: PALETA.antorcha }[p.spr] || PALETA.pergamino2;
+      orbeFuego: PALETA.antorcha, orbeSangre: PALETA.carmesi2, orbeAgua: PALETA.marea2, bolaFuego: PALETA.antorcha, piedra: PALETA.piedra3, rocaGrande: PALETA.piedra3, rayoBola: PALETA.acero2, rayoBolaCargada: PALETA.oro2, trueno: PALETA.acero2, telaGancho: PALETA.pergamino2, petaloGaia: PALETA.magia, ganchoShai: PALETA.acero2, discoGaia: PALETA.carmesi2, grillete: PALETA.antorcha }[p.spr] || PALETA.pergamino2;
     const ca = Math.cos(p.a), sa = Math.sin(p.a);
     for (let i = 1; i <= 5; i++) {
       if (i > 3 && (Math.floor(this.time * 20) + i) % 2) continue;
@@ -14275,6 +14630,66 @@ class Renderer {
           }
           break;
         }
+        case 'olaMarca': {   // Ora marca dónde nace la ola: remolino de agua
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + t * 6, d = 4 + t * 10; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.marea2 : CHAR.c; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.7), 2, 1); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'olaSale': {   // la ola se levanta
+          this.ring(cx, cy, Math.round(6 + t * 16), PALETA.tinta, 1 - t, 2); this.ring(cx, cy, Math.round(6 + t * 16), PALETA.marea2, 1 - t, 1);
+          break;
+        }
+        case 'mojado': {   // un proyectil cruza la burbuja: salpica
+          for (let i = 0; i < 6; i++) { const b = i * TAU / 6; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.c : CHAR.q; g.fillRect(Math.round(cx + Math.cos(b) * t * 8), Math.round(cy + Math.sin(b) * t * 8), 1, 1); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'burbujaSale': {   // se forma la burbuja: onda de agua
+          const r = Math.round(f.r * ESC);
+          this.ring(cx, cy, Math.round(r * (0.6 + 0.4 * t)), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * (0.6 + 0.4 * t)), CHAR.q, 1 - t, 1);
+          break;
+        }
+        case 'burbujaRevienta': {   // revienta: anillo que se abre y gotas que vuelan
+          const r = Math.round(f.r * ESC);
+          this.ring(cx, cy, Math.round(r * (1 + t * 0.3)), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * (1 + t * 0.3)), PALETA.marea2, 1 - t, 1);
+          for (let i = 0; i < 14; i++) { const b = i * TAU / 14, d = r * (0.8 + t * 0.5); g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? CHAR.c : CHAR.q; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d - Math.sin(Math.PI * t) * 8), 2, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'geiserCampo': {   // Ora lanza el Géiser: el radio se abre con una onda
+          const r = Math.round(f.r * ESC);
+          this.ring(cx, cy, Math.round(r * t), PALETA.tinta, 1 - t, 3); this.ring(cx, cy, Math.round(r * t), CHAR.c, 1 - t, 1);
+          break;
+        }
+        case 'geiser': {   // Ora (Seba 12-11, mejorado y 25% más lento): chorro alto de agua que ondula, corona de espuma, charco y salpicaduras
+          const sube = Math.sin(Math.PI * Math.min(1, t * 1.3)), alto = Math.round(sube * 50), C = CHAR;
+          g.globalAlpha = 0.5 * (1 - t); this.discDither(cx, cy, 14, PALETA.marea1, 2, 4); g.globalAlpha = 1;   // charco
+          this.ring(cx, cy, Math.round(8 + t * 14), PALETA.tinta, 1 - t, 2); this.ring(cx, cy, Math.round(8 + t * 14), PALETA.marea2, 1 - t, 1);
+          if (alto > 0) {
+            for (let yy = 0; yy < alto; yy++) {   // columna con bordes que ondulan
+              const w = 4 + Math.round(Math.sin((yy + this.time * 40) * 0.35) * 1.2) - Math.floor(yy / 22), x0 = cx - w;
+              g.fillStyle = PALETA.tinta; g.fillRect(x0 - 1, cy - yy, w * 2 + 3, 1);
+              g.fillStyle = PALETA.marea1; g.fillRect(x0, cy - yy, w * 2 + 1, 1);
+              g.fillStyle = PALETA.marea2; g.fillRect(x0 + 1, cy - yy, w * 2 - 1, 1);
+              g.fillStyle = C.c; g.fillRect(cx - 1 + ((yy >> 2) % 2), cy - yy, 2, 1);
+            }
+            // corona de espuma
+            g.fillStyle = PALETA.tinta; g.fillRect(cx - 7, cy - alto - 4, 15, 5);
+            g.fillStyle = C.q; g.fillRect(cx - 6, cy - alto - 3, 13, 3); g.fillStyle = C.c; g.fillRect(cx - 4, cy - alto - 6, 9, 3); g.fillStyle = C.q; g.fillRect(cx - 2, cy - alto - 7, 5, 2);
+          }
+          for (let i = 0; i < 10; i++) {   // gotas que saltan desde la corona y caen
+            const b = i * TAU / 10 + 0.3, d = 3 + t * 20, yb = cy - alto - 4 + Math.round((t * t) * 40);
+            g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? C.c : C.q; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(yb + Math.sin(b) * d * 0.4), 1, 2);
+          }
+          for (let i = 0; i < 4; i++) { const ph = (t * 1.5 + i / 4) % 1; g.globalAlpha = (1 - ph) * 0.6 * (1 - t); g.fillStyle = C.c; g.fillRect(cx - 12 + i * 8, cy - 6 - Math.round(ph * 18), 2, 1); }   // bruma
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'gotasOra': {   // Gotas suspendidas: las gotas vuelan de Ora al aliado
+          const x2 = this.gx(f.x2), y2 = this.gy(f.y2) - 8;
+          for (let i = 0; i < 3; i++) { const ph = Math.min(1, t * 1.5 + i * 0.1), x = Math.round(cx + (x2 - cx) * ph), y = Math.round(cy - 14 + (y2 - cy + 14) * ph - Math.sin(Math.PI * ph) * 10); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 4, 4); g.fillStyle = PALETA.marea2; g.fillRect(x, y, 2, 2); g.fillStyle = CHAR.q; g.fillRect(x, y, 1, 1); }
+          break;
+        }
         case 'cargaLegios': {   // Legios empieza la carga: el caballo levanta polvo dorado
           for (let i = 0; i < 8; i++) { const b = i * TAU / 8; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro1 : PALETA.oro2; g.fillRect(Math.round(cx + Math.cos(b) * (6 + t * 18)), Math.round(cy + 4 + Math.sin(b) * (3 + t * 8)), 2, 1); }
           g.globalAlpha = 1;
@@ -14696,7 +15111,7 @@ function miJugador() {
   const r = latest.p.find(p => p[0] === S.myId);
   if (!r) return null;
   const pos = S.predPos || { x: r[1], y: r[2] };
-  return { x: pos.x, y: pos.y, alive: !!(r[6] & 1), st: meta.st, build: meta.build, lev: !!(r[23] & 67108864) };   // lev: Lei levitando (online)
+  return { x: pos.x, y: pos.y, alive: !!(r[6] & 1), st: meta.st, build: meta.build, lev: !!(r[23] & 67108864), om: r[51] ? { x: r[52], y: r[53] } : null };   // om: marca de la ola de Ora   // lev: Lei levitando (online)
 }
 
 const renderer = new Renderer($('cv'));
@@ -14729,6 +15144,8 @@ function guiaActual() {
     const k = habilidadesDe(p.build)[ap.slot];
     if (!k || p.build.niv[ap.slot] < 1) return null;
     const lev = p.fx ? !!p.fx.vendaval : !!p.lev;   // Lei levitando: la guía pasa a ser el punto de la rueda dentro del radio
+    const om = k === 'olaOra' ? (p.fx ? p.fx.olaMarca : p.om) : null;   // Ora: con la marca puesta, la guía es la ola que sale desde ella
+    if (om) return { ...GUIAS.olaOraLinea, x: om.x, y: om.y, a: ap.a, d: GUIAS.olaOraLinea.alcance };
     const G = (k === 'ojoVendaval' && lev ? GUIAS.ojoVendavalRueda : GUIAS[k]) || { tipo: 'linea', alcance: 400 };
     if (k === 'impactoRunico' && ap.a === null) return { tipo: 'propio', r: G.r, x: p.x, y: p.y };   // Seba (05-11): tocar sin apuntar = sello bajo Æthar
     return { ...G, x: p.x, y: p.y, a: ap.a, d: (G.alcance || 0) * Math.max(0.1, ap.frac || 0) };
@@ -15830,6 +16247,10 @@ function updateHud(latest, now) {
       if (cdn) cdn.textContent = restante > 0 ? Math.ceil(restante) + ' s' : me[14] >= 1 ? '' : Math.floor(me[14] * 100) + '%';
       continue;
     }
+    // Ora: con la marca de la ola puesta, el botón queda listo para el 2.º arrastre (hacia dónde corre)
+    const ola2 = k === 'olaOra' && !!me[51];   // Ora: marca de la ola (snapshot 51)
+    btn.classList.toggle('lista', ola2);
+    if (ola2) { cd.style.setProperty('--p', '0%'); if (cdn) cdn.textContent = '➜'; continue; }
     if (restante > 0) {
       cd.style.setProperty('--p', Math.round(restante / H.cd * 8) / 8 * 100 + '%');
       if (cdn) cdn.textContent = Math.ceil(restante);
@@ -15931,6 +16352,13 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.7', f: '12-11-2026', n: [
+    'Nuevo héroe: Ora (Errantes, control · apoyo), oráculo de las mareas. Básico: orbe de agua a distancia.',
+    'Ora — Gotas suspendidas (pasiva): cada 3 básicos que aciertan, se cura 15 y cura 15 a un aliado cercano.',
+    'Ora — Invocar ola: primero marcas dónde nace la ola y luego hacia dónde corre (2 s para elegir). A los enemigos: 70 de daño, los arrastra un poco y 33% más lentos por 3 s; a los aliados que toca: +25% de velocidad por 3 s.',
+    'Ora — Burbuja de marea: se forma en 2 s a la vista de todos y dura 4,5 s. Los proyectiles enemigos que la cruzan hacen 50% menos de daño (no los de ultis). Al reventar cura 75 a los aliados dentro y hace 40 y 33% de lentitud a los enemigos dentro.',
+    'Ora — Géiser (ulti): canaliza 0,5 s; luego, alrededor de Ora brotan géiseres por 6 s, cada vez más seguidos: 50 de daño, levantan 1,5 s y al caer 33% más lentos por 2 s.',
+  ] },
   { v: 'V6.6', f: '12-11-2026', n: [
     'Aldor: indicador del empuje. Bajo el medidor del Temple hay 3 marcas que se llenan con cada básico que acierta (los golpes al aire no cuentan). Con las 3 llenas, el próximo básico que acierte empuja: las marcas laten y la cabeza del martillo brilla en verde.',
   ] },
