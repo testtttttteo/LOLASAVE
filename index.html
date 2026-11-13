@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.3</title>
+<title>LOLA V7.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.3</p>
+        <p class="sub version">LOLA V7.4</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -13203,10 +13203,7 @@ class Renderer {
         const g = this.g, T = this.time, C = CHAR;
         g.globalAlpha = 0.6; this.discDither(cx, cy, r, C.p, 2, 5); g.globalAlpha = 0.4; this.discDither(cx, cy, r - 2, C.P, 3, 7); g.globalAlpha = 0.55; this.discDither(cx, cy, Math.round(r * 0.5), C.m, 2, 6); g.globalAlpha = 1;
         this.ring(cx, cy, r, PALETA.tinta, 0.8, 2); this.ring(cx, cy, r, C.P, 1, 1); this.ring(cx, cy, r - 3, C.m, 0.5, 1);
-        for (let arm = 0; arm < 4; arm++) {   // brazos del remolino
-          let px0 = null, py0 = null;
-          for (let k = 0; k <= 14; k++) { const d = r * (1 - k / 15), b = arm * TAU / 4 - T * 1.6 + k * 0.32; const x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9); if (px0 !== null) this.linea(px0, py0, x, y, k > 9 ? C.w : arm % 2 ? C.m : C.P, 0, 0, k > 9 ? 2 : 1); px0 = x; py0 = y; }
-        }
+        // Seba (13-11, V7.4): sin los 4 brazos del remolino que se juntaban al centro
         g.fillStyle = C.w; g.fillRect(cx - 3, cy - 2, 7, 4); g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, cy - 1, 5, 2);   // centro hundido
         for (let i = 0; i < 12; i++) { const ph = (T * 0.5 + hash(i, z.id, 2)) % 1, b = hash(i, 4, z.id) * TAU - ph * 3, d = r * (1 - ph); g.globalAlpha = 0.5 + 0.5 * (1 - ph); g.fillStyle = i % 3 ? C.P : C.q; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.9), 1, 1); }
         g.globalAlpha = 1;
@@ -17867,6 +17864,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.4', f: '13-11-2026', n: [
+    'Kiro, Pozo de arena: se quitan las 4 líneas del remolino que se juntaban en el centro.',
+  ] },
   { v: 'V7.3', f: '13-11-2026', n: [
     'Menú: se quita el botón Sorpréndeme de Jugar con bots.',
   ] },
