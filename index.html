@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.1</title>
+<title>LOLA V8.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.1</p>
+        <p class="sub version">LOLA V8.2</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1999,7 +1999,7 @@ Object.assign(HABILIDADES, {
                       desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
                       n1: { dano: 100 }, n2: { dano: 100 } },
   ancestroOlvidado: { nombre: 'Ancestro olvidado', glifo: 'ancestroOlvidado', cd: 55, cdFijo: true, ulti: true, canal: 1, radio: 320, dur: 10,   // Seba: canal 1 s, tótem de radio muy amplio; castear dentro: 100, +75 por cada otra; alcanzado por habilidades aliadas: 25, +25 por instancia; el rayo nunca falla; (Seba 13-11) 10 s, indestructible, cuentan las habilidades de Bambaa y sus aliados; (C) radio 320, recarga 55
-                      desc: (n) => `Canalizas ${HABILIDADES.ancestroOlvidado.canal} s y levantas un tótem maldito por ${HABILIDADES.ancestroOlvidado.dur} s con un radio muy amplio (${RADIO(HABILIDADES.ancestroOlvidado.radio)}). Cada vez que un enemigo dentro del radio lanza una habilidad, el tótem le dispara un rayo: ${n.casteo} de daño, +${n.casteoInc} por cada habilidad que ya lanzó. Cada habilidad tuya o de un aliado que alcanza a un enemigo dentro del radio dispara otro rayo (una vez por lanzamiento y por enemigo, aunque haga daño varias veces): ${n.golpe} de daño, +${n.golpeInc} por cada vez anterior. Los rayos nunca fallan. Atacar con básicos (aunque estén potenciados) no cuenta.`,
+                      desc: (n) => `Canalizas ${HABILIDADES.ancestroOlvidado.canal} s y levantas un tótem maldito por ${HABILIDADES.ancestroOlvidado.dur} s con un radio muy amplio (${RADIO(HABILIDADES.ancestroOlvidado.radio)}). Cada vez que un enemigo dentro del radio lanza una habilidad, el tótem le dispara un rayo: ${n.casteo} de daño, +${n.casteoInc} por cada habilidad que ya lanzó. Cada habilidad tuya o de un aliado que alcanza a un enemigo dentro del radio dispara otro rayo (cada habilidad aliada lo hace una sola vez por enemigo mientras dure el tótem, aunque la vuelvan a lanzar): ${n.golpe} de daño, +${n.golpeInc} por cada vez anterior. Los rayos nunca fallan. Atacar con básicos (aunque estén potenciados) no cuenta.`,
                       n1: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 }, n2: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 } },
   // ---- Golagore (Seba, 13-11; números (C) salvo los que fijó Seba)
   cargaGolagore:     { nombre: 'Embestida ígnea', glifo: 'cargaGolagore', cd: 12, cdFijo: true, dur: 3.5, vel: 0.2, aturde: 0.5, radio: 70, fuegoDur: 3, fuegoDano: 25, fuegoCada: 1, fuegoR: 22, devuelve: 0.5,   // Seba (13-11, V7.5): rastro de fuego 3 s (25 por segundo pisándolo); aturdido en la carga → recupera 50% de la recarga   // Seba: +20% velocidad, en línea recta sin control, 50 y aturdido 0,5 s; (Seba 13-11) 3,5 s; el golpe sale en un radio al chocar, al terminar o al volver a apretar; (C) radio 70, recarga 12, los muros la terminan, un aturdido la corta sin golpe
@@ -6845,7 +6845,12 @@ class Game {
     for (const z of this.zones) {
       if (z.kind !== 'totemBambaa' || z.done || this.teamOf(z.owner) !== eqA || this.teamOf(target.id) === eqA) continue;
       if (dist(target, z) > z.r + CONFIG.RADIO_JUGADOR) continue;
-      if (inst) { const V = z.vistos || (z.vistos = new Map()); let w = V.get(target.id); if (!w) V.set(target.id, w = new WeakSet()); if (w.has(inst)) continue; w.add(inst); }   // una vez por lanzamiento
+      // Seba (13-11, V8.2): cada habilidad ALIADA activa este tótem una sola vez por enemigo mientras el tótem dure (volver a lanzarla no lo activa de nuevo)
+      if (inst) {
+        const clave = inst.k ? inst.owner + '|' + inst.k : 'o' + (inst.id ?? '?');
+        const V = z.vistos || (z.vistos = new Map()); let w = V.get(target.id); if (!w) V.set(target.id, w = new Set());
+        if (w.has(clave)) continue; w.add(clave);
+      }
       const c = z.golpes[target.id] || 0; z.golpes[target.id] = c + 1;
       this.rayoTotem(z, target, z.n.golpe + z.n.golpeInc * c);
     }
@@ -7939,7 +7944,7 @@ class Game {
     this._apunte = apunte && Number.isFinite(apunte.a) ? apunte : null;
     this._cancela = !!(apunte && apunte.d === -99);   // botón X de cancelar (Fatum: Pozo Maldito)
     // Seba (13-11, V8.1): cada lanzamiento es una «instancia» (para que el tótem de Bambaa se active una sola vez por habilidad); lo que nace en el lanzamiento la hereda
-    const inst = { id: this.nextId++, owner: p.id }, z0 = this.zones.length, u0 = this.units.length;
+    const inst = { id: this.nextId++, owner: p.id, k: (HEROES[p.build?.heroe]?.habs || [])[slot] || ('s' + slot) }, z0 = this.zones.length, u0 = this.units.length;
     this._castInst = inst;
     try { this._castAbility(p, slot); } finally {
       this._apunte = null; this._cancela = false; this._enUlti = false; this._castInst = null;
@@ -8484,7 +8489,7 @@ class Game {
       case 'cargaGolagore': {
         const { a } = this.aim(p, 370);
         p.facing = a; p.disparo = null;
-        this.aplicarEfecto(p, 'cargaGolagore', { t: h.dur + 1, a, n, px: p.x, py: p.y, edad: 0, quema: !!p.magmaQuema }); p.magmaQuema = false;   // la duración la cuenta edad
+        this.aplicarEfecto(p, 'cargaGolagore', { t: h.dur + 1, a, n, px: p.x, py: p.y, edad: 0, quema: !!p.magmaQuema, inst: this._castInst }); p.magmaQuema = false;   // la duración la cuenta edad
         this.emit({ k: 'cargaGolagore', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
         break;
       }
@@ -10040,7 +10045,7 @@ class Game {
         const movio = Math.hypot(p.x - v.px, p.y - v.py), esperado = this.velocidadDe(p) * dt; v.px = p.x; v.py = p.y; v.edad += dt;
         // Seba (13-11, V7.5): rastro de fuego cada ~18 de recorrido
         v.rastro = (v.rastro || 0) + movio;
-        if (v.rastro >= 18 || !v.fuegos) { v.rastro = 0; v.fuegos = (v.fuegos || 0) + 1; this.fuegoGolagore(p, p.x, p.y, v); }
+        if (v.rastro >= 18 || !v.fuegos) { v.rastro = 0; v.fuegos = (v.fuegos || 0) + 1; this.fuegoGolagore(p, p.x, p.y, v.inst || v); }
         let fin = v.edad >= H.dur || this.cruzaRoca(p.x, p.y, p.x + ca * (R + 8), p.y + sa * (R + 8)) || (v.edad > 0.15 && movio < esperado * 0.3);
         if (!fin) for (const e of this.enemigosGol(p)) {
           const rr = e.esUnidad ? 10 : R, dx = e.x - p.x, dy = e.y - p.y;
@@ -18513,6 +18518,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.2', f: '13-11-2026', n: [
+    'Bambaa, Ancestro olvidado: cada habilidad aliada activa el tótem una sola vez por enemigo mientras el tótem dure. Volver a lanzar la misma habilidad (o sus golpes siguientes: giros de Driiar, polvo de Vario, corazones…) no lo activa de nuevo; hace falta un tótem nuevo. Del lado enemigo no cambia: cada habilidad que lancen dentro del radio dispara su rayo.',
+  ] },
   { v: 'V8.1', f: '13-11-2026', n: [
     'Bambaa, Ancestro olvidado: el daño continuo de habilidades (polvo del muñeco vudú, arena de Kiro, polvo de estrellas de Vario, rastro de fuego de Golagore…) ahora también activa el tótem, pero cada lanzamiento de una habilidad aliada lo activa una sola vez por enemigo. Antes los polvos y la arena no lo activaban, y el polvo de Vario lo activaba cada 0,5 s.',
   ] },
