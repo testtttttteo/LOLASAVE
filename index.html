@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.5</title>
+<title>LOLA V7.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.5</p>
+        <p class="sub version">LOLA V7.6</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2137,7 +2137,7 @@ const PASIVAS = {
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
   amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
-  corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 20, dur: 4, quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 20 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
+  corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 30, dur: 4,   /* Seba (13-11, V7.6): 20 → 30 */ quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 30 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
   pasoEnFalso: { nombre: 'Paso en falso', glifo: 'pasoEnFalso', chance: 0.05, cd: 3, desc: 'Tienes 5% de probabilidad de esquivar por completo un ataque básico enemigo (de héroes o invocaciones). Tras esquivar, 3 s sin poder volver a hacerlo.' },   // Seba (13-11)
   gotasOra: { nombre: 'Gotas suspendidas', glifo: 'gotasOra', cada: 3, cura: 15, radio: 200, desc: 'Cada 3 ataques básicos que aciertan, te curas 15 y curas 15 a un aliado cercano (hasta distancia media).' },   // Seba (12-11): solo un aliado cercano, radio corto a mediano (200)
   juicioDorado: { nombre: 'Juicio Real', glifo: 'juicioDorado', cd: 2.5, radio: 110, dano: 25,   // Seba (12-11): 50 → 25
@@ -18467,6 +18467,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.6', f: '13-11-2026', n: [
+    'Golagore, Coraza de magma: el escudo de la pasiva sube de 20 a 30.',
+  ] },
   { v: 'V7.5', f: '13-11-2026', n: [
     'Nuevo héroe: Bambaa (Errantes), bruja del vudú con su olla, su cuervo y su bastón.',
     'Bambaa — Amuletos viejos (pasiva): los efectos de control enemigos le duran 5% menos.',
