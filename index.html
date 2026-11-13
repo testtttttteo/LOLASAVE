@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.0</title>
+<title>LOLA V8.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.0</p>
+        <p class="sub version">LOLA V8.1</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1999,7 +1999,7 @@ Object.assign(HABILIDADES, {
                       desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
                       n1: { dano: 100 }, n2: { dano: 100 } },
   ancestroOlvidado: { nombre: 'Ancestro olvidado', glifo: 'ancestroOlvidado', cd: 55, cdFijo: true, ulti: true, canal: 1, radio: 320, dur: 10,   // Seba: canal 1 s, tótem de radio muy amplio; castear dentro: 100, +75 por cada otra; alcanzado por habilidades aliadas: 25, +25 por instancia; el rayo nunca falla; (Seba 13-11) 10 s, indestructible, cuentan las habilidades de Bambaa y sus aliados; (C) radio 320, recarga 55
-                      desc: (n) => `Canalizas ${HABILIDADES.ancestroOlvidado.canal} s y levantas un tótem maldito por ${HABILIDADES.ancestroOlvidado.dur} s con un radio muy amplio (${RADIO(HABILIDADES.ancestroOlvidado.radio)}). Cada vez que un enemigo dentro del radio lanza una habilidad, el tótem le dispara un rayo: ${n.casteo} de daño, +${n.casteoInc} por cada habilidad que ya lanzó. Cada vez que una habilidad tuya o de un aliado alcanza a un enemigo dentro del radio, otro rayo: ${n.golpe} de daño, +${n.golpeInc} por cada vez anterior. Los rayos nunca fallan. Atacar con básicos (aunque estén potenciados) no cuenta.`,
+                      desc: (n) => `Canalizas ${HABILIDADES.ancestroOlvidado.canal} s y levantas un tótem maldito por ${HABILIDADES.ancestroOlvidado.dur} s con un radio muy amplio (${RADIO(HABILIDADES.ancestroOlvidado.radio)}). Cada vez que un enemigo dentro del radio lanza una habilidad, el tótem le dispara un rayo: ${n.casteo} de daño, +${n.casteoInc} por cada habilidad que ya lanzó. Cada habilidad tuya o de un aliado que alcanza a un enemigo dentro del radio dispara otro rayo (una vez por lanzamiento y por enemigo, aunque haga daño varias veces): ${n.golpe} de daño, +${n.golpeInc} por cada vez anterior. Los rayos nunca fallan. Atacar con básicos (aunque estén potenciados) no cuenta.`,
                       n1: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 }, n2: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 } },
   // ---- Golagore (Seba, 13-11; números (C) salvo los que fijó Seba)
   cargaGolagore:     { nombre: 'Embestida ígnea', glifo: 'cargaGolagore', cd: 12, cdFijo: true, dur: 3.5, vel: 0.2, aturde: 0.5, radio: 70, fuegoDur: 3, fuegoDano: 25, fuegoCada: 1, fuegoR: 22, devuelve: 0.5,   // Seba (13-11, V7.5): rastro de fuego 3 s (25 por segundo pisándolo); aturdido en la carga → recupera 50% de la recarga   // Seba: +20% velocidad, en línea recta sin control, 50 y aturdido 0,5 s; (Seba 13-11) 3,5 s; el golpe sale en un radio al chocar, al terminar o al volver a apretar; (C) radio 70, recarga 12, los muros la terminan, un aturdido la corta sin golpe
@@ -6426,7 +6426,11 @@ class Game {
       c.n = Math.min(10, c.n + 1); c.t = 1;
     }
     if (atacante && atacante !== target && this.teamOf(atacante.id) !== this.teamOf(target.id)) { atacante.dmgRound += real; this.cargarUlti(atacante, real, src, o); if (atacante.fx && atacante.fx.llama) atacante.fx.llama.dano += real; }
-    if (!o.basico && !o.tick && !o.rayoTotem && atacante && atacante !== target && real > 0) this.totemGolpe(atacante, target);   // Bambaa: Ancestro olvidado
+    // Bambaa: Ancestro olvidado — Seba (13-11, V8.1): también el daño continuo (polvos, arena), pero cada lanzamiento de habilidad activa el tótem una sola vez por enemigo
+    if (!o.basico && !o.rayoTotem && atacante && atacante !== target && real > 0) {
+      const d = o.desde, inst = o.inst || (d && d !== atacante && typeof d === 'object' ? (d.inst || d) : null) || this._castInst || null;
+      if (inst || !o.tick) this.totemGolpe(atacante, target, inst);
+    }
     if (target.hp <= 0) this.kill(target, src);
     return amt;
   }
@@ -6835,12 +6839,13 @@ class Game {
     }
   }
   // una habilidad de Bambaa o un aliado alcanza a un enemigo dentro del radio: 25, +25 por cada vez anterior
-  totemGolpe(atacante, target) {
+  totemGolpe(atacante, target, inst = null) {
     if (target.esUnidad || !target.alive) return;
     const eqA = this.teamOf(atacante.esUnidad ? atacante.owner : atacante.id);
     for (const z of this.zones) {
       if (z.kind !== 'totemBambaa' || z.done || this.teamOf(z.owner) !== eqA || this.teamOf(target.id) === eqA) continue;
       if (dist(target, z) > z.r + CONFIG.RADIO_JUGADOR) continue;
+      if (inst) { const V = z.vistos || (z.vistos = new Map()); let w = V.get(target.id); if (!w) V.set(target.id, w = new WeakSet()); if (w.has(inst)) continue; w.add(inst); }   // una vez por lanzamiento
       const c = z.golpes[target.id] || 0; z.golpes[target.id] = c + 1;
       this.rayoTotem(z, target, z.n.golpe + z.n.golpeInc * c);
     }
@@ -6857,7 +6862,7 @@ class Game {
     }
     this.emit({ k: 'munecoActiva', x: c.x | 0, y: c.y | 0, r: h.radio });
     let acc = 0;
-    this.zones.push({ id: this.nextId++, kind: 'polvoVudu', x: c.x, y: c.y, r: h.radio, t: F.polvo, total: F.polvo, owner: p.id, forma,
+    this.zones.push({ id: this.nextId++, kind: 'polvoVudu', x: c.x, y: c.y, r: h.radio, t: F.polvo, total: F.polvo, owner: p.id, forma, inst: z.inst || z,
       tick: (zz, dt) => {
         acc += dt;
         while (acc >= h.cada) {
@@ -6872,10 +6877,10 @@ class Game {
       } });
   }
   // Golagore (Seba 13-11, V7.5): llama del rastro de la Embestida. Cada enemigo recibe 25 por cada segundo que pisa el fuego (un solo reloj por enemigo aunque pise varias llamas)
-  fuegoGolagore(p, x, y) {
+  fuegoGolagore(p, x, y, inst = null) {
     const H = HABILIDADES.cargaGolagore;
     if (!p.relojFuegoGol) p.relojFuegoGol = new Map();
-    this.zones.push({ id: this.nextId++, kind: 'fuegoGolagore', x, y, r: H.fuegoR, t: H.fuegoDur, total: H.fuegoDur, owner: p.id,
+    this.zones.push({ id: this.nextId++, kind: 'fuegoGolagore', x, y, r: H.fuegoR, t: H.fuegoDur, total: H.fuegoDur, owner: p.id, inst,
       tick: (z, dt) => {
         for (const e of this.enemigosGol(p)) {
           if (Math.hypot(e.x - z.x, e.y - z.y) > z.r + (e.esUnidad ? 8 : CONFIG.RADIO_JUGADOR * 0.6)) continue;
@@ -7682,7 +7687,7 @@ class Game {
       x: p.x + Math.cos(a) * start, y: p.y + Math.sin(a) * start,
       vx: Math.cos(a) * o.vel, vy: Math.sin(a) * o.vel,
       left: o.alcance, radio: o.radio || 5, dmg: o.dmg, dmgInv: o.dmgInv, tipo: o.tipo || 'fis', spr: o.spr,
-      efecto: o.efecto || null, basico: !!o.basico, deUlti: !!(o.deUlti || this._enUlti || (p.esUnidad && p.deUlti)),   /* Seba (12-11, V6.8): lo que disparan las invocaciones de ultis (torreta de Jürgen, dragón de Maidas…) cuenta como de ulti */ soloJugadores: !!o.soloJugadores, atraviesa: !!o.atraviesa, sinEmpuje: !!o.sinEmpuje, extra: o.extra, src: p.esUnidad ? p : null,
+      efecto: o.efecto || null, basico: !!o.basico, deUlti: !!(o.deUlti || this._enUlti || (p.esUnidad && p.deUlti)), inst: o.inst || this._castInst || null,   /* Seba (12-11, V6.8): lo que disparan las invocaciones de ultis (torreta de Jürgen, dragón de Maidas…) cuenta como de ulti */ soloJugadores: !!o.soloJugadores, atraviesa: !!o.atraviesa, sinEmpuje: !!o.sinEmpuje, extra: o.extra, src: p.esUnidad ? p : null,
     });
     // Seba (10-11, V5.7): si se dispara pegado al muro de Aldor, el proyectil nace del lado del tirador (no del otro lado de la roca)
     const pr = this.projectiles[this.projectiles.length - 1], f = this.frenaMuroAldor({ ...pr, x: p.x, y: p.y }, pr.x, pr.y);
@@ -7933,7 +7938,14 @@ class Game {
   castAbility(p, slot, apunte = null) {
     this._apunte = apunte && Number.isFinite(apunte.a) ? apunte : null;
     this._cancela = !!(apunte && apunte.d === -99);   // botón X de cancelar (Fatum: Pozo Maldito)
-    try { this._castAbility(p, slot); } finally { this._apunte = null; this._cancela = false; this._enUlti = false; }
+    // Seba (13-11, V8.1): cada lanzamiento es una «instancia» (para que el tótem de Bambaa se active una sola vez por habilidad); lo que nace en el lanzamiento la hereda
+    const inst = { id: this.nextId++, owner: p.id }, z0 = this.zones.length, u0 = this.units.length;
+    this._castInst = inst;
+    try { this._castAbility(p, slot); } finally {
+      this._apunte = null; this._cancela = false; this._enUlti = false; this._castInst = null;
+      for (let i = z0; i < this.zones.length; i++) if (this.zones[i] && !this.zones[i].inst) this.zones[i].inst = inst;
+      for (let i = u0; i < this.units.length; i++) if (this.units[i] && !this.units[i].inst) this.units[i].inst = inst;
+    }
   }
 
   // Distancia elegida al apuntar (para habilidades que caen en un punto)
@@ -8356,6 +8368,7 @@ class Game {
       }
       case 'polvoEstrellas': {
         this.aplicarEfecto(p, 'polvo', { t: h.dur, n, prox: 0 });   // (arreglo 02-11: la duración está en la habilidad, no en n1)
+        p.polvoInst = this._castInst;   // Seba (13-11, V8.1): todo este polvo cuenta como un solo lanzamiento para el tótem de Bambaa
         this.emit({ k: 'boom', x: p.x | 0, y: p.y | 0, r: 34, c: 'magenta' });
         break;
       }
@@ -10027,7 +10040,7 @@ class Game {
         const movio = Math.hypot(p.x - v.px, p.y - v.py), esperado = this.velocidadDe(p) * dt; v.px = p.x; v.py = p.y; v.edad += dt;
         // Seba (13-11, V7.5): rastro de fuego cada ~18 de recorrido
         v.rastro = (v.rastro || 0) + movio;
-        if (v.rastro >= 18 || !v.fuegos) { v.rastro = 0; v.fuegos = (v.fuegos || 0) + 1; this.fuegoGolagore(p, p.x, p.y); }
+        if (v.rastro >= 18 || !v.fuegos) { v.rastro = 0; v.fuegos = (v.fuegos || 0) + 1; this.fuegoGolagore(p, p.x, p.y, v); }
         let fin = v.edad >= H.dur || this.cruzaRoca(p.x, p.y, p.x + ca * (R + 8), p.y + sa * (R + 8)) || (v.edad > 0.15 && movio < esperado * 0.3);
         if (!fin) for (const e of this.enemigosGol(p)) {
           const rr = e.esUnidad ? 10 : R, dx = e.x - p.x, dy = e.y - p.y;
@@ -10136,7 +10149,7 @@ class Game {
               st.acc -= 0.5;
               const nivel = Math.max(0, Math.floor(st.dentro / 0.5) - 1);
               const dps = Math.min(n.dpsMax, n.dps0 + n.inc * nivel), lento = Math.min(n.lentoMax, n.lento0 + n.lentoInc * nivel);
-              this.damage(e, dps * 0.5, p, { tipo: 'mag', desde: p });   // cada golpe de 0,5 s es una instancia (cuenta para Acto final)
+              this.damage(e, dps * 0.5, p, { tipo: 'mag', desde: p, inst: p.polvoInst || p });   // cada golpe de 0,5 s es una instancia (cuenta para Acto final); para el tótem de Bambaa, todo el polvo es un lanzamiento
               if (e.alive && e.fx) this.aplicarEfecto(e, 'slow', { t: 0.6, mult: 1 - lento, k: 'polvoVario' });
             }
             E.set(e.id, st);
@@ -18500,6 +18513,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.1', f: '13-11-2026', n: [
+    'Bambaa, Ancestro olvidado: el daño continuo de habilidades (polvo del muñeco vudú, arena de Kiro, polvo de estrellas de Vario, rastro de fuego de Golagore…) ahora también activa el tótem, pero cada lanzamiento de una habilidad aliada lo activa una sola vez por enemigo. Antes los polvos y la arena no lo activaban, y el polvo de Vario lo activaba cada 0,5 s.',
+  ] },
   { v: 'V8.0', f: '13-11-2026', n: [
     'Bambaa, Muñeco vudú: el polvo hace 1,5 de daño cada 0,1 s (antes 3): 15 por segundo, hasta 45 caminando y 60 plantado.',
   ] },
