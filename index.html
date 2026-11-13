@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.5</title>
+<title>LOLA V8.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.5</p>
+        <p class="sub version">LOLA V8.6</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -14477,15 +14477,7 @@ class Renderer {
       this.lanzaLegios(mx, my, la, ext, golpe, p.lc && (p.lc - 1) / 10 >= 3);
     }
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
-    else if (esBam) {   // Seba (13-11, V8.4): Bambaa es una viejita — mismo diseño, dibujado a escala 0,7 (V8.5: un poco más alta que Karilthal); se pinta a 1× en un lienzo aparte y se reduce sin suavizar
-      const S = 0.7, W = 64, H = 80, c = this._lienzoBam || (this._lienzoBam = nuevoCanvas(W, H)), cg = c.getContext('2d');
-      cg.setTransform(1, 0, 0, 1, 0, 0); cg.clearRect(0, 0, W, H); cg.imageSmoothingEnabled = false; cg.globalAlpha = 1;
-      const g0 = this.g; this.g = cg;
-      try { this.dibujaBambaa(p, 32, 56, izq, moviendo, sube); } finally { this.g = g0; }
-      const s0 = g0.imageSmoothingEnabled; g0.imageSmoothingEnabled = false;
-      g0.drawImage(c, Math.round(cx - 32 * S), Math.round(cy + 8 - 64 * S), Math.round(W * S), Math.round(H * S));
-      g0.imageSmoothingEnabled = s0;
-    }
+    else if (esBam) this.bambaaChica(p, cx, cy, izq, moviendo, sube);   // Seba (13-11, V8.4–8.6): Bambaa más chica sin perder la cara
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
     if (p.f2 & 134217728) { this.llama(cx - 4, cy + 7, 0.75, 'rojo', 1); this.llama(cx + 4, cy + 7, 0.75, 'rojo', 3); }   // Ash cargando la patada: pies en llamas
@@ -15119,6 +15111,30 @@ class Renderer {
   }
   // Bambaa (Seba 13-11): «que el modelo quede bueno» — bruja encorvada de la referencia; el cuerpo, el bastón y el cuervo no se mueven (solo los pies),
   // ojo morado que titila, cuervo que pestañea y gira la cabeza, brebaje verde que burbujea en la olla y humo morado que sale del bastón
+  // Seba (13-11, V8.6): Bambaa a ~0,7 de su tamaño (un poco más alta que Karilthal) SIN perder detalles: se pinta a 1× en un lienzo aparte y se
+  // quitan filas y columnas enteras elegidas a mano, lejos de la cara, la olla y el cuervo (escalar parejo borraba la cara)
+  bambaaChica(p, cx, cy, izq, moviendo, sube) {
+    const W = 64, H = 80, c = this._lienzoBam || (this._lienzoBam = nuevoCanvas(W, H)), cg = c.getContext('2d');
+    cg.setTransform(1, 0, 0, 1, 0, 0); cg.clearRect(0, 0, W, H); cg.imageSmoothingEnabled = false; cg.globalAlpha = 1;
+    const g0 = this.g; this.g = cg;
+    try { this.dibujaBambaa(p, 32, 56, izq, moviendo, sube); } finally { this.g = g0; }
+    const clave = (izq ? 1 : 0) + ':' + sube, cache = this._cortesBam || (this._cortesBam = new Map());
+    let ct = cache.get(clave);
+    if (!ct) {
+      const FILAS = [3, 4, 6, 15, 17, 23, 24, 25, 26, 28], COLS = [7, 19, 20, 21, 22, 29];   // del dibujo de 30×32 (sin contorno)
+      const y0 = 31 - sube, dR = new Set(FILAS.map(k => y0 + 1 + k)), dC = new Set(COLS.map(k => izq ? 16 + 30 - k : 16 + 1 + k));
+      const kx = [], ky = [];
+      for (let x = 0; x < W; x++) if (x >= 16 && x < 48 ? !dC.has(x) : x % 3 !== 0) kx.push(x);
+      for (let y = 0; y < H; y++) if (y >= y0 && y < y0 + 34 ? !dR.has(y) : y % 3 !== 0) ky.push(y);
+      ct = { kx, ky, ox: kx.filter(x => x < 32).length, oy: ky.filter(y => y < 64).length };
+      cache.set(clave, ct);
+    }
+    const t = this._lienzoBam2 || (this._lienzoBam2 = nuevoCanvas(W, H)), tg = t.getContext('2d'), w = ct.kx.length;
+    tg.setTransform(1, 0, 0, 1, 0, 0); tg.clearRect(0, 0, W, H); tg.imageSmoothingEnabled = false;
+    for (let i = 0; i < w; i++) tg.drawImage(c, ct.kx[i], 0, 1, H, i, 0, 1, H);
+    const dx = Math.round(cx) - ct.ox, dy = Math.round(cy) + 8 - ct.oy;
+    for (let j = 0; j < ct.ky.length; j++) g0.drawImage(t, 0, ct.ky[j], w, 1, dx, dy + j, w, 1);
+  }
   dibujaBambaa(p, cx, cy, izq, moviendo, sube) {
     const g = this.g, T = this.time;
     let fr = 0;
@@ -18527,6 +18543,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V8.6', f: '13-11-2026', n: [
+    'Bambaa: recupera la cara. Sigue igual de chica, pero ahora se achica quitando filas y columnas lejos de la cara, la olla y el cuervo, en vez de escalar parejo.',
+  ] },
   { v: 'V8.5', f: '13-11-2026', n: [
     'Bambaa: el modelo se achica un poco más (×0,75 → ×0,7), apenas más alta que Karilthal.',
   ] },
