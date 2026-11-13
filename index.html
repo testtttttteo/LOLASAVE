@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V7.4</title>
+<title>LOLA V7.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V7.4</p>
+        <p class="sub version">LOLA V7.5</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1604,6 +1604,16 @@ Object.assign(HEROES, {
     habs: ['cargaGolagore', 'hachazoGolagore', 'fortalezaGolagore'],
     pasiva: 'corazaMagma',
   },
+// Seba (13-11): Bambaa, bruja ancestral (Errantes): chamana y recolectora de maldiciones, entre Baba Yaga y una curandera de folklore. Números (C) salvo los que fijó Seba.
+  bambaa: {
+    casa: 'errantes',
+    nombre: 'Bambaa', rol: 'Control · maldiciones', fondo: 'bambaa', arma: 'bastonBambaa',
+    desc: 'Bruja ancestral y recolectora de maldiciones, con su cuervo y su bastón de huesos. Siembra muñecos vudú, suelta calacas de humo y levanta un tótem que castiga a quien use magia.',
+    vida: 365, dano: 26, recarga: 1.4, ultiCarga: 300, velocidad: 141,   // (C) vida, daño, recarga; velocidad como Maidas
+    ataque: { tipo: 'proyectil', proj: 'orbeBambaa', vel: 440, alcance: 420, radio: 6 },   // Seba (13-11): orbe maldito a distancia
+    habs: ['munecoVudu', 'calacaBambaa', 'ancestroOlvidado'],
+    pasiva: 'amuletosBambaa',
+  },
 });
 
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
@@ -1978,12 +1988,22 @@ Object.assign(HABILIDADES, {
                    ancho: 162, confusion: 2.5,   // Seba: 3 básicos potenciados en 10 s (se pueden fallar); tornado 10% menos ancho y 25% más rápido que la Tormenta de Rasho, largo, 50/s, arrastra, al final −33% 1,5 s; (C) largo 380, recarga
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
+  // ---- Bambaa (Seba, 13-11; números (C) salvo los que fijó Seba)
+  munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 30, confusion: 3,   // Seba: camina; si topa a un enemigo lo maldice 30/s por 2 s; si no, se planta invisible al final; si un enemigo entra en su radio, todos los del radio quedan confundidos 3 s y malditos 30/s por 3 s; tope 2; 2 cargas; (Seba 13-11) dura 30 s plantado; (C) recarga, alcance, velocidad, radio
+                      desc: (n) => `Sueltas un muñeco vudú que camina hasta el punto que eliges (como máximo a distancia ${DIST(HABILIDADES.munecoVudu.alcance)}). Si topa a un enemigo, lo maldice: ${n.dps} de daño por segundo por ${n.dur} s. Si no topa a nadie, se planta en ese punto, invisible para los enemigos, por ${HABILIDADES.munecoVudu.dur} s: cuando un enemigo entra en su radio ${RADIO(HABILIDADES.munecoVudu.radio)}, todos los enemigos del radio quedan confundidos ${HABILIDADES.munecoVudu.confusion} s (controles al revés) y malditos ${n.dps} por segundo por ${n.durTrampa} s. Máximo ${HABILIDADES.munecoVudu.max} en el mapa. 2 cargas: la recarga empieza al usar la segunda.`,
+                      n1: { dps: 30, dur: 2, durTrampa: 3 }, n2: { dps: 30, dur: 2, durTrampa: 3 } },
+  calacaBambaa:     { nombre: 'Calaca de humo', glifo: 'calacaBambaa', cd: 13, cdFijo: true, dur: 3, choque: 16, giro: 3.2, silencio: 2, prisa: 0.25, prisaDur: 2,   // Seba: rastrea hasta 3 s, 100 y silencio 2 s, +25% de velocidad 2 s si alcanza a un héroe; velocidad del alma de Tenebris; (C) recarga, giro
+                      desc: (n) => `Lanzas una calaca de humo morado que persigue al enemigo más cercano a donde apuntas por hasta ${HABILIDADES.calacaBambaa.dur} s (arranca lenta y acelera). Al alcanzarlo hace ${n.dano} de daño y lo silencia ${HABILIDADES.calacaBambaa.silencio} s. Si alcanza a un héroe, ganas +${Math.round(HABILIDADES.calacaBambaa.prisa * 100)}% de velocidad por ${HABILIDADES.calacaBambaa.prisaDur} s.`,
+                      n1: { dano: 100 }, n2: { dano: 100 } },
+  ancestroOlvidado: { nombre: 'Ancestro olvidado', glifo: 'ancestroOlvidado', cd: 55, cdFijo: true, ulti: true, canal: 1, radio: 320, dur: 10,   // Seba: canal 1 s, tótem de radio muy amplio; castear dentro: 100, +75 por cada otra; alcanzado por habilidades aliadas: 25, +25 por instancia; el rayo nunca falla; (Seba 13-11) 10 s, indestructible, cuentan las habilidades de Bambaa y sus aliados; (C) radio 320, recarga 55
+                      desc: (n) => `Canalizas ${HABILIDADES.ancestroOlvidado.canal} s y levantas un tótem maldito por ${HABILIDADES.ancestroOlvidado.dur} s con un radio muy amplio (${RADIO(HABILIDADES.ancestroOlvidado.radio)}). Cada vez que un enemigo dentro del radio lanza una habilidad, el tótem le dispara un rayo: ${n.casteo} de daño, +${n.casteoInc} por cada habilidad que ya lanzó. Cada vez que una habilidad tuya o de un aliado alcanza a un enemigo dentro del radio, otro rayo: ${n.golpe} de daño, +${n.golpeInc} por cada vez anterior. Los rayos nunca fallan. Atacar con básicos (aunque estén potenciados) no cuenta.`,
+                      n1: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 }, n2: { casteo: 100, casteoInc: 75, golpe: 25, golpeInc: 25 } },
   // ---- Golagore (Seba, 13-11; números (C) salvo los que fijó Seba)
-  cargaGolagore:     { nombre: 'Embestida ígnea', glifo: 'cargaGolagore', cd: 12, cdFijo: true, dur: 3.5, vel: 0.2, aturde: 0.5, radio: 70,   // Seba: +20% velocidad, en línea recta sin control, 50 y aturdido 0,5 s; (Seba 13-11) 3,5 s; el golpe sale en un radio al chocar, al terminar o al volver a apretar; (C) radio 70, recarga 12, los muros la terminan, un aturdido la corta sin golpe
-                       desc: (n) => `Cargas envuelto en fuego en línea recta hacia donde apuntas hasta ${fmtN(HABILIDADES.cargaGolagore.dur)} s con +${Math.round(HABILIDADES.cargaGolagore.vel * 100)}% de velocidad, sin poder girar. Al chocar con un enemigo o un muro, al terminar, o si vuelves a apretar, golpeas en un radio ${RADIO(HABILIDADES.cargaGolagore.radio)}: ${n.dano} de daño y aturdido ${fmtN(HABILIDADES.cargaGolagore.aturde)} s. Un aturdido te corta sin golpe.`,
+  cargaGolagore:     { nombre: 'Embestida ígnea', glifo: 'cargaGolagore', cd: 12, cdFijo: true, dur: 3.5, vel: 0.2, aturde: 0.5, radio: 70, fuegoDur: 3, fuegoDano: 25, fuegoCada: 1, fuegoR: 22, devuelve: 0.5,   // Seba (13-11, V7.5): rastro de fuego 3 s (25 por segundo pisándolo); aturdido en la carga → recupera 50% de la recarga   // Seba: +20% velocidad, en línea recta sin control, 50 y aturdido 0,5 s; (Seba 13-11) 3,5 s; el golpe sale en un radio al chocar, al terminar o al volver a apretar; (C) radio 70, recarga 12, los muros la terminan, un aturdido la corta sin golpe
+                       desc: (n) => `Cargas envuelto en fuego en línea recta hacia donde apuntas hasta ${fmtN(HABILIDADES.cargaGolagore.dur)} s con +${Math.round(HABILIDADES.cargaGolagore.vel * 100)}% de velocidad, sin poder girar. Al chocar con un enemigo o un muro, al terminar, o si vuelves a apretar, golpeas en un radio ${RADIO(HABILIDADES.cargaGolagore.radio)}: ${n.dano} de daño y aturdido ${fmtN(HABILIDADES.cargaGolagore.aturde)} s. Un aturdido te corta sin golpe, pero te devuelve la mitad de la recarga. Dejas un rastro de fuego por ${HABILIDADES.cargaGolagore.fuegoDur} s: cada segundo que un enemigo pisa el fuego recibe ${HABILIDADES.cargaGolagore.fuegoDano} de daño.`,
                        n1: { dano: 50 }, n2: { dano: 50 } },
-  hachazoGolagore:   { nombre: 'Hachazo volcánico', glifo: 'hachazoGolagore', cd: 14, cdFijo: true, alcance: 220, salto: 0.8, radio: 90, centro: 40, aturde: 1.5,   // Seba (13-11) rework: salto corto y pesado que termina en un hachazo: 100 en un radio; al centro 120 y aturdido 1,5 s; (C) alcance 220, 0,8 s en el aire, radio 90, centro 40, recarga 14, inmune al control en el aire
-                       desc: (n) => `Saltas pesadamente hacia un punto a distancia ${DIST(HABILIDADES.hachazoGolagore.alcance)} (${fmtN(HABILIDADES.hachazoGolagore.salto)} s en el aire; todos ven dónde caerás) y caes con un hachazo: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hachazoGolagore.radio)}; los enemigos del centro reciben ${n.centro} y quedan aturdidos ${fmtN(HABILIDADES.hachazoGolagore.aturde)} s. En el aire no te afecta el control.`,
+  hachazoGolagore:   { nombre: 'Hachazo volcánico', glifo: 'hachazoGolagore', cd: 14, cdFijo: true, alcance: 220, salto: 0.8, radio: 90, centro: 40, aturde: 1.5, escudo: 50, escudoDur: 4,   // Seba (13-11, V7.5): +50 de escudo por enemigo aturdido con el centro (C: 4 s)   // Seba (13-11) rework: salto corto y pesado que termina en un hachazo: 100 en un radio; al centro 120 y aturdido 1,5 s; (C) alcance 220, 0,8 s en el aire, radio 90, centro 40, recarga 14, inmune al control en el aire
+                       desc: (n) => `Saltas pesadamente hacia un punto a distancia ${DIST(HABILIDADES.hachazoGolagore.alcance)} (${fmtN(HABILIDADES.hachazoGolagore.salto)} s en el aire; todos ven dónde caerás) y caes con un hachazo: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hachazoGolagore.radio)}; los enemigos del centro reciben ${n.centro} y quedan aturdidos ${fmtN(HABILIDADES.hachazoGolagore.aturde)} s. En el aire no te afecta el control. Por cada enemigo que aturdes con el centro ganas ${HABILIDADES.hachazoGolagore.escudo} de escudo por ${HABILIDADES.hachazoGolagore.escudoDur} s (se suma al de tu pasiva).`,
                        n1: { dano: 100, centro: 120 }, n2: { dano: 100, centro: 120 } },
   fortalezaGolagore: { nombre: 'Núcleo de magma', glifo: 'fortalezaGolagore', cd: 60, cdFijo: true, ulti: true, canal: 4, radio: 150, lento: 0.5, red: 0.6, mueve: 0.5,   // Seba (13-11): puede moverse al 50% (el radio lo sigue (C))
                          // Seba: canal hasta 4 s, recast lo corta, −50% en el radio, −60% de daño recibido, explota 50 +50/s y el 100% del daño recibido (sin el −60%) repartido entre los enemigos dentro; (Seba 13-11) quieto y radio fijo; (C) radio 150, recarga, un aturdido o silencio lo hace explotar antes
@@ -2116,6 +2136,7 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
   corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 20, dur: 4, quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 20 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
   pasoEnFalso: { nombre: 'Paso en falso', glifo: 'pasoEnFalso', chance: 0.05, cd: 3, desc: 'Tienes 5% de probabilidad de esquivar por completo un ataque básico enemigo (de héroes o invocaciones). Tras esquivar, 3 s sin poder volver a hacerlo.' },   // Seba (13-11)
   gotasOra: { nombre: 'Gotas suspendidas', glifo: 'gotasOra', cada: 3, cura: 15, radio: 200, desc: 'Cada 3 ataques básicos que aciertan, te curas 15 y curas 15 a un aliado cercano (hasta distancia media).' },   // Seba (12-11): solo un aliado cercano, radio corto a mediano (200)
@@ -2258,6 +2279,7 @@ const GUIAS = {
   encanto: { tipo: 'cono', alcance: 320, arco: 50 }, polvoEstrellas: { tipo: 'propio', r: 30 }, armario: { tipo: 'punto', alcance: 350, r: 94 },
   tajoKiro: { tipo: 'linea', alcance: 128, ancho: 34 }, pozoArena: { tipo: 'propio', r: 126 }, tormentaArena: { tipo: 'propio', r: 30 },
   cargaGolagore: { tipo: 'linea', alcance: 370, ancho: 40 }, hachazoGolagore: { tipo: 'punto', alcance: 220, r: 90 }, fortalezaGolagore: { tipo: 'propio', r: 150 },
+  munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 320 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -5287,6 +5309,266 @@ function legiosGrande(frame) {
   return r;
 }
 
+// Seba (13-11): Bambaa — bruja ancestral (Errantes): capucha morada con banda bordada, pelo blanco, nariz ganchuda y un ojo morado que brilla,
+// poncho pardo con collar de huesos y calavera, falda morada en harapos, olla de brebaje verde a la cadera, garra adelante y bastón retorcido
+// con amuletos y su cuervo arriba. Modelo grande (30×32) que se dibuja aparte en render; el chico (20×22) es para menús.
+Object.assign(CAPAS, {
+  cuerpoBambaa: L({
+    0: '.................n..',
+    1: '...A............nI33',
+    2: '...AA.........nnnn..',
+    3: '....DDD..........2..',
+    4: '....AIDDA......wWm..',
+    5: '....AIDDDDDA....mWw.',
+    6: '....ADqomomA....W.qw',
+    7: '....ADq4pIkpA...mWmo',
+    8: '....ADqqmppppm..W...',
+    9: '..mWwA3qmp..Wm..mW.D',
+    10: '..WmWw.q.m.WWWWPp...',
+    11: '.PwWW.4q4WWo....mW..',
+    12: 'P.PwmWqq4mWm....Ww..',
+    13: 'P...wDoooDoo....W...',
+    14: '..11kIDwDIDD....Ww..',
+    15: '..nn1DDwDIDD....W...',
+    16: '...ADIDDDIDDA...Ww..',
+    17: '...ADDDDDDDDA...W...',
+    18: '...wADAw.wDDw...Ww..',
+    19: '......mp.pA.....W...',
+    20: '......mp.pp.....Ww..',
+    21: '.....pp..pp.....w...',
+  }),
+});
+Object.assign(APARIENCIA, {
+  bambaa: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoBambaa'], ['cuerpoBambaa']], cabeza: [[], []] },
+});
+Object.assign(ARMAS_SPR, {
+  bastonBambaa: { g: [1, 6], S: 31, rows: ['..............', '..............', '..............', '..............', '..............', '..............', 'wWmWmWmWmWmWnn', '..............', '..............', '..............', '..............', '..............'] },
+});
+Object.assign(GLIFOS, {
+  munecoVudu:       ['.R.....R.', '..q.p.q..', '..pmpmp..', '..kpppk..', '.ppkpkpp.', 'pp.pIp.pp', '...pmp...', '..pp.pp..', '..mm.mm..'],
+  calacaBambaa:     ['..IIIII..', '.IvvvvvI.', 'IvqvvvvvI', 'IAAvvvAAI', 'IAqAvAqAI', '.IvvkvvI.', '..vkvkv..', '.D.IvI.D.', 'D..D.D..D'],
+  ancestroOlvidado: ['.I.....I.', '.wWWWWWw.', 'wkIkWkIkw', 'wWWkkkWWw', 'wkqkqkqkw', '.wWWWWWw.', 'wkIkWkIkw', 'wkqkqkqkw', '.wwwwwww.'],
+  amuletosBambaa:   ['....w....', '...w.w...', '..w...w..', '.q.....m.', '.4.....o.', '.q..I..m.', '....D....', '....I....', '.........'],
+});
+Object.assign(FONDOS, { bambaa: ['A', 'I'] });
+Object.assign(OTROS, {
+  orbeBambaa: [['.DID.', 'DIvID', 'IvqvI', 'DIvID', '.DID.'], ['.IDI.', 'IDvDI', 'DvqvD', 'IDvDI', '.IDI.']],   // Seba (13-11): todo morado
+});
+// cuadros: 0 quieta, 1 adelanta el pie de adelante, 2 el de atrás (el bastón, el cuervo y el cuerpo no se mueven)
+const BAMBAA_GRANDE = [
+  [
+    '.........................nn...',
+    '....A...................nnI33.',
+    '....ADA..............nnnnnn...',
+    '....ADDD...........nn1nn1n....',
+    '.....ADDDD.............2.2....',
+    '......ADIDDDA.........wWWmw...',
+    '......ADIDDDDDA.......w.Wmw.w.',
+    '......ADIDDDDDDDA.......mW.w..',
+    '......ADomoomoomoA......Ww.qw.',
+    '......ADDq3kpppmA.......Wm.4w.',
+    '......ADAq4ppkIkpmA.....mW.mom',
+    '......ADA3qpmppppppmm...Ww..o.',
+    '....mWADAq4kpmkkpm......Wm..I.',
+    '...mWWwAA3q4mpm..WWmW...mW..D.',
+    '...WmmWwA.q3.4..WmWWWWPPpw....',
+    '...WmoWWm4kqWmmoWw....PpWm....',
+    '.PPwWmW.34qq4WmWow......mW....',
+    'P.PPwWmWWqkq4mWWmw......Ww....',
+    'P.P..wwomoomoomoow......Wm....',
+    '.P.lGlDDDDwDDDDDD.......mW....',
+    '..k111kIDDwDDIDDD.......Ww....',
+    '..1nnn1DDDwDDDIDDA......Wm....',
+    '...111DDDDwwDDDDDA......mW....',
+    '....ADDIDDDwDDIDDDA.....Ww....',
+    '....ADDDDDDwDDDDDDA.....Wm....',
+    '....AwDDDADwwDADDwA.....mW....',
+    '....w.ADDAwA.wADD.w.....Ww....',
+    '.....A.DAmpw.pmA.A......Wm....',
+    '.........mp..pm.........mW....',
+    '........pmp..pmp........Ww....',
+    '.......ppp...ppp........ww....',
+    '..............................',
+  ],
+  [
+    '.........................nn...',
+    '....A...................nnI33.',
+    '....ADA..............nnnnnn...',
+    '....ADDD...........nn1nn1n....',
+    '.....ADDDD.............2.2....',
+    '......ADIDDDA.........wWWmw...',
+    '......ADIDDDDDA.......w.Wmw.w.',
+    '......ADIDDDDDDDA.......mW.w..',
+    '......ADomoomoomoA......Ww.qw.',
+    '......ADDq3kpppmA.......Wm.4w.',
+    '......ADAq4ppkIkpmA.....mW.mom',
+    '......ADA3qpmppppppmm...Ww..o.',
+    '....mWADAq4kpmkkpm......Wm..I.',
+    '...mWWwAA3q4mpm..WWmW...mW..D.',
+    '...WmmWwA.q3.4..WmWWWWPPpw....',
+    '...WmoWWm4kqWmmoWw....PpWm....',
+    '.PPwWmW.34qq4WmWow......mW....',
+    'P.PPwWmWWqkq4mWWmw......Ww....',
+    'P.P..wwomoomoomoow......Wm....',
+    '.P.lGlDDDDwDDDDDD.......mW....',
+    '..k111kIDDwDDIDDD.......Ww....',
+    '..1nnn1DDDwDDDIDDA......Wm....',
+    '...111DDDDwwDDDDDA......mW....',
+    '....ADDIDDDwDDIDDDA.....Ww....',
+    '....ADDDDDDwDDDDDDA.....Wm....',
+    '....ADwDDADwwDADwDA.....mW....',
+    '.....wADDA.wAwADDw......Ww....',
+    '....A..DAmp..Apm........Wm....',
+    '.........mp...pmp.......mW....',
+    '........pmp...ppp.......Ww....',
+    '.......ppp..............ww....',
+    '..............................',
+  ],
+  [
+    '.........................nn...',
+    '....A...................nnI33.',
+    '....ADA..............nnnnnn...',
+    '....ADDD...........nn1nn1n....',
+    '.....ADDDD.............2.2....',
+    '......ADIDDDA.........wWWmw...',
+    '......ADIDDDDDA.......w.Wmw.w.',
+    '......ADIDDDDDDDA.......mW.w..',
+    '......ADomoomoomoA......Ww.qw.',
+    '......ADDq3kpppmA.......Wm.4w.',
+    '......ADAq4ppkIkpmA.....mW.mom',
+    '......ADA3qpmppppppmm...Ww..o.',
+    '....mWADAq4kpmkkpm......Wm..I.',
+    '...mWWwAA3q4mpm..WWmW...mW..D.',
+    '...WmmWwA.q3.4..WmWWWWPPpw....',
+    '...WmoWWm4kqWmmoWw....PpWm....',
+    '.PPwWmW.34qq4WmWow......mW....',
+    'P.PPwWmWWqkq4mWWmw......Ww....',
+    'P.P..wwomoomoomoow......Wm....',
+    '.P.lGlDDDDwDDDDDD.......mW....',
+    '..k111kIDDwDDIDDD.......Ww....',
+    '..1nnn1DDDwDDDIDDA......Wm....',
+    '...111DDDDwwDDDDDA......mW....',
+    '....ADDIDDDwDDIDDDA.....Ww....',
+    '....ADDDDDDwDDDDDDA.....Wm....',
+    '....ADwDDADwwDADwDA.....mW....',
+    '.....wADDA.wAwADDw......Ww....',
+    '....A..Dmpw..pmA........Wm....',
+    '.......pmp...pm.........mW....',
+    '......ppp....pmp........Ww....',
+    '.............ppp........ww....',
+    '..............................',
+  ],
+];
+const cacheBambaa = new Map();
+function bambaaGrande(frame) {
+  if (cacheBambaa.has(frame)) return cacheBambaa.get(frame);
+  const m = matrizVacia(30, 32);
+  pintar(m, BAMBAA_GRANDE[frame]);
+  const der = aCanvas(contornear(m));
+  const r = { der, izq: espejo(der) };
+  cacheBambaa.set(frame, r);
+  return r;
+}
+// muñeco vudú (2 cuadros caminando), calaca de humo y tótem del Ancestro olvidado
+const SPR_BAMBAA = {
+  muneco0: [
+    '..R.....R..',
+    '...q.p.q...',
+    '..pmpppmp..',
+    '..pkpmpkp..',
+    '..ppkpkpp..',
+    '...ppmpp...',
+    'pppmpppmppp',
+    '.p.pIIpp.p.',
+    '...pmkmp...',
+    '...ppppp...',
+    '...pp.pp...',
+    '...mm.mm...',
+  ],
+  muneco1: [
+    '..R.....R..',
+    '...q.p.q...',
+    '..pmpppmp..',
+    '..pkpmpkp..',
+    '..ppkpkpp..',
+    '...ppmpp...',
+    'pppmpppmppp',
+    '.p.pIIpp.p.',
+    '...pmkmp...',
+    '...ppppp...',
+    '..pp...pp..',
+    '..mm...mm..',
+  ],
+  calaca: [
+    '...IIIII...',
+    '..IvvvvvI..',
+    '.IvqqvvvvI.',
+    'IvqvvvvvvvI',
+    'IAAAvvvAAAI',
+    'IAqAAvAAqAI',
+    'IvAAvkvAAvI',
+    '.IvvkkkvvI.',
+    '..IvvvvvI..',
+    '..vkvkvkv..',
+    '...IvIvI...',
+  ],
+  totem: [
+    '....I..........I....',
+    '....vI........Iv....',
+    '.....wWW.AA.WWw.....',
+    '.....wWWwwwwwWWw....',
+    '....wwwwwwwwwwww....',
+    '....WWWWWWWWWWWWw...',
+    '....WmkkkmmkkkmWw...',
+    '...wWkIIkmmkIIkWw...',
+    '...wWmkkkmmkkkmWw...',
+    '...wWmDDmWWmDkmWw...',
+    '...wWkkkkkkkkkkWw...',
+    '...wWkqkqkqkqkkWw...',
+    '....wwwwwwwwwwww....',
+    '...wwwwwwwwwwwwww...',
+    '..wWWWWWWkWWWWWWWw..',
+    '...WmkkkmkmmkkkmWw..',
+    '..wWkIIkmmmmkIIkWw..',
+    '..wWkkkkmmmmkkkmWw..',
+    '..wWkDDmWWWWmDDmWw..',
+    '..wWkkkkkkkkkkkkWw..',
+    '..wWkqkqkqkqkqkkWw..',
+    '...wwwwwwwwwwwwww...',
+    '..wDDwwwwwwwwwwDDw..',
+    '.DwwwwwwwwwwwwwwDD..',
+    '..DIWWWWWWWWWWWWWIw.',
+    '..DmkkkmmmmmmkkkmDw.',
+    '.wWAIIkmmmmmmkIIkWw.',
+    '.wWmkkkkmmmmmkkkmWw.',
+    '.wWmDDmkWWWWWmDDmWw.',
+    '.wWkkkkkkkkkkkkkkWw.',
+    '.wWkqkqkqkqkqkqkkWw.',
+    '..wwwwwwwwwwwwwwww..',
+    '...wwwwwwwwwwwwww...',
+    '..wWWWWWWkWWWWWWWw..',
+    '..wWmkkkmkmmkkkmWw..',
+    '..wWkIIkmmmmkIIkWw..',
+    '..wWmkkkmmmmkkkmWw..',
+    '..wWmkDmWWWWmDDmWw..',
+    '..wWkkkkkkkkkkkkWw..',
+    '..wWkqkqkqkqkqkkWw..',
+    '...wwwwwwwwwwwwww...',
+    '....wwmWWwwWWkww....',
+    '...wwWWmmWWmmWWww...',
+    '...wWWWWWWWWWWWWww..',
+  ],
+};
+const cacheSprB = new Map();
+function sprBambaa(k) {
+  if (cacheSprB.has(k)) return cacheSprB.get(k);
+  const rows = SPR_BAMBAA[k], m = matrizVacia(rows[0].length, rows.length);
+  pintar(m, rows);
+  const c = aCanvas(contornear(m));
+  cacheSprB.set(k, c);
+  return c;
+}
+
 // Seba (13-11): Golagore — gólem berserker infernal, compacto y pesadísimo: roca oscura con armadura de placas, magma que brilla en las juntas
 // y un núcleo ardiente en el pecho, yelmo con cuernos de fuego y visor encendido, hombreras con púas, puños de roca, taparrabo rojo.
 // Modelo grande (lienzo 32×30) que se dibuja aparte en render; el chico (20×22) es para menús y retratos. Hacha doble de filo fundido.
@@ -5349,18 +5631,18 @@ Object.assign(GLIFOS, {
 });
 Object.assign(FONDOS, { golagore: ['n', 'R'] });
 // cuadros: 0 quieto, 1 adelanta la pierna de adelante, 2 adelanta la de atrás
-const GOLAGORE_GRANDE = [   // Seba (13-11): sin antebrazos ni puños — se dibujan en render tomando el hacha a dos manos
+const GOLAGORE_GRANDE = [   // Seba (13-11): sin antebrazos ni puños — se dibujan en render tomando el hacha a dos manos; cabeza un poco más grande (10×10)
   [
-    '..............y....y............',
-    '..............fy...f............',
-    '..............rfr..fr...........',
-    '.............rr2222rRk.y...y....',
-    '.....y..y...kr122221Rk.f...f....',
-    '....rf.rf...kn111111Rkrfr.rfR...',
-    '...r22221rr.knnkfyyyrr2222222R..',
-    '..r1111111nrkrnRRRRnr122222221R.',
-    '..n1nn11nnnnnnnrRRrnn111111111R.',
-    '..nnRRfRRnnnn1nnnnnnnnnRRfRRnnR.',
+    '.............y......y...........',
+    '.............fy....yf...........',
+    '.............rfr..rfr...........',
+    '............rr222222rRky...y....',
+    '.....y..y..kr12222221Rkf...f....',
+    '....rf.rf..kn11111111Rkfr.rfR...',
+    '...r22221rrkn1111111nRk222222R..',
+    '..r1111111nknnkffyyyfR22222221R.',
+    '..n1nn11nnnkrnnRRRRRnR11111111R.',
+    '..nnRRfRRnnnnnnrRRRrnnnRRfRRnnR.',
     '..rnnnnnnnn1nnRRRnn1rnnnnnnnnrR.',
     '.r1nnnnn.nnnnRfyfRnnn.nnnn1nnR..',
     '.n1nRnnn.n1nRfyqyfRn1nnnnRnn1R..',
@@ -5383,16 +5665,16 @@ const GOLAGORE_GRANDE = [   // Seba (13-11): sin antebrazos ni puños — se dib
     '....rrrrrrrrr.....rrrrrrrrrr....',
   ],
   [
-    '..............y....y............',
-    '..............fy...f............',
-    '..............rfr..fr...........',
-    '.............rr2222rRk.y...y....',
-    '.....y..y...kr122221Rk.f...f....',
-    '....rf.rf...kn111111Rkrfr.rfR...',
-    '...r22221rr.knnkfyyyrr2222222R..',
-    '..r1111111nrkrnRRRRnr122222221R.',
-    '..n1nn11nnnnnnnrRRrnn111111111R.',
-    '..nnRRfRRnnnn1nnnnnnnnnRRfRRnnR.',
+    '.............y......y...........',
+    '.............fy....yf...........',
+    '.............rfr..rfr...........',
+    '............rr222222rRky...y....',
+    '.....y..y..kr12222221Rkf...f....',
+    '....rf.rf..kn11111111Rkfr.rfR...',
+    '...r22221rrkn1111111nRk222222R..',
+    '..r1111111nknnkffyyyfR22222221R.',
+    '..n1nn11nnnkrnnRRRRRnR11111111R.',
+    '..nnRRfRRnnnnnnrRRRrnnnRRfRRnnR.',
     '..rnnnnnnnn1nnRRRnn1rnnnnnnnnrR.',
     '.r1nnnnn.nnnnRfyfRnnn.nnnn1nnR..',
     '.n1nRnnn.n1nRfyqyfRn1nnnnRnn1R..',
@@ -5415,16 +5697,16 @@ const GOLAGORE_GRANDE = [   // Seba (13-11): sin antebrazos ni puños — se dib
     '....rrrrrrrrr...................',
   ],
   [
-    '..............y....y............',
-    '..............fy...f............',
-    '..............rfr..fr...........',
-    '.............rr2222rRk.y...y....',
-    '.....y..y...kr122221Rk.f...f....',
-    '....rf.rf...kn111111Rkrfr.rfR...',
-    '...r22221rr.knnkfyyyrr2222222R..',
-    '..r1111111nrkrnRRRRnr122222221R.',
-    '..n1nn11nnnnnnnrRRrnn111111111R.',
-    '..nnRRfRRnnnn1nnnnnnnnnRRfRRnnR.',
+    '.............y......y...........',
+    '.............fy....yf...........',
+    '.............rfr..rfr...........',
+    '............rr222222rRky...y....',
+    '.....y..y..kr12222221Rkf...f....',
+    '....rf.rf..kn11111111Rkfr.rfR...',
+    '...r22221rrkn1111111nRk222222R..',
+    '..r1111111nknnkffyyyfR22222221R.',
+    '..n1nn11nnnkrnnRRRRRnR11111111R.',
+    '..nnRRfRRnnnnnnrRRRrnnnRRfRRnnR.',
     '..rnnnnnnnn1nnRRRnn1rnnnnnnnnrR.',
     '.r1nnnnn.nnnnRfyfRnnn.nnnn1nnR..',
     '.n1nRnnn.n1nRfyqyfRn1nnnnRnn1R..',
@@ -5561,7 +5843,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 // Seba (09-11): proyectiles que atraviesan el muro de Aldor (magia y lo que vuela). Todo lo demás (físico) se frena.
 // Fatum entero, sombra de Karilthal, orbes de Monh, Rasho, runas de Æthar, orbe de Driiar, corazones de Vario (C) y lo de las ultis.
@@ -5885,7 +6167,7 @@ class Game {
       p.cd = [0, 0, 0, CONFIG.ULTI_INICIO || 0, 0];   // Seba (28-10): ulti en espera 45 s al empezar
       p.ultiAvisada = false;
       p.habCargas = {};   // Torreta: parte con sus 2 cargas
-      p.fx = {}; p.sedZeal = 0; p.sedCd = 0; p.gotasZeal = null; p.colaGota = null; p.golpesAldor = 0;   // Zeal: la Sed arcana parte de cero cada ronda
+      p.fx = {}; p.sedZeal = 0; p.sedCd = 0; p.gotasZeal = null; p.colaGota = null; p.golpesAldor = 0; p.relojFuegoGol = null;   // Zeal: la Sed arcana parte de cero cada ronda
       p.kbx = p.kby = 0;
       p.hidden = false; p.revelado = 0;
       p.dmgRound = 0; p.killsRound = 0; p.muertes = 0; p.curaHecha = 0; p.racha = 0; p.caido = false; p.revive = 0; p.respawn = 0;
@@ -6141,6 +6423,7 @@ class Game {
       c.n = Math.min(10, c.n + 1); c.t = 1;
     }
     if (atacante && atacante !== target && this.teamOf(atacante.id) !== this.teamOf(target.id)) { atacante.dmgRound += real; this.cargarUlti(atacante, real, src, o); if (atacante.fx && atacante.fx.llama) atacante.fx.llama.dano += real; }
+    if (!o.basico && !o.tick && !o.rayoTotem && atacante && atacante !== target && real > 0) this.totemGolpe(atacante, target);   // Bambaa: Ancestro olvidado
     if (target.hp <= 0) this.kill(target, src);
     return amt;
   }
@@ -6214,8 +6497,9 @@ class Game {
     // Un aturdimiento corta la canalización del Sablazo
     // Seba (28-10): aturdimiento y silencio cortan las canalizaciones (Sablazo y Jetpack)
     if ((key === 'aturdido' || key === 'silence') && t.fx.canalGolagore) this.explotaGolagore(t);   // Golagore (C): aturdido o silencio hacen explotar el Núcleo antes
-    if (key === 'aturdido' && t.fx.cargaGolagore) { delete t.fx.cargaGolagore; this.emit({ k: 'chocaGolagore', x: t.x | 0, y: t.y | 0 }); }   // Golagore (C): un aturdido corta la Embestida (sin golpe)
+    if (key === 'aturdido' && t.fx.cargaGolagore) { const sl = (HEROES[t.build?.heroe]?.habs || []).indexOf('cargaGolagore'); if (sl >= 0 && t.cd) t.cd[sl + 1] *= 1 - HABILIDADES.cargaGolagore.devuelve; delete t.fx.cargaGolagore;   /* Seba (13-11, V7.5): aturdido en la carga → recupera 50% de la recarga */ this.emit({ k: 'chocaGolagore', x: t.x | 0, y: t.y | 0 }); }   // Golagore (C): un aturdido corta la Embestida (sin golpe)
     if (t.fx.saltoGol && CONTROL.has(key)) return;   // Golagore (C): en el aire no le afecta el control
+    if ((CONTROL.has(key) || key === 'confusoKiro') && val && val.t && !t.esUnidad && HEROES[t.build?.heroe]?.pasiva === 'amuletosBambaa') val = { ...val, t: val.t * (1 - PASIVAS.amuletosBambaa.red) };   // Bambaa: Amuletos viejos, −5% de control
     const canal = (key === 'aturdido' || key === 'silence' || key === 'encantado') && (CANALES.find(k => k !== 'embateGiro' && t.fx[k]) || null);
     if (canal) {
       const z = t.fx[canal].zona; if (z) { z.cancelado = true; z.t = 0; }
@@ -6532,7 +6816,47 @@ class Game {
   // Kiro: usar una habilidad lo revela (y vuelve a esperar 0,75 s en el pozo)
   revelarKiro(p) { p.kiroOculto = 0; if (p.fx.invisible && p.fx.invisible.kiro) { delete p.fx.invisible; this.emit({ k: 'humo', x: p.x | 0, y: p.y | 0, chico: true }); } }
   // Kiro: suma una acumulación (cada una dura 3 s); con 3, aturdido 1 s y se limpian
+  // Bambaa: rayo del tótem (nunca falla; no cuenta para su propio conteo)
+  rayoTotem(z, e, dano) {
+    const own = this.players.get(z.owner);
+    this.emit({ k: 'rayoTotem', x: z.x | 0, y: z.y | 0, x2: e.x | 0, y2: e.y | 0, v: Math.round(dano) });
+    this.damage(e, dano, own || null, { tipo: 'mag', rayoTotem: true, desde: z });
+  }
+  totemesContra(id) { const eq = this.teamOf(id); return this.zones.filter(z => z.kind === 'totemBambaa' && !z.done && this.teamOf(z.owner) !== eq); }
+  // un enemigo lanza una habilidad dentro del radio: 100, +75 por cada una que ya lanzó (por tótem)
+  totemCasteo(p) {
+    for (const z of this.totemesContra(p.id)) {
+      if (dist(p, z) > z.r + CONFIG.RADIO_JUGADOR) continue;
+      const c = z.casteos[p.id] || 0; z.casteos[p.id] = c + 1;
+      this.rayoTotem(z, p, z.n.casteo + z.n.casteoInc * c);
+    }
+  }
+  // una habilidad de Bambaa o un aliado alcanza a un enemigo dentro del radio: 25, +25 por cada vez anterior
+  totemGolpe(atacante, target) {
+    if (target.esUnidad || !target.alive) return;
+    const eqA = this.teamOf(atacante.esUnidad ? atacante.owner : atacante.id);
+    for (const z of this.zones) {
+      if (z.kind !== 'totemBambaa' || z.done || this.teamOf(z.owner) !== eqA || this.teamOf(target.id) === eqA) continue;
+      if (dist(target, z) > z.r + CONFIG.RADIO_JUGADOR) continue;
+      const c = z.golpes[target.id] || 0; z.golpes[target.id] = c + 1;
+      this.rayoTotem(z, target, z.n.golpe + z.n.golpeInc * c);
+    }
+  }
   // Golagore: Coraza de magma — alcanzar a 2 o más enemigos con una habilidad da un escudo de 20 por 4 s (no se acumula: se renueva)
+  // Golagore (Seba 13-11, V7.5): llama del rastro de la Embestida. Cada enemigo recibe 25 por cada segundo que pisa el fuego (un solo reloj por enemigo aunque pise varias llamas)
+  fuegoGolagore(p, x, y) {
+    const H = HABILIDADES.cargaGolagore;
+    if (!p.relojFuegoGol) p.relojFuegoGol = new Map();
+    this.zones.push({ id: this.nextId++, kind: 'fuegoGolagore', x, y, r: H.fuegoR, t: H.fuegoDur, total: H.fuegoDur, owner: p.id,
+      tick: (z, dt) => {
+        for (const e of this.enemigosGol(p)) {
+          if (Math.hypot(e.x - z.x, e.y - z.y) > z.r + (e.esUnidad ? 8 : CONFIG.RADIO_JUGADOR * 0.6)) continue;
+          const R = p.relojFuegoGol, ahora = this.combatTime, ult = R.get(e.id);
+          if (ult !== undefined && ahora - ult < H.fuegoCada) continue;
+          R.set(e.id, ahora); this.damage(e, H.fuegoDano, p, { tipo: 'mag', desde: z, tick: true });
+        }
+      } });
+  }
   corazaMagma(p, n) {
     if (n < 2 || HEROES[p.build?.heroe]?.pasiva !== 'corazaMagma') return;
     const P = PASIVAS.corazaMagma, e = p.fx.escudo;
@@ -6560,17 +6884,23 @@ class Game {
     const v = p.fx.saltoGol; if (!v) return;
     delete p.fx.saltoGol;
     p.x = v.x1; p.y = v.y1; this.clampWall(p);
-    const H = HABILIDADES.hachazoGolagore; let n = 0;
+    const H = HABILIDADES.hachazoGolagore; let n = 0, aturdidos = 0;
     for (const e of this.enemigosGol(p)) {
       const d = dist(e, p), rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR;
       if (d > H.radio + rr) continue;
-      if (d <= H.centro + rr * 0.5) { this.damage(e, v.n.centro, p, { tipo: 'fis', desde: p }); if (e.alive) this.aplicarEfecto(e, 'aturdido', { t: H.aturde }); }
+      if (d <= H.centro + rr * 0.5) { this.damage(e, v.n.centro, p, { tipo: 'fis', desde: p }); if (e.alive) { this.aplicarEfecto(e, 'aturdido', { t: H.aturde }); if (!e.esUnidad && e.fx.aturdido) aturdidos++; } }
       else this.damage(e, v.n.dano, p, { tipo: 'fis', desde: p });
       this.quemaMagma(p, e, v.quema);
       n++;
     }
     this.emit({ k: 'hachazoGolagore', x: p.x | 0, y: p.y | 0, r: H.radio, c: H.centro, a: +v.a.toFixed(2) });
     this.corazaMagma(p, n);
+    if (aturdidos > 0 && p.alive) {   // Seba (13-11, V7.5): +50 de escudo por enemigo aturdido con el centro; se suma al de la pasiva
+      const v2 = H.escudo * aturdidos, es = p.fx.escudo;
+      if (es && es.v > 0) { es.v += v2; es.max = (es.max || 0) + v2; es.t = Math.max(es.t, H.escudoDur); }
+      else this.aplicarEfecto(p, 'escudo', { t: H.escudoDur, v: v2, max: v2, de: p.id });
+      this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'ESCUDO +' + v2, id: p.id });
+    }
   }
   // Golagore: explota el Núcleo de magma — 50 +50 por segundo y todo el daño crudo recibido repartido entre los enemigos dentro
   explotaGolagore(p) {
@@ -7101,6 +7431,7 @@ class Game {
     if (p.fx.cargaLegios) v *= 1 + HABILIDADES.cargaLegios.n1.vel * this.etapaCarga(p.fx.cargaLegios);   // Legios: +20% por segundo de carga
     if (p.fx.auraRey) v *= 1 + p.fx.auraRey.vel;   // Legios: Por el Rey
     if (p.fx.olaVel) v *= 1 + p.fx.olaVel.v;   // Ora: la ola acelera a los aliados
+    if (p.fx.prisaBambaa) v *= 1 + HABILIDADES.calacaBambaa.prisa;   // Bambaa: la calaca alcanzó a un héroe
     if (p.fx.templeAldor) v *= 1.05;   // Aldor: Temple de enano
     if (p.fx.ascension) v *= 1 + p.fx.ascension.n.vel;   // Lire: Ascensión élfica
     if (p.fx.luzMina) v *= 1 + p.fx.luzMina.vel;   // Jürgen: Lámpara de mina   // Vario: Polvo de estrellas
@@ -7697,6 +8028,7 @@ class Game {
     } else p.cd[slot + 1] = h.cd;
     if (h.ulti) p.ulti = 0;
     this.revelar(p);
+    this.totemCasteo(p);   // Bambaa: el tótem castiga a los enemigos que lanzan habilidades en su radio
     this._enUlti = !!h.ulti;   // Aldor: los proyectiles de ultis atraviesan su muro
     // Lei (Seba 05-11): Flotar — cada 3 habilidades, +5% de velocidad por 4 s (recarga 8 s; mientras recarga no cuentan)
     if (HEROES[p.build.heroe].pasiva === 'flotar' && this.combatTime >= (p.flotarCd || 0)) {
@@ -8025,6 +8357,90 @@ class Game {
         this.emit({ k: 'tajoKiro', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), paso });
         if (paso < 3) { p.kiroPaso = paso; p.kiroVence = this.combatTime + T + h.ventana; p.cd[slot + 1] = T + 0.12; }
         else { p.kiroPaso = 0; p.kiroVence = 0; }
+        break;
+      }
+      case 'munecoVudu': {   // Bambaa: muñeco vudú que camina; maldice al primero que topa o se planta invisible como trampa
+        const { a, t: ob } = this.aim(p, h.alcance);
+        const lejos = Math.max(18, (this._apunte ? this.distApunte(h.alcance) : ob ? Math.min(h.alcance, dist(ob, p)) : h.alcance) - 12);   // (sale 12 adelante)   // Seba (13-11): la distancia se mide con el arrastre
+        p.facing = a; p.disparo = null;
+        const mios = this.zones.filter(z => z.kind === 'munecoVudu' && z.owner === p.id && !z.done);
+        if (mios.length >= h.max) { const v = mios[0]; v.done = true; this.emit({ k: 'munecoSeVa', x: v.x | 0, y: v.y | 0 }); }
+        const enemigosV = () => this.enemigos(p.id, false).filter(e => e.alive && e.kind !== 'muro' && !(e.esUnidad && UNIDADES[e.kind]?.invulnerable));
+        const z = { id: this.nextId++, kind: 'munecoVudu', x: p.x + Math.cos(a) * 12, y: p.y + Math.sin(a) * 12, r: h.radio, t: h.dur + h.alcance / h.vel + 1, total: h.dur + h.alcance / h.vel + 1, owner: p.id, a, w: 0, rec: 0, oculto: 0,
+          tick: (z, dt) => {
+            if (z.w === 0) {   // caminando
+              const st = Math.min(h.vel * dt, lejos - z.rec), nx = z.x + Math.cos(a) * st, ny = z.y + Math.sin(a) * st, q = { x: nx, y: ny };
+              this.clampWall(q);
+              const trabado = Math.hypot(q.x - nx, q.y - ny) > 0.5 || this.cruzaRoca(z.x, z.y, nx, ny);
+              if (!trabado) { z.x = nx; z.y = ny; z.rec += st; }
+              for (const e of enemigosV()) if (dist(e, z) <= h.choque + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) {
+                this.aplicarEfecto(e, 'dot', { t: n.dur, dps: n.dps, src: p.id, k: 'vudu', maldicion: true });
+                this.emit({ k: 'munecoMaldice', x: z.x | 0, y: z.y | 0, x2: e.x | 0, y2: e.y | 0 });
+                z.done = true; return;
+              }
+              if (trabado || z.rec >= lejos - 0.5) { z.w = 1; z.oculto = 1; z.t = h.dur; z.total = h.dur; this.emit({ k: 'munecoPlanta', x: z.x | 0, y: z.y | 0, id: p.id }); }
+            } else {   // plantado (invisible para los enemigos): si alguien entra en el radio, confunde y maldice a todos los del radio
+              const dentro = enemigosV().filter(e => dist(e, z) <= h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR));
+              if (!dentro.some(e => !e.esUnidad)) return;
+              for (const e of dentro) {
+                this.aplicarEfecto(e, 'dot', { t: n.durTrampa, dps: n.dps, src: p.id, k: 'vudu', maldicion: true });
+                if (!e.esUnidad) this.aplicarEfecto(e, 'confusoKiro', { t: h.confusion, bruja: true });
+              }
+              this.emit({ k: 'munecoActiva', x: z.x | 0, y: z.y | 0, r: h.radio });
+              z.done = true;
+            }
+          },
+          fin: (z) => this.emit({ k: 'munecoSeVa', x: z.x | 0, y: z.y | 0 }) };
+        this.zones.push(z);
+        this.emit({ k: 'munecoSale', x: z.x | 0, y: z.y | 0 });
+        break;
+      }
+      case 'calacaBambaa': {   // Bambaa: calaca de humo que persigue (como el alma de Tenebris: arranca lenta y acelera)
+        const { a } = this.aim(p, 600);
+        p.facing = a; p.disparo = null;
+        const A = HABILIDADES.almaErrante;
+        const cand = this.enemigos(p.id, false).filter(e => e.alive && e.kind !== 'muro' && !(e.esUnidad && UNIDADES[e.kind]?.invulnerable) && !(e.fx && e.fx.invisible) && dist(e, p) < 800);
+        const puntaje = (e) => (e.esUnidad ? 1000 : 0) + angDiff(Math.atan2(e.y - p.y, e.x - p.x), a) * 200 + dist(e, p) * 0.3;
+        cand.sort((u, v) => puntaje(u) - puntaje(v));
+        const obj = cand[0] || null;
+        const z = { id: this.nextId++, kind: 'calacaBambaa', x: p.x + Math.cos(a) * 14, y: p.y + Math.sin(a) * 14, r: h.choque, t: h.dur, total: h.dur, owner: p.id, a, v: A.vel,
+          tick: (z, dt) => {
+            if (obj && obj.alive && !(obj.fx && obj.fx.invisible)) {
+              const des = Math.atan2(obj.y - z.y, obj.x - z.x); let d = des - z.a;
+              while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU;
+              z.a += Math.max(-h.giro * dt, Math.min(h.giro * dt, d));
+            }
+            z.v = Math.min(A.velMax, z.v + A.acelera * dt);
+            const nx = z.x + Math.cos(z.a) * z.v * dt, ny = z.y + Math.sin(z.a) * z.v * dt;
+            if (this.cruzaRoca(z.x, z.y, nx, ny)) { z.done = true; this.emit({ k: 'calacaSeVa', x: z.x | 0, y: z.y | 0 }); return; }
+            z.x = nx; z.y = ny;
+            for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              if (dist(e, z) > h.choque + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+              this.damage(e, n.dano, p, { tipo: 'mag', desde: z });
+              if (e.alive) this.aplicarEfecto(e, 'silence', { t: h.silencio });
+              if (!e.esUnidad && p.alive) this.aplicarEfecto(p, 'prisaBambaa', { t: h.prisaDur });
+              this.emit({ k: 'calacaGolpe', x: e.x | 0, y: e.y | 0, id: p.id, h: e.esUnidad ? 0 : 1 });
+              z.done = true; return;
+            }
+          },
+          fin: (z) => this.emit({ k: 'calacaSeVa', x: z.x | 0, y: z.y | 0 }) };
+        this.zones.push(z);
+        this.emit({ k: 'calacaSale', x: z.x | 0, y: z.y | 0, a: +a.toFixed(2) });
+        break;
+      }
+      case 'ancestroOlvidado': {   // Bambaa: canaliza 1 s (aturdido o silencio lo cortan) y levanta el tótem
+        const a0 = this.aim(p, 100).a;
+        this.aplicarEfecto(p, 'canalAncestro', { t: h.canal });
+        const zc = { id: this.nextId++, kind: 'canalAncestro', x: p.x, y: p.y, r: 30, t: h.canal, total: h.canal, owner: p.id, sigue: p,
+          fin: (zz) => {
+            if (zz.cancelado || !p.alive) return;
+            const tp = { x: p.x + Math.cos(a0) * 46, y: p.y + Math.sin(a0) * 46 }; this.clampWall(tp);   // (C) el tótem sale un poco adelante de ella
+            this.zones.push({ id: this.nextId++, kind: 'totemBambaa', x: tp.x, y: tp.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id, n, casteos: {}, golpes: {} });
+            this.emit({ k: 'totemSube', x: tp.x | 0, y: tp.y | 0, r: h.radio });
+          } };
+        this.zones.push(zc); p.fx.canalAncestro.zona = zc;
+        this.emit({ k: 'canalAncestro', x: p.x | 0, y: p.y | 0 });
         break;
       }
       case 'cargaGolagore': {
@@ -9584,6 +10000,9 @@ class Game {
       if (p.fx.cargaGolagore) {   // Golagore: Embestida — al chocar con un enemigo o un muro, o al terminar, golpea en un radio
         const v = p.fx.cargaGolagore, H = HABILIDADES.cargaGolagore, ca = Math.cos(v.a), sa = Math.sin(v.a), R = CONFIG.RADIO_JUGADOR;
         const movio = Math.hypot(p.x - v.px, p.y - v.py), esperado = this.velocidadDe(p) * dt; v.px = p.x; v.py = p.y; v.edad += dt;
+        // Seba (13-11, V7.5): rastro de fuego cada ~18 de recorrido
+        v.rastro = (v.rastro || 0) + movio;
+        if (v.rastro >= 18 || !v.fuegos) { v.rastro = 0; v.fuegos = (v.fuegos || 0) + 1; this.fuegoGolagore(p, p.x, p.y); }
         let fin = v.edad >= H.dur || this.cruzaRoca(p.x, p.y, p.x + ca * (R + 8), p.y + sa * (R + 8)) || (v.edad > 0.15 && movio < esperado * 0.3);
         if (!fin) for (const e of this.enemigosGol(p)) {
           const rr = e.esUnidad ? 10 : R, dx = e.x - p.x, dy = e.y - p.y;
@@ -10222,8 +10641,9 @@ class Game {
         fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
         fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0,
         fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0,
-        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
-        (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0]);   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro && !fx.confusoKiro.bruja ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
+        (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0,
+        (fx.confusoKiro && fx.confusoKiro.bruja ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (fx.dotsInst && Object.values(fx.dotsInst).some(d => d.key === 'vudu') ? 8 : 0)]);   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -10477,6 +10897,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'pozoArena': si = d < 120; break;
       case 'tormentaArena': si = d < 90 && !target.esUnidad; break;
       case 'cargaGolagore': si = d < 300 && d > 60; break;
+      case 'munecoVudu': si = d < 380; break;
+      case 'calacaBambaa': si = d < 600 && !target.esUnidad; break;
+      case 'ancestroOlvidado': si = d < 280 && !target.esUnidad; break;
       case 'hachazoGolagore': si = d < 230 && d > 30; break;
       case 'fortalezaGolagore': si = d < 110 && !target.esUnidad; break;
       case 'olaOra': si = d < 320; break;
@@ -12062,7 +12485,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -12338,7 +12761,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -13105,6 +13528,10 @@ class Renderer {
         const yy = cy - Math.round((1 - k) * 70), xx = cx - Math.round((1 - k) * 20);
         this.linea(xx - 10, yy - 24, xx, yy, PALETA.tinta, 0, 0, 8); this.linea(xx - 10, yy - 24, xx, yy, PALETA.espectro0, 0, 0, 6); this.linea(xx - 6, yy - 14, xx, yy, PALETA.espectro1, 0, 0, 3);
         this.bolaPixel(xx, yy, 7, PALETA.tinta); this.bolaPixel(xx, yy, 6, PALETA.espectro1); this.bolaPixel(xx - 1, yy - 1, 4, PALETA.espectro2); this.calaveraVerde(xx, yy, 2);
+      } else if (z.kind === 'fuegoGolagore') {   // Golagore (Seba 13-11, V7.5): rastro de fuego de la Embestida — brasas en el suelo y 2 llamas que se apagan
+        const vida = 1 - z.prog, g = this.g;
+        g.globalAlpha = 0.35 + 0.3 * vida; this.discDither(cx, cy, r, PALETA.antorcha, 2, z.id % 2); g.globalAlpha = 1;
+        for (let i = 0; i < 2; i++) { const ph = (this.time * 1.6 + i * 0.5 + (z.id % 7) * 0.13) % 1, a = hash(i, z.id, 3) * TAU, d = r * 0.45; this.llama(cx + Math.cos(a) * d, cy + Math.sin(a) * d * 0.7, (0.45 + 0.35 * Math.sin(ph * Math.PI)) * Math.min(1, vida * 2), 'rojo', i + z.id); }
       } else if (z.kind === 'fuegoVerde') {
         // Fatum: piso en llamas verdes (fuegos que se encienden y apagan en distintos puntos del radio)
         const vida = 1 - z.prog;
@@ -13179,6 +13606,34 @@ class Renderer {
         for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + hash(i, 2, z.id)) % 1, b = hash(i, 5, z.id) * TAU, d = r * 0.8 * hash(i, 9, z.id), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9);
           if (ph < 0.6) { const s = 1 + Math.round(ph * 4); g.fillStyle = PALETA.tinta; g.fillRect(x - (s >> 1) - 1, y - (s >> 1) - 1, s + 2, s + 2); g.fillStyle = PALETA.carmesi1; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); g.fillStyle = PALETA.carmesi2; g.fillRect(x - (s >> 1), y - (s >> 1), 1, 1); }
           else this.gota(x, y - Math.round((ph - 0.6) * 20), 1 - (ph - 0.6) / 0.4); }
+      } else if (z.kind === 'munecoVudu') {
+        // Bambaa: muñeco vudú — camina (lo ven todos); plantado solo lo ven los aliados (semitransparente, con su radio)
+        const g = this.g, T = this.time;
+        if (z.w === 0) {
+          g.globalAlpha = 0.35; g.fillStyle = PALETA.tinta; g.fillRect(cx - 5, cy + 4, 11, 2); g.globalAlpha = 1;
+          const s = sprBambaa(Math.floor(T * 6) % 2 ? 'muneco1' : 'muneco0'); g.drawImage(s, cx - (s.width >> 1), cy + 5 - s.height - (Math.floor(T * 6) % 2));
+          if (Math.floor(T * 3) % 2) { g.fillStyle = PALETA.vacio2; g.fillRect(cx - 7, cy - 10, 1, 1); g.fillRect(cx + 6, cy - 6, 1, 1); }
+        } else if (this.esAliadoDe(z.owner)) {
+          g.globalAlpha = 0.25; this.discDither(cx, cy, r, PALETA.vacio1, 3, Math.floor(T * 3)); g.globalAlpha = 0.55;
+          for (let i = 0; i < 16; i++) { const b = i * TAU / 16 + T * 0.4; g.fillStyle = PALETA.vacio2; g.fillRect(Math.round(cx + Math.cos(b) * r), Math.round(cy + Math.sin(b) * r), 2, 1); }
+          const s = sprBambaa('muneco0'); g.drawImage(s, cx - (s.width >> 1), cy + 4 - s.height);
+          g.globalAlpha = 1;
+        }
+      } else if (z.kind === 'canalAncestro') {
+        // Bambaa canaliza la ulti: círculo rúnico bajo sus pies que se dibuja y chispas moradas que suben
+        const T = this.time, k = z.prog;
+        this.circuloRunico(cx, cy, Math.round(10 + 16 * k), T * 2, PALETA.vacio2, 0.6 + 0.4 * k);
+        for (let i = 0; i < 6; i++) { const ph = (T * 1.5 + i / 6) % 1, b = i * TAU / 6; this.g.globalAlpha = 1 - ph; this.g.fillStyle = i % 2 ? PALETA.magia : PALETA.vacio2; this.g.fillRect(Math.round(cx + Math.cos(b) * 18), Math.round(cy + Math.sin(b) * 12 - ph * 26), 1, 3); }
+        this.g.globalAlpha = 1;
+      } else if (z.kind === 'totemBambaa') {
+        // Ancestro olvidado: el radio (lo ven todos) — tramado morado, borde de runas que gira, pulsos hacia afuera y el círculo rúnico al pie del tótem
+        const g = this.g, T = this.time, k = z.prog;
+        g.globalAlpha = 0.16; this.discDither(cx, cy, r, PALETA.vacio1, 3, 0); g.globalAlpha = 1;
+        this.ring(cx, cy, r, PALETA.tinta, 0.9, 3); this.ring(cx, cy, r, Math.floor(T * 4) % 2 ? PALETA.vacio2 : PALETA.magia, 0.9, 1);
+        for (let i = 0; i < 24; i++) { const b = i * TAU / 24 + T * 0.25, x = Math.round(cx + Math.cos(b) * (r - 5)), y = Math.round(cy + Math.sin(b) * (r - 5)); g.fillStyle = i % 3 ? PALETA.vacio2 : PALETA.magia; g.fillRect(x, y - 1, 1, 3); if (i % 3 === 0) g.fillRect(x - 1, y, 3, 1); }
+        const pu = (T * 0.7) % 1; this.ring(cx, cy, Math.round(20 + (r - 20) * pu), PALETA.vacio2, 0.22 * (1 - pu), 1);
+        this.circuloRunico(cx, cy + 2, 26, -T * 0.8, PALETA.vacio2, 0.9);
+        if (k > 0.8 && Math.floor(T * 8) % 2) this.ring(cx, cy, r, PALETA.pergamino2, 0.5, 1);   // por terminar
       } else if (z.kind === 'marcaSaltoGol') {
         // Golagore: dónde caerá el salto (lo ven todos) — radio del hachazo y el centro que aturde; un anillo se cierra hasta la caída
         const g = this.g, T = this.time, rc = Math.round((z.w || 40) * ESC), on = Math.floor(T * 10) % 2;
@@ -13495,6 +13950,31 @@ class Renderer {
     }
     for (const p of view.projs) this.drawProj(p);
     // Bombas en parábola (Biteroi)
+    for (const z of view.zones) {   // Bambaa: tótem y calaca (por encima del suelo)
+      const cx = this.gx(z.x), cy = this.gy(z.y), g = this.g, T = this.time;
+      if (z.kind === 'totemBambaa') {
+        const s = sprBambaa('totem'), sube = Math.min(1, z.prog * 10 / 0.6), h = Math.round(s.height * (0.3 + 0.7 * sube));   // sale del suelo
+        g.drawImage(s, 0, 0, s.width, h, cx - (s.width >> 1), cy + 4 - h, s.width, h);
+        // ojos que laten y humo morado que sale de la cima y entre los pisos
+        const k = (Math.sin(T * 4) + 1) / 2;
+        g.globalAlpha = 0.35 + 0.5 * k; for (const yy of [8, 18, 29, 39]) { if (yy > h) continue; g.fillStyle = PALETA.magia; g.fillRect(cx - 6, cy + 4 - h + yy, 3, 1); g.fillRect(cx + 4, cy + 4 - h + yy, 3, 1); } g.globalAlpha = 1;
+        for (let i = 0; i < 6; i++) { const ph = (T * 0.6 + i / 6) % 1, x = cx + Math.round(Math.sin(T * 1.5 + i * 2) * 4) + (i % 2 ? 4 : -4), y = cy + 4 - h - Math.round(ph * 22); g.globalAlpha = 0.8 * (1 - ph); this.humoMorado(x, y, 3 - Math.round(ph * 2), i); }
+        g.globalAlpha = 1;
+      } else if (z.kind === 'calacaBambaa') {
+        // calaca de humo morado: estela de humo, jirones alrededor y la calavera que mira hacia donde va
+        this.calacaTrazo = this.calacaTrazo || new Map();
+        let tr = this.calacaTrazo.get(z.id); if (!tr) { tr = []; this.calacaTrazo.set(z.id, tr); }
+        tr.push({ x: z.x, y: z.y, t: T }); while (tr.length && T - tr[0].t > 0.5) tr.shift();
+        for (let i = 0; i < tr.length; i += 2) { const q = tr[i], e = (T - q.t) / 0.5; g.globalAlpha = 0.8 * (1 - e); this.humoMorado(this.gx(q.x) + Math.round(Math.sin(i + T * 3) * 2), this.gy(q.y) - 10 - Math.round(e * 6), Math.round(4 - e * 3), i); }
+        g.globalAlpha = 1;
+        const s = sprBambaa('calaca'), y = cy - 12 + Math.round(Math.sin(T * 8) * 1.5), izq = Math.cos(z.a) < 0;
+        for (let i = 0; i < 4; i++) { const b = T * 6 + i * TAU / 4; g.globalAlpha = 0.6; this.humoMorado(cx + Math.cos(b) * 8, y + Math.sin(b) * 5, 2, i); }
+        g.globalAlpha = 1;
+        if (izq && !this._calacaI) this._calacaI = espejo(s);
+        g.drawImage(izq ? this._calacaI : s, cx - (s.width >> 1), y - (s.height >> 1));
+      }
+    }
+    if (this.calacaTrazo && this.calacaTrazo.size > 20) this.calacaTrazo.clear();
     for (const z of view.zones) {
       if (z.kind !== 'bomba') continue;
       const k = z.prog, x = z.ox + (z.x - z.ox) * k, y = z.oy + (z.y - z.oy) * k;
@@ -13679,8 +14159,9 @@ class Renderer {
       this.llamasAzules(cx, cy + 4 - Math.round(alturaSalto * 0.5), 3, 8);
     }
     const esLegios = meta.build.heroe === 'legios' && gigante === 1;
-    const esGol = meta.build.heroe === 'golagore' && gigante === 1;   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : 0);
+    const esGol = meta.build.heroe === 'golagore' && gigante === 1;
+    const esBam = meta.build.heroe === 'bambaa' && gigante === 1;   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 10 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -13890,7 +14371,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios || esGol) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol || esBam) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -13944,6 +14425,7 @@ class Renderer {
       this.lanzaLegios(mx, my, la, ext, golpe, p.lc && (p.lc - 1) / 10 >= 3);
     }
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
+    else if (esBam) this.dibujaBambaa(p, cx, cy, izq, moviendo, sube);
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
     if (p.f2 & 134217728) { this.llama(cx - 4, cy + 7, 0.75, 'rojo', 1); this.llama(cx + 4, cy + 7, 0.75, 'rojo', 3); }   // Ash cargando la patada: pies en llamas
@@ -14017,6 +14499,22 @@ class Renderer {
       for (let i = 0; i < 6; i++) { const b = -T * 9 + i * TAU / 6; g.fillStyle = i % 2 ? CHAR.m : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * 15), Math.round(cy - 25 + Math.sin(b) * 5), 1, 1); }   // granos que giran
       const q2 = texto('?', CHAR.P); g.drawImage(q2, cx - (q2.width >> 1), cy - 46 + Math.round(Math.sin(T * 6) * 1));
       g.fillStyle = PALETA.tinta; g.fillRect(cx - 9, cy + 6, 19, 3); g.fillStyle = CHAR.P; g.fillRect(cx - 8, cy + 7, 6, 1); g.fillRect(cx + 3, cy + 7, 6, 1); g.fillRect(cx - 8, cy + 6, 1, 3); g.fillRect(cx + 8, cy + 6, 1, 3);   // ⇄ bajo los pies
+    }
+    if (p.bb & 1) {   // confundido por el muñeco vudú: estrellas moradas que giran sobre la cabeza (como el aturdido) y un «?»
+      const T = this.time;
+      for (let i = 0; i < 4; i++) {
+        const b = T * 6 + i * TAU / 4, x = Math.round(cx + Math.cos(b) * 11), y = Math.round(cy - 25 + Math.sin(b) * 4);
+        g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 1, 5, 3); g.fillRect(x - 1, y - 2, 3, 5);
+        g.fillStyle = i % 2 ? PALETA.magia : PALETA.vacio2; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3); g.fillStyle = PALETA.pergamino2; g.fillRect(x, y, 1, 1);
+      }
+      const tq = texto('?', PALETA.magia); g.drawImage(tq, cx - (tq.width >> 1), cy - 36 + (Math.floor(T * 4) % 2));
+    }
+    if (p.bb & 8) {   // maldito por el vudú: tres alfileres que giran sobre la cabeza y gotas moradas
+      const T = this.time;
+      for (let i = 0; i < 3; i++) { const b = -T * 3 + i * TAU / 3, x = Math.round(cx + Math.cos(b) * 8), y = Math.round(cy - 22 + Math.sin(b) * 3);
+        g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 4, 3, 7); g.fillStyle = PALETA.piedra3; g.fillRect(x, y - 2, 1, 4); g.fillStyle = PALETA.carmesi2; g.fillRect(x, y - 3, 1, 1); }
+      for (let i = 0; i < 2; i++) { const ph = (T * 1.3 + i * 0.5) % 1; g.globalAlpha = 1 - ph; g.fillStyle = PALETA.vacio2; g.fillRect(cx - 4 + i * 8, cy - 14 + Math.round(ph * 10), 1, 2); }
+      g.globalAlpha = 1;
     }
     if (p.kb & 128) {   // arenado por el 1.er golpe de la Tormenta (lento 5 s): nubecita de arena sobre la cabeza que suelta granos
       const T = this.time;
@@ -14542,6 +15040,52 @@ class Renderer {
     if (ch < 2) { const [x, y] = B[4]; const sy = y - 2 - ch * 2; this.g.fillStyle = PALETA.tinta; this.g.fillRect(x - 1, sy - 1, 3, 3); this.g.fillStyle = P[2]; this.g.fillRect(x, sy, 1, 1); }
   }
   // n llamas chicas repartidas en un ancho (compatibilidad con los usos de antes)
+  esAliadoDe(id) { return id === this._myId || !!(this.equipos && this.equipos[id] && this.equipos[id] === this.equipos[this._myId]); }
+  // Bambaa: círculo rúnico (anillos, estrella de cinco puntas y runas), como el de la referencia
+  circuloRunico(cx, cy, r, rot, col = PALETA.vacio2, a = 1) {
+    const g = this.g; g.globalAlpha = a;
+    this.ring(cx, cy, r, PALETA.tinta, 1, 3); this.ring(cx, cy, r, col, 1, 1); this.ring(cx, cy, Math.max(2, r - 4), PALETA.vacio1, 1, 1);
+    const P = []; for (let i = 0; i < 5; i++) { const b = rot + i * TAU / 5 - Math.PI / 2; P.push([Math.round(cx + Math.cos(b) * (r - 4)), Math.round(cy + Math.sin(b) * (r - 4) * 0.9)]); }
+    for (let i = 0; i < 5; i++) { const [x0, y0] = P[i], [x1, y1] = P[(i + 2) % 5]; this.linea(x0, y0, x1, y1, PALETA.magia, 0, 0, 1); }
+    for (let i = 0; i < 10; i++) { const b = -rot * 0.7 + i * TAU / 10, x = Math.round(cx + Math.cos(b) * (r + 3)), y = Math.round(cy + Math.sin(b) * (r + 3) * 0.95); g.fillStyle = i % 2 ? PALETA.magia : PALETA.vacio2; g.fillRect(x, y - 1, 1, 3); g.fillRect(x - 1, y, 3, 1); }
+    g.globalAlpha = 1;
+  }
+  // Bambaa: bocanada de humo morado (capas sin contorno duro, borde tramado)
+  humoMorado(x, y, r, seed = 0) {
+    const g = this.g; x = Math.round(x); y = Math.round(y); r = Math.max(1, Math.round(r));
+    this.bolaPixel(x, y + 1, r, PALETA.vacio0); this.bolaPixel(x, y, Math.max(1, r - 1), PALETA.vacio1);
+    if (r >= 3) this.bolaPixel(x - 1, y - 1, r - 2, PALETA.vacio2);
+    if (r >= 4) { g.fillStyle = PALETA.magia; g.fillRect(x - 2, y - r + 2, 2, 1); }
+  }
+  // Bambaa (Seba 13-11): «que el modelo quede bueno» — bruja encorvada de la referencia; el cuerpo, el bastón y el cuervo no se mueven (solo los pies),
+  // ojo morado que titila, cuervo que pestañea y gira la cabeza, brebaje verde que burbujea en la olla y humo morado que sale del bastón
+  dibujaBambaa(p, cx, cy, izq, moviendo, sube) {
+    const g = this.g, T = this.time;
+    let fr = 0;
+    if (moviendo) fr = [1, 0, 2, 0][Math.floor(T * 5) % 4];
+    const lx = cx - 16, ly = cy + 8 - 33 - sube, X = (x) => lx + (izq ? 31 - x : x);
+    g.drawImage(bambaaGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    // ojo que brilla
+    const fl = Math.floor(T * 7 + p.id.length) % 5;
+    g.fillStyle = fl === 0 ? PALETA.pergamino2 : PALETA.magia; g.fillRect(X(15), ly + 11, 1, 1);
+    g.globalAlpha = 0.35 + 0.2 * Math.sin(T * 5); g.fillStyle = PALETA.vacio2; g.fillRect(X(15) - 1, ly + 10, 3, 3); g.globalAlpha = 1;
+    g.fillStyle = fl === 0 ? PALETA.pergamino2 : PALETA.magia; g.fillRect(X(15), ly + 11, 1, 1);
+    // cuervo: pestañea y a ratos mira para atrás
+    const c = (T + p.id.length * 0.7) % 4;
+    if (c < 0.15) { g.fillStyle = PALETA.noche; g.fillRect(X(27), ly + 2, 1, 1); }
+    else if (c > 2.6 && c < 3.2) { g.fillStyle = PALETA.noche; g.fillRect(X(27), ly + 2, 1, 1); g.fillRect(X(28), ly + 2, 2, 1); g.fillStyle = PALETA.piedra2; g.fillRect(X(24), ly + 2, 1, 1); g.fillStyle = PALETA.vacio2; g.fillRect(X(25), ly + 2, 1, 1); }
+    // brebaje que burbujea en la olla
+    for (let i = 0; i < 3; i++) { const ph = (T * 0.9 + i * 0.33) % 1, x = X(4 + i) + Math.round(Math.sin(T * 4 + i) * 0.6), y = ly + 19 - Math.round(ph * 7); g.globalAlpha = 1 - ph; g.fillStyle = ph < 0.3 ? PALETA.bosque2 : PALETA.bosque1; g.fillRect(x, y, 1, 1); }
+    g.globalAlpha = 1;
+    // humo morado que sale de la punta del bastón
+    for (let i = 0; i < 3; i++) { const ph = (T * 0.5 + i * 0.33) % 1, x = X(24) + Math.round(Math.sin(T * 2 + i * 2) * 2), y = ly + 6 - Math.round(ph * 10); g.globalAlpha = 0.7 * (1 - ph); g.fillStyle = i % 2 ? PALETA.vacio2 : PALETA.magia; g.fillRect(x, y, 1 + (ph < 0.5 ? 1 : 0), 1); }
+    g.globalAlpha = 1;
+    if (p.bb & 2) {   // prisa de la calaca: estela de humo morado detrás de los pies
+      const dir = izq ? -1 : 1;
+      for (let i = 0; i < 4; i++) { const ph = (T * 4 + i * 0.25) % 1; g.globalAlpha = 0.8 * (1 - ph); this.humoMorado(cx - dir * (8 + ph * 16), cy + 5 - i, 2 - (ph > 0.5 ? 1 : 0), i); }
+      g.globalAlpha = 1;
+    }
+  }
   // Golagore: trozo de roca volcánica (contorno, roca oscura, brillo de piedra y una veta de magma)
   rocaGol(x, y, s = 2, brasa = true) {
     const g = this.g; x = Math.round(x); y = Math.round(y);
@@ -15248,7 +15792,7 @@ class Renderer {
     else s = otro(p.spr, Math.floor(this.time * 8));
     // Estela: puntos detrás del proyectil, en el color de su tipo
     const col = { cartaVario: PALETA.magenta2, corazonVario: PALETA.magenta2, corazonVarioChico: PALETA.magenta2, flecha: PALETA.pergamino2, flechaBosque: PALETA.bosque2, flechaElfica: PALETA.oro2, virote: PALETA.pergamino1, sombra: PALETA.magia,
-      orbeFuego: PALETA.antorcha, orbeSangre: PALETA.carmesi2, orbeAgua: PALETA.marea2, bolaFuego: PALETA.antorcha, piedra: PALETA.piedra3, rocaGrande: PALETA.piedra3, rayoBola: PALETA.acero2, rayoBolaCargada: PALETA.oro2, trueno: PALETA.acero2, telaGancho: PALETA.pergamino2, petaloGaia: PALETA.magia, ganchoShai: PALETA.acero2, discoGaia: PALETA.carmesi2, grillete: PALETA.antorcha }[p.spr] || PALETA.pergamino2;
+      orbeBambaa: PALETA.magia, orbeFuego: PALETA.antorcha, orbeSangre: PALETA.carmesi2, orbeAgua: PALETA.marea2, bolaFuego: PALETA.antorcha, piedra: PALETA.piedra3, rocaGrande: PALETA.piedra3, rayoBola: PALETA.acero2, rayoBolaCargada: PALETA.oro2, trueno: PALETA.acero2, telaGancho: PALETA.pergamino2, petaloGaia: PALETA.magia, ganchoShai: PALETA.acero2, discoGaia: PALETA.carmesi2, grillete: PALETA.antorcha }[p.spr] || PALETA.pergamino2;
     const ca = Math.cos(p.a), sa = Math.sin(p.a);
     for (let i = 1; i <= 5; i++) {
       if (i > 3 && (Math.floor(this.time * 20) + i) % 2) continue;
@@ -15846,6 +16390,65 @@ class Renderer {
         }
         case 'alzaHachazo': {   // levanta el hacha: chispas de magma que suben
           for (let i = 0; i < 6; i++) { const x = cx - 10 + i * 4, y = cy - 20 - Math.round(t * 14) - (i % 2) * 3; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, y, 1, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'munecoSale': case 'munecoSeVa': case 'calacaSeVa': {   // bocanada de humo morado
+          g.globalAlpha = 1 - t; for (let i = 0; i < 5; i++) { const b = i * TAU / 5, d = 3 + t * 10; this.humoMorado(cx + Math.cos(b) * d, cy - 6 + Math.sin(b) * d * 0.6 - t * 6, 3 - Math.round(t * 2), i); } g.globalAlpha = 1;
+          break;
+        }
+        case 'munecoPlanta': {   // el muñeco se planta (solo lo ven los aliados): se hunde un poco y suelta humo
+          if (!this.esAliadoDe(f.id)) break;
+          g.globalAlpha = 1 - t; for (let i = 0; i < 4; i++) { const b = i * TAU / 4 + 0.4; this.humoMorado(cx + Math.cos(b) * (4 + t * 8), cy + Math.sin(b) * 3, 2, i); } g.globalAlpha = 1;
+          break;
+        }
+        case 'munecoMaldice': {   // el muñeco topa a alguien: se deshace en humo y le clava alfileres
+          const x2 = this.gx(f.x2), y2 = this.gy(f.y2);
+          g.globalAlpha = 1 - t;
+          for (let i = 0; i < 5; i++) { const b = i * TAU / 5 + t * 3; this.humoMorado(x2 + Math.cos(b) * (6 + t * 6), y2 - 12 + Math.sin(b) * 4 - t * 8, 3, i); }
+          for (let i = 0; i < 4; i++) { const b = -Math.PI / 2 + (i - 1.5) * 0.5, d = 14 - Math.min(1, t * 3) * 8, x = Math.round(x2 + Math.cos(b) * d), y = Math.round(y2 - 10 + Math.sin(b) * d); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 3, 5); g.fillStyle = PALETA.piedra3; g.fillRect(x, y, 1, 3); g.fillStyle = PALETA.carmesi2; g.fillRect(x, y - 1, 1, 1); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'munecoActiva': {   // la trampa se activa: el muñeco revienta en una onda morada del radio con alfileres y retazos que vuelan
+          const R = Math.round(f.r * ESC), e = 1 - Math.pow(1 - Math.min(1, t * 2.2), 3), rr = Math.round(6 + (R - 6) * e);
+          if (t < 0.25) { g.globalAlpha = 1 - t * 4; this.bolaPixel(cx, cy - 6, Math.round(10 * (1 - t)), PALETA.vacio2); this.bolaPixel(cx, cy - 6, Math.round(5 * (1 - t)), PALETA.magia); g.globalAlpha = 1; }
+          g.globalAlpha = 1 - t;
+          this.ring(cx, cy, rr, PALETA.tinta, 1, 3); this.ring(cx, cy, rr, PALETA.vacio2, 1, 1); this.ring(cx, cy, Math.max(2, rr - 4), PALETA.magia, 0.5, 1);
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + 0.2, d = 4 + e * R * 0.8; this.humoMorado(cx + Math.cos(b) * d, cy - 4 + Math.sin(b) * d * 0.8, 3 - Math.round(t * 2), i); }
+          for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = t * 22, x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy - 10 + Math.sin(b) * d - Math.sin(Math.PI * t) * 10); g.fillStyle = i % 2 ? PALETA.pergamino0 : PALETA.madera2; g.fillRect(x, y, 2, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'calacaSale': {   // sale la calaca: humo hacia adelante
+          const ca = Math.cos(f.a), sa = Math.sin(f.a); g.globalAlpha = 1 - t;
+          for (let i = 0; i < 4; i++) this.humoMorado(cx + ca * (4 + i * 4 + t * 8), cy - 10 + sa * (4 + i * 4), 3 - (i >> 1), i);
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'calacaGolpe': {   // la calaca revienta sobre el enemigo: calavera que se agranda y se deshace en humo, y el silencio
+          const s = sprBambaa('calaca'), k = 1 + t * 0.8; g.globalAlpha = 1 - t;
+          g.drawImage(s, Math.round(cx - s.width * k / 2), Math.round(cy - 14 - s.height * k / 2 - t * 8), Math.round(s.width * k), Math.round(s.height * k));
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8, d = 6 + t * 16; this.humoMorado(cx + Math.cos(b) * d, cy - 12 + Math.sin(b) * d * 0.7, 3 - Math.round(t * 2), i); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'canalAncestro': {   // empieza a invocar: destello morado
+          this.ring(cx, cy - 10, Math.round(4 + t * 14), PALETA.magia, 1 - t, 1);
+          break;
+        }
+        case 'totemSube': {   // sale el tótem: onda morada que recorre todo el radio y tierra que salta
+          const R = Math.round(f.r * ESC), e = 1 - Math.pow(1 - Math.min(1, t * 1.5), 2), rr = Math.round(10 + (R - 10) * e);
+          g.globalAlpha = 1 - t; this.ring(cx, cy, rr, PALETA.tinta, 1, 3); this.ring(cx, cy, rr, PALETA.vacio2, 1, 1); this.ring(cx, cy, Math.max(2, rr - 4), PALETA.magia, 0.6, 1); g.globalAlpha = 1;
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8, d = 10 + t * 18; g.fillStyle = i % 2 ? PALETA.madera1 : PALETA.madera0; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.6 - Math.sin(Math.PI * t) * 12), 2, 2); }
+          break;
+        }
+        case 'rayoTotem': {   // rayo morado del tótem al enemigo: nunca falla — zigzag que llega y golpea
+          const x0 = cx, y0 = cy - 44, x1 = this.gx(f.x2), y1 = this.gy(f.y2) - 10, e = Math.min(1, t * 5), xe = Math.round(x0 + (x1 - x0) * e), ye = Math.round(y0 + (y1 - y0) * e), sd = Math.floor(this.time * 30);
+          g.globalAlpha = t < 0.6 ? 1 : (1 - t) / 0.4;
+          this.linea(x0, y0, xe, ye, PALETA.tinta, 5, sd, 4); this.linea(x0, y0, xe, ye, PALETA.vacio2, 5, sd, 2); this.linea(x0, y0, xe, ye, PALETA.pergamino2, 5, sd, 1);
+          this.bolaPixel(x0, y0, 3, PALETA.magia);
+          if (e >= 1) { this.bolaPixel(x1, y1, Math.round(6 * (1 - t)) + 1, PALETA.vacio2); this.bolaPixel(x1, y1, Math.round(3 * (1 - t)) + 1, PALETA.pergamino2); for (let i = 0; i < 6; i++) { const b = i * TAU / 6 + t * 4, d = 4 + t * 10; g.fillStyle = PALETA.magia; g.fillRect(Math.round(x1 + Math.cos(b) * d), Math.round(y1 + Math.sin(b) * d), 1, 1); } }
           g.globalAlpha = 1;
           break;
         }
@@ -17864,6 +18467,16 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V7.5', f: '13-11-2026', n: [
+    'Nuevo héroe: Bambaa (Errantes), bruja del vudú con su olla, su cuervo y su bastón.',
+    'Bambaa — Amuletos viejos (pasiva): los efectos de control enemigos le duran 5% menos.',
+    'Bambaa — Muñeco vudú: camina hasta el punto elegido; si topa a un enemigo, lo maldice (30 por segundo por 2 s). Si no, se planta invisible por 30 s: el primer enemigo que entra confunde y maldice a todos los del radio por 3 s. 2 cargas, máximo 2 en el mapa.',
+    'Bambaa — Calaca de humo: persigue al enemigo más cercano a donde apuntas hasta 3 s; 100 de daño y 2 s de silencio. Si alcanza a un héroe, Bambaa gana +25% de velocidad por 2 s.',
+    'Bambaa — Ancestro olvidado (ulti): tras 1 s levanta un tótem por 10 s con un radio enorme. Cada habilidad que lance un enemigo dentro recibe un rayo (100, +75 por cada habilidad anterior); cada habilidad aliada que alcanza a un enemigo dentro, otro rayo (25, +25 por vez).',
+    'Golagore: nueva cabeza.',
+    'Golagore, Embestida ígnea: deja un rastro de fuego que dura 3 s; cada segundo que un enemigo lo pisa recibe 25. Si lo aturden durante la carga, recupera la mitad de la recarga.',
+    'Golagore, Hachazo volcánico: por cada enemigo aturdido con el centro gana 50 de escudo por 4 s (se suma al de su pasiva).',
+  ] },
   { v: 'V7.4', f: '13-11-2026', n: [
     'Kiro, Pozo de arena: se quitan las 4 líneas del remolino que se juntaban en el centro.',
   ] },
