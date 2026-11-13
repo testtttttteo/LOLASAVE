@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V6.7</title>
+<title>LOLA V6.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1018,7 +1018,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V6.7</p>
+        <p class="sub version">LOLA V6.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -6837,7 +6837,7 @@ class Game {
       x: p.x + Math.cos(a) * start, y: p.y + Math.sin(a) * start,
       vx: Math.cos(a) * o.vel, vy: Math.sin(a) * o.vel,
       left: o.alcance, radio: o.radio || 5, dmg: o.dmg, dmgInv: o.dmgInv, tipo: o.tipo || 'fis', spr: o.spr,
-      efecto: o.efecto || null, basico: !!o.basico, deUlti: !!(o.deUlti || this._enUlti), soloJugadores: !!o.soloJugadores, atraviesa: !!o.atraviesa, sinEmpuje: !!o.sinEmpuje, extra: o.extra, src: p.esUnidad ? p : null,
+      efecto: o.efecto || null, basico: !!o.basico, deUlti: !!(o.deUlti || this._enUlti || (p.esUnidad && p.deUlti)),   /* Seba (12-11, V6.8): lo que disparan las invocaciones de ultis (torreta de Jürgen, dragón de Maidas…) cuenta como de ulti */ soloJugadores: !!o.soloJugadores, atraviesa: !!o.atraviesa, sinEmpuje: !!o.sinEmpuje, extra: o.extra, src: p.esUnidad ? p : null,
     });
     // Seba (10-11, V5.7): si se dispara pegado al muro de Aldor, el proyectil nace del lado del tirador (no del otro lado de la roca)
     const pr = this.projectiles[this.projectiles.length - 1], f = this.frenaMuroAldor({ ...pr, x: p.x, y: p.y }, pr.x, pr.y);
@@ -7073,6 +7073,7 @@ class Game {
       x, y, hp: vida, maxHp: vida, cd: 0.4, t: 0, dur: extra.dur || d.duracion || 0,
       facing: p.facing, fx: {}, kbx: 0, kby: 0, ...extra,
     };
+    if (this._enUlti) u.deUlti = true;   // Seba (12-11, V6.8): invocación de una ulti (sus disparos no los reduce la burbuja de Ora ni los frena el muro de Aldor)
     this.units.push(u);
     this.emit({ k: 'poof', x: x | 0, y: y | 0, c: kind === 'muro' ? 'hielo' : 'magia' });
     return u;
@@ -8547,7 +8548,7 @@ class Game {
       u.cd = H.cada; u.lado = !u.lado;
       const ca = Math.cos(u.facing), sa = Math.sin(u.facing), ld = u.lado ? 4 : -4;
       this.emit({ k: 'chispaT', x: u.x | 0, y: u.y | 0, a: +u.facing.toFixed(2), l: u.lado ? 1 : 0, u: u.id });
-      this.spawnProj({ x: u.x - sa * ld, y: u.y + ca * ld - 10, id: own.id }, u.facing + (u.lado ? 0.03 : -0.03), { vel: 620, alcance: H.rango + 20, radio: 5, dmg: u.n.dano, tipo: 'mag', spr: 'brasa', sinEmpuje: true, efecto: 'brasaTorreta', extra: u });
+      this.spawnProj({ x: u.x - sa * ld, y: u.y + ca * ld - 10, id: own.id }, u.facing + (u.lado ? 0.03 : -0.03), { vel: 620, alcance: H.rango + 20, radio: 5, dmg: u.n.dano, tipo: 'mag', spr: 'brasa', sinEmpuje: true, deUlti: true, efecto: 'brasaTorreta', extra: u });
     }
     // Rasho: nube de tormenta que avanza y descarga cada 0,9 s (solo a enemigos)
     for (const u of this.units) {
@@ -16352,6 +16353,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V6.8', f: '12-11-2026', n: [
+    'Ora, Burbuja de marea: los disparos de invocaciones de ultis (las brasas de la torreta de Jürgen) ya no se reducen, como el resto de lo que viene de ultis. Las invocaciones que no son de ulti (la torreta de Lire, por ejemplo) sí se reducen. Lo que se dispara desde dentro de la burbuja también se reduce.',
+    'Por la misma regla, las brasas de la torreta de Jürgen ahora atraviesan el muro de Aldor (todo lo de ultis lo atraviesa).',
+  ] },
   { v: 'V6.7', f: '12-11-2026', n: [
     'Nuevo héroe: Ora (Errantes, control · apoyo), oráculo de las mareas. Básico: orbe de agua a distancia.',
     'Ora — Gotas suspendidas (pasiva): cada 3 básicos que aciertan, se cura 15 y cura 15 a un aliado cercano.',
