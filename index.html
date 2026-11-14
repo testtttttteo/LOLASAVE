@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V8.9</title>
+<title>LOLA V9.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V8.9</p>
+        <p class="sub version">LOLA V9.0</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -11710,25 +11710,10 @@ Object.assign(Game.prototype, {
 const PREFIJO = 'lola-juego-v2-';
 const LETRAS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 
-// Seba (14-11, V8.9): las salas solo andaban en el mismo wifi. Entre redes distintas (datos móviles, routers con NAT estricto) la
-// conexión directa falla y hace falta un servidor TURN que retransmita. Probamos varios STUN y TURN públicos gratis; si se llena
-// TURN_PROPIO con credenciales propias (p. ej. cuenta gratis de Metered u otro proveedor), se usan primero.
-const TURN_PROPIO = [];   // ej.: { urls: ['turn:xxx.metered.live:80', 'turns:xxx.metered.live:443?transport=tcp'], username: '...', credential: '...' }
-function servidoresIce() {
-  const q = new URLSearchParams(location.search), extra = [];
-  if (q.get('turn')) extra.push({ urls: q.get('turn').split(','), username: q.get('turnuser') || '', credential: q.get('turnpass') || '' });
-  return [
-    ...extra, ...TURN_PROPIO,
-    { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun.cloudflare.com:3478'] },
-    { urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp'], username: 'openrelayproject', credential: 'openrelayproject' },
-    { urls: ['turn:eu-0.turn.peerjs.com:3478', 'turn:us-0.turn.peerjs.com:3478'], username: 'peerjs', credential: 'peerjsp' },
-  ];
-}
-
 function opcionesPeer() {
   // Permite usar un servidor PeerJS propio con ?peerhost=...&peerport=...&peerpath=...
   const q = new URLSearchParams(location.search);
-  const o = { debug: 1, config: { iceServers: servidoresIce(), sdpSemantics: 'unified-plan' } };
+  const o = { debug: 1 };
   if (q.get('peerhost')) {
     o.host = q.get('peerhost');
     o.port = +(q.get('peerport') || 443);
@@ -11862,9 +11847,8 @@ class ClientSession {
         if (!listo) { listo = true; this.cerrado = true; peer.destroy(); reject(new Error(txt)); }
         else this.terminar(txt);
       };
-      const timeout = setTimeout(() => fallo('No se pudo conectar con el anfitrión. Si el código es correcto, puede que sus redes no se dejen conectar directo (prueben otra red o datos móviles).'), 25000);   // V8.9: 15 → 25 s (el TURN tarda más)
+      const timeout = setTimeout(() => fallo('La conexión tardó demasiado. Revisa el código e inténtalo de nuevo.'), 15000);
       peer.on('error', (err) => fallo(traducirError(err)));
-      peer.on('disconnected', () => { if (!peer.destroyed && !this.cerrado) peer.reconnect(); });
       peer.on('open', () => {
         const conn = peer.connect(PREFIJO + code.toUpperCase(), { reliable: true, serialization: 'json' });
         this.conn = conn;
@@ -11886,7 +11870,6 @@ class ClientSession {
           this.h.onMessage(msg);
         });
         conn.on('close', () => { clearTimeout(timeout); fallo('Se perdió la conexión con el anfitrión.'); });
-        conn.on('error', () => { clearTimeout(timeout); fallo('No se pudo abrir la conexión con el anfitrión (red bloqueada).'); });
       });
     });
   }
@@ -18561,9 +18544,8 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
-  { v: 'V8.9', f: '14-11-2026', n: [
-    'Salas online: ahora usan servidores de retransmisión (TURN) para conectar jugadores en redes distintas, no solo en el mismo wifi.',
-    'Salas online: el invitado espera hasta 25 s y el mensaje de error explica mejor qué falló.',
+  { v: 'V9.0', f: '14-11-2026', n: [
+    'Salas online: se quitan los servidores públicos de retransmisión de la V8.9; la conexión vuelve a ser como en la V8.8.',
   ] },
   { v: 'V8.8', f: '13-11-2026', n: [
     'Bambaa, Muñeco vudú: dura 15 s en vez de 30 (sigue invisible y con 2 cargas).',
