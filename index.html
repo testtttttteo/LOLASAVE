@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.0</title>
+<title>LOLA V9.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.0</p>
+        <p class="sub version">LOLA V9.1</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1614,6 +1614,16 @@ Object.assign(HEROES, {
     habs: ['munecoVudu', 'calacaBambaa', 'ancestroOlvidado'],
     pasiva: 'amuletosBambaa',
   },
+// Seba (16-11): Smok (Errantes): sombra humanoide, mitad humo; solo se distinguen los ojos. Inspirado en un mito chileno. Números (C) salvo los que fijó Seba.
+  smok: {
+    casa: 'errantes',
+    nombre: 'Smok', rol: 'Engaño · sombras', fondo: 'smok', arma: 'manoSmok',
+    desc: 'Sombra humanoide hecha de humo; solo se le ven los ojos. Se hunde en la tierra dejando un clon, envuelve a sus enemigos en nubes que silencian y trae el ocaso, donde nadie ve más allá de sus manos.',
+    vida: 370, dano: 30, recarga: 1.3, ultiCarga: 300, velocidad: 155,   // Seba (16-11): daño 30; (C) el resto
+    ataque: { tipo: 'proyectil', proj: 'humoSmok', vel: 420, alcance: 340, radio: 6 },   // Seba (16-11): bola de humo a distancia
+    habs: ['hundidoSmok', 'esferaSmok', 'ocasoSmok'],
+    pasiva: 'ecosSmok',
+  },
 });
 
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
@@ -1988,6 +1998,20 @@ Object.assign(HABILIDADES, {
                    ancho: 162, confusion: 2.5,   // Seba: 3 básicos potenciados en 10 s (se pueden fallar); tornado 10% menos ancho y 25% más rápido que la Tormenta de Rasho, largo, 50/s, arrastra, al final −33% 1,5 s; (C) largo 380, recarga
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
+  // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
+  hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
+                     // Seba (16-11): recarga 14 → 15,5
+                   confusion: 2.5, clonDur: 7, clonRecibe: 0.30, clonHace: 0.5,   // Seba: desaparece (el enemigo ve un círculo negro), deja un clon quieto que solo hace básicos (+30% de daño recibido, −50% de daño), al terminar o cortarla reaparece con 50 en área y confusión 2,5 s; (Seba 16-11) clon con la vida actual de Smok, dura 7 s; (C) 3 s, +15% de velocidad, radio 90, no lo pueden golpear ni controlar hundido, recarga 14
+                  desc: (n) => `Te hundes en la tierra hasta ${HABILIDADES.hundidoSmok.dur} s (los enemigos solo ven un círculo negro que se mueve; nada te alcanza) y te mueves ${Math.round(HABILIDADES.hundidoSmok.vel * 100)}% más rápido. Dejas un clon en tu lugar con tu vida actual por ${HABILIDADES.hundidoSmok.clonDur} s: no se mueve, ataca con tu básico, hace 50% menos de daño y recibe 30% más. Al terminar o si vuelves a apretar, reapareces con otro clon a tu lado: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hundidoSmok.radio)} y los enemigos quedan confundidos ${fmtN(HABILIDADES.hundidoSmok.confusion)} s.`,
+                  n1: { dano: 50 }, n2: { dano: 50 } },
+  esferaSmok:   { nombre: 'Esfera de humo', glifo: 'esferaSmok', cd: 16, cdFijo: true, alcance: 280, vuelo: 0.35, dur: 8, r0: 45, crece: 15, pasos: 10, cada: 0.5, lento: 0.10, tope: 0.15,   // Seba (16-11): +1 s de recarga; nube 7 s; lento como la arena de Kiro (−10% cada 0,5 s dentro) con tope 15%; (C) deja de crecer en 195
+                    // Seba: nube que se expande cada 0,5 s por 5 s; silencia, frena 20% y hace 1 cada 0,1 s; al terminar deja un clon en el centro; (C) alcance 280, radio 45 → 195, recarga 15
+                  desc: (n) => `Lanzas una esfera de humo a distancia ${DIST(HABILIDADES.esferaSmok.alcance)} que se abre en una nube por ${HABILIDADES.esferaSmok.dur} s y crece cada ${fmtN(HABILIDADES.esferaSmok.cada)} s. Los enemigos dentro quedan silenciados, se frenan ${Math.round(HABILIDADES.esferaSmok.lento * 100)}% cada 0,5 s que siguen dentro (hasta ${Math.round(HABILIDADES.esferaSmok.tope * 100)}%) y reciben ${n.tick} de daño cada 0,1 s. Al disiparse deja un clon tuyo en el centro (como el de Hundido).`,
+                  n1: { tick: 1 }, n2: { tick: 1 } },
+  ocasoSmok:    { nombre: 'Ocaso', glifo: 'ocasoSmok', cd: 61, cdFijo: true, ulti: true, canal: 1, dur: 6, vision: 130, cerca: 160,   // Seba (16-11): +1 s de recarga
+                    // Seba: canal 1 s; los héroes enemigos ven solo un radio pequeño; 25/s, 50/s si Smok está cerca (un poco más que la visión); (C) 6 s, visión 130, cerca 160, recarga 60
+                  desc: (n) => `Canalizas ${HABILIDADES.ocasoSmok.canal} s y cae el ocaso por ${HABILIDADES.ocasoSmok.dur} s: los héroes enemigos solo ven un radio pequeño a su alrededor, aparece un clon tuyo justo en el borde de la visión de cada uno, y reciben ${n.dps} de daño por segundo, ${n.dpsCerca} si estás cerca de ellos.`,
+                  n1: { dps: 25, dpsCerca: 50 }, n2: { dps: 25, dpsCerca: 50 } },
   // ---- Bambaa (Seba, 13-11; números (C) salvo los que fijó Seba)
   munecoVudu:       { nombre: 'Muñeco vudú', glifo: 'munecoVudu', cd: 16, cdFijo: true, cargas: 2, max: 2, alcance: 400, vel: 120, choque: 18, radio: 70, dur: 15,   // Seba (13-11, V8.8): dura 30 → 15 s
                      
@@ -2141,6 +2165,7 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  ecosSmok: { nombre: 'Ecos de humo', glifo: 'ecosSmok', reduce: 0.5, cada: 4, desc: 'Cada 4.º ataque básico tuyo que acierta deja un clon donde estás. Cuando los enemigos destruyen un clon tuyo, tus habilidades se recargan 0,5 s (no la ulti).' },   // Seba (16-11): ya no cuenta el golpe del clon   // Seba (16-11): + clon cada 4.º básico acertado   // Seba (16-11): 1 golpe por clon + destruido; no la ulti   // Seba (16-11); nombre (C)
   amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
   corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 30, dur: 4,   /* Seba (13-11, V7.6): 20 → 30 */ quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 30 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
   pasoEnFalso: { nombre: 'Paso en falso', glifo: 'pasoEnFalso', chance: 0.05, cd: 3, desc: 'Tienes 5% de probabilidad de esquivar por completo un ataque básico enemigo (de héroes o invocaciones). Tras esquivar, 3 s sin poder volver a hacerlo.' },   // Seba (13-11)
@@ -2171,6 +2196,7 @@ const UNIDADES = {
   cucko:     { vel: 80, sprite: 'cucko' },
   nubeTormenta: { vel: 0, invulnerable: true },
   clon:      { vel: 0, invulnerable: true },
+  clonSmok:  { vel: 0 },   // Smok: clon quieto que ataca con su básico
   tela:      { vel: 0, invulnerable: true },
   orbeVida:  { vel: 0, invulnerable: true },
   circuloVida: { vel: 0, invulnerable: true },
@@ -2285,6 +2311,7 @@ const GUIAS = {
   tajoKiro: { tipo: 'linea', alcance: 128, ancho: 34 }, pozoArena: { tipo: 'propio', r: 126 }, tormentaArena: { tipo: 'propio', r: 30 },
   cargaGolagore: { tipo: 'linea', alcance: 370, ancho: 40 }, hachazoGolagore: { tipo: 'punto', alcance: 220, r: 90 }, fortalezaGolagore: { tipo: 'propio', r: 150 },
   munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 352 },
+  hundidoSmok: { tipo: 'propio', r: 90 }, esferaSmok: { tipo: 'punto', alcance: 280, r: 45 }, ocasoSmok: { tipo: 'propio', r: 160 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -5314,6 +5341,113 @@ function legiosGrande(frame) {
   return r;
 }
 
+// Seba (16-11): Smok — sombra humanoide, mitad humo (Errantes); no se distingue nada más que los ojos (cian). El humo que se desprende se dibuja en render.
+Object.assign(CAPAS, {
+  cuerpoSmok: L({
+    0: '.........1n.........',
+    1: '......1nnnnn1.......',
+    2: '.....1nnnnnnnn......',
+    3: '......nnnnnuJnu.....',
+    4: '.....1nnnnnnnn......',
+    5: '.......nnnnnn1......',
+    6: '....1nnnnnnnnnn1....',
+    7: '.1nnnn1nnnnnn1nnnn1.',
+    8: '1nnnn11nnnnnn11nnnn1',
+    9: 'nnnnnn1nn11nn1nnnnnn',
+    10: 'nnn1.nnnnnnnnnn.1nnn',
+    11: 'nnn..nnnn11nnnn..nnn',
+    12: 'n1n..1nnnnnnnn1..n1n',
+    13: 'nnn...nnnnnnnn...nnn',
+    14: 'nn....1nnnnnn1....nn',
+    15: '1n.....nnnnnn.....n1',
+    16: '.n.....1nnnn1.....n.',
+    17: '........nnnn........',
+    18: '.......1nnnn1.......',
+    19: '......1nn11nn1......',
+    20: '......1.......1.....',
+  }),
+});
+Object.assign(APARIENCIA, {
+  smok: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoSmok'], ['cuerpoSmok']], cabeza: [[], []] },
+});
+Object.assign(ARMAS_SPR, {
+  manoSmok: { g: [1, 6], S: 15, rows: ['......', '......', '......', '......', '......', '......', 'n1n...', '......', '......', '......', '......', '......'] },
+});
+Object.assign(GLIFOS, {
+  hundidoSmok: ['.........', '...u.u...', '..nnnnn..', '.nnnnnnn.', '..nnnnn..', '.........', '.kkkkkkk.', 'kknnnnnkk', '.kkkkkkk.'],
+  esferaSmok:  ['..1.1.1..', '.1n1n1n1.', '1nn111nn1', '.n1nnn1n.', '1n1nkn1n1', '.n1nnn1n.', '1nn111nn1', '.1n1n1n1.', '..1.1.1..'],
+  ocasoSmok:   ['kkkkkkkkk', 'kkkkkkkkk', 'kk.....kk', 'k..nnn..k', 'k.nu.un.k', 'k..nnn..k', 'kk.....kk', 'kkkkkkkkk', 'kkkkkkkkk'],
+  ecosSmok:    ['.u.....u.', 'nnn...nnn', 'nnn...nnn', '.n.....n.', '.n..1..n.', '...1.1...', '..1...1..', '.........', '.........'],
+});
+Object.assign(FONDOS, { smok: ['n', 'u'] });
+Object.assign(OTROS, {
+  humoSmok: [['.n1n.', 'n121n', '12u21', 'n121n', '.n1n.'], ['.1n1.', '1n2n1', 'n2u2n', '1n2n1', '.1n1.']],
+});
+const SMOK_GRANDE = [   // Seba (16-11): 15% más grande (25×24), cabeza más grande y redonda, ojos hundidos
+  [
+    '..........1nnn1..........',
+    '.........nnnnnnn.........',
+    '........nn1nnnnnn........',
+    '........nnnnnnnnn1.......',
+    '........nnnnkukkuk.......',
+    '........1nnnkknkkn.......',
+    '.........nnnnnnnn........',
+    '..........nnnnnn.........',
+    '......1nnnnnnnnnnnn1.....',
+    '...1nnnnn1nnnnnn1nnnnn1..',
+    '..1nnn1n11nnnnnn11n1nnn1.',
+    '..nnnnnnn1nn11nn1nnnnnnn.',
+    '..nn1n1.nnn1nnnnnn.1nn1n.',
+    '..nnnn..nnnn11nn1n..nnnn.',
+    '..n1nn..1nnnnn1nn1..nn1n.',
+    '..nnnn...nn1nnnnn...nnnn.',
+    '.nnnn....1nnnn1nn1...nnnn',
+    '.n1nn.....nnnnnn.....nn1n',
+    '.n.nn.....1nnnn1.....nn.n',
+    '...........nnnn..........',
+    '..........1nn1n1.........',
+    '.........1nn11nn1........',
+    '.........1.......1.......',
+    '.........................',
+  ],
+  [
+    '..........1nnn1..........',
+    '.........nnnnnnn.........',
+    '........nn1nnnnnn........',
+    '........nnnnnnnnn1.......',
+    '........nnnnkukkuk.......',
+    '........1nnnkknkkn.......',
+    '.........nnnnnnnn........',
+    '..........nnnnnn.........',
+    '......1nnnnnnnnnnnn1.....',
+    '...1nnnnn1nnnnnn1nnnnn1..',
+    '..1nnn1n11nnnnnn11n1nnn1.',
+    '..nnnnnnn1nn11nn1nnnnnnn.',
+    '..nn1n1.nnn1nnnnnn.1nn1n.',
+    '..nnnn..nnnn11nn1n..nnnn.',
+    '..n1nn..1nnnnn1nn1..nn1n.',
+    '..nnnn...nn1nnnnn...nnnn.',
+    '.nnnn....1nnnn1nn1...nnnn',
+    '.n1nn.....nnnnnn.....nn1n',
+    '.n.nn.....1nnnn1.....nn.n',
+    '...........nnnn..........',
+    '..........1nn1n1.........',
+    '........1nn1..1nn1.......',
+    '........1.........1......',
+    '.........................',
+  ],
+];
+const cacheSmok = new Map();
+function smokGrande(frame) {
+  if (cacheSmok.has(frame)) return cacheSmok.get(frame);
+  const m = matrizVacia(25, 24);
+  pintar(m, SMOK_GRANDE[frame]);
+  const der = aCanvas(contornear(m));
+  const r = { der, izq: espejo(der) };
+  cacheSmok.set(frame, r);
+  return r;
+}
+
 // Seba (13-11): Bambaa — bruja ancestral (Errantes): capucha morada con banda bordada, pelo blanco, nariz ganchuda y un ojo morado que brilla,
 // poncho pardo con collar de huesos y calavera, falda morada en harapos, olla de brebaje verde a la cadera, garra adelante y bastón retorcido
 // con amuletos y su cuervo arriba. Modelo grande (30×32) que se dibuja aparte en render; el chico (20×22) es para menús.
@@ -5848,7 +5982,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 // Seba (09-11): proyectiles que atraviesan el muro de Aldor (magia y lo que vuela). Todo lo demás (físico) se frena.
 // Fatum entero, sombra de Karilthal, orbes de Monh, Rasho, runas de Æthar, orbe de Driiar, corazones de Vario (C) y lo de las ultis.
@@ -6271,7 +6405,7 @@ class Game {
   enemigos(ownerId, conMuros = true) {
     const out = [];
     const team = this.teamOf(ownerId);
-    for (const q of this.players.values()) if (q.alive && this.teamOf(q.id) !== team) out.push(q);   // Seba (28-10): en un árbol igual recibe daño y proyectiles
+    for (const q of this.players.values()) if (q.alive && this.teamOf(q.id) !== team && !(q.fx && q.fx.hundidoSmok)) out.push(q);   // Seba (28-10): en un árbol igual recibe daño y proyectiles (Smok hundido: no)
     for (const u of this.units) {
       if (!u.alive || this.teamOf(u.owner) === team || u.kind === 'torreta' || u.kind === 'torretaBrasas' || u.sinCuerpo) continue;
       if (u.kind === 'muro' && !conMuros) continue;
@@ -6283,7 +6417,7 @@ class Game {
   // Objetivos principales: jugadores rivales y, en PvE, los enemigos (no son invocaciones).
   jugadoresEnemigos(ownerId) {
     const team = this.teamOf(ownerId);
-    const out = [...this.players.values()].filter(q => q.alive && this.teamOf(q.id) !== team);
+    const out = [...this.players.values()].filter(q => q.alive && this.teamOf(q.id) !== team && !(q.fx && q.fx.hundidoSmok));
     for (const u of this.units) if (u.alive && u.enemigo && this.teamOf(u.owner) !== team) out.push(u);
     return out;
   }
@@ -6323,6 +6457,7 @@ class Game {
     if (!esJugador && UNIDADES[target.kind].invulnerable) return 0;
 
     if (esJugador && target.fx && target.fx.jetpack) return 0;   // Biteroi en el aire: nada lo daña (Seba)
+    if (esJugador && target.fx && target.fx.hundidoSmok) return 0;   // Smok hundido (C): nada lo alcanza
     if (esJugador && o.basico && src && src !== target && HEROES[target.build?.heroe]?.pasiva === 'pasoEnFalso' && this.combatTime >= (target.pasoCd || 0) && Math.random() < PASIVAS.pasoEnFalso.chance) {
       target.pasoCd = this.combatTime + PASIVAS.pasoEnFalso.cd;   // Kiro: Paso en falso — esquiva el básico entero
       this.emit({ k: 'esquivaKiro', x: target.x | 0, y: target.y | 0, id: target.id });
@@ -6393,6 +6528,7 @@ class Game {
     }
     if (esJugador && amt > 0 && HEROES[target.build?.heroe]?.pasiva === 'templeEnano') this.medidorAldor(target, amt);   // sin contar escudos
 
+    if (!esJugador && target.kind === 'clonSmok') amt *= 1 + HABILIDADES.hundidoSmok.clonRecibe;   // Smok: el clon recibe 30% más
     if (!esJugador) {
       this.actoFinal(atacante, target, o); this.resonar(atacante, target, o); this.gotear(atacante, target, o);
       if (atacante && target.enemigo) this.sumarStat(atacante, 'dano', Math.min(amt, Math.max(0, target.hp)));
@@ -6402,12 +6538,13 @@ class Game {
       if (atacante && atacante.fx && atacante.fx.llama && this.teamOf(atacante.id) !== this.teamOf(target.owner)) atacante.fx.llama.dano += Math.min(amt, Math.max(0, target.hp));
       target.hp -= amt;
       this.numero(target, amt, src, o.silencioso && !o.tick, !!o.tick);
-      if (target.hp <= 0) this.killUnit(target, atacante, true);
+      if (target.hp <= 0) { this.killUnit(target, atacante, true); if (target.kind === 'clonSmok' && atacante && this.teamOf(atacante.id) !== this.teamOf(target.owner)) this.ecosSmok(target.owner, target); }   // Smok: destruyeron un clon
       return amt;
     }
 
     this.actoFinal(atacante, target, o); this.resonar(atacante, target, o); this.gotear(atacante, target, o);
     const real = Math.min(amt, Math.max(0, target.hp));
+    if (o.basico && atacante && atacante === src && real > 0 && HEROES[atacante.build?.heroe]?.pasiva === 'ecosSmok') { atacante.smokN = (atacante.smokN || 0) + 1; if (atacante.smokN >= PASIVAS.ecosSmok.cada) { atacante.smokN = 0; this.clonSmok(atacante, atacante.x, atacante.y); this.emit({ k: 'clonPasivaSmok', x: atacante.x | 0, y: atacante.y | 0 }); } }   // Seba (16-11): cada 4.º básico acertado (a héroes) deja un clon
     if (atacante !== target) this.sedZeal(atacante, real, o);
     if (o.basico && atacante && atacante !== target && real > 0 && HEROES[atacante.build?.heroe]?.pasiva === 'gotasOra') this.gotasOra(atacante);   // Ora: Gotas suspendidas
     // Festín (Aracnida): recuerda quién la dañó hace poco
@@ -6508,6 +6645,7 @@ class Game {
     if ((key === 'aturdido' || key === 'silence') && t.fx.canalGolagore) this.explotaGolagore(t);   // Golagore (C): aturdido o silencio hacen explotar el Núcleo antes
     if (key === 'aturdido' && t.fx.cargaGolagore) { const sl = (HEROES[t.build?.heroe]?.habs || []).indexOf('cargaGolagore'); if (sl >= 0 && t.cd) t.cd[sl + 1] *= 1 - HABILIDADES.cargaGolagore.devuelve; delete t.fx.cargaGolagore;   /* Seba (13-11, V7.5): aturdido en la carga → recupera 50% de la recarga */ this.emit({ k: 'chocaGolagore', x: t.x | 0, y: t.y | 0 }); }   // Golagore (C): un aturdido corta la Embestida (sin golpe)
     if (t.fx.saltoGol && CONTROL.has(key)) return;   // Golagore (C): en el aire no le afecta el control
+    if (t.fx && t.fx.hundidoSmok && (CONTROL.has(key) || key === 'dot' || key === 'burn' || key === 'confusoKiro')) return;   // Smok hundido (C)   // Golagore (C): en el aire no le afecta el control
     if ((CONTROL.has(key) || key === 'confusoKiro') && val && val.t && !t.esUnidad && HEROES[t.build?.heroe]?.pasiva === 'amuletosBambaa') val = { ...val, t: val.t * (1 - PASIVAS.amuletosBambaa.red) };   // Bambaa: Amuletos viejos, −5% de control
     const canal = (key === 'aturdido' || key === 'silence' || key === 'encantado') && (CANALES.find(k => k !== 'embateGiro' && t.fx[k]) || null);
     if (canal) {
@@ -6825,6 +6963,34 @@ class Game {
   // Kiro: usar una habilidad lo revela (y vuelve a esperar 0,75 s en el pozo)
   revelarKiro(p) { p.kiroOculto = 0; if (p.fx.invisible && p.fx.invisible.kiro) { delete p.fx.invisible; this.emit({ k: 'humo', x: p.x | 0, y: p.y | 0, chico: true }); } }
   // Kiro: suma una acumulación (cada una dura 3 s); con 3, aturdido 1 s y se limpian
+  // Smok: Ecos de humo — un clon daña a un héroe o lo destruyen: −0,5 s a sus recargas
+  ecosSmok(ownerId, clon) {
+    const p = this.players.get(ownerId);
+    if (!p || HEROES[p.build?.heroe]?.pasiva !== 'ecosSmok') return;
+    const habs = HEROES[p.build.heroe].habs;
+    for (let i = 1; i < p.cd.length; i++) if (p.cd[i] > 0 && !HABILIDADES[habs[i - 1]]?.ulti) p.cd[i] = Math.max(0, p.cd[i] - PASIVAS.ecosSmok.reduce);   // Seba (16-11): no la ulti
+    this.emit({ k: 'ecoSmok', x: clon.x | 0, y: clon.y | 0, id: p.id });
+  }
+  clonSmok(p, x, y) {
+    const H = HABILIDADES.hundidoSmok, q = { x, y }; this.clampWall(q);
+    const u = this.invocar(p, 'clonSmok', q.x, q.y, { vida: Math.max(1, p.hp), dur: H.clonDur, dano: p.st.dano * (1 - H.clonHace), facing: p.facing });
+    u.maxHp = p.st.vidaMax; u.cd = 0.6;
+    return u;
+  }
+  emergeSmok(p) {
+    const v = p.fx.hundidoSmok; if (!v) return;
+    delete p.fx.hundidoSmok;
+    const H = HABILIDADES.hundidoSmok;
+    for (const e of this.enemigos(p.id, false)) {
+      if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+      if (dist(e, p) > H.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+      this.damage(e, v.n.dano, p, { tipo: 'mag', desde: p });
+      if (e.alive && !e.esUnidad) this.aplicarEfecto(e, 'confusoKiro', { t: H.confusion, smok: true });
+    }
+    const sl = HEROES[p.build.heroe]?.habs.indexOf('hundidoSmok'); if (sl >= 0) p.cd[sl + 1] = H.cd;
+    this.emit({ k: 'emergeSmok', x: p.x | 0, y: p.y | 0, r: H.radio });
+    this.clonSmok(p, p.x - Math.cos(p.facing) * 24, p.y - Math.sin(p.facing) * 24);   // Seba (16-11): al reaparecer también deja un clon (C: a su espalda)
+  }
   // Bambaa: rayo del tótem (nunca falla; no cuenta para su propio conteo)
   rayoTotem(z, e, dano) {
     const own = this.players.get(z.owner);
@@ -7450,6 +7616,8 @@ class Game {
   velocidadDe(p) {
     if (!p.fx.aturdido && p.fx.cargaGolagore) return this.velocidadBase(p) * (1 + HABILIDADES.cargaGolagore.vel);   // Golagore: Embestida +20%
     if (p.fx.saltoGol) return 0;   // Golagore: en el aire lo mueve el salto
+    if (p.fx.canalOcaso) return 0;
+    if (!p.fx.aturdido && p.fx.hundidoSmok) return this.velocidadBase(p) * (1 + HABILIDADES.hundidoSmok.vel);   // Smok hundido: +15%
     if (!p.fx.aturdido && p.fx.canalGolagore) return this.velocidadBase(p) * HABILIDADES.fortalezaGolagore.mueve;   // Golagore (Seba 13-11): camina al 50% en el Núcleo
     if (p.esMuneco) return 0;
     if (p.fx.aturdido || p.fx.empujeAldor || p.fx.dashKiro || p.fx.saltoGol || canalizando(p.fx) || p.fx.canalLluvia || p.fx.jetpack || p.fx.saltoLanza || p.fx.saltoPatada || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval) return 0;   // Lei: quieta en el aire
@@ -7496,7 +7664,7 @@ class Game {
 
   basicAttack(p, ang = null, dd = null) {
     if (p.esMuneco) return;
-    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
+    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol || p.fx.hundidoSmok) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
     const at = p.st.ataque;
     p.cd[0] = CONFIG.CADENCIA;
     p.cargas = Math.max(0, p.cargas - 1);
@@ -7994,6 +8162,8 @@ class Game {
     if (p.fx.encantado) return;   // Vario: encantado no usa habilidades
     if (p.fx.polvo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'EN EL POLVO', id: p.id }); return; }   // Vario: con el polvo no usa otras habilidades
     if (key === 'patadaFenix' && p.fx.canalPatada) { this.soltarPatada(p); return; }   // Ash: segunda apretada = saltar
+    if (key === 'hundidoSmok' && p.fx.hundidoSmok) { if (this.combatTime - p.fx.hundidoSmok.inicio >= 0.3) this.emergeSmok(p); return; }   // Smok: segunda apretada = reaparecer
+    if (p.fx.hundidoSmok) return;   // hundido no usa otras habilidades
     if (key === 'cargaGolagore' && p.fx.cargaGolagore) { if (p.fx.cargaGolagore.edad >= 0.2) this.golpeEmbestida(p); return; }   // Golagore (Seba 13-11): segunda apretada = golpe anticipado
     if (key === 'fortalezaGolagore' && p.fx.canalGolagore) { if (this.combatTime - p.fx.canalGolagore.inicio >= 0.3) this.explotaGolagore(p); return; }   // Golagore: segunda apretada = explotar antes
     if (p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol) return;   // Golagore: embistiendo, saltando o en el Núcleo no usa otras habilidades
@@ -8405,6 +8575,55 @@ class Game {
         this.emit({ k: 'tajoKiro', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), paso });
         if (paso < 3) { p.kiroPaso = paso; p.kiroVence = this.combatTime + T + h.ventana; p.cd[slot + 1] = T + 0.12; }
         else { p.kiroPaso = 0; p.kiroVence = 0; }
+        break;
+      }
+      case 'hundidoSmok': {   // Smok: se hunde, deja un clon con su vida actual y viaja como un círculo negro
+        this.clonSmok(p, p.x, p.y);
+        this.aplicarEfecto(p, 'hundidoSmok', { t: h.dur + 1, inicio: this.combatTime, n });
+        p.disparo = null; p.cd[slot + 1] = h.cd + h.dur;
+        this.emit({ k: 'hundeSmok', x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'esferaSmok': {   // Smok: esfera de humo que se abre en una nube creciente; al disiparse deja un clon en el centro
+        const { a, t: ob } = this.aim(p, h.alcance);
+        const d = this._apunte ? this.distApunte(h.alcance) : ob ? Math.min(h.alcance, dist(ob, p)) : h.alcance;
+        const c = { x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d }; this.clampWall(c);
+        p.facing = a; p.disparo = null;
+        this.emit({ k: 'esferaSmok', x: p.x | 0, y: p.y | 0, x2: c.x | 0, y2: c.y | 0, t: h.vuelo });
+        const tk = {};
+        this.zones.push({ id: this.nextId++, kind: 'nubeSmok', x: c.x, y: c.y, r: h.r0, t: h.dur + h.vuelo, total: h.dur + h.vuelo, owner: p.id, e: 0, prox: 0,
+          tick: (z, dt) => {
+            z.e += dt; if (z.e < h.vuelo) { z.r = 0; return; }
+            const k = z.e - h.vuelo; z.r = h.r0 + h.crece * Math.min(h.pasos, Math.floor(k / h.cada));
+            z.dentro = z.dentro || new Map();
+            z.prox -= dt; const pega = z.prox <= 0; if (pega) z.prox += 0.1;
+            for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              if (dist(e, z) > z.r + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) { z.dentro.delete(e.id); continue; }
+              const td = (z.dentro.get(e.id) || 0) + dt; z.dentro.set(e.id, td);
+              this.aplicarEfecto(e, 'slow', { t: 0.2, mult: 1 - Math.min(h.tope, h.lento * (1 + Math.floor(td / 0.5))), k: 'nubeSmok' });   // Seba (16-11): como la arena de Kiro, tope 15%
+              if (!e.esUnidad) this.aplicarEfecto(e, 'silence', { t: 0.2 });
+              if (pega) this.damage(e, n.tick, p, { tipo: 'mag', tick: true, silencioso: true, desde: z });
+            }
+          },
+          fin: (z) => { if (p.alive || true) this.clonSmok(p, z.x, z.y); this.emit({ k: 'nubeSmokFin', x: z.x | 0, y: z.y | 0 }); } });
+        break;
+      }
+      case 'ocasoSmok': {   // Smok: canaliza 1 s y cae el ocaso sobre los héroes enemigos
+        this.aplicarEfecto(p, 'canalOcaso', { t: h.canal });
+        const zc = { id: this.nextId++, kind: 'canalOcaso', x: p.x, y: p.y, r: 30, t: h.canal, total: h.canal, owner: p.id, sigue: p,
+          fin: (zz) => {
+            if (zz.cancelado || !p.alive) return;
+            this.aplicarEfecto(p, 'ocasoSmok', { t: h.dur });
+            for (const e of this.players.values()) if (e.alive && this.teamOf(e.id) !== this.teamOf(p.id)) {
+              e.fx.ocaso = { t: h.dur, src: p.id, n, tk: {} };
+              const b = Math.atan2(p.y - e.y, p.x - e.x) + (Math.random() - 0.5) * 1.2;   // Seba (16-11): un clon en el borde de su visión (C: hacia el lado de Smok)
+              this.clonSmok(p, e.x + Math.cos(b) * h.vision, e.y + Math.sin(b) * h.vision);
+            }
+            this.emit({ k: 'ocasoCae', x: p.x | 0, y: p.y | 0 });
+          } };
+        this.zones.push(zc); p.fx.canalOcaso.zona = zc;
+        this.emit({ k: 'canalOcaso', x: p.x | 0, y: p.y | 0 });
         break;
       }
       case 'munecoVudu': {   // Bambaa: muñeco vudú que camina; maldice al primero que topa o se planta invisible como trampa
@@ -9531,6 +9750,21 @@ class Game {
         if (HEROES[own.build.heroe]?.pasiva === 'sentidoAracnido') this.aplicarEfecto(q, 'expuesto', { t: 0.25 });
       }
     }
+    // Smok: clones (quietos; atacan con el básico de Smok a la mitad de daño)
+    for (const u of this.units) {
+      if (!u.alive || u.kind !== 'clonSmok') continue;
+      const own = this.players.get(u.owner), A = HEROES.smok.ataque;
+      u.t += dt; u.cd -= dt; this.tickEfectos(u, dt);
+      if (!own || u.t >= u.dur) { u.alive = false; this.emit({ k: 'clonSmokSeVa', x: u.x | 0, y: u.y | 0 }); continue; }
+      if (u.fx.aturdido || u.cd > 0) continue;
+      let obj = null, bd = A.alcance;
+      for (const q of this.enemigos(own.id, false)) { if (q.kind === 'muro' || (q.esUnidad && UNIDADES[q.kind]?.invulnerable) || (q.hidden && !(q.fx && q.fx.expuesto)) || (q.fx && q.fx.invisible)) continue; const d = dist(q, u) + (q.esUnidad ? 200 : 0); if (d < bd) { bd = d; obj = q; } }
+      if (!obj) continue;
+      u.facing = Math.atan2(obj.y - u.y, obj.x - u.x);
+      u.cd = HEROES.smok.recarga;
+      this.spawnProj(u, u.facing, { vel: A.vel, alcance: A.alcance, radio: A.radio, dmg: u.dano, tipo: 'fis', basico: true, spr: A.proj });
+      this.emit({ k: 'tiroClonSmok', id: u.id, x: u.x | 0, y: u.y | 0, a: +u.facing.toFixed(2) });
+    }
     // Takichi: clones de la Danza silenciosa (quietos; golpean a quien esté pegado a ellos)
     for (const u of this.units) {
       if (!u.alive || u.kind !== 'clon') continue;
@@ -9615,7 +9849,7 @@ class Game {
       if (u.t >= u.dur) { u.alive = false; this.emit({ k: 'poof', x: u.x | 0, y: u.y | 0, c: 'magia' }); }
     }
     for (const u of this.units) {
-      if (!u.alive || u.enemigo || u.mapaU || u.kind === 'orbeVida' || u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'nubeTormenta' || u.kind === 'clon' || u.kind === 'tela' || u.kind === 'lanza' || u.kind === 'arenaEstepa' || u.kind === 'muroRoca' || u.kind === 'almaErrante' || u.kind === 'totemGaia' || u.kind === 'torretaBrasas') continue;
+      if (!u.alive || u.enemigo || u.mapaU || u.kind === 'orbeVida' || u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'nubeTormenta' || u.kind === 'clon' || u.kind === 'clonSmok' || u.kind === 'tela' || u.kind === 'lanza' || u.kind === 'arenaEstepa' || u.kind === 'muroRoca' || u.kind === 'almaErrante' || u.kind === 'totemGaia' || u.kind === 'torretaBrasas') continue;
       const d = UNIDADES[u.kind];
       const own = this.players.get(u.owner);
       if (u.kind === 'cucko') { this.tickEfectos(u, dt); continue; }   // se mueve en updateCucko
@@ -10014,6 +10248,11 @@ class Game {
             if (e.alive && e.fx) this.aplicarEfecto(e, 'slow', { t: n.lentoDur, mult: 1 - n.lento, k: 'mecha' });
           }
         }
+      }
+      if (p.fx.hundidoSmok && this.combatTime - p.fx.hundidoSmok.inicio >= HABILIDADES.hundidoSmok.dur) this.emergeSmok(p);   // Smok: se acabó el tiempo hundido
+      if (p.fx.ocaso && p.alive) {   // Smok: Ocaso — 25/s, 50/s con Smok cerca
+        const o = p.fx.ocaso, s = this.players.get(o.src);
+        if (this.porSegundo(o.tk, 'd', dt)) { const cerca = s && s.alive && dist(s, p) <= HABILIDADES.ocasoSmok.cerca; this.damage(p, cerca ? o.n.dpsCerca : o.n.dps, s || null, { tipo: 'mag', tick: true, desde: p }); }
       }
       if (p.kiroVence && this.combatTime > p.kiroVence) { p.kiroVence = 0; p.kiroPaso = 0; const sl = HEROES[p.build.heroe]?.habs.indexOf('tajoKiro'); if (sl >= 0) p.cd[sl + 1] = HABILIDADES.tajoKiro.cd; }   // Kiro: no usó el siguiente tajo a tiempo
       if (p.fx.dashKiro) {   // Kiro: el tajo avanza a 900/s; los muros de Aldor (roca) y de Maidas lo frenan; golpea a todos los que cruza
@@ -10686,9 +10925,10 @@ class Game {
         fx.canalFestin ? 2 : 0, fx.festinZeal ? Math.ceil(fx.festinZeal.t * 10) : 0, fx.gotaZeal ? (fx.gotaZeal.nivel + 1) * 100 + Math.round(100 * (1 - fx.gotaZeal.t / HABILIDADES.pozoSangre.gotaDur)) : 0, fx.escudo && fx.escudo.sangre && fx.escudo.v > 0 ? 1 : 0, ...this.medidorSed(p),
         fx.cargaLegios ? 1 + Math.round((fx.cargaLegios.el || 0) * 10) : 0, fx.canalRey ? 1 : fx.porElRey ? 2 + Math.ceil(fx.porElRey.t * 10) : 0, (fx.auraRey ? 1 : 0) | (fx.auraReyEnemiga ? 2 : 0) | (fx.selloLegios ? 4 * Math.min(3, fx.selloLegios.s || 1) : 0), (fx.juramento || fx.juramentoPre ? 1 : 0) | (fx.escudo && fx.escudo.v > 0 && fx.escudo.rey ? 2 : 0), p.golpesAldor || 0,
         fx.olaMarca ? 1 : 0, fx.olaMarca ? fx.olaMarca.x | 0 : 0, fx.olaMarca ? fx.olaMarca.y | 0 : 0, (fx.olaVel ? 1 : 0) | (fx.geiserOra ? 2 : 0) | (fx.canalGeiser ? 4 : 0) | (this.combatTime < (p.geiserHasta || 0) ? 8 : 0), p.gotasOra || 0,
-        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro && !fx.confusoKiro.bruja ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
+        p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro && !fx.confusoKiro.bruja && !fx.confusoKiro.smok ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
         (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0,
-        (fx.encantado && fx.encantado.vudu ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (p.enPolvoVudu && this.combatTime - p.enPolvoVudu < 0.25 ? 8 : 0)]);   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.encantado && fx.encantado.vudu ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (p.enPolvoVudu && this.combatTime - p.enPolvoVudu < 0.25 ? 8 : 0),   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0)]);   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -10943,6 +11183,10 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'tormentaArena': si = d < 90 && !target.esUnidad; break;
       case 'cargaGolagore': si = d < 300 && d > 60; break;
       case 'munecoVudu': si = d < 380; break;
+      case 'hundidoSmok': si = d < 140; break;
+      case 'esferaSmok': si = d < 300; break;
+      case 'ocasoSmok': si = d < 260 && !target.esUnidad; break;
+      case 'bladeDance': si = d < 110 || (p.athPaso === 2 && d < 150); break;
       case 'calacaBambaa': si = d < 600 && !target.esUnidad; break;
       case 'ancestroOlvidado': si = d < 280 && !target.esUnidad; break;
       case 'hachazoGolagore': si = d < 230 && d > 30; break;
@@ -12530,7 +12774,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -12806,7 +13050,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -13199,6 +13443,42 @@ class Renderer {
       const ph = (t * (0.6 + h(i, 7) * 0.6) + h(i, 9)) % 1;
       const gx = Math.round(x - r * 1.4 + ph * r * 3.2), gy = Math.round(y - r * 0.9 + h(i, 5) * r * 1.6 - Math.sin(ph * Math.PI) * 2);
       g.fillStyle = i % 3 === 0 ? CHAR.m : i % 3 === 1 ? CHAR.p : CHAR.P; g.fillRect(gx, gy, 1, 1);
+    }
+  }
+  nubeHumo(x, y, r, seed = 0) {   // Smok (Seba 16-11): la misma textura de nube que la arena de Kiro (polvo de Vario / nube de Rasho), en negro
+    const g = this.g; x = Math.round(x); y = Math.round(y); r = Math.max(1, Math.round(r));
+    const t = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
+    const h = (a, b) => { let v = (a * 374761393 + b * 668265263 + seed * 2246822519) | 0; v = (v ^ (v >>> 13)) * 1274126177 | 0; return ((v ^ (v >>> 16)) >>> 0) / 4294967296; };
+    const L = [[0, 0, r], [-r * 0.8, r * 0.25, r * (0.5 + h(1, 1) * 0.25)], [r * 0.85, r * 0.2, r * (0.45 + h(2, 2) * 0.3)], [(h(3, 3) - 0.5) * r, -r * 0.55, r * 0.5]];
+    const x0 = x - Math.ceil(r * 1.9), x1 = x + Math.ceil(r * 1.9), y0 = y - Math.ceil(r * 1.3), y1 = y + Math.ceil(r * 1.1);
+    // Seba (16-11, V9.1): el cuerpo de la nube se pinta una vez por tamaño y semilla y se reusa (antes se calculaba píxel a píxel cada cuadro)
+    this.formaEn('nh' + r + '|' + (seed % 16), x1 - x0 + 1, y1 - y0 + 1, (gg) => {
+    for (let py = y0; py <= y1; py++) {
+      let run = null, rx = 0, rl = 0;
+      const flush = () => { if (run) { gg.fillStyle = run; gg.fillRect(rx - x0, py - y0, rl, 1); } run = null; rl = 0; };
+      for (let px = x0; px <= x1; px++) {
+        let d = 0;
+        for (const [lx, ly, lr] of L) { const dx = (px - x - lx) / lr, dy = (py - y - ly) / (lr * 0.8), q = 1 - Math.sqrt(dx * dx + dy * dy); if (q > d) d = q; }
+        let c = null;
+        if (d > 0) {
+          const n = h(px - x0, py - y0), rel = (py - y) / r;
+          if (d < 0.22) c = n < 0.45 ? (rel > 0.1 ? PALETA.tinta : PALETA.noche) : null;   // borde tramado: granos sueltos
+          else if (rel > 0.35 && d < 0.5) c = n < 0.7 ? PALETA.tinta : PALETA.noche;   // sombra ocre abajo
+          else if (rel < -0.25 && d > 0.45) c = n < 0.15 ? PALETA.piedra1 : PALETA.piedra0;   // brillo arriba
+          else c = n < 0.1 ? PALETA.tinta : n < 0.22 ? PALETA.piedra0 : PALETA.noche;   // cuerpo con granos
+        }
+        if (c !== run) { flush(); if (c) { run = c; rx = px; } }
+        if (c) rl++;
+      }
+      flush();
+    }
+    }, x0, y0);
+    if (r >= 3) { g.fillStyle = PALETA.piedra0; const vy = y - Math.round(r * 0.2), vx = x - r + Math.round(((t * 9 + seed * 3) % (r * 2)) * 0.5); g.fillRect(vx, vy, Math.max(2, r), 1); }   // veta de viento
+    const ng = 2 + Math.min(4, r >> 1);
+    for (let i = 0; i < ng; i++) {   // granos que vuelan con el viento
+      const ph = (t * (0.6 + h(i, 7) * 0.6) + h(i, 9)) % 1;
+      const gx = Math.round(x - r * 1.4 + ph * r * 3.2), gy = Math.round(y - r * 0.9 + h(i, 5) * r * 1.6 - Math.sin(ph * Math.PI) * 2);
+      g.fillStyle = i % 3 === 0 ? PALETA.tinta : i % 3 === 1 ? PALETA.noche : PALETA.piedra0; g.fillRect(gx, gy, 1, 1);
     }
   }
   // Zeal: murciélago de sombra (f = 0/1, alas arriba/abajo)
@@ -13659,6 +13939,21 @@ class Renderer {
         for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + hash(i, 2, z.id)) % 1, b = hash(i, 5, z.id) * TAU, d = r * 0.8 * hash(i, 9, z.id), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.9);
           if (ph < 0.6) { const s = 1 + Math.round(ph * 4); g.fillStyle = PALETA.tinta; g.fillRect(x - (s >> 1) - 1, y - (s >> 1) - 1, s + 2, s + 2); g.fillStyle = PALETA.carmesi1; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); g.fillStyle = PALETA.carmesi2; g.fillRect(x - (s >> 1), y - (s >> 1), 1, 1); }
           else this.gota(x, y - Math.round((ph - 0.6) * 20), 1 - (ph - 0.6) / 0.4); }
+      } else if (z.kind === 'nubeSmok') {
+        // Smok: nube de humo negro que crece; jirones que giran y borde que se mueve
+        const g = this.g, T = this.time;
+        if (r > 0) {
+          g.globalAlpha = 0.75; this.discDither(cx, cy, r, PALETA.tinta, 1, 0); g.globalAlpha = 0.55; this.discDither(cx, cy, r, PALETA.noche, 2, Math.floor(T * 5)); g.globalAlpha = 1;
+          const n = Math.max(8, Math.round(r / 4));
+          for (let i = 0; i < n; i++) { const b = i * TAU / n + T * 0.5 * (i % 2 ? 1 : -1), d = r * (0.35 + 0.6 * ((i * 37) % 10) / 10); g.globalAlpha = 0.8; this.humoNegro(cx + Math.cos(b) * d, cy + Math.sin(b) * d * 0.9 - 4, 3 + (i % 3)); }
+          for (let i = 0; i < 18; i++) { const b = i * TAU / 18 + T * 0.3; g.globalAlpha = 0.9; this.humoNegro(cx + Math.cos(b) * r, cy + Math.sin(b) * r, 3); }
+          g.globalAlpha = 1;
+        }
+      } else if (z.kind === 'canalOcaso') {
+        // Smok canaliza el Ocaso: columnas de humo negro que suben a su alrededor
+        const g = this.g, T = this.time;
+        for (let i = 0; i < 8; i++) { const ph = (T * 1.4 + i / 8) % 1, b = i * TAU / 8 + T; g.globalAlpha = 1 - ph; this.humoNegro(cx + Math.cos(b) * 14, cy + Math.sin(b) * 6 - ph * 30, 3 - Math.round(ph * 2)); }
+        g.globalAlpha = 1;
       } else if (z.kind === 'munecoVudu') {
         // Bambaa: muñeco vudú — camina (lo ven todos); plantado solo lo ven los aliados (semitransparente, con su radio)
         const g = this.g, T = this.time;
@@ -14047,6 +14342,19 @@ class Renderer {
     this.drawGuia();
     if (view.zo) this.drawFlechasObjetivos(view.zo);
     this.drawFx(dt, myId); this.g.globalAlpha = 1;   // Seba (11-11, V6.1): por si el último efecto dejó transparencia
+    // Smok: lazo de humo (solo Smok y sus aliados lo ven) hacia cada enemigo cegado que está lo bastante cerca para recibir 50/s
+    for (const sp of view.players) {
+      if (!(sp.sm & 8) || !this.esAliadoDe(sp.id)) continue;
+      for (const e of view.players) {
+        if (!(e.sm & 2) || Math.hypot(e.x - sp.x, e.y - sp.y) > HABILIDADES.ocasoSmok.cerca) continue;
+        const x0 = this.gx(sp.x), y0 = this.gy(sp.y) - 10, x1 = this.gx(e.x), y1 = this.gy(e.y) - 10, T = this.time, sd = Math.floor(T * 12);
+        this.linea(x0, y0, x1, y1, PALETA.tinta, 3, sd, 4); this.linea(x0, y0, x1, y1, PALETA.noche, 3, sd, 2); this.linea(x0, y0, x1, y1, PALETA.espectro2, 3, sd + 1, 1);
+        for (let i = 1; i < 4; i++) { const q = ((T * 1.5 + i / 4) % 1); this.g.globalAlpha = 0.8; this.nubeHumo(x0 + (x1 - x0) * q, y0 + (y1 - y0) * q, 2, i); }
+        this.g.globalAlpha = 1;
+        this.ring(x1, y1 + 10, 9 + (Math.floor(T * 8) % 2), PALETA.espectro2, 0.7, 1);
+      }
+    }
+    if (me && (me.sm & 2) && me.alive !== false) this.dibujaOcaso(this.gx(me.x), this.gy(me.y) - 6);   // Smok: Ocaso (solo en la pantalla del enemigo)
 
     // Tormenta
     if (view.ar < CONFIG.RADIO_ARENA - 1) this.drawStorm(view.ar);
@@ -14214,7 +14522,8 @@ class Renderer {
     const esLegios = meta.build.heroe === 'legios' && gigante === 1;
     const esGol = meta.build.heroe === 'golagore' && gigante === 1;
     const esBam = meta.build.heroe === 'bambaa' && gigante === 1;   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : 0);
+    const esSmok = meta.build.heroe === 'smok' && gigante === 1;   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -14424,7 +14733,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios || esGol || esBam) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol || esBam || esSmok) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -14479,6 +14788,7 @@ class Renderer {
     }
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
     else if (esBam) this.bambaaChica(p, cx, cy, izq, moviendo, sube);   // Seba (13-11, V8.4–8.6): Bambaa más chica sin perder la cara
+    else if (esSmok) { if (p.sm & 1) { const al = this.esAliadoDe(p.id); this.dibujaHundido(p, cx, cy, al); if (!al) return; } else this.dibujaSmok(p, cx, cy, izq, moviendo, sube, 1, p.sm); }   // hundido: el enemigo solo ve el círculo (sin nombre ni barra)
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
     if (p.f2 & 134217728) { this.llama(cx - 4, cy + 7, 0.75, 'rojo', 1); this.llama(cx + 4, cy + 7, 0.75, 'rojo', 3); }   // Ash cargando la patada: pies en llamas
@@ -14552,6 +14862,25 @@ class Renderer {
       for (let i = 0; i < 6; i++) { const b = -T * 9 + i * TAU / 6; g.fillStyle = i % 2 ? CHAR.m : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * 15), Math.round(cy - 25 + Math.sin(b) * 5), 1, 1); }   // granos que giran
       const q2 = texto('?', CHAR.P); g.drawImage(q2, cx - (q2.width >> 1), cy - 46 + Math.round(Math.sin(T * 6) * 1));
       g.fillStyle = PALETA.tinta; g.fillRect(cx - 9, cy + 6, 19, 3); g.fillStyle = CHAR.P; g.fillRect(cx - 8, cy + 7, 6, 1); g.fillRect(cx + 3, cy + 7, 6, 1); g.fillRect(cx - 8, cy + 6, 1, 3); g.fillRect(cx + 8, cy + 6, 1, 3);   // ⇄ bajo los pies
+    }
+    if (p.sm & 2) {   // cegado por el Ocaso (lo ven todos): venda de humo negro sobre los ojos, un ojo tachado arriba y humo alrededor de la cabeza
+      const T = this.time, y = cy - 18;
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 7, y - 1, 15, 4); g.fillStyle = PALETA.noche; g.fillRect(cx - 6, y, 13, 2); g.fillStyle = PALETA.piedra0; g.fillRect(cx - 5, y, 3, 1); g.fillRect(cx + 3, y + 1, 3, 1);
+      g.fillStyle = PALETA.tinta; g.fillRect(cx + 7, y + 1, 3, 2); g.fillRect(cx + 9, y + 2, 2, 3);   // nudo que cuelga
+      for (let i = 0; i < 4; i++) { const b = T * 2 + i * TAU / 4; g.globalAlpha = 0.8; this.nubeHumo(cx + Math.cos(b) * 9, y - 2 + Math.sin(b) * 4, 2, i); }
+      g.globalAlpha = 1;
+      const ey = cy - 32;   // ojo tachado
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 5, ey - 2, 11, 5); g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 4, ey - 1, 9, 3); g.fillStyle = PALETA.noche; g.fillRect(cx - 1, ey - 1, 3, 3);
+      for (let i = -4; i <= 4; i++) { g.fillStyle = PALETA.espectro2; g.fillRect(cx + i, ey - Math.round(i * 0.6), 1, 1); }
+    }
+    if (p.sm & 16) {   // confundido por Smok: estrellas de humo negro con brillo cian que giran sobre la cabeza
+      const T = this.time;
+      for (let i = 0; i < 4; i++) {
+        const b = -T * 6 + i * TAU / 4, x = Math.round(cx + Math.cos(b) * 11), y = Math.round(cy - 25 + Math.sin(b) * 4);
+        g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 1, 5, 3); g.fillRect(x - 1, y - 2, 3, 5);
+        g.fillStyle = i % 2 ? PALETA.piedra0 : PALETA.noche; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3); g.fillStyle = PALETA.espectro2; g.fillRect(x, y, 1, 1);
+      }
+      const tq = texto('?', PALETA.espectro2); g.drawImage(tq, cx - (tq.width >> 1), cy - 36 + (Math.floor(T * 4) % 2));
     }
     if (p.bb & 1) {   // confundido por el muñeco vudú: estrellas moradas que giran sobre la cabeza (como el aturdido) y un «?»
       const T = this.time;
@@ -15093,6 +15422,67 @@ class Renderer {
     if (ch < 2) { const [x, y] = B[4]; const sy = y - 2 - ch * 2; this.g.fillStyle = PALETA.tinta; this.g.fillRect(x - 1, sy - 1, 3, 3); this.g.fillStyle = P[2]; this.g.fillRect(x, sy, 1, 1); }
   }
   // n llamas chicas repartidas en un ancho (compatibilidad con los usos de antes)
+  // Smok: jirón de humo negro (capas oscuras, borde gris)
+  humoNegro(x, y, r) {   // V9.1: cacheado por radio
+    x = Math.round(x); y = Math.round(y); r = Math.max(1, Math.round(r));
+    this.formaEn('hn' + r, 2 * r + 2, 2 * r + 2, (gg) => {
+      const bola = (cx, cy, rr, col) => { gg.fillStyle = col; for (let dy = -rr; dy <= rr; dy++) { const w = Math.round(Math.sqrt(rr * rr - dy * dy)); gg.fillRect(cx - w, cy + dy, w * 2 + 1, 1); } };
+      bola(r, r, r, PALETA.piedra0); bola(r, r, Math.max(1, r - 1), PALETA.noche); if (r >= 3) bola(r + 1, r + 1, r - 2, PALETA.tinta);
+    }, x - r, y - r);
+  }
+  // Smok (Seba 16-11): sombra de humo — solo se ven los ojos; el humo sube de la cabeza y los hombros y la parte de abajo se deshace
+  dibujaSmok(p, cx, cy, izq, moviendo, sube, alfa = 1, sm = 0) {
+    const g = this.g, T = this.time, seed = (p.id && p.id.length) || 3;
+    const lx = cx - 13, ly = cy + 8 - 25 - sube, X = (x) => lx + (izq ? 26 - x : x);   // Seba (16-11): lienzo 27×26
+    g.globalAlpha = alfa;
+    if (sm & 8) { g.globalAlpha = alfa * 0.4; this.discDither(cx, cy - 10, 18, PALETA.tinta, 2, Math.floor(T * 8)); g.globalAlpha = alfa; }   // Ocaso: aura negra
+    // Seba (16-11): más humo — nubes negras con la textura del polvo de Vario / la nube de Rasho detrás del cuerpo
+    const nubes = [[3, 12, 3], [23, 12, 3], [6, 18, 3], [20, 18, 3], [13, 22, 4], [9, 23, 3], [17, 23, 3], [13, 2, 2]];
+    for (let i = 0; i < nubes.length; i++) { const [sx0, sy0, rr] = nubes[i], w = Math.sin(T * 1.6 + i * 1.3 + seed); g.globalAlpha = alfa * 0.85; this.nubeHumo(X(sx0) + Math.round(w * 1.5), ly + sy0 + Math.round(Math.cos(T * 1.3 + i) * 1), rr + (w > 0.6 ? 1 : 0), i + seed); }
+    // la parte de abajo se deshace en humo
+    for (let i = 0; i < 6; i++) { const ph = (T * 0.8 + i / 6) % 1, x = cx + Math.round(Math.sin(T * 2 + i * 1.7 + seed) * 7) + (i - 2.5) * 2, y = cy + 2 + Math.round(ph * 7); g.globalAlpha = alfa * 0.85 * (1 - ph); this.nubeHumo(x, y, 3 - Math.round(ph * 2), i + 7); }
+    g.globalAlpha = alfa;
+    g.drawImage(smokGrande(moviendo ? Math.floor(T * 5) % 2 : 0)[izq ? 'izq' : 'der'], lx, ly);
+    // jirones que suben de la cabeza, los hombros y los brazos
+    for (let i = 0; i < 10; i++) { const ph = (T * 0.7 + i / 10) % 1, sx0 = [13, 4, 22, 8, 18, 12, 2, 24, 10, 16][i], sy0 = [1, 9, 9, 8, 8, 0, 16, 16, 12, 12][i], x = X(sx0) + Math.round(Math.sin(T * 3 + i * 2) * 1.5), y = ly + sy0 - Math.round(ph * 12); g.globalAlpha = alfa * 0.8 * (1 - ph); g.fillStyle = i % 3 === 0 ? PALETA.piedra1 : i % 2 ? PALETA.piedra0 : PALETA.noche; const q = ph < 0.5 ? 2 : 1; g.fillRect(x, y, q, q); }
+    // ojos hundidos que brillan desde adentro (cuencas más negras, brillo cian y un punto blanco)
+    const k = (Math.sin(T * 4 + seed) + 1) / 2, e1 = X(14), e2 = X(17), ey = ly + 5;
+    g.globalAlpha = alfa; g.fillStyle = PALETA.tinta; g.fillRect(Math.min(e1, e2) - 1, ey - 1, Math.abs(e2 - e1) + 3, 3);
+    g.globalAlpha = alfa * (0.25 + 0.35 * k); g.fillStyle = PALETA.espectro1; for (const ex of [e1, e2]) { g.fillRect(ex - 1, ey, 3, 1); g.fillRect(ex, ey - 1, 1, 3); }   // brillo chico alrededor de cada ojo
+    g.globalAlpha = alfa; g.fillStyle = PALETA.espectro1; g.fillRect(e1, ey, 1, 1); g.fillRect(e2, ey, 1, 1);
+    g.fillStyle = k > 0.5 || (sm & 8) ? PALETA.pergamino2 : PALETA.espectro2; g.fillRect(e1, ey, 1, 1); g.fillRect(e2, ey, 1, 1);
+    if (sm & 8) for (let i = 0; i < 3; i++) { g.globalAlpha = alfa * (1 - i / 3); g.fillStyle = PALETA.espectro2; g.fillRect(e1 - (izq ? -1 : 1) * (i + 1), ey, 1, 1); g.fillRect(e2 - (izq ? -1 : 1) * (i + 1), ey, 1, 1); }
+    g.globalAlpha = 1;
+  }
+  // Smok hundido: lo que se ve es un círculo negro que se mueve (los aliados además lo ven tenue)
+  dibujaHundido(p, cx, cy, aliado) {
+    const g = this.g, T = this.time;
+    g.globalAlpha = 0.85; this.discDither(cx, cy + 4, 8, PALETA.tinta, 1, 0); g.globalAlpha = 0.6; this.discDither(cx, cy + 4, 10, PALETA.noche, 2, Math.floor(T * 6)); g.globalAlpha = 1;   // Seba (16-11): 20% más chico
+    this.ring(cx, cy + 4, 9, PALETA.tinta, 1, 2);
+    for (let i = 0; i < 4; i++) { const ph = (T * 1.2 + i / 4) % 1, b = i * TAU / 4 + T; g.globalAlpha = 0.8 * (1 - ph); this.humoNegro(cx + Math.cos(b) * 7, cy + 2 + Math.sin(b) * 3 - ph * 7, 2); }
+    g.globalAlpha = 1;
+    if (aliado) this.dibujaSmok(p, cx, cy, false, true, 0, 0.3, 0);
+  }
+  // Smok: Ocaso — en la pantalla de un enemigo, todo oscuro menos un círculo alrededor de su héroe
+  dibujaOcaso(cx, cy) {   // V9.1: el agujero con borde tramado se pinta una vez; cada cuadro son 4 rectángulos negros y una imagen
+    const W = this.W, H = this.H, R = Math.round(HABILIDADES.ocasoSmok.vision * ESC), S = 2 * R + 9, o = R + 4;
+    if (!this._ocasoHueco || this._ocasoHueco.width !== S) {
+      const c = document.createElement('canvas'); c.width = S; c.height = S; const k = c.getContext('2d');
+      k.fillStyle = PALETA.tinta; k.fillRect(0, 0, S, S); k.globalCompositeOperation = 'destination-out';
+      for (let y = -o; y <= o; y++) for (let x = -o; x <= o; x++) {   // borde tramado
+        const d = Math.hypot(x, y);
+        if (d <= R - 3 || (d <= R + 3 && ((x + y) & 1) === 0 && d <= R + 3 - ((x * 7 + y * 13) & 3))) k.fillRect(x + o, y + o, 1, 1);
+      }
+      this._ocasoHueco = c;
+    }
+    const g = this.g, x0 = Math.round(cx) - o, y0 = Math.round(cy) - o;
+    g.globalAlpha = 0.95; g.fillStyle = PALETA.tinta;
+    g.fillRect(0, 0, W, Math.max(0, y0)); g.fillRect(0, y0 + S, W, Math.max(0, H - y0 - S));
+    g.fillRect(0, y0, Math.max(0, x0), S); g.fillRect(x0 + S, y0, Math.max(0, W - x0 - S), S);
+    g.drawImage(this._ocasoHueco, x0, y0); g.globalAlpha = 1;
+    const T = this.time;   // humo que se mueve en el borde
+    for (let i = 0; i < 14; i++) { const b = i * TAU / 14 + T * 0.4; this.humoNegro(cx + Math.cos(b) * (R + 2), cy + Math.sin(b) * (R + 2), 3); }
+  }
   esAliadoDe(id) { return id === this._myId || !!(this.equipos && this.equipos[id] && this.equipos[id] === this.equipos[this._myId]); }
   // Bambaa: círculo rúnico (anillos, estrella de cinco puntas y runas), como el de la referencia
   circuloVudu(cx, cy, r, rot, col = PALETA.vacio2, a = 1) {   // Bambaa (renombrado V7.9: antes pisaba el circuloRunico de Æthar)
@@ -15611,6 +16001,13 @@ class Renderer {
       g.fillStyle = PALETA.magia; g.fillRect(cx - 1, cy - 1, 3, 3);
       return;
     }
+    if (u.kind === 'clonSmok') {   // Smok: clon idéntico (los aliados lo ven un poco translúcido), con barra de vida
+      const cx = this.gx(u.x), cy = this.gy(u.y), izq = Math.cos(u.f) < -0.05, al = this.esAliadoDe(u.owner);
+      this.dibujaSmok({ id: 'c' + u.id, sm: 0 }, cx, cy, izq, false, 0, al ? 0.7 : 1, 0);
+      const g = this.g, bw = 20; g.fillStyle = PALETA.tinta; g.fillRect(cx - bw / 2 - 1, cy - 20, bw + 2, 3);
+      g.fillStyle = al ? PALETA.bosque2 : PALETA.carmesi2; g.fillRect(cx - bw / 2, cy - 19, Math.round(bw * Math.max(0, u.hp / u.mh)), 1);
+      return;
+    }
     if (u.kind === 'clon') {
       // Clon de Takichi: su silueta en morado translúcido
       const ownM = metaById.get(u.owner);
@@ -15869,7 +16266,7 @@ class Renderer {
     else s = otro(p.spr, Math.floor(this.time * 8));
     // Estela: puntos detrás del proyectil, en el color de su tipo
     const col = { cartaVario: PALETA.magenta2, corazonVario: PALETA.magenta2, corazonVarioChico: PALETA.magenta2, flecha: PALETA.pergamino2, flechaBosque: PALETA.bosque2, flechaElfica: PALETA.oro2, virote: PALETA.pergamino1, sombra: PALETA.magia,
-      orbeBambaa: PALETA.magia, orbeFuego: PALETA.antorcha, orbeSangre: PALETA.carmesi2, orbeAgua: PALETA.marea2, bolaFuego: PALETA.antorcha, piedra: PALETA.piedra3, rocaGrande: PALETA.piedra3, rayoBola: PALETA.acero2, rayoBolaCargada: PALETA.oro2, trueno: PALETA.acero2, telaGancho: PALETA.pergamino2, petaloGaia: PALETA.magia, ganchoShai: PALETA.acero2, discoGaia: PALETA.carmesi2, grillete: PALETA.antorcha }[p.spr] || PALETA.pergamino2;
+      humoSmok: PALETA.piedra0, orbeBambaa: PALETA.magia, orbeFuego: PALETA.antorcha, orbeSangre: PALETA.carmesi2, orbeAgua: PALETA.marea2, bolaFuego: PALETA.antorcha, piedra: PALETA.piedra3, rocaGrande: PALETA.piedra3, rayoBola: PALETA.acero2, rayoBolaCargada: PALETA.oro2, trueno: PALETA.acero2, telaGancho: PALETA.pergamino2, petaloGaia: PALETA.magia, ganchoShai: PALETA.acero2, discoGaia: PALETA.carmesi2, grillete: PALETA.antorcha }[p.spr] || PALETA.pergamino2;
     const ca = Math.cos(p.a), sa = Math.sin(p.a);
     for (let i = 1; i <= 5; i++) {
       if (i > 3 && (Math.floor(this.time * 20) + i) % 2) continue;
@@ -16468,6 +16865,32 @@ class Renderer {
         case 'alzaHachazo': {   // levanta el hacha: chispas de magma que suben
           for (let i = 0; i < 6; i++) { const x = cx - 10 + i * 4, y = cy - 20 - Math.round(t * 14) - (i % 2) * 3; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, y, 1, 2); }
           g.globalAlpha = 1;
+          break;
+        }
+        case 'hundeSmok': case 'clonSmokSeVa': case 'nubeSmokFin': case 'clonPasivaSmok': {   // humo negro que se dispersa
+          g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 3 + t * 12; this.humoNegro(cx + Math.cos(b) * d, cy - 4 + Math.sin(b) * d * 0.6 - t * 6, 3 - Math.round(t * 2)); } g.globalAlpha = 1;
+          break;
+        }
+        case 'emergeSmok': {   // reaparece: onda de humo negro del radio y los ojos que se encienden
+          const R = Math.round(f.r * ESC), e = 1 - Math.pow(1 - Math.min(1, t * 2.2), 3), rr = Math.round(6 + (R - 6) * e);
+          g.globalAlpha = 1 - t;
+          this.ring(cx, cy, rr, PALETA.tinta, 1, 4); this.ring(cx, cy, Math.max(2, rr - 3), PALETA.piedra0, 1, 1);
+          for (let i = 0; i < 10; i++) { const b = i * TAU / 10 + t, d = rr; this.humoNegro(cx + Math.cos(b) * d, cy + Math.sin(b) * d * 0.9, 3); }
+          for (let i = 0; i < 6; i++) { const ph = t, b = i * TAU / 6; this.humoNegro(cx + Math.cos(b) * 5, cy - 4 - ph * 18 + Math.sin(b) * 3, 4 - Math.round(t * 3)); }
+          g.globalAlpha = 1;
+          if (t < 0.3) { g.fillStyle = PALETA.espectro2; g.fillRect(cx - 3, cy - 18, 2, 1); g.fillRect(cx + 2, cy - 18, 2, 1); }
+          break;
+        }
+        case 'esferaSmok': {   // la esfera vuela en arco hasta donde se abre la nube
+          const e = Math.min(1, t / (f.t / 0.5)), x2 = this.gx(f.x2), y2 = this.gy(f.y2), x = cx + (x2 - cx) * e, y = cy + (y2 - cy) * e - 10 - Math.sin(Math.PI * e) * 24;
+          if (e < 1) { this.humoNegro(x, y, 5); g.fillStyle = PALETA.espectro2; g.fillRect(Math.round(x), Math.round(y), 1, 1); for (let i = 1; i < 4; i++) { const q = Math.max(0, e - i * 0.06); g.globalAlpha = 0.6 - i * 0.15; this.humoNegro(cx + (x2 - cx) * q, cy + (y2 - cy) * q - 10 - Math.sin(Math.PI * q) * 24, 4 - i); } g.globalAlpha = 1; }
+          break;
+        }
+        case 'ecoSmok': { g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 10), PALETA.espectro2, 1, 1); g.globalAlpha = 1; break; }
+        case 'canalOcaso': { this.ring(cx, cy - 8, Math.round(4 + t * 16), PALETA.tinta, 1 - t, 2); break; }
+        case 'ocasoCae': {   // cae el ocaso: onda de oscuridad que barre todo
+          const rr = Math.round(10 + t * 260);
+          g.globalAlpha = (1 - t) * 0.8; this.ring(cx, cy, rr, PALETA.tinta, 1, 6); this.ring(cx, cy, Math.max(2, rr - 6), PALETA.noche, 1, 3); g.globalAlpha = 1;
           break;
         }
         case 'munecoSale': case 'munecoSeVa': case 'calacaSeVa': {   // bocanada de humo morado
@@ -18544,6 +18967,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.1', f: '16-11-2026', n: [
+    'Nuevo héroe: Smok (Errantes), sombra de humo. Hundido: se hunde hasta 4 s dejando un clon y reaparece con 50 de daño y confusión. Esfera de humo: nube que crece, silencia, frena y deja un clon. Ulti Ocaso: los enemigos solo ven a su alrededor y reciben 25/s (50/s con Smok cerca).',
+    'Smok, Ecos de humo: cada 4.º básico que acierta deja un clon; si los enemigos destruyen un clon, sus habilidades (menos la ulti) se recargan 0,5 s.',
+    'Rendimiento: el humo de Smok, sus clones y la ceguera del Ocaso se dibujan con imágenes guardadas para no cargar el juego.',
+  ] },
   { v: 'V9.0', f: '14-11-2026', n: [
     'Salas online: se quitan los servidores públicos de retransmisión de la V8.9; la conexión vuelve a ser como en la V8.8.',
   ] },
