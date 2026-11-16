@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.1</title>
+<title>LOLA V9.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.1</p>
+        <p class="sub version">LOLA V9.2</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1619,7 +1619,7 @@ Object.assign(HEROES, {
     casa: 'errantes',
     nombre: 'Smok', rol: 'Engaño · sombras', fondo: 'smok', arma: 'manoSmok',
     desc: 'Sombra humanoide hecha de humo; solo se le ven los ojos. Se hunde en la tierra dejando un clon, envuelve a sus enemigos en nubes que silencian y trae el ocaso, donde nadie ve más allá de sus manos.',
-    vida: 370, dano: 30, recarga: 1.3, ultiCarga: 300, velocidad: 155,   // Seba (16-11): daño 30; (C) el resto
+    vida: 370, dano: 28, recarga: 1.3, ultiCarga: 300, velocidad: 155,   // Seba (16-11, V9.2): daño 30 → 28; (C) el resto
     ataque: { tipo: 'proyectil', proj: 'humoSmok', vel: 420, alcance: 340, radio: 6 },   // Seba (16-11): bola de humo a distancia
     habs: ['hundidoSmok', 'esferaSmok', 'ocasoSmok'],
     pasiva: 'ecosSmok',
@@ -2002,7 +2002,7 @@ Object.assign(HABILIDADES, {
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
                      // Seba (16-11): recarga 14 → 15,5
                    confusion: 2.5, clonDur: 7, clonRecibe: 0.30, clonHace: 0.5,   // Seba: desaparece (el enemigo ve un círculo negro), deja un clon quieto que solo hace básicos (+30% de daño recibido, −50% de daño), al terminar o cortarla reaparece con 50 en área y confusión 2,5 s; (Seba 16-11) clon con la vida actual de Smok, dura 7 s; (C) 3 s, +15% de velocidad, radio 90, no lo pueden golpear ni controlar hundido, recarga 14
-                  desc: (n) => `Te hundes en la tierra hasta ${HABILIDADES.hundidoSmok.dur} s (los enemigos solo ven un círculo negro que se mueve; nada te alcanza) y te mueves ${Math.round(HABILIDADES.hundidoSmok.vel * 100)}% más rápido. Dejas un clon en tu lugar con tu vida actual por ${HABILIDADES.hundidoSmok.clonDur} s: no se mueve, ataca con tu básico, hace 50% menos de daño y recibe 30% más. Al terminar o si vuelves a apretar, reapareces con otro clon a tu lado: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hundidoSmok.radio)} y los enemigos quedan confundidos ${fmtN(HABILIDADES.hundidoSmok.confusion)} s.`,
+                  desc: (n) => `Te hundes en la tierra hasta ${HABILIDADES.hundidoSmok.dur} s (los enemigos solo ven un círculo negro que se mueve; nada nuevo te alcanza, pero las quemaduras, venenos y maldiciones que ya tenías siguen, y sí te llegan curas y escudos aliados) y te mueves ${Math.round(HABILIDADES.hundidoSmok.vel * 100)}% más rápido. Dejas un clon en tu lugar con tu vida actual por ${HABILIDADES.hundidoSmok.clonDur} s: no se mueve, ataca con tu básico, hace 50% menos de daño y recibe 30% más. Al terminar o si vuelves a apretar, reapareces con otro clon a tu lado: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hundidoSmok.radio)} y los enemigos quedan confundidos ${fmtN(HABILIDADES.hundidoSmok.confusion)} s.`,
                   n1: { dano: 50 }, n2: { dano: 50 } },
   esferaSmok:   { nombre: 'Esfera de humo', glifo: 'esferaSmok', cd: 16, cdFijo: true, alcance: 280, vuelo: 0.35, dur: 8, r0: 45, crece: 15, pasos: 10, cada: 0.5, lento: 0.10, tope: 0.15,   // Seba (16-11): +1 s de recarga; nube 7 s; lento como la arena de Kiro (−10% cada 0,5 s dentro) con tope 15%; (C) deja de crecer en 195
                     // Seba: nube que se expande cada 0,5 s por 5 s; silencia, frena 20% y hace 1 cada 0,1 s; al terminar deja un clon en el centro; (C) alcance 280, radio 45 → 195, recarga 15
@@ -6457,7 +6457,7 @@ class Game {
     if (!esJugador && UNIDADES[target.kind].invulnerable) return 0;
 
     if (esJugador && target.fx && target.fx.jetpack) return 0;   // Biteroi en el aire: nada lo daña (Seba)
-    if (esJugador && target.fx && target.fx.hundidoSmok) return 0;   // Smok hundido (C): nada lo alcanza
+    if (esJugador && target.fx && target.fx.hundidoSmok && !o.dotPropio) return 0;   // Smok hundido: nada nuevo lo alcanza; Seba (16-11, V9.2): las quemaduras, venenos y maldiciones que ya traía siguen haciéndole daño
     if (esJugador && o.basico && src && src !== target && HEROES[target.build?.heroe]?.pasiva === 'pasoEnFalso' && this.combatTime >= (target.pasoCd || 0) && Math.random() < PASIVAS.pasoEnFalso.chance) {
       target.pasoCd = this.combatTime + PASIVAS.pasoEnFalso.cd;   // Kiro: Paso en falso — esquiva el básico entero
       this.emit({ k: 'esquivaKiro', x: target.x | 0, y: target.y | 0, id: target.id });
@@ -9542,7 +9542,7 @@ class Game {
       if (k === 'dotsInst') {
         for (const [q, d] of Object.entries(f)) {
           d.t -= dt; d.acc = (d.acc || 0) + dt;
-          if (d.acc >= 0.999) { d.acc -= 1; if (e.alive) this.damage(e, d.dps, this.players.get(d.src), { tipo: 'mag', silencioso: true, tick: true, ulti: d.key === 'veneno' || d.key === 'fuegoAzul', fuegoAzul: d.key === 'fuegoAzul' }); }   // un golpe por segundo
+          if (d.acc >= 0.999) { d.acc -= 1; if (e.alive) this.damage(e, d.dps, this.players.get(d.src), { tipo: 'mag', silencioso: true, tick: true, dotPropio: true, ulti: d.key === 'veneno' || d.key === 'fuegoAzul', fuegoAzul: d.key === 'fuegoAzul' }); }   // un golpe por segundo
           if (e.fx !== fx || !fx.dotsInst) break;   // murió y se limpiaron sus efectos
           if (d.t <= 1e-6) delete f[q];
         }
@@ -18967,6 +18967,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.2', f: '16-11-2026', n: [
+    'Smok, Hundido: las quemaduras, venenos y maldiciones que ya tenía siguen haciéndole daño estando hundido, por el tiempo que les quedaba. Nada nuevo lo alcanza, pero sí le llegan curas y escudos aliados.',
+    'Smok: el daño del básico baja de 30 a 28.',
+  ] },
   { v: 'V9.1', f: '16-11-2026', n: [
     'Nuevo héroe: Smok (Errantes), sombra de humo. Hundido: se hunde hasta 4 s dejando un clon y reaparece con 50 de daño y confusión. Esfera de humo: nube que crece, silencia, frena y deja un clon. Ulti Ocaso: los enemigos solo ven a su alrededor y reciben 25/s (50/s con Smok cerca).',
     'Smok, Ecos de humo: cada 4.º básico que acierta deja un clon; si los enemigos destruyen un clon, sus habilidades (menos la ulti) se recargan 0,5 s.',
