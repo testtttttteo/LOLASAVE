@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.2</title>
+<title>LOLA V9.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.2</p>
+        <p class="sub version">LOLA V9.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1624,6 +1624,16 @@ Object.assign(HEROES, {
     habs: ['hundidoSmok', 'esferaSmok', 'ocasoSmok'],
     pasiva: 'ecosSmok',
   },
+// Seba (17-11): Rin (Aliados): esgrimista joven, rubia, ropas claras y luminosas, rapiera; habilidades de luz magenta; rápida, daño que se acumula. Números (C) salvo los que fijó Seba.
+  rin: {
+    casa: 'aliados',
+    nombre: 'Rin', rol: 'Esgrimista · veloz', fondo: 'rin', arma: 'rapieraRin',
+    desc: 'Esgrimista joven y luminosa, rápida como un destello. Su rapiera de luz magenta salta de marca en marca, levanta espadas espirituales y gira en una danza que estalla a su alrededor.',
+    vida: 370, dano: 24, recarga: 0.85, ultiCarga: 300, velocidad: 168,   // (C); Seba (17-11): vida +10
+    ataque: { tipo: 'melee', rango: 66, arco: 90 },   // (C) rapiera
+    habs: ['estocadaRin', 'trapRin', 'danzaRin'],
+    pasiva: 'marcaRin',
+  },
 });
 
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
@@ -1998,6 +2008,21 @@ Object.assign(HABILIDADES, {
                    ancho: 162, confusion: 2.5,   // Seba: 3 básicos potenciados en 10 s (se pueden fallar); tornado 10% menos ancho y 25% más rápido que la Tormenta de Rasho, largo, 50/s, arrastra, al final −33% 1,5 s; (C) largo 380, recarga
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
+  // ---- Rin (Seba, 17-11; números (C) salvo los que fijó Seba)
+  estocadaRin: { nombre: 'Estocada', glifo: 'estocadaRin', cd: 6, cdFijo: true, dash: 38, largo: 190, ancho: 34, velSalto: 1100,   // Seba (17-11 r10): sin mini dash previo; el golpe es en todo el rango al castear y Rin avanza 38 (−25%); si la estocada toca una marca o una espada, Rin va hasta ahí
+                 racha: 20, rachaVentana: 5,   // Seba (17-11): cada estocada adicional al mismo enemigo dentro de 5 s hace +20 acumulable (+20, +40…). Seba: dash cortito y estocada mágica larga (rango medio), 50 de daño, la habilidad central; (C) recarga 6, dash 50, estocada 190, salto a marcas/espadas 320
+                 desc: (n) => `Estocada de luz magenta instantánea en todo su alcance (${DIST(HABILIDADES.estocadaRin.largo)}): ${n.dano} de daño a todo lo que atraviesa, y avanzas un poco. Si la estocada toca a un enemigo marcado o a una de tus espadas espirituales, saltas hasta ahí (gasta la marca o la espada) y la estocada se recarga al instante; al marcado le haces +${PASIVAS.marcaRin.extra}. Cada estocada que repites sobre el mismo enemigo dentro de ${HABILIDADES.estocadaRin.rachaVentana} s hace +${HABILIDADES.estocadaRin.racha} más (acumulable).`,
+                 n1: { dano: 50 }, n2: { dano: 50 } },
+  trapRin:     { nombre: 'Espadas espirituales', glifo: 'trapRin', cd: 14, cdFijo: true, alcance: 240, vel: 700, radio: 100, espadas: 6, dur: 4, choque: 16, lento: 0.25, lentoDur: 3,   // Seba (17-11): es un proyectil; alcance −25% (320 → 240); si alcanza a un enemigo, el anillo se abre con él al centro
+                   // Seba: levanta espíritus de espadas magenta en un espacio (como la ulti de Irelia); impacto 50 y lento 25% 3 s; tocar una espada repite el efecto; (Seba 17-11) se cruzan; (C) alcance, radio, 6 espadas, 4 s, 1 vez por espada y enemigo
+                 desc: (n) => `Lanzas una espada de luz (alcance ${DIST(HABILIDADES.trapRin.alcance)}); donde cae, o sobre el primer enemigo que alcanza (que queda al centro), se levanta un anillo de ${HABILIDADES.trapRin.espadas} espadas espirituales magenta (radio ${RADIO(HABILIDADES.trapRin.radio)}) por ${HABILIDADES.trapRin.dur} s. Los enemigos dentro reciben ${n.dano} de daño y se frenan ${Math.round(HABILIDADES.trapRin.lento * 100)}% por ${HABILIDADES.trapRin.lentoDur} s. Cada espada que tocan repite el efecto (una vez por espada).`,
+                 n1: { dano: 50 }, n2: { dano: 50 } },
+  danzaRin:    { nombre: 'Danza de espadas', glifo: 'danzaRin', cd: 60, cdFijo: true, ulti: true,
+                 dur: 6, radio: 49, giro: 0.5, espadas: 8, largo: 31, grosor: 4,   // Seba (17-11 r6): sin expansión; siempre 35% más lejos de Rin (36 → 49); 20 por toque; (r7) 8 espadas   // Seba (17-11 r5): espadas radiales (mango hacia Rin, filo afuera), +10% largo, pegadas a Rin y luego +50%; sin límite de toques, hitbox = la espada dibujada
+                 // Seba (17-11, rework): Rin se puede mover; el anillo la sigue y gira 6 s (3 s cerca, luego se expande y gira 3 s más); cada toque de espada: 40, se puede repetir
+                 // (C) 0,5 vueltas/s, largo 31
+                 desc: (n) => `Durante ${HABILIDADES.danzaRin.dur} s, ${HABILIDADES.danzaRin.espadas} espadas magenta giran a tu alrededor y te siguen (puedes moverte), con el mango hacia ti y el filo hacia afuera. Cada vez que una espada toca a un enemigo: ${n.dano} de daño.`,
+                 n1: { dano: 20 }, n2: { dano: 20 } },
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
                      // Seba (16-11): recarga 14 → 15,5
@@ -2165,6 +2190,7 @@ const PASIVAS = {
   distanciaMaldita: { nombre: 'Distancia maldita', glifo: 'distanciaMaldita', desc: 'Tus ataques básicos hacen +5 de daño si golpean desde el borde de tu alcance (85% o más).' },
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
+  marcaRin: { nombre: 'Marca de esgrima', glifo: 'marcaRin', dur: 5, cada: 10, extra: 10, desc: 'Tus habilidades marcan a los enemigos que alcanzan (cada habilidad puede marcar una vez cada 10 s). Tu Estocada salta hasta un marcado y le hace +10 (saltar gasta la marca); también salta hasta tus espadas espirituales.' },   // Seba (17-11); (C) la marca dura 5 s
   ecosSmok: { nombre: 'Ecos de humo', glifo: 'ecosSmok', reduce: 0.5, cada: 4, desc: 'Cada 4.º ataque básico tuyo que acierta deja un clon donde estás. Cuando los enemigos destruyen un clon tuyo, tus habilidades se recargan 0,5 s (no la ulti).' },   // Seba (16-11): ya no cuenta el golpe del clon   // Seba (16-11): + clon cada 4.º básico acertado   // Seba (16-11): 1 golpe por clon + destruido; no la ulti   // Seba (16-11); nombre (C)
   amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
   corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 30, dur: 4,   /* Seba (13-11, V7.6): 20 → 30 */ quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 30 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
@@ -2312,6 +2338,7 @@ const GUIAS = {
   cargaGolagore: { tipo: 'linea', alcance: 370, ancho: 40 }, hachazoGolagore: { tipo: 'punto', alcance: 220, r: 90 }, fortalezaGolagore: { tipo: 'propio', r: 150 },
   munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 352 },
   hundidoSmok: { tipo: 'propio', r: 90 }, esferaSmok: { tipo: 'punto', alcance: 280, r: 45 }, ocasoSmok: { tipo: 'propio', r: 160 },
+  estocadaRin: { tipo: 'linea', alcance: 240, ancho: 34 }, trapRin: { tipo: 'linea', alcance: 240, ancho: 24 }, danzaRin: { tipo: 'propio', r: 70 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -5341,6 +5368,140 @@ function legiosGrande(frame) {
   return r;
 }
 
+// Seba (17-11): Rin — esgrimista joven (Aliados): pelo corto rubio con cinta magenta, ojos magenta, traje claro y luminoso con oro,
+// forro y capa magenta, corsé oscuro, botas blancas; rapiera de guarda dorada (se dibuja aparte). Habilidades de luz magenta.
+Object.assign(CAPAS, {
+  cuerpoRin: L({
+    1: '......OyyyyO........',
+    2: '..hM.OyyOyyyyO......',
+    3: '.hMMOyOyyyyyyO......',
+    4: '..h.OoOyyqqyO.......',
+    5: '....OOoyqkMqq.......',
+    6: '....oOoOqqqqP.......',
+    7: '....oOoOPqeP........',
+    8: '.....oO.Pqq.........',
+    9: '...q.PqyOOyqP.......',
+    10: '..qPqqqnoonqqq......',
+    11: '.MqP3qnqonqP3q......',
+    12: '.MN.Pq.nnonn.qP.....',
+    13: '.MN.qP.OOyOO.Pq.....',
+    14: 'MMN.P.qoyyyoq.P.....',
+    15: 'MN..PqqqNMqqqP......',
+    16: 'MMN.qqqqMNMqqqP.....',
+    17: '.hN..oyyNMNyyo......',
+    18: '......n3...3n.......',
+    19: '......q3...3q.......',
+    20: '.....qq3...3qq......',
+  }),
+});
+Object.assign(APARIENCIA, {
+  rin: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoRin'], ['cuerpoRin']], cabeza: [[], []] },
+});
+Object.assign(ARMAS_SPR, {
+  rapieraRin: { g: [2, 5], S: 39, rows: [
+    '..................',
+    '..................',
+    '..................',
+    '..oOo.............',
+    '.o..y.............',
+    'oyOOWyq4444444444q',
+    '.o..y.............',
+    '..oOo.............',
+    '..................',
+    '..................',
+    '..................',
+    '..................',
+  ] },
+});
+Object.assign(GLIFOS, {
+  estocadaRin: ['.........', '.......h.', '......hM.', 'oO.4444q.', 'Oy4444qhM', 'oO.4444q.', '......hM.', '.......h.', '.........'],
+  trapRin:     ['....h....', '.h..M..h.', '..M.4.M..', '....4....', 'hM4.N.4Mh', '....4....', '..M.4.M..', '.h..M..h.', '....h....'],
+  danzaRin:    ['..hMhMh..', '.h.....h.', 'M..4.4..M', 'h.4.q.4.h', 'M..qNq..M', 'h.4.q.4.h', 'M..4.4..M', '.h.....h.', '..hMhMh..'],
+  marcaRin:    ['....h....', '...hMh...', '..h.M.h..', '.hMMqMMh.', '..h.M.h..', '...hMh...', '....h....', '....q....', '....4....'],
+});
+Object.assign(FONDOS, { rin: ['M', 'q'] });
+const RIN_GRANDE = [
+  [
+    '..................',
+    '......OyyyyO......',
+    '..hM.OyyOyyyyO....',
+    '.hMMOyOyyyyyyyO...',
+    '..h.OoOyyykkyyO...',
+    '....OOoyqqkhqq....',
+    '....oOoOqqqqqP....',
+    '....oOoOPqqeP.....',
+    '.....oO.Pqqq......',
+    '...q.PqyOOyqP.....',
+    '..qPqqqnoonqqq....',
+    '.MqP3qnqonqP3q....',
+    '.MN.Pq.nnonn.qP...',
+    '.MN.qP.OOyOO.Pq...',
+    'MMN.P.qoyyyoq.P...',
+    'MN..PqqqNMqqqP....',
+    'MMN.qqqqMNMqqqP...',
+    '.hN..oyyNMNyyo....',
+    '......n3...3n.....',
+    '......q3...3q.....',
+    '.....qq3...3qq....',
+  ],
+  [
+    '..................',
+    '......OyyyyO......',
+    '..hM.OyyOyyyyO....',
+    '.hMMOyOyyyyyyyO...',
+    '..h.OoOyyykkyyO...',
+    '....OOoyqqkhqq....',
+    '....oOoOqqqqqP....',
+    '....oOoOPqqeP.....',
+    '.....oO.Pqqq......',
+    '...q.PqyOOyqP.....',
+    '..qPqqqnoonqqq....',
+    '.MqP3qnqonqP3q....',
+    '.MN.Pq.nnonn.qP...',
+    '.MN.qP.OOyOO.Pq...',
+    'MMN.P.qoyyyoq.P...',
+    'MN..PqqqNMqqqP....',
+    'MMN.qqqqMNMqqqP...',
+    '.hN..oyyNMNyyo....',
+    '.....n3....3n.....',
+    '.....q3....3q.....',
+    '....qq3.....3qq...',
+  ],
+  [
+    '..................',
+    '......OyyyyO......',
+    '..hM.OyyOyyyyO....',
+    '.hMMOyOyyyyyyyO...',
+    '..h.OoOyyykkyyO...',
+    '....OOoyqqkhqq....',
+    '....oOoOqqqqqP....',
+    '....oOoOPqqeP.....',
+    '.....oO.Pqqq......',
+    '...q.PqyOOyqP.....',
+    '..qPqqqnoonqqq....',
+    '.MqP3qnqonqP3q....',
+    '.MN.Pq.nnonn.qP...',
+    '.MN.qP.OOyOO.Pq...',
+    'MMN.P.qoyyyoq.P...',
+    'MN..PqqqNMqqqP....',
+    'MMN.qqqqMNMqqqP...',
+    '.hN..oyyNMNyyo....',
+    '......n3..3n......',
+    '......q3..3q......',
+    '.....qq3.3qq......',
+  ],
+];
+const cacheRin = new Map();
+function rinGrande(frame) {
+  if (cacheRin.has(frame)) return cacheRin.get(frame);
+  const m = matrizVacia(18, 21);
+  pintar(m, RIN_GRANDE[frame]);
+  const der = aCanvas(contornear(m));
+  const r = { der, izq: espejo(der) };
+  cacheRin.set(frame, r);
+  return r;
+}
+
 // Seba (16-11): Smok — sombra humanoide, mitad humo (Errantes); no se distingue nada más que los ojos (cian). El humo que se desprende se dibuja en render.
 Object.assign(CAPAS, {
   cuerpoSmok: L({
@@ -5982,7 +6143,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso', 'canalDanza'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 // Seba (09-11): proyectiles que atraviesan el muro de Aldor (magia y lo que vuela). Todo lo demás (físico) se frena.
 // Fatum entero, sombra de Karilthal, orbes de Monh, Rasho, runas de Æthar, orbe de Driiar, corazones de Vario (C) y lo de las ultis.
@@ -6963,6 +7124,63 @@ class Game {
   // Kiro: usar una habilidad lo revela (y vuelve a esperar 0,75 s en el pozo)
   revelarKiro(p) { p.kiroOculto = 0; if (p.fx.invisible && p.fx.invisible.kiro) { delete p.fx.invisible; this.emit({ k: 'humo', x: p.x | 0, y: p.y | 0, chico: true }); } }
   // Kiro: suma una acumulación (cada una dura 3 s); con 3, aturdido 1 s y se limpian
+  // Rin: marca de esgrima (cada habilidad puede marcar una vez cada 10 s)
+  marcaRinPuede(p, key) { p.rinMarcaCd = p.rinMarcaCd || {}; return HEROES[p.build?.heroe]?.pasiva === 'marcaRin' && this.combatTime >= (p.rinMarcaCd[key] || 0); }
+  marcarRin(p, lista, key) {
+    if (!lista.length || !this.marcaRinPuede(p, key)) return;
+    let n = 0;
+    for (const e of lista) if (e.alive && !e.esUnidad && e.fx) { e.fx.marcaRin = { t: PASIVAS.marcaRin.dur, src: p.id }; n++; this.emit({ k: 'marcaRin', x: e.x | 0, y: e.y | 0 }); }
+    if (n) p.rinMarcaCd[key] = this.combatTime + PASIVAS.marcaRin.cada;
+  }
+  // Rin: abre el anillo de espadas espirituales en c (impacto en el radio y espadas que repiten el efecto)
+  abrirTrapRin(p, c, n) {
+    const h = HABILIDADES.trapRin; c = { x: c.x, y: c.y }; this.clampWall(c);
+    const efecto = (e) => { this.damage(e, n.dano, p, { tipo: 'mag', desde: c }); if (e.alive) this.aplicarEfecto(e, 'slow', { t: h.lentoDur, mult: 1 - h.lento, k: 'trapRin' }); };
+    const dentro = [];
+    for (const e of this.enemigos(p.id, false)) {
+      if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+      if (dist(e, c) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+      efecto(e); dentro.push(e);
+    }
+    this.marcarRin(p, dentro, 'trapRin');
+    const toc = {};
+    this.zones.push({ id: this.nextId++, kind: 'trapRin', x: c.x, y: c.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id, a: Math.random() * TAU, w: 0, nEsp: h.espadas,
+      tick: (z) => {
+        for (const e of this.enemigos(p.id, false)) {
+          if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          const rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR;
+          for (let i = 0; i < z.nEsp; i++) {
+            if (z.w & (1 << i)) continue;
+            const k = e.id + ':' + i; if (toc[k]) continue;
+            const b = z.a + i * TAU / z.nEsp, bx = z.x + Math.cos(b) * z.r, by = z.y + Math.sin(b) * z.r;
+            if (Math.hypot(e.x - bx, e.y - by) > h.choque + rr) continue;
+            toc[k] = true; efecto(e); this.emit({ k: 'espadaRinToca', x: bx | 0, y: by | 0 });
+            if (!e.esUnidad) this.marcarRin(p, [e], 'trapRin');
+          }
+        }
+      } });
+    this.emit({ k: 'trapRin', x: c.x | 0, y: c.y | 0, r: h.radio });
+  }
+  // Rin: la estocada (línea frente a ella); devuelve si gastó una marca
+  estocadaRinGolpe(p, a, largo, n, objetivo = 0) {
+    const H = HABILIDADES.estocadaRin, ca = Math.cos(a), sa = Math.sin(a), golpeados = []; let gasto = false;
+    for (const e of this.enemigos(p.id, false)) {
+      if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+      const rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR, dx = e.x - p.x, dy = e.y - p.y, u = dx * ca + dy * sa, w = Math.abs(-dx * sa + dy * ca);
+      if (u < -rr || u > largo + rr || w > H.ancho / 2 + rr) continue;
+      let dano = n.dano;
+      // Seba (17-11): racha — cada estocada adicional al mismo enemigo dentro de 5 s suma +20 (acumulable)
+      const ra = e.rachaRin && e.rachaRin.src === p.id && this.combatTime - e.rachaRin.t <= H.rachaVentana ? e.rachaRin.n + 1 : 0;
+      e.rachaRin = { src: p.id, n: ra, t: this.combatTime }; dano += H.racha * ra;
+      if (ra > 0) this.emit({ k: 'rachaRin', x: e.x | 0, y: e.y | 0, n: ra });
+      if (e.fx && e.fx.marcaRin && e.fx.marcaRin.src === p.id) { dano += PASIVAS.marcaRin.extra; delete e.fx.marcaRin; gasto = true; this.emit({ k: 'marcaRinGasta', x: e.x | 0, y: e.y | 0 }); }
+      this.damage(e, dano, p, { tipo: 'fis', desde: p });
+      golpeados.push(e);
+    }
+    this.emit({ k: 'estocadaRin', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), r: largo });
+    this.marcarRin(p, golpeados.filter(e => !e.esUnidad && e.id !== objetivo), 'estocadaRin');   // marca a todos los que alcanza, menos al objetivo del salto (su marca ya se gastó)
+    return gasto;
+  }
   // Smok: Ecos de humo — un clon daña a un héroe o lo destruyen: −0,5 s a sus recargas
   ecosSmok(ownerId, clon) {
     const p = this.players.get(ownerId);
@@ -7617,6 +7835,7 @@ class Game {
     if (!p.fx.aturdido && p.fx.cargaGolagore) return this.velocidadBase(p) * (1 + HABILIDADES.cargaGolagore.vel);   // Golagore: Embestida +20%
     if (p.fx.saltoGol) return 0;   // Golagore: en el aire lo mueve el salto
     if (p.fx.canalOcaso) return 0;
+    if (p.fx.dashRin) return 0;   // Rin: la mueve el dash
     if (!p.fx.aturdido && p.fx.hundidoSmok) return this.velocidadBase(p) * (1 + HABILIDADES.hundidoSmok.vel);   // Smok hundido: +15%
     if (!p.fx.aturdido && p.fx.canalGolagore) return this.velocidadBase(p) * HABILIDADES.fortalezaGolagore.mueve;   // Golagore (Seba 13-11): camina al 50% en el Núcleo
     if (p.esMuneco) return 0;
@@ -7664,7 +7883,7 @@ class Game {
 
   basicAttack(p, ang = null, dd = null) {
     if (p.esMuneco) return;
-    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol || p.fx.hundidoSmok) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
+    if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol || p.fx.hundidoSmok || p.fx.dashRin) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
     const at = p.st.ataque;
     p.cd[0] = CONFIG.CADENCIA;
     p.cargas = Math.max(0, p.cargas - 1);
@@ -8164,6 +8383,7 @@ class Game {
     if (key === 'patadaFenix' && p.fx.canalPatada) { this.soltarPatada(p); return; }   // Ash: segunda apretada = saltar
     if (key === 'hundidoSmok' && p.fx.hundidoSmok) { if (this.combatTime - p.fx.hundidoSmok.inicio >= 0.3) this.emergeSmok(p); return; }   // Smok: segunda apretada = reaparecer
     if (p.fx.hundidoSmok) return;   // hundido no usa otras habilidades
+    if (p.fx.dashRin) return;   // Rin: en pleno dash
     if (key === 'cargaGolagore' && p.fx.cargaGolagore) { if (p.fx.cargaGolagore.edad >= 0.2) this.golpeEmbestida(p); return; }   // Golagore (Seba 13-11): segunda apretada = golpe anticipado
     if (key === 'fortalezaGolagore' && p.fx.canalGolagore) { if (this.combatTime - p.fx.canalGolagore.inicio >= 0.3) this.explotaGolagore(p); return; }   // Golagore: segunda apretada = explotar antes
     if (p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol) return;   // Golagore: embistiendo, saltando o en el Núcleo no usa otras habilidades
@@ -8575,6 +8795,77 @@ class Game {
         this.emit({ k: 'tajoKiro', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), paso });
         if (paso < 3) { p.kiroPaso = paso; p.kiroVence = this.combatTime + T + h.ventana; p.cd[slot + 1] = T + 0.12; }
         else { p.kiroPaso = 0; p.kiroVence = 0; }
+        break;
+      }
+      case 'estocadaRin': {   // Rin (Seba 17-11 r10): golpe instantáneo en todo el rango; si toca una marca o una espada propia, salta hasta ahí; si no, avanza un poco
+        const { a } = this.aim(p, h.largo);
+        p.facing = a; p.disparo = null;
+        const ca = Math.cos(a), sa = Math.sin(a);
+        const enLinea = (x, y, rr) => { const dx = x - p.x, dy = y - p.y, u = dx * ca + dy * sa, w = Math.abs(-dx * sa + dy * ca); return u >= -rr && u <= h.largo + rr && w <= h.ancho / 2 + rr ? u : -1; };
+        // ¿la estocada toca un marcado o una espada propia? (el más cercano en la línea)
+        let obj = null;
+        for (const e of this.jugadoresEnemigos(p.id)) if (e.alive && e.fx && e.fx.marcaRin && e.fx.marcaRin.src === p.id) { const u = enLinea(e.x, e.y, CONFIG.RADIO_JUGADOR); if (u >= 0 && (!obj || u < obj.u)) obj = { u, x: e.x, y: e.y, tipo: 'marca', ref: e }; }
+        for (const z of this.zones) if (z.kind === 'trapRin' && z.owner === p.id && !z.done) for (let i = 0; i < z.nEsp; i++) if (!(z.w & (1 << i))) { const b = z.a + i * TAU / z.nEsp, x = z.x + Math.cos(b) * z.r, y = z.y + Math.sin(b) * z.r, u = enLinea(x, y, 8); if (u >= 0 && (!obj || u < obj.u)) obj = { u, x, y, tipo: 'espada', ref: { z, i } }; }
+        this.estocadaRinGolpe(p, a, h.largo, n, obj && obj.tipo === 'marca' ? obj.ref.id : 0);   // golpe en todo el rango (gasta las marcas que atraviesa)
+        if (obj) {
+          if (obj.tipo === 'espada') obj.ref.z.w |= (1 << obj.ref.i);   // la espada se gasta
+          const d = Math.hypot(obj.x - p.x, obj.y - p.y), b = Math.atan2(obj.y - p.y, obj.x - p.x), lejos = Math.max(0, d - (obj.tipo === 'marca' ? 34 : 0));
+          p.facing = b;
+          this.aplicarEfecto(p, 'dashRin', { t: 2, x0: p.x, y0: p.y, x1: p.x + Math.cos(b) * lejos, y1: p.y + Math.sin(b) * lejos, T: Math.max(0.08, lejos / h.velSalto), e: 0, a: b, salto: true, recarga: true });
+          this.emit({ k: 'saltoRin', x: p.x | 0, y: p.y | 0, a: +b.toFixed(2) });
+        } else {
+          this.aplicarEfecto(p, 'dashRin', { t: 2, x0: p.x, y0: p.y, x1: p.x + ca * h.dash, y1: p.y + sa * h.dash, T: 0.1, e: 0, a, salto: false });
+        }
+        break;
+      }
+      case 'trapRin': {   // Rin: lanza una espada de luz; al caer (o al alcanzar a un enemigo, que queda al centro) se abre el anillo
+        const { a } = this.aim(p, h.alcance);
+        p.facing = a; p.disparo = null;
+        const ca = Math.cos(a), sa = Math.sin(a);
+        this.zones.push({ id: this.nextId++, kind: 'trapRinProj', x: p.x + ca * 14, y: p.y + sa * 14, r: 10, t: h.alcance / h.vel + 0.2, total: h.alcance / h.vel + 0.2, owner: p.id, a, rec: 0,
+          tick: (z, dt) => {
+            const st = h.vel * dt, nx = z.x + ca * st, ny = z.y + sa * st, q = { x: nx, y: ny }; this.clampWall(q);
+            let fin = null;
+            if (this.cruzaRoca(z.x, z.y, nx, ny) || Math.hypot(q.x - nx, q.y - ny) > 0.5) fin = { x: z.x, y: z.y };
+            else { z.x = nx; z.y = ny; z.rec += st; if (z.rec >= h.alcance) fin = { x: z.x, y: z.y }; }
+            if (!fin) for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              if (dist(e, z) > 12 + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+              fin = { x: e.x, y: e.y }; break;
+            }
+            if (fin) { z.done = true; this.abrirTrapRin(p, fin, n); }
+          },
+          fin: (z) => this.abrirTrapRin(p, { x: z.x, y: z.y }, n) });
+        this.emit({ k: 'lanzaTrapRin', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
+        break;
+      }
+      case 'danzaRin': {   // Rin (rework 17-11): el anillo de espadas la sigue y gira 6 s (cerca y luego abierto); cada toque de espada hace daño y se repite
+        const w = TAU * h.giro, ult = {};
+        const z = { id: this.nextId++, kind: 'danzaRin', x: p.x, y: p.y, r: h.radio, a: p.facing || 0, w: 0, t: h.dur, total: h.dur, owner: p.id, sigue: p, e: 0,
+          tick: (z, dt) => {
+            if (!p.alive) { z.done = true; return; }
+            z.x = p.x; z.y = p.y; z.e += dt; z.a += w * dt;
+            const marcados = [], L = h.largo / 2;
+            for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              const q = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR, dx = e.x - z.x, dy = e.y - z.y;
+              for (let i = 0; i < h.espadas; i++) {
+                // la espada es un segmento radial: del mango (z.r − L) a la punta (z.r + L); toca si el cuerpo del enemigo la cruza
+                const b = z.a + i * TAU / h.espadas, cb = Math.cos(b), sb = Math.sin(b);
+                const u = Math.max(z.r - L, Math.min(z.r + L, dx * cb + dy * sb)), px = dx - cb * u, py = dy - sb * u;
+                const toca = Math.hypot(px, py) <= q + h.grosor / 2, k = e.id + ':' + i;
+                if (!toca) { ult[k] = false; continue; }
+                if (ult[k]) continue;   // sigue tocando la misma espada: no repite hasta que la espada salga y vuelva a entrar
+                ult[k] = true; this.damage(e, n.dano, p, { tipo: 'mag', desde: z });
+                this.emit({ k: 'espadaRinToca', x: (z.x + cb * u) | 0, y: (z.y + sb * u) | 0 });
+                if (!e.esUnidad && !marcados.includes(e)) marcados.push(e);
+                if (!e.alive) break;
+              }
+            }
+            if (marcados.length) this.marcarRin(p, marcados, 'danzaRin');
+          } };
+        this.zones.push(z);
+        this.emit({ k: 'danzaRin', x: p.x | 0, y: p.y | 0 });
         break;
       }
       case 'hundidoSmok': {   // Smok: se hunde, deja un clon con su vida actual y viaja como un círculo negro
@@ -10249,6 +10540,16 @@ class Game {
           }
         }
       }
+      if (p.fx.dashRin) {   // Rin: avance corto o salto hasta la marca / espada (la estocada ya golpeó al castear)
+        const v = p.fx.dashRin; v.e += dt; const k = Math.min(1, v.e / v.T);
+        const q = { x: v.x0 + (v.x1 - v.x0) * k, y: v.y0 + (v.y1 - v.y0) * k }; this.clampWall(q);
+        if (!this.cruzaRoca(p.x, p.y, q.x, q.y)) { p.x = q.x; p.y = q.y; } else v.e = v.T;
+        p.kbx = p.kby = 0;
+        if (v.e >= v.T) {
+          delete p.fx.dashRin;
+          if (v.recarga) { const sl = HEROES[p.build.heroe]?.habs.indexOf('estocadaRin'); if (sl >= 0) p.cd[sl + 1] = 0.25; this.emit({ k: 'recargaRin', x: p.x | 0, y: p.y | 0 }); }   // (C) gastar una marca o saltar a una espada recarga la estocada
+        }
+      }
       if (p.fx.hundidoSmok && this.combatTime - p.fx.hundidoSmok.inicio >= HABILIDADES.hundidoSmok.dur) this.emergeSmok(p);   // Smok: se acabó el tiempo hundido
       if (p.fx.ocaso && p.alive) {   // Smok: Ocaso — 25/s, 50/s con Smok cerca
         const o = p.fx.ocaso, s = this.players.get(o.src);
@@ -10928,7 +11229,8 @@ class Game {
         p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro && !fx.confusoKiro.bruja && !fx.confusoKiro.smok ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
         (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0,
         (fx.encantado && fx.encantado.vudu ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (p.enPolvoVudu && this.combatTime - p.enPolvoVudu < 0.25 ? 8 : 0),   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
-        (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0)]);   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0),   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.dashRin ? 1 : 0) | (fx.canalDanza ? 2 : 0) | (fx.marcaRin ? 4 : 0) | (fx.dashRin && fx.dashRin.salto ? 8 : 0)]);   // Rin: 67 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -11184,6 +11486,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'cargaGolagore': si = d < 300 && d > 60; break;
       case 'munecoVudu': si = d < 380; break;
       case 'hundidoSmok': si = d < 140; break;
+      case 'estocadaRin': si = d < 210; break;
+      case 'trapRin': si = d < 240; break;
+      case 'danzaRin': si = d < 70 && !target.esUnidad; break;
       case 'esferaSmok': si = d < 300; break;
       case 'ocasoSmok': si = d < 260 && !target.esUnidad; break;
       case 'bladeDance': si = d < 110 || (p.athPaso === 2 && d < 150); break;
@@ -12774,7 +13079,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -13050,7 +13355,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { rachaRin: 0.7, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -13062,6 +13367,7 @@ class Renderer {
     if (ev.k === 'slash' && ev.h === 'lei') { this.leiCombo = (this.leiCombo || 0) + 1; f.lado = this.leiCombo % 2; f.dur = 0.3; }   // Lei: el abanico barre de un lado y luego del otro
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
     if (ev.k === 'slash' && ev.h === 'golagore') f.dur = 0.5;   // Golagore: hachazo pesado
+    if (ev.k === 'slash' && ev.h === 'rin' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.28, T: 0.28, a: ev.a });   // Rin: estocada rápida
     if (ev.k === 'slash' && ev.id !== undefined && ev.h === 'golagore') this.swing.set(ev.id, { t: 0.42, T: 0.42, a: ev.a });
     else if (ev.k === 'slash' && ev.id !== undefined) this.swing.set(ev.id, { t: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, T: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, a: ev.a });
     if (ev.k === 'golemGolpe') { (this.golpesGolem = this.golpesGolem || new Map()).set(ev.id, { t: this.time, x2: ev.x2, y2: ev.y2 }); return; }
@@ -14308,6 +14614,34 @@ class Renderer {
         g.globalAlpha = 0.35 + 0.5 * k; for (const yy of [8, 18, 29, 39]) { if (yy > h) continue; g.fillStyle = PALETA.magia; g.fillRect(cx - 6, cy + 4 - h + yy, 3, 1); g.fillRect(cx + 4, cy + 4 - h + yy, 3, 1); } g.globalAlpha = 1;
         for (let i = 0; i < 6; i++) { const ph = (T * 0.6 + i / 6) % 1, x = cx + Math.round(Math.sin(T * 1.5 + i * 2) * 4) + (i % 2 ? 4 : -4), y = cy + 4 - h - Math.round(ph * 22); g.globalAlpha = 0.8 * (1 - ph); this.humoMorado(x, y, 3 - Math.round(ph * 2), i); }
         g.globalAlpha = 1;
+      } else if (z.kind === 'trapRin') {
+        // Rin: anillo de espadas espirituales magenta (las usadas por la estocada ya no están)
+        const R = Math.round(z.r * ESC), n = 6, k = z.prog;
+        if (k < 0.08) this.ring(cx, cy, R, PALETA.magenta2, 1 - k * 12, 2);
+        for (let i = 0; i < 24; i++) { const b = i * TAU / 24 + T * 0.4; if (i % 2) continue; g.globalAlpha = 0.6; g.fillStyle = PALETA.magenta1; g.fillRect(Math.round(cx + Math.cos(b) * R), Math.round(cy + Math.sin(b) * R), 2, 1); }
+        g.globalAlpha = 1;
+        for (let i = 0; i < n; i++) { if (z.w & (1 << i)) continue; const b = z.a + i * TAU / n, sube = Math.min(1, k * 25); this.espadaEspiritu(cx + Math.cos(b) * R, cy + Math.sin(b) * R, Math.round(16 * sube), k > 0.85 && Math.floor(T * 10) % 2 ? 0.5 : 1, i * 1.3); }
+      } else if (z.kind === 'trapRinProj') {
+        // Rin: la espada de luz vuela horizontal, con estela magenta
+        const ca = Math.cos(z.a), sa = Math.sin(z.a);
+        for (let i = 1; i <= 6; i++) { g.globalAlpha = 0.5 * (1 - i / 7); this.discDither(cx - ca * i * 5, cy - 8 - sa * i * 3, 3 - (i >> 1), PALETA.magenta2, 1, i); }
+        for (let i = 0; i < 4; i++) { const ph = (T * 4 + i / 4) % 1; g.globalAlpha = 1 - ph; g.fillStyle = i % 2 ? PALETA.pergamino2 : PALETA.magenta2; g.fillRect(Math.round(cx - ca * (6 + ph * 20) + Math.sin(i * 5) * 3), Math.round(cy - 8 - sa * (4 + ph * 12) + Math.cos(i * 3) * 3), 1, 1); }
+        g.globalAlpha = 1; this.espadaFlotante(cx, cy, z.a, 18, 1, 8, 0);
+      } else if (z.kind === 'danzaRin') {
+        // Rin (r2): espadas horizontales que flotan y giran alrededor (más lento y con más energía); luego el círculo se expande
+        // Rin (rework 17-11): el anillo la sigue y gira; radio, ángulo y apertura (z.w) vienen de la simulación
+        const D = HABILIDADES.danzaRin, ang0 = z.a || 0, R = Math.round(z.r * ESC), ab = z.w || 0, fin = z.prog > 0.92;
+        const pulso = (Math.sin(T * 7) + 1) / 2, alfa = fin && Math.floor(T * 12) % 2 ? 0.5 : 1;
+        g.globalAlpha = (0.16 + 0.12 * pulso) * alfa; this.discDither(cx, cy, R + 3, PALETA.magenta1, ab > 0 ? 3 : 2, Math.floor(T * 8)); g.globalAlpha = alfa;
+        this.ring(cx, cy, R + 3, PALETA.tinta, 0.5, ab > 0 ? 4 : 3); this.ring(cx, cy, R + 3, PALETA.magenta1, 0.8, ab > 0 ? 2 : 1);
+        
+        if (ab > 0 && ab < 1) this.ring(cx, cy, R, PALETA.pergamino2, 1 - ab, 2);   // destello al abrirse
+        for (let i = 0; i < 18; i++) { const b = -T * 2.2 + i * TAU / 18; if (i % 3 === 2) continue; g.globalAlpha = 0.8 * alfa; g.fillStyle = i % 3 ? PALETA.magenta2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * (R + 7)), Math.round(cy + Math.sin(b) * (R + 7)), 2, 1); }
+        for (let i = 0; i < 10; i++) { const ph = (T * 0.8 + i / 10) % 1, b = i * 2.39 + Math.floor(T * 0.8 + i / 10); g.globalAlpha = (1 - ph) * alfa; g.fillStyle = i % 2 ? PALETA.magenta2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * R * (1 - ph * 0.6)), Math.round(cy + Math.sin(b) * R * (1 - ph * 0.6) - ph * 18), 1, 2); }
+        g.globalAlpha = 1;
+        const esp = []; for (let i = 0; i < D.espadas; i++) { const b = ang0 + i * TAU / D.espadas; esp.push({ b, x: cx + Math.cos(b) * R, y: cy + Math.sin(b) * R }); }
+        esp.sort((p1, p2) => p1.y - p2.y);
+        for (const e of esp) this.espadaFlotante(e.x, e.y, e.b, Math.round(D.largo * ESC), alfa, 3, e.b, 1);   // mango hacia Rin, filo afuera; largo = hitbox
       } else if (z.kind === 'calacaBambaa') {
         // calaca de humo morado: estela de humo, jirones alrededor y la calavera que mira hacia donde va
         this.calacaTrazo = this.calacaTrazo || new Map();
@@ -14523,7 +14857,8 @@ class Renderer {
     const esGol = meta.build.heroe === 'golagore' && gigante === 1;
     const esBam = meta.build.heroe === 'bambaa' && gigante === 1;   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
     const esSmok = meta.build.heroe === 'smok' && gigante === 1;   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : 0);
+    const esRin = meta.build.heroe === 'rin' && gigante === 1;   // Rin (Seba 17-11): modelo 18×21 con la rapiera aparte   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -14733,7 +15068,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios || esGol || esBam || esSmok) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol || esBam || esSmok || esRin) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -14788,6 +15123,7 @@ class Renderer {
     }
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
     else if (esBam) this.bambaaChica(p, cx, cy, izq, moviendo, sube);   // Seba (13-11, V8.4–8.6): Bambaa más chica sin perder la cara
+    else if (esRin) this.dibujaRin(p, cx, cy, izq, moviendo, sw, sube);
     else if (esSmok) { if (p.sm & 1) { const al = this.esAliadoDe(p.id); this.dibujaHundido(p, cx, cy, al); if (!al) return; } else this.dibujaSmok(p, cx, cy, izq, moviendo, sube, 1, p.sm); }   // hundido: el enemigo solo ve el círculo (sin nombre ni barra)
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
@@ -14862,6 +15198,12 @@ class Renderer {
       for (let i = 0; i < 6; i++) { const b = -T * 9 + i * TAU / 6; g.fillStyle = i % 2 ? CHAR.m : CHAR.p; g.fillRect(Math.round(cx + Math.cos(b) * 15), Math.round(cy - 25 + Math.sin(b) * 5), 1, 1); }   // granos que giran
       const q2 = texto('?', CHAR.P); g.drawImage(q2, cx - (q2.width >> 1), cy - 46 + Math.round(Math.sin(T * 6) * 1));
       g.fillStyle = PALETA.tinta; g.fillRect(cx - 9, cy + 6, 19, 3); g.fillStyle = CHAR.P; g.fillRect(cx - 8, cy + 7, 6, 1); g.fillRect(cx + 3, cy + 7, 6, 1); g.fillRect(cx - 8, cy + 6, 1, 3); g.fillRect(cx + 8, cy + 6, 1, 3);   // ⇄ bajo los pies
+    }
+    if (p.rn & 4) {   // marcado por Rin (r2): espada magenta clavada en el aire sobre la cabeza, con aura que late y rombos que giran
+      const T = this.time, y = cy - 30, k = (Math.sin(T * 5) + 1) / 2;
+      g.globalAlpha = 0.3 + 0.3 * k; this.discDither(cx, y - 6, 7 + Math.round(k * 2), PALETA.magenta1, 2, Math.floor(T * 6)); g.globalAlpha = 0.5 + 0.4 * k; this.ring(cx, y - 6, 8 + Math.round(k * 2), PALETA.magenta2, 1, 1); g.globalAlpha = 1;
+      for (let i = 0; i < 3; i++) { const b = T * 2.5 + i * TAU / 3; g.fillStyle = PALETA.tinta; g.fillRect(Math.round(cx + Math.cos(b) * 10) - 1, Math.round(y - 6 + Math.sin(b) * 4) - 1, 3, 3); g.fillStyle = PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * 10), Math.round(y - 6 + Math.sin(b) * 4), 1, 1); }
+      this.espadaEspiritu(cx, y + Math.round(Math.sin(T * 3) * 1), 11, 1, 0);
     }
     if (p.sm & 2) {   // cegado por el Ocaso (lo ven todos): venda de humo negro sobre los ojos, un ojo tachado arriba y humo alrededor de la cabeza
       const T = this.time, y = cy - 18;
@@ -15464,6 +15806,89 @@ class Renderer {
     if (aliado) this.dibujaSmok(p, cx, cy, false, true, 0, 0.3, 0);
   }
   // Smok: Ocaso — en la pantalla de un enemigo, todo oscuro menos un círculo alrededor de su héroe
+  // Rin: espada espiritual magenta (Seba 17-11 r2: más robusta, con aura y luces para que se note que es interactiva). x, y = pie de la hoja
+  espadaEspiritu(x, y, h = 14, alfa = 1, fase = 0) {
+    const g = this.g, T = this.time; x = Math.round(x); y = Math.round(y);
+    const k = (Math.sin(T * 5 + fase) + 1) / 2;
+    // aura en la base: óvalo que late
+    g.globalAlpha = alfa * (0.25 + 0.25 * k); this.discDither(x, y + 1, 6 + Math.round(k * 2), PALETA.magenta1, 2, Math.floor(T * 6 + fase)); 
+    g.globalAlpha = alfa * (0.5 + 0.4 * k); this.ring(x, y + 1, 5 + Math.round(k * 2), PALETA.magenta2, 1, 1);
+    // halo alrededor de la hoja
+    g.globalAlpha = alfa * (0.25 + 0.2 * k); g.fillStyle = PALETA.magenta2; g.fillRect(x - 3, y - h - 3, 7, h + 4);
+    g.globalAlpha = alfa;
+    g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - h - 1, 5, h + 2); g.fillRect(x - 1, y - h - 2, 3, 1);
+    g.fillStyle = PALETA.magenta0 || PALETA.magenta1; g.fillRect(x - 1, y - h, 3, h);
+    g.fillStyle = PALETA.magenta1; g.fillRect(x - 1, y - h, 2, h); g.fillStyle = PALETA.magenta2; g.fillRect(x, y - h, 1, h);
+    g.fillStyle = PALETA.pergamino2; g.fillRect(x, y - h, 1, Math.max(2, h >> 2)); g.fillRect(x, y - h - 1, 1, 1);
+    // guarda ancha, empuñadura y pomo de luz
+    g.fillStyle = PALETA.tinta; g.fillRect(x - 4, y - 5, 9, 3); g.fillRect(x - 1, y - 3, 3, 4);
+    g.fillStyle = PALETA.oro2; g.fillRect(x - 3, y - 4, 7, 1); g.fillStyle = PALETA.magenta2; g.fillRect(x, y - 2, 1, 2);
+    // destello que recorre la hoja y chispas que suben
+    const sy = y - Math.round(((T * 1.5 + fase * 0.3) % 1) * h); g.fillStyle = PALETA.pergamino2; g.fillRect(x - 1, sy, 3, 1);
+    for (let i = 0; i < 2; i++) { const ph = (T * 0.9 + i * 0.5 + fase * 0.17) % 1; g.globalAlpha = alfa * (1 - ph); g.fillStyle = i ? PALETA.magenta2 : PALETA.pergamino2; g.fillRect(x + (i ? 3 : -3), y - Math.round(ph * (h + 6)), 1, 1); }
+    g.globalAlpha = 1;
+  }
+  // Rin: espada espiritual horizontal que flota (ulti y proyectil). x, y = centro; ang = hacia dónde apunta la punta; alt = altura sobre el suelo
+  espadaFlotante(x, y, ang, len = 14, alfa = 1, alt = 8, fase = 0, aplana = 0.6) {
+    const g = this.g, T = this.time, ca = Math.cos(ang), sa = Math.sin(ang) * aplana;
+    const k = (Math.sin(T * 6 + fase) + 1) / 2, oy = Math.round(Math.sin(T * 3 + fase) * 1.5);
+    const P = (t, o = 0) => [Math.round(x + ca * t - sa / 0.6 * 0 + (-sa) * o), Math.round(y - alt + oy + sa * t + ca * o)];
+    // sombra en el suelo
+    g.globalAlpha = alfa * 0.35; g.fillStyle = PALETA.tinta; for (let t = -len / 2; t <= len / 2; t += 1) g.fillRect(Math.round(x + ca * t), Math.round(y + 2 + sa * t), 1, 1);
+    // halo
+    g.globalAlpha = alfa * (0.3 + 0.25 * k); g.fillStyle = PALETA.magenta2; for (let t = -len / 2 - 2; t <= len / 2 + 2; t += 1) { const [px, py] = P(t); g.fillRect(px - 2, py - 2, 5, 5); }
+    g.globalAlpha = alfa;
+    g.fillStyle = PALETA.tinta; for (let t = -len / 2 - 1; t <= len / 2 + 1; t += 1) { const [px, py] = P(t); g.fillRect(px - 1, py - 1, 3, 3); }
+    for (let t = -len / 2 + 4; t <= len / 2; t += 1) { const [px, py] = P(t); g.fillStyle = PALETA.magenta1; g.fillRect(px, py, 1, 1); }
+    for (let t = len / 2 - 4; t <= len / 2; t += 1) { const [px, py] = P(t); g.fillStyle = PALETA.pergamino2; g.fillRect(px, py, 1, 1); }
+    // guarda (perpendicular) y pomo
+    for (let o = -3; o <= 3; o++) { const [px, py] = P(-len / 2 + 3, o); g.fillStyle = PALETA.tinta; g.fillRect(px - 1, py - 1, 3, 3); }
+    for (let o = -2; o <= 2; o++) { const [px, py] = P(-len / 2 + 3, o); g.fillStyle = PALETA.oro2; g.fillRect(px, py, 1, 1); }
+    { const [px, py] = P(-len / 2); g.fillStyle = PALETA.magenta2; g.fillRect(px, py, 1, 1); }
+    // destello que recorre la hoja
+    { const [px, py] = P(-len / 2 + 4 + ((T * 2 + fase * 0.2) % 1) * (len - 4)); g.fillStyle = PALETA.pergamino2; g.fillRect(px - 1, py, 3, 1); }
+    g.globalAlpha = 1;
+  }
+  // Rin (Seba 17-11): esgrimista; el cuerpo no se mueve (solo los pies), la rapiera en la mano de adelante, en guardia
+  dibujaRin(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, dash = p.rn & 1, salto = p.rn & 8;
+    let fr = 0;
+    if (moviendo || dash) fr = [1, 0, 2, 0][Math.floor(T * 8) % 4];
+    const lx = cx - 10, ly = cy + 8 - 23 - sube, X = (x) => lx + (izq ? 19 - x : x);
+    if (dash) {   // dash: imágenes que quedan atrás teñidas de magenta y líneas de velocidad
+      const dir = izq ? -1 : 1, s = rinGrande(fr)[izq ? 'izq' : 'der'];
+      for (let i = 3; i >= 1; i--) { g.globalAlpha = 0.18 * (4 - i); g.drawImage(s, lx - dir * i * (salto ? 9 : 5), ly); }
+      g.globalAlpha = 0.6; g.fillStyle = PALETA.magenta2; for (let i = 0; i < 4; i++) g.fillRect(Math.min(cx - dir * 10, cx - dir * (22 + i * 3)), ly + 6 + i * 4, 10 + i * 3, 1);
+      g.globalAlpha = 1;
+    }
+    // rapiera: en guardia hacia adelante y abajo; el básico es una estocada rápida (sale derecha y vuelve)
+    // Seba (17-11): básico con más vida — recoge la rapiera, estocada a fondo con estela de luz y vuelve a la guardia
+    let a = 0.55, ext = 0, estela = 0;
+    if (sw && sw.t > 0) {
+      const t = 1 - Math.max(0, sw.t) / (sw.T || 0.2);
+      if (t < 0.2) { const k = t / 0.2; a = 0.55 + 0.25 * k; ext = -Math.round(3 * k); }   // recoge
+      else if (t < 0.45) { const k = (t - 0.2) / 0.25; a = 0.8 - 0.85 * k; ext = Math.round(-3 + 13 * k); estela = k; }   // estocada a fondo
+      else { const k = (t - 0.45) / 0.55; a = -0.05 + 0.6 * k; ext = Math.round(10 * (1 - k)); estela = Math.max(0, 1 - k * 2.5); }   // vuelve
+    }
+    if (dash) { a = -0.05; ext = 4; }
+    const aa = izq ? Math.PI - a : a, hx = X(14) + (izq ? -ext : ext), hy = ly + 13;
+    const esp = armaRotada('rapieraRin', idxAng(aa));
+    g.drawImage(rinGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    g.drawImage(esp, hx - (esp.width >> 1), hy - (esp.height >> 1));
+    if (estela > 0) {   // estela de luz magenta por delante de la hoja y destello en la punta
+      const ca = Math.cos(aa), sa = Math.sin(aa), px = hx + ca * 16, py = hy + sa * 16;
+      g.globalAlpha = 0.75 * estela; g.fillStyle = PALETA.magenta2;
+      for (let d = -14; d <= 10; d++) g.fillRect(Math.round(px + ca * d), Math.round(py + sa * d), 1, 1);
+      g.globalAlpha = 0.35 * estela; for (let d = -10; d <= 6; d++) { g.fillRect(Math.round(px + ca * d - sa), Math.round(py + sa * d + ca), 1, 1); g.fillRect(Math.round(px + ca * d + sa), Math.round(py + sa * d - ca), 1, 1); }
+      g.globalAlpha = 1; this.destelloLuz(px + ca * 10, py + sa * 10, estela > 0.5 ? 3 : 2);
+    } else if (Math.floor(T * 3 + (p.id || '').length) % 5 === 0) this.destelloLuz(hx + Math.cos(aa) * 15, hy + Math.sin(aa) * 15, 1);   // destello en la punta
+  }
+  // Athena: destello de luz (cruz de 4 puntas con centro blanco)
+  destelloLuz(x, y, s = 3) {
+    const g = this.g; x = Math.round(x); y = Math.round(y);
+    g.fillStyle = PALETA.oro2; g.fillRect(x - s, y, 2 * s + 1, 1); g.fillRect(x, y - s, 1, 2 * s + 1);
+    g.fillStyle = PALETA.pergamino2; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3);
+  }
   dibujaOcaso(cx, cy) {   // V9.1: el agujero con borde tramado se pinta una vez; cada cuadro son 4 rectángulos negros y una imagen
     const W = this.W, H = this.H, R = Math.round(HABILIDADES.ocasoSmok.vision * ESC), S = 2 * R + 9, o = R + 4;
     if (!this._ocasoHueco || this._ocasoHueco.width !== S) {
@@ -16305,6 +16730,14 @@ class Renderer {
             g.globalAlpha = 1;
             break;
           }
+          if (f.h === 'rin') {   // Rin: estocada de rapiera (línea fina con brillo magenta)
+            const L = Math.round(f.r * ESC) + 6, e = Math.min(1, t * 6), ca = Math.cos(f.a), sa = Math.sin(f.a), yc = cy - 8;
+            g.globalAlpha = Math.min(1, (1 - t) * 1.6);
+            this.linea(cx, yc, Math.round(cx + ca * L * e), Math.round(yc + sa * L * e), PALETA.magenta1, 0, 0, 2); this.linea(cx, yc, Math.round(cx + ca * L * e), Math.round(yc + sa * L * e), PALETA.pergamino2, 0, 0, 1);
+            if (e >= 1 && t < 0.5) this.destelloLuz(cx + ca * L, yc + sa * L, 2);
+            g.globalAlpha = 1;
+            break;
+          }
           if (f.h === 'golagore') {
             // Golagore (Seba 13-11): hachazo de arriba hacia abajo — el filo cae como una estela de magma y revienta el suelo frente a él
             const R = Math.round(f.r * ESC * 0.85), ix = Math.round(cx + Math.cos(f.a) * R), iy = Math.round(cy + Math.sin(f.a) * R * 0.8 + 2);
@@ -16864,6 +17297,49 @@ class Renderer {
         }
         case 'alzaHachazo': {   // levanta el hacha: chispas de magma que suben
           for (let i = 0; i < 6; i++) { const x = cx - 10 + i * 4, y = cy - 20 - Math.round(t * 14) - (i % 2) * 3; g.globalAlpha = 1 - t; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.antorcha; g.fillRect(x, y, 1, 2); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'estocadaRin': {   // Rin: estocada mágica — la hoja se ensancha en luz magenta hasta su alcance
+          const L = Math.round(f.r * ESC) + 4, e = Math.min(1, t * 5), ca = Math.cos(f.a), sa = Math.sin(f.a), yc = cy - 8, x1 = Math.round(cx + ca * L * e), y1 = Math.round(yc + sa * L * e);
+          g.globalAlpha = Math.min(1, (1 - t) * 1.5);
+          this.linea(cx, yc, x1, y1, PALETA.tinta, 0, 0, 7); this.linea(cx, yc, x1, y1, PALETA.magenta1, 0, 0, 5); this.linea(cx, yc, x1, y1, PALETA.magenta2, 0, 0, 3); this.linea(cx, yc, x1, y1, PALETA.pergamino2, 0, 0, 1);
+          for (let i = 0; i < 5; i++) { const d = L * e * (0.2 + i * 0.18); g.fillStyle = PALETA.magenta2; g.fillRect(Math.round(cx + ca * d - sa * (4 + i % 2 * 2)), Math.round(yc + sa * d + ca * (4 + i % 2 * 2)), 1, 1); g.fillRect(Math.round(cx + ca * d + sa * 4), Math.round(yc + sa * d - ca * 4), 1, 1); }
+          this.destelloLuz(x1, y1, 3);
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'saltoRin': {   // salto a la marca / espada: estela magenta
+          const ca = Math.cos(f.a), sa = Math.sin(f.a); g.globalAlpha = 1 - t;
+          for (let i = 0; i < 6; i++) { const d = i * 8 + t * 20; g.fillStyle = i % 2 ? PALETA.magenta2 : PALETA.magenta1; g.fillRect(Math.round(cx + ca * d) - 1, Math.round(cy - 8 + sa * d) - 1, 3, 3); }
+          g.globalAlpha = 1;
+          break;
+        }
+        case 'marcaRin': case 'espadaRinToca': { this.ring(cx, cy - 10, Math.round(3 + t * 10), PALETA.magenta2, 1 - t, 1); this.destelloLuz(cx, cy - 10, Math.round(4 * (1 - t)) + 1); break; }
+        case 'marcaRinGasta': {   // se gasta la marca: estalla en rombos magenta
+          g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 4 + t * 14; g.fillStyle = PALETA.magenta2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 12 + Math.sin(b) * d), 2, 2); } g.globalAlpha = 1;
+          break;
+        }
+        case 'trapRin': {   // se levantan las espadas: anillo magenta que cae al radio
+          const R = Math.round(f.r * ESC), rr = Math.round(R * (1.4 - 0.4 * Math.min(1, t * 3)));
+          this.ring(cx, cy, rr, PALETA.tinta, 1 - t, 3); this.ring(cx, cy, rr, PALETA.magenta2, 1 - t, 1);
+          if (t < 0.3) { g.globalAlpha = 0.4 * (1 - t / 0.3); this.discDither(cx, cy, R, PALETA.magenta1, 2, 0); g.globalAlpha = 1; }
+          break;
+        }
+        case 'lanzaTrapRin': {   // Rin lanza la espada: destello magenta en la mano
+          g.globalAlpha = 1 - t; this.ring(cx + Math.round(Math.cos(f.a) * 10), cy - 8, Math.round(2 + t * 8), PALETA.magenta2, 1, 1); this.destelloLuz(cx + Math.round(Math.cos(f.a) * 10), cy - 8, Math.round(4 * (1 - t)) + 1); g.globalAlpha = 1;
+          break;
+        }
+        case 'danzaRinAbre': {   // el anillo se abre: onda magenta
+          break;
+        }
+        case 'rachaRin': {   // racha de estocadas: +20, +40…
+          const s = texto('+' + (f.n * HABILIDADES.estocadaRin.racha), PALETA.magenta2); g.globalAlpha = 1 - t; g.drawImage(s, cx - (s.width >> 1), cy - 40 - Math.round(t * 10)); g.globalAlpha = 1; break;
+        }
+        case 'danzaRin': case 'recargaRin': { this.ring(cx, cy - 8, Math.round(4 + t * 14), PALETA.magenta2, 1 - t, 1); break; }
+        case 'danzaRinCerca': {   // golpe cercano de la danza: destello magenta del radio
+          const R = Math.round(f.r * ESC); g.globalAlpha = (1 - t) * 0.5;
+          this.discDither(cx, cy, R, PALETA.magenta1, 3, Math.floor(t * 10)); g.globalAlpha = 1 - t; this.ring(cx, cy, R, PALETA.magenta2, 1, 2);
           g.globalAlpha = 1;
           break;
         }
@@ -18967,6 +19443,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.3', f: '17-11-2026', n: [
+    'Nuevo héroe: Rin (Aliados), esgrimista veloz con rapiera de luz. Estocada: golpe en línea instantáneo; si toca a un marcado o a una de sus espadas, salta hasta ahí y se recarga, y repetirla sobre el mismo enemigo hace más daño. Espadas espirituales: lanza una espada que levanta un anillo de espadas que dañan, frenan y marcan. Ulti Danza de espadas: un anillo de espadas gira a su alrededor por 6 s y corta a quien toca.',
+    'Rin, Marca de esgrima: sus habilidades marcan a los enemigos; la Estocada salta hasta un marcado y le hace +10.',
+  ] },
   { v: 'V9.2', f: '16-11-2026', n: [
     'Smok, Hundido: las quemaduras, venenos y maldiciones que ya tenía siguen haciéndole daño estando hundido, por el tiempo que les quedaba. Nada nuevo lo alcanza, pero sí le llegan curas y escudos aliados.',
     'Smok: el daño del básico baja de 30 a 28.',
