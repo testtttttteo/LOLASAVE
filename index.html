@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.3</title>
+<title>LOLA V9.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.3</p>
+        <p class="sub version">LOLA V9.4</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2009,7 +2009,8 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Tus próximos 3 ataques básicos (en ${HABILIDADES.tormentaArena.dur} s, aunque fallen) se potencian: el 1.º hace +${n.extra} de daño y frena ${Math.round(n.lento1 * 100)}% por 5 s; el 2.º confunde ${fmtN(HABILIDADES.tormentaArena.confusion)} s (sus controles quedan al revés) y frena ${Math.round(n.lento2 * 100)}%; el 3.º lanza un tornado de arena que arrastra a los enemigos que atrapa, les hace ${n.dps} de daño por segundo y al soltarlos los deja ${Math.round(n.lento3 * 100)}% más lentos por 1,5 s.`,
                    n1: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 }, n2: { extra: 10, lento1: 0.10, lento2: 0.10, dps: 50, lento3: 0.33 } },
   // ---- Rin (Seba, 17-11; números (C) salvo los que fijó Seba)
-  estocadaRin: { nombre: 'Estocada', glifo: 'estocadaRin', cd: 6, cdFijo: true, dash: 38, largo: 190, ancho: 34, velSalto: 1100,   // Seba (17-11 r10): sin mini dash previo; el golpe es en todo el rango al castear y Rin avanza 38 (−25%); si la estocada toca una marca o una espada, Rin va hasta ahí
+  estocadaRin: { nombre: 'Estocada', glifo: 'estocadaRin', cd: 6, cdFijo: true, dash: 38, largo: 209, ancho: 34, velSalto: 1100,   // Seba (17-11, V9.4): largo 190 → 209 (+10%), igual que el indicador
+                   // Seba (17-11 r10): sin mini dash previo; el golpe es en todo el rango al castear y Rin avanza 38 (−25%); si la estocada toca una marca o una espada, Rin va hasta ahí
                  racha: 20, rachaVentana: 5,   // Seba (17-11): cada estocada adicional al mismo enemigo dentro de 5 s hace +20 acumulable (+20, +40…). Seba: dash cortito y estocada mágica larga (rango medio), 50 de daño, la habilidad central; (C) recarga 6, dash 50, estocada 190, salto a marcas/espadas 320
                  desc: (n) => `Estocada de luz magenta instantánea en todo su alcance (${DIST(HABILIDADES.estocadaRin.largo)}): ${n.dano} de daño a todo lo que atraviesa, y avanzas un poco. Si la estocada toca a un enemigo marcado o a una de tus espadas espirituales, saltas hasta ahí (gasta la marca o la espada) y la estocada se recarga al instante; al marcado le haces +${PASIVAS.marcaRin.extra}. Cada estocada que repites sobre el mismo enemigo dentro de ${HABILIDADES.estocadaRin.rachaVentana} s hace +${HABILIDADES.estocadaRin.racha} más (acumulable).`,
                  n1: { dano: 50 }, n2: { dano: 50 } },
@@ -2021,7 +2022,8 @@ Object.assign(HABILIDADES, {
                  dur: 6, radio: 49, giro: 0.5, espadas: 8, largo: 31, grosor: 4,   // Seba (17-11 r6): sin expansión; siempre 35% más lejos de Rin (36 → 49); 20 por toque; (r7) 8 espadas   // Seba (17-11 r5): espadas radiales (mango hacia Rin, filo afuera), +10% largo, pegadas a Rin y luego +50%; sin límite de toques, hitbox = la espada dibujada
                  // Seba (17-11, rework): Rin se puede mover; el anillo la sigue y gira 6 s (3 s cerca, luego se expande y gira 3 s más); cada toque de espada: 40, se puede repetir
                  // (C) 0,5 vueltas/s, largo 31
-                 desc: (n) => `Durante ${HABILIDADES.danzaRin.dur} s, ${HABILIDADES.danzaRin.espadas} espadas magenta giran a tu alrededor y te siguen (puedes moverte), con el mango hacia ti y el filo hacia afuera. Cada vez que una espada toca a un enemigo: ${n.dano} de daño.`,
+                 desc: (n) => `Durante ${HABILIDADES.danzaRin.dur} s, ${HABILIDADES.danzaRin.espadas} espadas magenta giran a tu alrededor y te siguen (puedes moverte), con el mango hacia ti y el filo hacia afuera. Cada vez que una espada toca a un enemigo: ${n.dano} de daño. Cada ${HABILIDADES.danzaRin.espadaCada} s, dañar a un enemigo deja una espada espiritual donde fue dañado (${HABILIDADES.danzaRin.espadaDur} s; tu Estocada puede saltar hasta ella).`,
+                 espadaCada: 1, espadaDur: 4,   // Seba (17-11, V9.4): cada 1 s, dañar a un enemigo deja una espada espiritual donde fue dañado (la Estocada salta hasta ella); (C) dura 4 s como las del anillo
                  n1: { dano: 20 }, n2: { dano: 20 } },
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
@@ -2338,7 +2340,7 @@ const GUIAS = {
   cargaGolagore: { tipo: 'linea', alcance: 370, ancho: 40 }, hachazoGolagore: { tipo: 'punto', alcance: 220, r: 90 }, fortalezaGolagore: { tipo: 'propio', r: 150 },
   munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 352 },
   hundidoSmok: { tipo: 'propio', r: 90 }, esferaSmok: { tipo: 'punto', alcance: 280, r: 45 }, ocasoSmok: { tipo: 'propio', r: 160 },
-  estocadaRin: { tipo: 'linea', alcance: 240, ancho: 34 }, trapRin: { tipo: 'linea', alcance: 240, ancho: 24 }, danzaRin: { tipo: 'propio', r: 70 },
+  estocadaRin: { tipo: 'linea', alcance: 209, ancho: 34 }, trapRin: { tipo: 'linea', alcance: 240, ancho: 24 }, danzaRin: { tipo: 'propio', r: 70 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -7133,6 +7135,16 @@ class Game {
     if (n) p.rinMarcaCd[key] = this.combatTime + PASIVAS.marcaRin.cada;
   }
   // Rin: abre el anillo de espadas espirituales en c (impacto en el radio y espadas que repiten el efecto)
+  // Rin: espadas propias sin usar (las del anillo de Espadas espirituales y las sueltas que deja la ulti)
+  espadasRin(p) {
+    const out = [];
+    for (const z of this.zones) {
+      if (z.owner !== p.id || z.done) continue;
+      if (z.kind === 'trapRin') { for (let i = 0; i < z.nEsp; i++) if (!(z.w & (1 << i))) { const b = z.a + i * TAU / z.nEsp; out.push({ x: z.x + Math.cos(b) * z.r, y: z.y + Math.sin(b) * z.r, z, i }); } }
+      else if (z.kind === 'espadaRin' && !(z.w & 1)) out.push({ x: z.x, y: z.y, z, i: 0 });
+    }
+    return out;
+  }
   abrirTrapRin(p, c, n) {
     const h = HABILIDADES.trapRin; c = { x: c.x, y: c.y }; this.clampWall(c);
     const efecto = (e) => { this.damage(e, n.dano, p, { tipo: 'mag', desde: c }); if (e.alive) this.aplicarEfecto(e, 'slow', { t: h.lentoDur, mult: 1 - h.lento, k: 'trapRin' }); };
@@ -8798,14 +8810,21 @@ class Game {
         break;
       }
       case 'estocadaRin': {   // Rin (Seba 17-11 r10): golpe instantáneo en todo el rango; si toca una marca o una espada propia, salta hasta ahí; si no, avanza un poco
-        const { a } = this.aim(p, h.largo);
+        let { a } = this.aim(p, h.largo);
+        if (!this._apunte) {   // Seba (17-11, V9.4): sin apuntar a mano, prioriza al marcado o la espada propia más cercana a su alcance
+          let mejor = null;
+          const prueba = (x, y) => { const d = Math.hypot(x - p.x, y - p.y); if (d <= h.largo + 8 && (!mejor || d < mejor.d)) mejor = { d, a: Math.atan2(y - p.y, x - p.x) }; };
+          for (const e of this.jugadoresEnemigos(p.id)) if (e.alive && e.fx && e.fx.marcaRin && e.fx.marcaRin.src === p.id) prueba(e.x, e.y);
+          for (const q of this.espadasRin(p)) prueba(q.x, q.y);
+          if (mejor) a = mejor.a;
+        }
         p.facing = a; p.disparo = null;
         const ca = Math.cos(a), sa = Math.sin(a);
         const enLinea = (x, y, rr) => { const dx = x - p.x, dy = y - p.y, u = dx * ca + dy * sa, w = Math.abs(-dx * sa + dy * ca); return u >= -rr && u <= h.largo + rr && w <= h.ancho / 2 + rr ? u : -1; };
         // ¿la estocada toca un marcado o una espada propia? (el más cercano en la línea)
         let obj = null;
         for (const e of this.jugadoresEnemigos(p.id)) if (e.alive && e.fx && e.fx.marcaRin && e.fx.marcaRin.src === p.id) { const u = enLinea(e.x, e.y, CONFIG.RADIO_JUGADOR); if (u >= 0 && (!obj || u < obj.u)) obj = { u, x: e.x, y: e.y, tipo: 'marca', ref: e }; }
-        for (const z of this.zones) if (z.kind === 'trapRin' && z.owner === p.id && !z.done) for (let i = 0; i < z.nEsp; i++) if (!(z.w & (1 << i))) { const b = z.a + i * TAU / z.nEsp, x = z.x + Math.cos(b) * z.r, y = z.y + Math.sin(b) * z.r, u = enLinea(x, y, 8); if (u >= 0 && (!obj || u < obj.u)) obj = { u, x, y, tipo: 'espada', ref: { z, i } }; }
+        for (const q of this.espadasRin(p)) { const u = enLinea(q.x, q.y, 8); if (u >= 0 && (!obj || u < obj.u)) obj = { u, x: q.x, y: q.y, tipo: 'espada', ref: { z: q.z, i: q.i } }; }
         this.estocadaRinGolpe(p, a, h.largo, n, obj && obj.tipo === 'marca' ? obj.ref.id : 0);   // golpe en todo el rango (gasta las marcas que atraviesa)
         if (obj) {
           if (obj.tipo === 'espada') obj.ref.z.w |= (1 << obj.ref.i);   // la espada se gasta
@@ -8857,6 +8876,11 @@ class Game {
                 if (!toca) { ult[k] = false; continue; }
                 if (ult[k]) continue;   // sigue tocando la misma espada: no repite hasta que la espada salga y vuelva a entrar
                 ult[k] = true; this.damage(e, n.dano, p, { tipo: 'mag', desde: z });
+                if (this.combatTime - (z.ultEsp ?? -99) >= h.espadaCada) {   // Seba (17-11, V9.4): cada 1 s, una espada donde fue dañado
+                  z.ultEsp = this.combatTime; const c = { x: e.x, y: e.y }; this.clampWall(c);
+                  this.zones.push({ id: this.nextId++, kind: 'espadaRin', x: c.x, y: c.y, r: 8, t: h.espadaDur, total: h.espadaDur, owner: p.id, w: 0, a: 0 });
+                  this.emit({ k: 'espadaRinDeja', x: c.x | 0, y: c.y | 0 });
+                }
                 this.emit({ k: 'espadaRinToca', x: (z.x + cb * u) | 0, y: (z.y + sb * u) | 0 });
                 if (!e.esUnidad && !marcados.includes(e)) marcados.push(e);
                 if (!e.alive) break;
@@ -11486,7 +11510,7 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'cargaGolagore': si = d < 300 && d > 60; break;
       case 'munecoVudu': si = d < 380; break;
       case 'hundidoSmok': si = d < 140; break;
-      case 'estocadaRin': si = d < 210; break;
+      case 'estocadaRin': { const L = HABILIDADES.estocadaRin.largo; si = d < L || game.espadasRin(p).some(q => Math.hypot(q.x - p.x, q.y - p.y) <= L) || game.jugadoresEnemigos(p.id).some(e => e.alive && e.fx && e.fx.marcaRin && e.fx.marcaRin.src === p.id && Math.hypot(e.x - p.x, e.y - p.y) <= L); break; }   // V9.4: también si hay marca o espada a su alcance
       case 'trapRin': si = d < 240; break;
       case 'danzaRin': si = d < 70 && !target.esUnidad; break;
       case 'esferaSmok': si = d < 300; break;
@@ -13355,7 +13379,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { rachaRin: 0.7, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -14621,6 +14645,9 @@ class Renderer {
         for (let i = 0; i < 24; i++) { const b = i * TAU / 24 + T * 0.4; if (i % 2) continue; g.globalAlpha = 0.6; g.fillStyle = PALETA.magenta1; g.fillRect(Math.round(cx + Math.cos(b) * R), Math.round(cy + Math.sin(b) * R), 2, 1); }
         g.globalAlpha = 1;
         for (let i = 0; i < n; i++) { if (z.w & (1 << i)) continue; const b = z.a + i * TAU / n, sube = Math.min(1, k * 25); this.espadaEspiritu(cx + Math.cos(b) * R, cy + Math.sin(b) * R, Math.round(16 * sube), k > 0.85 && Math.floor(T * 10) % 2 ? 0.5 : 1, i * 1.3); }
+      } else if (z.kind === 'espadaRin') {
+        // Rin (V9.4): espada espiritual suelta que deja la ulti (la Estocada salta hasta ella); parpadea antes de irse
+        if (!(z.w & 1)) { const fin = z.prog > 0.8 && Math.floor(T * 10) % 2; this.espadaEspiritu(cx, cy, 14, fin ? 0.45 : 1, z.id || 0); }
       } else if (z.kind === 'trapRinProj') {
         // Rin: la espada de luz vuela horizontal, con estela magenta
         const ca = Math.cos(z.a), sa = Math.sin(z.a);
@@ -17315,7 +17342,7 @@ class Renderer {
           g.globalAlpha = 1;
           break;
         }
-        case 'marcaRin': case 'espadaRinToca': { this.ring(cx, cy - 10, Math.round(3 + t * 10), PALETA.magenta2, 1 - t, 1); this.destelloLuz(cx, cy - 10, Math.round(4 * (1 - t)) + 1); break; }
+        case 'marcaRin': case 'espadaRinToca': case 'espadaRinDeja': { this.ring(cx, cy - 10, Math.round(3 + t * 10), PALETA.magenta2, 1 - t, 1); this.destelloLuz(cx, cy - 10, Math.round(4 * (1 - t)) + 1); break; }
         case 'marcaRinGasta': {   // se gasta la marca: estalla en rombos magenta
           g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 4 + t * 14; g.fillStyle = PALETA.magenta2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 12 + Math.sin(b) * d), 2, 2); } g.globalAlpha = 1;
           break;
@@ -19443,6 +19470,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.4', f: '17-11-2026', n: [
+    'Rin, Estocada: alcanza un 10% más (190 → 209) y el indicador de apuntado llega justo hasta donde llega la estocada.',
+    'Rin, Estocada: sin apuntar a mano, apunta primero al enemigo marcado o a la espada propia más cercana a su alcance (los bots también la usan así).',
+    'Rin, Danza de espadas: cada 1 s, dañar a un enemigo deja una espada espiritual donde fue dañado (hasta 6 por ulti, duran 4 s); la Estocada puede saltar hasta ellas.',
+  ] },
   { v: 'V9.3', f: '17-11-2026', n: [
     'Nuevo héroe: Rin (Aliados), esgrimista veloz con rapiera de luz. Estocada: golpe en línea instantáneo; si toca a un marcado o a una de sus espadas, salta hasta ahí y se recarga, y repetirla sobre el mismo enemigo hace más daño. Espadas espirituales: lanza una espada que levanta un anillo de espadas que dañan, frenan y marcan. Ulti Danza de espadas: un anillo de espadas gira a su alrededor por 6 s y corta a quien toca.',
     'Rin, Marca de esgrima: sus habilidades marcan a los enemigos; la Estocada salta hasta un marcado y le hace +10.',
