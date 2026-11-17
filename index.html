@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.5</title>
+<title>LOLA V9.6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.5</p>
+        <p class="sub version">LOLA V9.6</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1629,7 +1629,7 @@ Object.assign(HEROES, {
     casa: 'aliados',
     nombre: 'Rin', rol: 'Esgrimista · veloz', fondo: 'rin', arma: 'rapieraRin',
     desc: 'Esgrimista joven y luminosa, rápida como un destello. Su rapiera de luz magenta salta de marca en marca, levanta espadas espirituales y gira en una danza que estalla a su alrededor.',
-    vida: 370, dano: 24, recarga: 0.85, ultiCarga: 300, velocidad: 168,   // (C); Seba (17-11): vida +10
+    vida: 370, dano: 26, recarga: 0.85,   /* Seba (17-11, V9.6): daño 24 → 26 */ ultiCarga: 300, velocidad: 168,   // (C); Seba (17-11): vida +10
     ataque: { tipo: 'melee', rango: 66, arco: 90 },   // (C) rapiera
     habs: ['estocadaRin', 'trapRin', 'danzaRin'],
     pasiva: 'marcaRin',
@@ -2028,7 +2028,7 @@ Object.assign(HABILIDADES, {
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
                      // Seba (16-11): recarga 14 → 15,5
-                   confusion: 2.5, clonDur: 7, clonRecibe: 0.30, clonHace: 0.5,   // Seba: desaparece (el enemigo ve un círculo negro), deja un clon quieto que solo hace básicos (+30% de daño recibido, −50% de daño), al terminar o cortarla reaparece con 50 en área y confusión 2,5 s; (Seba 16-11) clon con la vida actual de Smok, dura 7 s; (C) 3 s, +15% de velocidad, radio 90, no lo pueden golpear ni controlar hundido, recarga 14
+                   confusion: 2.5, clonDur: 6,   /* Seba (17-11, V9.6): clones 7 → 6 s */ clonRecibe: 0.30, clonHace: 0.5,   // Seba: desaparece (el enemigo ve un círculo negro), deja un clon quieto que solo hace básicos (+30% de daño recibido, −50% de daño), al terminar o cortarla reaparece con 50 en área y confusión 2,5 s; (Seba 16-11) clon con la vida actual de Smok, dura 7 s; (C) 3 s, +15% de velocidad, radio 90, no lo pueden golpear ni controlar hundido, recarga 14
                   desc: (n) => `Te hundes en la tierra hasta ${HABILIDADES.hundidoSmok.dur} s (los enemigos solo ven un círculo negro que se mueve; nada nuevo te alcanza, pero las quemaduras, venenos y maldiciones que ya tenías siguen, y sí te llegan curas y escudos aliados) y te mueves ${Math.round(HABILIDADES.hundidoSmok.vel * 100)}% más rápido. Dejas un clon en tu lugar con tu vida actual por ${HABILIDADES.hundidoSmok.clonDur} s: no se mueve, ataca con tu básico, hace 50% menos de daño y recibe 30% más. Al terminar o si vuelves a apretar, reapareces con otro clon a tu lado: ${n.dano} de daño en un radio ${RADIO(HABILIDADES.hundidoSmok.radio)} y los enemigos quedan confundidos ${fmtN(HABILIDADES.hundidoSmok.confusion)} s.`,
                   n1: { dano: 50 }, n2: { dano: 50 } },
   esferaSmok:   { nombre: 'Esfera de humo', glifo: 'esferaSmok', cd: 16, cdFijo: true, alcance: 280, vuelo: 0.35, dur: 8, r0: 45, crece: 15, pasos: 10, cada: 0.5, lento: 0.10, tope: 0.15,   // Seba (16-11): +1 s de recarga; nube 7 s; lento como la arena de Kiro (−10% cada 0,5 s dentro) con tope 15%; (C) deja de crecer en 195
@@ -19480,6 +19480,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.6', f: '17-11-2026', n: [
+    'Smok: los clones duran 6 s (antes 7).',
+    'Rin: el básico hace 26 de daño (antes 24).',
+  ] },
   { v: 'V9.5', f: '17-11-2026', n: [
     'Smok, Ocaso: los enemigos ven un 5% menos (130 → 123,5) y el daño aumentado empieza más cerca (160 → 144).',
     'Smok, Ocaso: indicador de daño para el cegado — el borde de su visión late en rojo con cada golpe; con Smok cerca (50/s) late el doble de rápido, más grueso y con un segundo anillo.',
