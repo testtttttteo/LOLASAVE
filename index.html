@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.4</title>
+<title>LOLA V9.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.4</p>
+        <p class="sub version">LOLA V9.5</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2035,7 +2035,8 @@ Object.assign(HABILIDADES, {
                     // Seba: nube que se expande cada 0,5 s por 5 s; silencia, frena 20% y hace 1 cada 0,1 s; al terminar deja un clon en el centro; (C) alcance 280, radio 45 → 195, recarga 15
                   desc: (n) => `Lanzas una esfera de humo a distancia ${DIST(HABILIDADES.esferaSmok.alcance)} que se abre en una nube por ${HABILIDADES.esferaSmok.dur} s y crece cada ${fmtN(HABILIDADES.esferaSmok.cada)} s. Los enemigos dentro quedan silenciados, se frenan ${Math.round(HABILIDADES.esferaSmok.lento * 100)}% cada 0,5 s que siguen dentro (hasta ${Math.round(HABILIDADES.esferaSmok.tope * 100)}%) y reciben ${n.tick} de daño cada 0,1 s. Al disiparse deja un clon tuyo en el centro (como el de Hundido).`,
                   n1: { tick: 1 }, n2: { tick: 1 } },
-  ocasoSmok:    { nombre: 'Ocaso', glifo: 'ocasoSmok', cd: 61, cdFijo: true, ulti: true, canal: 1, dur: 6, vision: 130, cerca: 160,   // Seba (16-11): +1 s de recarga
+  ocasoSmok:    { nombre: 'Ocaso', glifo: 'ocasoSmok', cd: 61, cdFijo: true, ulti: true, canal: 1, dur: 6, vision: 123.5, cerca: 144,   // Seba (17-11, V9.5): visión 130 → 123,5 (−5%); daño aumentado a ≤144 (antes 160, −10%)
+                   // Seba (16-11): +1 s de recarga
                     // Seba: canal 1 s; los héroes enemigos ven solo un radio pequeño; 25/s, 50/s si Smok está cerca (un poco más que la visión); (C) 6 s, visión 130, cerca 160, recarga 60
                   desc: (n) => `Canalizas ${HABILIDADES.ocasoSmok.canal} s y cae el ocaso por ${HABILIDADES.ocasoSmok.dur} s: los héroes enemigos solo ven un radio pequeño a su alrededor, aparece un clon tuyo justo en el borde de la visión de cada uno, y reciben ${n.dps} de daño por segundo, ${n.dpsCerca} si estás cerca de ellos.`,
                   n1: { dps: 25, dpsCerca: 50 }, n2: { dps: 25, dpsCerca: 50 } },
@@ -10577,7 +10578,8 @@ class Game {
       if (p.fx.hundidoSmok && this.combatTime - p.fx.hundidoSmok.inicio >= HABILIDADES.hundidoSmok.dur) this.emergeSmok(p);   // Smok: se acabó el tiempo hundido
       if (p.fx.ocaso && p.alive) {   // Smok: Ocaso — 25/s, 50/s con Smok cerca
         const o = p.fx.ocaso, s = this.players.get(o.src);
-        if (this.porSegundo(o.tk, 'd', dt)) { const cerca = s && s.alive && dist(s, p) <= HABILIDADES.ocasoSmok.cerca; this.damage(p, cerca ? o.n.dpsCerca : o.n.dps, s || null, { tipo: 'mag', tick: true, desde: p }); }
+        o.cerca = !!(s && s.alive && dist(s, p) <= HABILIDADES.ocasoSmok.cerca);   // V9.5: se manda al cliente para el indicador
+        if (this.porSegundo(o.tk, 'd', dt)) { o.tg = this.combatTime; this.damage(p, o.cerca ? o.n.dpsCerca : o.n.dps, s || null, { tipo: 'mag', tick: true, desde: p }); }
       }
       if (p.kiroVence && this.combatTime > p.kiroVence) { p.kiroVence = 0; p.kiroPaso = 0; const sl = HEROES[p.build.heroe]?.habs.indexOf('tajoKiro'); if (sl >= 0) p.cd[sl + 1] = HABILIDADES.tajoKiro.cd; }   // Kiro: no usó el siguiente tajo a tiempo
       if (p.fx.dashKiro) {   // Kiro: el tajo avanza a 900/s; los muros de Aldor (roca) y de Maidas lo frenan; golpea a todos los que cruza
@@ -11253,7 +11255,7 @@ class Game {
         p.kiroVence ? 3 - (p.kiroPaso || 0) : 0, (p.kiroAc || []).filter(t => t > this.combatTime).length, (fx.confusoKiro && !fx.confusoKiro.bruja && !fx.confusoKiro.smok ? 1 : 0) | (fx.tornadoKiro ? 2 : 0) | (fx.dashKiro ? 4 : 0) | (fx.arenaKiro ? 8 * Math.min(4, fx.arenaKiro.n) : 0) | (p.kiroEmbos ? 64 : 0) | (fx.arenadoKiro ? 128 : 0), fx.tormentaKiro ? 3 - fx.tormentaKiro.golpe : 0, (p.kiroOculto || 0) > 0 && !fx.invisible ? Math.min(100, Math.round(p.kiroOculto / HABILIDADES.pozoArena.oculta * 100)) : 0,
         (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0,
         (fx.encantado && fx.encantado.vudu ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (p.enPolvoVudu && this.combatTime - p.enPolvoVudu < 0.25 ? 8 : 0),   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
-        (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0),   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.ocaso && fx.ocaso.cerca ? 32 : 0) | (fx.ocaso && this.combatTime - (fx.ocaso.tg ?? -9) < 0.35 ? 64 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0),   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
         (fx.dashRin ? 1 : 0) | (fx.canalDanza ? 2 : 0) | (fx.marcaRin ? 4 : 0) | (fx.dashRin && fx.dashRin.salto ? 8 : 0)]);   // Rin: 67 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
@@ -14715,7 +14717,7 @@ class Renderer {
         this.ring(x1, y1 + 10, 9 + (Math.floor(T * 8) % 2), PALETA.espectro2, 0.7, 1);
       }
     }
-    if (me && (me.sm & 2) && me.alive !== false) this.dibujaOcaso(this.gx(me.x), this.gy(me.y) - 6);   // Smok: Ocaso (solo en la pantalla del enemigo)
+    if (me && (me.sm & 2) && me.alive !== false) this.dibujaOcaso(this.gx(me.x), this.gy(me.y) - 6, me.sm & 32, me.sm & 64);   // Smok: Ocaso (solo en la pantalla del enemigo)
 
     // Tormenta
     if (view.ar < CONFIG.RADIO_ARENA - 1) this.drawStorm(view.ar);
@@ -15916,7 +15918,7 @@ class Renderer {
     g.fillStyle = PALETA.oro2; g.fillRect(x - s, y, 2 * s + 1, 1); g.fillRect(x, y - s, 1, 2 * s + 1);
     g.fillStyle = PALETA.pergamino2; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3);
   }
-  dibujaOcaso(cx, cy) {   // V9.1: el agujero con borde tramado se pinta una vez; cada cuadro son 4 rectángulos negros y una imagen
+  dibujaOcaso(cx, cy, cerca = 0, golpe = 0) {   // V9.1: el agujero con borde tramado se pinta una vez; cada cuadro son 4 rectángulos negros y una imagen
     const W = this.W, H = this.H, R = Math.round(HABILIDADES.ocasoSmok.vision * ESC), S = 2 * R + 9, o = R + 4;
     if (!this._ocasoHueco || this._ocasoHueco.width !== S) {
       const c = document.createElement('canvas'); c.width = S; c.height = S; const k = c.getContext('2d');
@@ -15932,6 +15934,14 @@ class Renderer {
     g.fillRect(0, 0, W, Math.max(0, y0)); g.fillRect(0, y0 + S, W, Math.max(0, H - y0 - S));
     g.fillRect(0, y0, Math.max(0, x0), S); g.fillRect(x0 + S, y0, Math.max(0, W - x0 - S), S);
     g.drawImage(this._ocasoHueco, x0, y0); g.globalAlpha = 1;
+    // Seba (17-11, V9.5): indicador de daño — borde rojo que late en cada golpe; con Smok cerca (daño aumentado) late el doble de rápido, más grueso y con un 2.º anillo
+    { const T = this.time, f = cerca ? 4 : 2, lat = (Math.sin(T * Math.PI * f) + 1) / 2, k = golpe ? 1 : lat * (cerca ? 0.6 : 0.3);
+      if (k > 0.05) {
+        this.ring(Math.round(cx), Math.round(cy), R - 1, PALETA.carmesi2, k, cerca ? 3 : 1);
+        if (cerca) this.ring(Math.round(cx), Math.round(cy), R - 6, PALETA.carmesi1, k * 0.7, 1);
+        if (golpe) this.ring(Math.round(cx), Math.round(cy), R - (cerca ? 10 : 4), PALETA.carmesi2, 0.5, 1);
+      }
+    }
     const T = this.time;   // humo que se mueve en el borde
     for (let i = 0; i < 14; i++) { const b = i * TAU / 14 + T * 0.4; this.humoNegro(cx + Math.cos(b) * (R + 2), cy + Math.sin(b) * (R + 2), 3); }
   }
@@ -19470,6 +19480,10 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.5', f: '17-11-2026', n: [
+    'Smok, Ocaso: los enemigos ven un 5% menos (130 → 123,5) y el daño aumentado empieza más cerca (160 → 144).',
+    'Smok, Ocaso: indicador de daño para el cegado — el borde de su visión late en rojo con cada golpe; con Smok cerca (50/s) late el doble de rápido, más grueso y con un segundo anillo.',
+  ] },
   { v: 'V9.4', f: '17-11-2026', n: [
     'Rin, Estocada: alcanza un 10% más (190 → 209) y el indicador de apuntado llega justo hasta donde llega la estocada.',
     'Rin, Estocada: sin apuntar a mano, apunta primero al enemigo marcado o a la espada propia más cercana a su alcance (los bots también la usan así).',
