@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.6</title>
+<title>LOLA V9.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1051,7 +1051,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.6</p>
+        <p class="sub version">LOLA V9.7</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2014,7 +2014,7 @@ Object.assign(HABILIDADES, {
                  racha: 20, rachaVentana: 5,   // Seba (17-11): cada estocada adicional al mismo enemigo dentro de 5 s hace +20 acumulable (+20, +40…). Seba: dash cortito y estocada mágica larga (rango medio), 50 de daño, la habilidad central; (C) recarga 6, dash 50, estocada 190, salto a marcas/espadas 320
                  desc: (n) => `Estocada de luz magenta instantánea en todo su alcance (${DIST(HABILIDADES.estocadaRin.largo)}): ${n.dano} de daño a todo lo que atraviesa, y avanzas un poco. Si la estocada toca a un enemigo marcado o a una de tus espadas espirituales, saltas hasta ahí (gasta la marca o la espada) y la estocada se recarga al instante; al marcado le haces +${PASIVAS.marcaRin.extra}. Cada estocada que repites sobre el mismo enemigo dentro de ${HABILIDADES.estocadaRin.rachaVentana} s hace +${HABILIDADES.estocadaRin.racha} más (acumulable).`,
                  n1: { dano: 50 }, n2: { dano: 50 } },
-  trapRin:     { nombre: 'Espadas espirituales', glifo: 'trapRin', cd: 14, cdFijo: true, alcance: 240, vel: 700, radio: 100, espadas: 6, dur: 4, choque: 16, lento: 0.25, lentoDur: 3,   // Seba (17-11): es un proyectil; alcance −25% (320 → 240); si alcanza a un enemigo, el anillo se abre con él al centro
+  trapRin:     { nombre: 'Espadas espirituales', glifo: 'trapRin', cd: 14, cdFijo: true, alcance: 240, vel: 700, radio: 100, espadas: 6, dur: 4.5 /* Seba (18-11, V9.7): 4 → 4,5 s */, choque: 16, lento: 0.25, lentoDur: 3,   // Seba (17-11): es un proyectil; alcance −25% (320 → 240); si alcanza a un enemigo, el anillo se abre con él al centro
                    // Seba: levanta espíritus de espadas magenta en un espacio (como la ulti de Irelia); impacto 50 y lento 25% 3 s; tocar una espada repite el efecto; (Seba 17-11) se cruzan; (C) alcance, radio, 6 espadas, 4 s, 1 vez por espada y enemigo
                  desc: (n) => `Lanzas una espada de luz (alcance ${DIST(HABILIDADES.trapRin.alcance)}); donde cae, o sobre el primer enemigo que alcanza (que queda al centro), se levanta un anillo de ${HABILIDADES.trapRin.espadas} espadas espirituales magenta (radio ${RADIO(HABILIDADES.trapRin.radio)}) por ${HABILIDADES.trapRin.dur} s. Los enemigos dentro reciben ${n.dano} de daño y se frenan ${Math.round(HABILIDADES.trapRin.lento * 100)}% por ${HABILIDADES.trapRin.lentoDur} s. Cada espada que tocan repite el efecto (una vez por espada).`,
                  n1: { dano: 50 }, n2: { dano: 50 } },
@@ -2023,7 +2023,7 @@ Object.assign(HABILIDADES, {
                  // Seba (17-11, rework): Rin se puede mover; el anillo la sigue y gira 6 s (3 s cerca, luego se expande y gira 3 s más); cada toque de espada: 40, se puede repetir
                  // (C) 0,5 vueltas/s, largo 31
                  desc: (n) => `Durante ${HABILIDADES.danzaRin.dur} s, ${HABILIDADES.danzaRin.espadas} espadas magenta giran a tu alrededor y te siguen (puedes moverte), con el mango hacia ti y el filo hacia afuera. Cada vez que una espada toca a un enemigo: ${n.dano} de daño. Cada ${HABILIDADES.danzaRin.espadaCada} s, dañar a un enemigo deja una espada espiritual donde fue dañado (${HABILIDADES.danzaRin.espadaDur} s; tu Estocada puede saltar hasta ella).`,
-                 espadaCada: 1, espadaDur: 4,   // Seba (17-11, V9.4): cada 1 s, dañar a un enemigo deja una espada espiritual donde fue dañado (la Estocada salta hasta ella); (C) dura 4 s como las del anillo
+                 espadaCada: 1, espadaDur: 4.5, /* Seba (18-11, V9.7): 4 → 4,5 s */   // Seba (17-11, V9.4): cada 1 s, dañar a un enemigo deja una espada espiritual donde fue dañado (la Estocada salta hasta ella); (C) dura 4 s como las del anillo
                  n1: { dano: 20 }, n2: { dano: 20 } },
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
@@ -19480,6 +19480,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.7', f: '18-11-2026', n: [
+    'Rin: el anillo de Espadas espirituales y las espadas que deja la Danza de espadas duran 4,5 s (antes 4).',
+  ] },
   { v: 'V9.6', f: '17-11-2026', n: [
     'Smok: los clones duran 6 s (antes 7).',
     'Rin: el básico hace 26 de daño (antes 24).',
