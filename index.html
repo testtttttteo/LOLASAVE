@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.7</title>
+<title>LOLA V9.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -983,6 +983,73 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
 .sp-acciones { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .menu-pie { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; border-top: 3px dashed var(--perg0); padding-top: 10px; }
 
+/* ===== Seba (18-11, V9.8): aviso de kill chico arriba a la izquierda ===== */
+#tl { position: absolute; top: calc(8px + var(--sat)); left: max(10px, var(--sal)); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; z-index: 5; pointer-events: none; }
+#tl #hud-players { position: static; top: auto; left: auto; }
+@media (orientation: portrait) { #tl { top: calc(50px + var(--sat)); } }
+@media (hover: none) and (pointer: coarse) { #tl { top: calc(44px + var(--sat)); left: max(8px, var(--sal)); } }
+#killfeed { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.kf2 { display: flex; align-items: center; gap: 3px; padding: 2px 3px; background: rgba(26, 20, 36, 0.72); border: 2px solid var(--tinta); transition: opacity .6s; }
+.kf2.fuera { opacity: 0; }
+.kf2.mia { box-shadow: 0 0 0 1px var(--oro2); } .kf2.yo { box-shadow: 0 0 0 1px var(--carm2); }
+.kf2 .kf-cara { display: block; width: 27px; height: 26px; image-rendering: pixelated; background: var(--noche); border-bottom: 2px solid var(--perg1); }
+.kf2 .kf-cara.az { border-color: var(--acero2); } .kf2 .kf-cara.ro { border-color: var(--carm2); }
+.kf2 .kf-cara.c0 { border-color: var(--carm2); } .kf2 .kf-cara.c1 { border-color: var(--acero2); } .kf2 .kf-cara.c2 { border-color: var(--bosq2); } .kf2 .kf-cara.c3 { border-color: var(--oro2); }
+.kf2 .kf-cara.muere { filter: grayscale(1) brightness(.7); }
+.kf2 .kf-esp { display: block; width: 11px; height: 11px; flex: none; }
+@media (hover: none) and (pointer: coarse), (max-height: 430px) { .kf2 { padding: 1px 2px; gap: 2px; border-width: 1px; } .kf2 .kf-cara { width: 18px; height: 17px; border-bottom-width: 1px; } .kf2 .kf-esp { width: 8px; height: 8px; } }
+
+/* ===== Seba (18-11, V9.8): selección de héroe — solo retratos por casa, ficha a la derecha en PC y en ventana en el celular ===== */
+.v2 .sel-roster { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+.v2 .ro-casa { display: flex; align-items: stretch; gap: 6px; padding: 4px 6px 4px 4px; border: 3px solid var(--tinta); min-width: 0; flex: none; }
+.v2 .ro-t { flex: none; margin: 0; writing-mode: vertical-rl; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 10px; letter-spacing: 1px; white-space: nowrap; overflow: hidden; padding: 0 1px; }
+.v2 .ro-t img { width: 16px; height: 16px; transform: rotate(180deg); }
+.v2 .ro-fila { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; }
+.v2 .ro-h { width: 58px; padding: 2px; gap: 0; border-width: 2px; transition: transform .08s; }
+.v2 .ro-h img { display: block; width: 100%; height: auto; }
+.v2 .ro-h:hover, .v2 .ro-h:focus-visible { transform: translateY(-2px); border-color: var(--oro2); }
+.v2 .ro-h.ver { border-color: var(--oro2); outline: 2px solid var(--oro2); outline-offset: 1px; z-index: 1; }
+.v2 .ro-h.mio { border-color: var(--oro2); }
+.v2 .ro-h.baneado::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 2px), var(--carm2) calc(50% - 2px), var(--carm2) calc(50% + 2px), transparent calc(50% + 2px)); pointer-events: none; }
+.v2 .ro-m { top: auto; bottom: 2px; left: 2px; right: 2px; font-size: 7px; line-height: 1.1; }
+/* turnos: fichas con BAN / PICK, el baneado se ve en su ficha */
+.v2 .dr-turnos { gap: 3px; align-items: stretch; }
+.v2 .dr-turnos .dt { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 30px; padding: 2px 3px 1px; text-decoration: none; opacity: .6; }
+.v2 .dr-turnos .dt img { display: block; width: 24px; height: 21px; filter: grayscale(1) brightness(.75); }
+.v2 .dr-turnos .dt b { display: block; height: 21px; line-height: 21px; font: 13px var(--f-num); color: var(--perg2); }
+.v2 .dr-turnos .dt.ban b { color: var(--carm2); }
+.v2 .dr-turnos .dt small { font: 7px var(--f-num); letter-spacing: 1px; }
+.v2 .dr-turnos .dt.hecho { opacity: .45; } .v2 .dr-turnos .dt.ahora { opacity: 1; transform: none; box-shadow: 0 0 0 2px var(--oro2); animation: latido 0.8s steps(2) infinite; }
+/* bans dentro de la columna de cada equipo */
+.dp-bans { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; }
+.dp-bans > span:first-child { font: 8px var(--f-num); color: var(--perg1); letter-spacing: 1px; }
+.dp-bans .db { position: relative; border: 2px solid var(--tinta); cursor: pointer; }
+.dp-bans .db img { display: block; width: 26px; height: 23px; filter: grayscale(1) brightness(.6); }
+.dp-bans .db::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top right, transparent calc(50% - 1px), var(--carm2) calc(50% - 1px), var(--carm2) calc(50% + 1px), transparent calc(50% + 1px)); }
+/* ventana de la ficha (celular) */
+.dr-modal { position: fixed; inset: 0; z-index: 40; background: rgba(10, 8, 16, 0.72); display: flex; align-items: center; justify-content: center; padding: max(10px, var(--sat)) max(10px, var(--sar)) max(10px, var(--sab)) max(10px, var(--sal)); }
+.dr-modal.hidden { display: none; }
+.drm-box { position: relative; width: min(680px, 100%); max-height: 100%; display: flex; flex-direction: column; padding: 0; margin: 0; }
+.drm-cuerpo { flex: 1; min-height: 0; overflow-y: auto; padding: 10px 46px 10px 12px; }
+.drm-pie { flex: none; padding: 6px; border-top: 3px solid var(--perg0); }
+.drm-pie .btn { width: 100%; }
+.drm-x { position: absolute; top: 6px; right: 6px; z-index: 2; min-width: 34px; }
+@media (max-width: 899px), (hover: none) and (pointer: coarse) {
+  .v2 .sel-main { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr); }
+  .v2 .sel-card { display: none; }
+  .v2 .ro-h { width: clamp(36px, 13vh, 58px); }
+  .v2 .ro-casa { padding: 3px 4px 3px 3px; gap: 4px; }
+}
+@media (max-height: 430px) {
+  .v2 .dr-turnos .dt { min-width: 22px; padding: 1px 2px 0; }
+  .v2 .dr-turnos .dt img { width: 18px; height: 16px; }
+  .v2 .dr-turnos .dt b { height: 16px; line-height: 16px; font-size: 11px; }
+  .v2 .dr-turnos .dt small { font-size: 6px; letter-spacing: 0; }
+  .v2 .ro-t { font-size: 8px; letter-spacing: 0; } .v2 .ro-t img { width: 12px; height: 12px; }
+  .dp-bans .db img { width: 20px; height: 18px; }
+  .drm-cuerpo { padding: 6px 44px 6px 8px; }
+}
+
 
 .demo-note{font-size:14px;color:var(--madera1);text-align:center;line-height:1.4}
 .demo-note b{color:var(--carm1)}
@@ -1006,7 +1073,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
         <div class="tag big" id="hud-timer">75</div>
         <div class="tag storm hidden" id="hud-storm">Tormenta</div>
       </div>
-      <div id="hud-players"></div>
+      <div id="tl"><div id="hud-players"></div><div id="killfeed"></div></div>
       <div id="hud-jefe" class="hidden"><span id="jefe-n"></span><div class="jbar"><i id="jefe-hp"></i></div></div>
       <div id="hud-spect" class="hidden">Eliminado · mirando la pelea</div>
       <!-- Seba (28-10): reaparición — cuenta grande para el que murió y fichitas para todos bajo el marcador -->
@@ -1051,7 +1118,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.7</p>
+        <p class="sub version">LOLA V9.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1173,7 +1240,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
   <!-- ================= DRAFT ================= -->
   <section class="screen hidden" id="scr-draft">
     <!-- Seba (30-10): selección en una sola pantalla — roster por casa a la izquierda, ficha a la derecha, jugadores abajo -->
-    <div class="draft-wrap sel">
+    <div class="draft-wrap sel v2">
       <div class="draft-head"><h2>Elige tu héroe</h2><div class="dr-turnos hidden" id="dr-turnos"></div><button class="btn small" id="b-matriz">Matchups</button><div class="sb-item timer" id="dr-timer">180</div></div>
       <div class="sel-main">
         <div class="sel-roster" id="dr-roster"></div>
@@ -1181,6 +1248,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       </div>
       <div class="sel-pie"><div class="dr-picks" id="dr-picks"></div><div class="dr-bans hidden" id="dr-bans"></div></div>
       <div class="dr-flash hidden" id="dr-flash"></div>
+      <div class="dr-modal hidden" id="dr-modal"><div class="drm-box panel" role="dialog" aria-label="Ficha del héroe"><button class="btn small drm-x" id="drm-x" aria-label="Cerrar">✕</button><div class="drm-cuerpo sel-card-cuerpo" id="drm-cuerpo"></div><div class="drm-pie"><button class="btn gold" id="drm-lock">Elegir</button></div></div></div>
     </div>
   </section>
 
@@ -18304,7 +18372,7 @@ function onPhase(ph) {
   if (ph === 'countdown') { S.lastCount = null; sonido.reiniciar(); renderer.reiniciarEfectos(); }
   if (ph === 'results' || ph === 'gameover') sonido.fin = true; else sonido.fin = false;
   if (ph === 'lobby') showScreen('scr-lobby');
-  else if (ph === 'draft') { S.casaDraft = null; S.verDraft = null; S.verDraftPick = null; $('dr-card').dataset.h = ''; S.ultFirmaDraft = undefined; S.ultPicks = {}; S.ultNBans = 0; showScreen('scr-draft'); }
+  else if (ph === 'draft') { cerrarDrModal(); S.casaDraft = null; S.verDraft = null; S.verDraftPick = null; $('dr-card').dataset.h = ''; S.ultFirmaDraft = undefined; S.ultPicks = {}; S.ultNBans = 0; showScreen('scr-draft'); }
   if (ph !== 'draft' && fichaAbierta) cerrarFicha();
   else if (ph === 'mejoras') showScreen('scr-shop');
   else if (combate) showScreen(null);
@@ -18439,21 +18507,22 @@ function boletin(text, tipo = '') {
   setTimeout(() => el.remove(), cel ? 3420 : 3800);
 }
 
-// Seba (30-10): aviso de kill con la cara 8 bit de cada héroe y el nombre en el color de su equipo
+// Seba (18-11, V9.8): aviso de kill chico arriba a la izquierda — retrato del que mata, espada y retrato del que muere (en gris)
+const ESPADA_KF = `<svg class="kf-esp" viewBox="0 0 11 11" shape-rendering="crispEdges" aria-hidden="true"><path fill="#1a1424" d="M7 0h4v4h-1v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h1v-1h1v-1h1v-1h1zM1 6h2v1h1v1h1v1h-1v1h-1v1h-2v-2h-1v-1h1z"/><path fill="#e8e0c8" d="M8 1h2v2h-1v1h-1v1h-1v1h-1v-1h1v-1h1z"/><path fill="#c89a3a" d="M2 7h1v1h1v1h-1v1h-1v-1h-1v-1h1z"/></svg>`;
 function avisoKill(ev) {
   const a = S.metaById.get(ev.ka), b = S.metaById.get(ev.kb);
   if (!a || !b || !a.build.heroe || !b.build.heroe) { boletin(ev.s, 'kill'); return; }
   const eqs = S.meta && S.meta.modo === 'equipos' ? S.meta.equipos : null;
   const colJ = (m) => eqs ? (eqs[m.id] === 'A' ? 'az' : 'ro') : 'c' + (m.colorIdx % 4);
   const caraC = (m) => eqs ? (eqs[m.id] === 'A' ? 1 : 0) : m.colorIdx;
-  const pj = (m) => `<img class="kf-cara" alt="${esc(HEROES[m.build.heroe].nombre)}" src="${imgCara(m.build.heroe, caraC(m), 2)}"><b class="kf-n ${colJ(m)}">${esc(m.name)}</b>`;
-  const f = $('feed'), el = document.createElement('div');
-  el.className = 'fi kill kf' + (ev.ka === S.myId || ev.kb === S.myId ? ' yo' : '');
-  el.innerHTML = `${pj(a)}<span class="kf-v">mató a</span>${pj(b)}`;
+  const pj = (m, muere) => `<img class="kf-cara ${colJ(m)}${muere ? ' muere' : ''}${m.id === S.myId ? ' yo' : ''}" alt="${esc(HEROES[m.build.heroe].nombre)}" title="${esc(m.name)} · ${esc(HEROES[m.build.heroe].nombre)}" src="${imgCara(m.build.heroe, caraC(m), 2)}">`;
+  const f = $('killfeed'), el = document.createElement('div');
+  el.className = 'kf2' + (ev.ka === S.myId ? ' mia' : ev.kb === S.myId ? ' yo' : '');
+  el.innerHTML = `${pj(a)}${ESPADA_KF}${pj(b, true)}`;
   f.prepend(el);
-  while (f.children.length > 4) f.lastChild.remove();
-  setTimeout(() => el.classList.add('fuera'), 3200);
-  setTimeout(() => el.remove(), 3800);
+  while (f.children.length > 5) f.lastChild.remove();
+  setTimeout(() => el.classList.add('fuera'), 4200);
+  setTimeout(() => el.remove(), 4800);
 }
 
 function banner(text, chico = false) {
@@ -18803,9 +18872,16 @@ function renderDraft() {
   const EB = estadoBan();
   const baneados = new Map((S.meta.bans || []).map(b => [b.heroe, b.eq]));
   $('dr-turnos').classList.toggle('hidden', !EB);
-  $('dr-bans').classList.toggle('hidden', !baneados.size);
+  $('dr-bans').classList.toggle('hidden', !baneados.size || !!S.meta.equipos);   // V9.8: con equipos, los bans van en la columna de cada equipo
   document.querySelector('#scr-draft .draft-head h2').textContent = EB && EB.tr ? (EB.tr.eq === EB.miEq ? (EB.tr.acc === 'ban' ? '¡Tu equipo banea!' : EB.puedoElegir ? '¡Elige tu héroe!' : 'Tu aliado elige') : `${NOM_EQ[EB.tr.eq]} ${EB.tr.acc === 'ban' ? 'banea' : 'elige'}…`) : 'Elige tu héroe';
-  if (EB) $('dr-turnos').innerHTML = EB.d.turnos.map(([eq, acc], i) => `<span class="dt ${eq === 'A' ? 'az' : 'ro'} ${acc}${i === EB.d.paso ? ' ahora' : i < EB.d.paso ? ' hecho' : ''}">${NOM_EQ[eq]} ${acc === 'ban' ? 'banea' : 'elige'}</span>`).join('');
+  if (EB) {   // V9.8: fichas de turno; un ban hecho muestra el retrato baneado, un pick hecho un ✓
+    const nB = { A: 0, B: 0 }, bansEq = { A: (S.meta.bans || []).filter(b => b.eq === 'A'), B: (S.meta.bans || []).filter(b => b.eq === 'B') };
+    $('dr-turnos').innerHTML = EB.d.turnos.map(([eq, acc], i) => {
+      const hecho = i < EB.d.paso, ahora = i === EB.d.paso, bn = acc === 'ban' ? bansEq[eq][nB[eq]++] : null;
+      const dentro = hecho && bn ? `<img alt="" src="${retratoHeroe(bn.heroe, 0, 2)}">` : `<b>${acc === 'ban' ? '✕' : hecho ? '✓' : i + 1}</b>`;
+      return `<span class="dt ${eq === 'A' ? 'az' : 'ro'} ${acc}${ahora ? ' ahora' : hecho ? ' hecho' : ''}" title="${NOM_EQ[eq]} ${acc === 'ban' ? 'banea' : 'elige'}">${dentro}<small>${acc === 'ban' ? 'BAN' : 'PICK'}</small></span>`;
+    }).join('');
+  }
   // Seba (29-10): lo elegido, bien visible — dos columnas (Azul / Rojo) con un casillero por jugador
   const eqs = S.meta.equipos;
   $('dr-picks').classList.remove('hidden');
@@ -18819,7 +18895,7 @@ function renderDraft() {
         const h = p.build.heroe ? HEROES[p.build.heroe] : null;
         const toca = !h && turnoAqui && !marcado; if (toca) marcado = true;
         return `<div ${h ? `data-h="${p.build.heroe}" role="button" tabindex="0" title="Ver ficha de ${esc(h.nombre)}" ` : ''}class="dp-slot${h ? ' lleno' : ''}${toca ? ' toca' : ''}${p.id === S.myId ? ' yo' : ''}">${h ? `<img alt="" src="${retratoHeroe(p.build.heroe, p.colorIdx, 3)}">` : '<span class="dp-q">?</span>'}<div class="dp-n"><b>${h ? esc(h.nombre) : toca ? 'Eligiendo…' : 'Sin elegir'}</b><small>${esc(p.name)}${p.id === S.myId ? ' (tú)' : ''}</small></div></div>`;
-      }).join('') + '</div></div>';
+      }).join('') + '</div>' + ((S.meta.bans || []).some(b => b.eq === eq) ? '<div class="dp-bans"><span>BANS</span>' + S.meta.bans.filter(b => b.eq === eq).map(b => `<span data-h="${b.heroe}" role="button" tabindex="0" class="db" title="${esc(HEROES[b.heroe]?.nombre || b.heroe)}"><img alt="${esc(HEROES[b.heroe]?.nombre || b.heroe)}" src="${retratoHeroe(b.heroe, 0, 2)}"></span>`).join('') + '</div>' : '') + '</div>';
     };
     $('dr-picks').innerHTML = col('A') + '<div class="dp-vs">VS</div>' + col('B');
   }
@@ -18850,8 +18926,8 @@ function renderDraft() {
     return `<div class="ro-casa ${ck}" style="--n:${hs.length}"><div class="ro-t"><img alt="" src="${imgIcono(c.glifo, c.fondo, 2)}">${esc(c.nombre)}</div><div class="ro-fila">` + hs.map(k => {
       const d = duenos.get(k), bn = baneados.get(k);
       const cls = (k === S.verDraft ? ' ver' : '') + (d ? (d.id === S.myId ? ' mio' : ' tomado') : bn ? ' baneado' : '');
-      const marca = d ? `<i class="ro-m ${eqs ? (eqs[d.id] === 'A' ? 'az' : 'ro') : ''}">${esc(d.id === S.myId ? 'TÚ' : d.name)}</i>` : bn ? '<i class="ro-m ban">BAN</i>' : '';
-      return `<button class="ro-h${cls}" data-h="${k}" aria-label="${esc(HEROES[k].nombre)}" aria-pressed="${k === S.verDraft}"><img alt="" src="${retratoHeroe(k, d ? d.colorIdx : me.colorIdx, 2)}"><span>${esc(HEROES[k].nombre)}</span>${marca}</button>`;
+      const marca = d ? `<i class="ro-m ${eqs ? (eqs[d.id] === 'A' ? 'az' : 'ro') : ''}">${d.id === S.myId ? 'TÚ' : esc(d.name.slice(0, 6))}</i>` : '';
+      return `<button class="ro-h${cls}" data-h="${k}" title="${esc(HEROES[k].nombre)}" aria-label="${esc(HEROES[k].nombre)}" aria-pressed="${k === S.verDraft}"><img alt="" src="${retratoHeroe(k, d ? d.colorIdx : me.colorIdx, 2)}">${marca}</button>`;   // V9.8: solo el retrato
     }).join('') + '</div></div>';
   }).join('');
   // Ficha (solo se reconstruye si cambia el héroe que miras: así no se pierde lo que estabas leyendo)
@@ -18860,13 +18936,21 @@ function renderDraft() {
     $('dr-card').innerHTML = fichaHtml(kv, me.colorIdx, false);
     $('dr-card').dataset.h = kv; $('dr-card').dataset.c = String(me.colorIdx); $('dr-card').scrollTop = 0;
   }
-  const lock = $('dr-lock'), dk = duenos.get(kv), bk = baneados.get(kv), ak = ac0(kv);
-  lock.disabled = !!dk || !!bk || ak.off;
-  lock.classList.toggle('ban', !dk && !bk && ak.ban);
-  lock.classList.toggle('gold', !(!dk && !bk && ak.ban));
-  lock.dataset.ban = ak.ban ? '1' : '';
-  lock.textContent = dk ? (dk.id === S.myId ? `${HEROES[kv].nombre} · Tu héroe` : `Tomado por ${dk.name}`) : bk ? `Baneado por ${NOM_EQ[bk]}` : ak.ban ? `Banear ${HEROES[kv].nombre}` : ak.off ? ak.texto : `Fijar ${HEROES[kv].nombre}`;
+  const dk = duenos.get(kv), bk = baneados.get(kv), ak = ac0(kv);
+  for (const lock of [$('dr-lock'), $('drm-lock')]) {
+    lock.disabled = !!dk || !!bk || ak.off;
+    lock.classList.toggle('ban', !dk && !bk && ak.ban);
+    lock.classList.toggle('gold', !(!dk && !bk && ak.ban));
+    lock.dataset.ban = ak.ban ? '1' : '';
+    lock.textContent = dk ? (dk.id === S.myId ? `${HEROES[kv].nombre} · Tu héroe` : `Tomado por ${dk.name}`) : bk ? `Baneado por ${NOM_EQ[bk]}` : ak.ban ? `Banear ${HEROES[kv].nombre}` : ak.off ? ak.texto : `Fijar ${HEROES[kv].nombre}`;
+  }
+  // V9.8: ventana del celular — misma ficha y mismo botón
+  if (!$('dr-modal').classList.contains('hidden') && ($('drm-cuerpo').dataset.h !== kv || $('drm-cuerpo').dataset.c !== String(me.colorIdx))) {
+    $('drm-cuerpo').innerHTML = fichaHtml(kv, me.colorIdx, false); $('drm-cuerpo').dataset.h = kv; $('drm-cuerpo').dataset.c = String(me.colorIdx); $('drm-cuerpo').scrollTop = 0;
+  }
 }
+const selVentana = () => matchMedia('(max-width: 899px), (hover: none) and (pointer: coarse)').matches;   // V9.8: en celular la ficha va en una ventana
+function cerrarDrModal() { $('dr-modal').classList.add('hidden'); $('drm-cuerpo').dataset.h = ''; }
 
 // ------------------------------------------------------------ ficha detallada y matchups
 const UMBRAL_FUERTE = 60, UMBRAL_DEBIL = 40;
@@ -19441,7 +19525,10 @@ $('b-draftmodo').onclick = () => { S.draftModo = S.draftModo === 'ban' ? 'libre'
 }
 document.querySelectorAll('#sala-draft button').forEach(b => { b.onclick = () => { if (!isAuth() || !S.game.sala) return; S.game.sala.draft = b.dataset.d; S.game.metaDirty = true; }; });
 $('b-matriz').onclick = abrirMatriz;
-$('dr-roster').addEventListener('click', (e) => { const b = e.target.closest('[data-h]'); if (b) { S.verDraft = b.dataset.h; renderDraft(); } });
+$('dr-roster').addEventListener('click', (e) => { const b = e.target.closest('[data-h]'); if (b) { S.verDraft = b.dataset.h; if (selVentana()) $('dr-modal').classList.remove('hidden'); renderDraft(); } });
+$('drm-x').onclick = cerrarDrModal;
+$('dr-modal').addEventListener('click', (e) => { if (e.target === $('dr-modal')) cerrarDrModal(); });
+$('drm-lock').onclick = () => { const k = S.verDraft; if (k && HEROES[k]) { act({ t: $('drm-lock').dataset.ban ? 'ban' : 'pick', key: k }); cerrarDrModal(); } };
 $('dr-lock').onclick = () => { const k = S.verDraft; if (k && HEROES[k]) act({ t: $('dr-lock').dataset.ban ? 'ban' : 'pick', key: k }); };
 $('b-1v1').onclick = () => startEquipos(1);
 $('b-2v2').onclick = () => startEquipos(2);
@@ -19480,6 +19567,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.8', f: '18-11-2026', n: [
+    'Avisos de kill: ahora son chicos y van arriba a la izquierda (PC y celular): retrato del que mata, una espada y el retrato del que muere en gris, con el color de su equipo.',
+    'Selección de héroe (libre y draft): solo retratos agrupados por casa. En PC la ficha sigue a la derecha; en celular, tocar un retrato abre una ventana con la ficha y el botón para elegir o banear.',
+    'Draft con baneos: los turnos se ven como fichas BAN / PICK (el baneado aparece en su ficha) y los bans de cada equipo van en su columna, abajo.',
+  ] },
   { v: 'V9.7', f: '18-11-2026', n: [
     'Rin: el anillo de Espadas espirituales y las espadas que deja la Danza de espadas duran 4,5 s (antes 4).',
   ] },
