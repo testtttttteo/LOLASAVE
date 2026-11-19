@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.8</title>
+<title>LOLA V9.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1118,7 +1118,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.8</p>
+        <p class="sub version">LOLA V9.9</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -6786,6 +6786,10 @@ class Game {
       target.cuenta += amt; target.ultimoDano = this.combatTime;
       this.numero(target, amt, src, o.silencioso && !o.tick, !!o.tick);
       if (atacante && atacante !== target) { atacante.dmgRound += amt; this.cargarUlti(atacante, amt, src, o); }
+      if (!o.basico && !o.rayoTotem && atacante && atacante !== target && amt > 0) {   // Seba (19-11, V9.9): el tótem de Bambaa también se activa con los muñecos de la arena
+        const d = o.desde, inst = o.inst || (d && d !== atacante && typeof d === 'object' ? (d.inst || d) : null) || this._castInst || null;
+        if (inst || !o.tick) this.totemGolpe(atacante, target, inst);
+      }
       return amt;
     }
     target.hp -= amt;
@@ -19567,6 +19571,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V9.9', f: '19-11-2026', n: [
+    'Arena de entrenamiento: el tótem de Bambaa ahora se activa al dañar a los muñecos (antes no lanzaba rayos ahí; en partidas sí funcionaba).',
+  ] },
   { v: 'V9.8', f: '18-11-2026', n: [
     'Avisos de kill: ahora son chicos y van arriba a la izquierda (PC y celular): retrato del que mata, una espada y el retrato del que muere en gris, con el color de su equipo.',
     'Selección de héroe (libre y draft): solo retratos agrupados por casa. En PC la ficha sigue a la derecha; en celular, tocar un retrato abre una ventana con la ficha y el botón para elegir o banear.',
