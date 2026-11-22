@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V9.9</title>
+<title>LOLA V10.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1050,6 +1050,11 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
   .drm-cuerpo { padding: 6px 44px 6px 8px; }
 }
 
+/* Seba (22-11, V10.0): habilidad que se puede volver a apretar — brillo dorado que late y ↻ (o ×n trampas) */
+.act.recast { border-color: var(--oro2); box-shadow: 0 0 0 2px var(--oro1), 0 0 10px var(--oro2); animation: latido 0.8s steps(2) infinite; }
+.act.recast .cdn { color: var(--oro2); font-size: 16px; text-shadow: 1px 1px 0 var(--tinta); }
+@media (prefers-reduced-motion: reduce) { .act.recast { animation: none; } }
+
 
 .demo-note{font-size:14px;color:var(--madera1);text-align:center;line-height:1.4}
 .demo-note b{color:var(--carm1)}
@@ -1118,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V9.9</p>
+        <p class="sub version">LOLA V10.0</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1702,6 +1707,17 @@ Object.assign(HEROES, {
     habs: ['estocadaRin', 'trapRin', 'danzaRin'],
     pasiva: 'marcaRin',
   },
+// Seba (22-11): Zinro (Errantes): cazador siberiano de las montañas, con su halcón. Números (C) salvo los que fijó Seba.
+  zinro: {
+    casa: 'errantes',
+    nombre: 'Zinro', rol: 'Cazador · halconero', fondo: 'zinro', arma: 'cuchilloZinro',
+    desc: 'Cazador de las montañas heladas. Ata a sus presas con boleadoras, manda a su halcón a vigilar desde el cielo y siembra el terreno de trampas.',
+    vida: 380, dano: 28, recarga: 1.0, ultiCarga: 300, velocidad: 160,   // Seba: cuchillo 28; (C) vida, recarga, velocidad
+    ataque: { tipo: 'dual', rango: 58, arco: 90, alcance: 330, vel: 494, danoDist: 25 },   // Seba (22-11 r2): a distancia lanza un kunai, 5% más lento (520 → 494)
+      // Seba: cuchillo cuerpo a cuerpo (28) o boleadora a distancia (25); a distancia salvo que haya un enemigo en rango cuerpo a cuerpo; (C) rangos
+    habs: ['voleaZinro', 'halconZinro', 'trampasZinro'],
+    pasiva: 'presaZinro',
+  },
 });
 
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
@@ -2093,6 +2109,17 @@ Object.assign(HABILIDADES, {
                  desc: (n) => `Durante ${HABILIDADES.danzaRin.dur} s, ${HABILIDADES.danzaRin.espadas} espadas magenta giran a tu alrededor y te siguen (puedes moverte), con el mango hacia ti y el filo hacia afuera. Cada vez que una espada toca a un enemigo: ${n.dano} de daño. Cada ${HABILIDADES.danzaRin.espadaCada} s, dañar a un enemigo deja una espada espiritual donde fue dañado (${HABILIDADES.danzaRin.espadaDur} s; tu Estocada puede saltar hasta ella).`,
                  espadaCada: 1, espadaDur: 4.5, /* Seba (18-11, V9.7): 4 → 4,5 s */   // Seba (17-11, V9.4): cada 1 s, dañar a un enemigo deja una espada espiritual donde fue dañado (la Estocada salta hasta ella); (C) dura 4 s como las del anillo
                  n1: { dano: 20 }, n2: { dano: 20 } },
+  // ---- Zinro (Seba, 22-11; números (C) salvo los que fijó Seba)
+  voleaZinro:   { nombre: 'Volea', glifo: 'voleaZinro', cd: 12, cdFijo: true, alcance: 420, vel: 618,   // Seba (22-11 r3): vuela 5% más lento (650 → 618)
+                  dano: 25, aturde: 0.75, enlace: 180, cono: 0.6, aturde2: 1.25, extra: 45,   // Seba: 25 y 0,75 s; si detrás hay otro enemigo, invocación enemiga o árbol: 1,25 s y +45 al terminar; distancia media (180) para empezar; (C) recarga 12, alcance 420
+                  desc: (n) => `Lanzas una boleadora (${DIST(HABILIDADES.voleaZinro.alcance)}): ${HABILIDADES.voleaZinro.dano} de daño y aturde ${fmtN(HABILIDADES.voleaZinro.aturde)} s al primer enemigo. Si detrás de él (hasta ${DIST(HABILIDADES.voleaZinro.enlace)}) hay otro enemigo, una invocación enemiga o un árbol, la boleadora los ata: aturde ${fmtN(HABILIDADES.voleaZinro.aturde2)} s a ambos y, al terminar, les hace ${HABILIDADES.voleaZinro.extra} de daño más.`,
+                  n1: {}, n2: {} },
+  halconZinro:  { nombre: 'Llamada al halcón', glifo: 'halconZinro', cd: 40, cdFijo: true, alcance: 450, radio: 320, dur: 35, velPicada: 900, dano: 50, aturde: 0.5, radioPicada: 50,   // Seba: patrulla 35 s; recarga = duración + 5; radio grande como la ulti de Bambaa; picada 50 y 0,5 s en un radio muy pequeño; (C) alcance 450, radio picada 50
+                  desc: (n) => `Lanzas a tu halcón hasta ${DIST(HABILIDADES.halconZinro.alcance)}: patrulla ${HABILIDADES.halconZinro.dur} s un gran radio (${RADIO(HABILIDADES.halconZinro.radio)}) y deja ver a ti y a tus aliados a los enemigos invisibles y lo escondido (marca con ! al Smok verdadero, las minas y las trampas). Vuelve a apretar: se lanza en picada contra el héroe enemigo más cercano del radio — ${HABILIDADES.halconZinro.dano} de daño y aturde ${fmtN(HABILIDADES.halconZinro.aturde)} s alrededor de él — y termina.`,
+                  n1: {}, n2: {} },
+  trampasZinro: { nombre: 'Cazador maestro', glifo: 'trampasZinro', cd: 50, cdFijo: true, ulti: true, trampas: 3, ventana: 15, separacion: 80, armado: 1, radio: 31, dano: 100, lento: 0.8, lentoDur: 3, cerca: 200, prisa: 0.1,   // Seba: hasta 3 trampas, 15 s; 100 y −80% 3 s; radio de la mina +20%; +10% de velocidad cerca de un atrapado; invisibles; separadas entre sí; (C) recarga 50, separación 80, cerca 200
+                  desc: (n) => `Dejas una trampa invisible a tus pies; puedes dejar hasta ${HABILIDADES.trampasZinro.trampas} (separadas entre sí) en ${HABILIDADES.trampasZinro.ventana} s antes de que entre en recarga. El enemigo que la pisa recibe ${HABILIDADES.trampasZinro.dano} de daño y queda ${Math.round(HABILIDADES.trampasZinro.lento * 100)}% más lento ${HABILIDADES.trampasZinro.lentoDur} s (si ya está atrapado, solo el daño). Tú y tus aliados cerca de un atrapado ganan +${Math.round(HABILIDADES.trampasZinro.prisa * 100)}% de velocidad.`,
+                  n1: {}, n2: {} },
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
                      // Seba (16-11): recarga 14 → 15,5
@@ -2262,6 +2289,8 @@ const PASIVAS = {
   resonancia: { nombre: 'Resonancia rúnica', glifo: 'resonancia', desc: 'Cada vez que tus habilidades dañan a un enemigo ganas una acumulación (máximo 5; duran 4 s y se renuevan al sumar otra): +3% de velocidad y 3% menos de daño recibido por cada una.' },
   actoFinal: { nombre: 'Acto final', glifo: 'actoFinal', desc: 'Cada vez que dañas a un enemigo le sumas una acumulación (se pierden tras 2 s sin sumar). Con 10, queda maldito: 20 de daño por segundo durante 2 s.' },
   marcaRin: { nombre: 'Marca de esgrima', glifo: 'marcaRin', dur: 5, cada: 10, extra: 10, desc: 'Tus habilidades marcan a los enemigos que alcanzan (cada habilidad puede marcar una vez cada 10 s). Tu Estocada salta hasta un marcado y le hace +10 (saltar gasta la marca); también salta hasta tus espadas espirituales.' },   // Seba (17-11); (C) la marca dura 5 s
+  presaZinro: { nombre: 'Presa acorralada', glifo: 'presaZinro', extra: 0.02,   // Seba: +2% de daño a enemigos bajo cualquier control (de Zinro o de sus aliados), no se acumula
+    desc: 'Los enemigos bajo cualquier efecto de control (aturdido, confusión, lentos, maldición, silencio…) reciben 2% más de daño de todas las fuentes mientras dure.' },
   ecosSmok: { nombre: 'Ecos de humo', glifo: 'ecosSmok', reduce: 0.5, cada: 4, desc: 'Cada 4.º ataque básico tuyo que acierta deja un clon donde estás. Cuando los enemigos destruyen un clon tuyo, tus habilidades se recargan 0,5 s (no la ulti).' },   // Seba (16-11): ya no cuenta el golpe del clon   // Seba (16-11): + clon cada 4.º básico acertado   // Seba (16-11): 1 golpe por clon + destruido; no la ulti   // Seba (16-11); nombre (C)
   amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
   corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 30, dur: 4,   /* Seba (13-11, V7.6): 20 → 30 */ quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 30 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
@@ -2294,6 +2323,7 @@ const UNIDADES = {
   nubeTormenta: { vel: 0, invulnerable: true },
   clon:      { vel: 0, invulnerable: true },
   clonSmok:  { vel: 0 },   // Smok: clon quieto que ataca con su básico
+  trampaZinro: { vel: 0, invulnerable: true },   // Zinro: trampa del Cazador maestro
   tela:      { vel: 0, invulnerable: true },
   orbeVida:  { vel: 0, invulnerable: true },
   circuloVida: { vel: 0, invulnerable: true },
@@ -2410,6 +2440,7 @@ const GUIAS = {
   munecoVudu: { tipo: 'punto', alcance: 400, r: 70 }, calacaBambaa: { tipo: 'linea', alcance: 300, ancho: 24 }, ancestroOlvidado: { tipo: 'propio', r: 352 },
   hundidoSmok: { tipo: 'propio', r: 90 }, esferaSmok: { tipo: 'punto', alcance: 280, r: 45 }, ocasoSmok: { tipo: 'propio', r: 160 },
   estocadaRin: { tipo: 'linea', alcance: 209, ancho: 34 }, trapRin: { tipo: 'linea', alcance: 240, ancho: 24 }, danzaRin: { tipo: 'propio', r: 70 },
+  voleaZinro: { tipo: 'linea', alcance: 420, ancho: 16 }, halconZinro: { tipo: 'punto', alcance: 450, r: 320 }, trampasZinro: { tipo: 'propio', r: 31 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -5573,6 +5604,300 @@ function rinGrande(frame) {
   return r;
 }
 
+// Seba (22-11): Zinro (Errantes) — cazador siberiano de las montañas: moño negro, bufanda, cuello de piel, abrigo azul con bordados dorados, faja roja; el halcón se dibuja aparte (render)
+Object.assign(CAPAS, {
+  cuerpoZinro: L({
+    0: '.........k..........',
+    1: '........knk.........',
+    2: '........kRk.........',
+    3: '......knnnnnk.......',
+    4: '.....knnnnnnnk......',
+    5: '.....knnnnnnnnk.....',
+    6: '.....knnnnnnpnk.....',
+    7: '.....knnnppppppk....',
+    8: '......knpqkppqkPk...',
+    9: '.......kppppppk.....',
+    10: '.....qqqqcccqqq.....',
+    11: '....qPqccBccPqqq.W..',
+    12: '....PBBBccBBBPqBBWk.',
+    13: '....BBBwBBBBwBBqqk..',
+    14: '...qBBBBwBBwBBBPq...',
+    15: '...pbBBRReBBBBBb....',
+    16: '....bBOBReBOBBOb....',
+    17: '....bOBBBBBOBBBb....',
+    18: '....qqqqqnnnqqqqq...',
+    19: '.....nnnn..nnnn.....',
+    20: '.....qqqq..qqqq.....',
+    21: '.....WWWW..WWWW.....',
+  }),
+});
+Object.assign(APARIENCIA, {
+  zinro: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoZinro'], ['cuerpoZinro']], cabeza: [[], []] },
+});
+Object.assign(GLIFOS, {
+  voleaZinro:   ['.kk......', 'kWWk.....', 'kWWk.....', '.kk.p....', '....p....', '....p.kk.', '...p.kWWk', '..p..kWWk', '.......kk'],
+  halconZinro:  ['....k....', '...kOk...', 'kk.kWk.kk', 'kWkWWWkWk', '.kWWmWWk.', '..kWWWk..', '...kwk...', '..kw.wk..', '.........'],
+  trampasZinro: ['.........', 'k.k.k.k.k', 'k3k3k3k3k', 'k3333333k', 'k2222222k', '.k22222k.', '..kkkkk..', '....k....', '...kWk...'],
+  presaZinro:   ['....k....', '...kek...', '..kRekk..', '..kekRk..', '...kek...', '....k....', '.k.....k.', 'kek...kek', '.k.....k.'],
+});
+Object.assign(FONDOS, { zinro: ['B', 'q'] });
+Object.assign(ARMAS_SPR, {
+  cuchilloZinro: { g: [2, 5], S: 39, rows: [
+    '..................',
+    '..................',
+    '..................',
+    '..................',
+    '...k.....kk.......',
+    'wWwk3333333k......',
+    '...k.....kk.......',
+    '..................',
+    '..................',
+    '..................',
+    '..................',
+    '..................',
+  ] },
+});
+const ZINRO_GRANDE = [   // Seba (22-11 r2): 15% más pequeño (19×25)
+  [
+    '........k..........',
+    '.......knk.........',
+    '.......kRk.........',
+    '.....knnnnnk.......',
+    '....knnnnnnnk......',
+    '....knnnnnnnnk.....',
+    '....knnnnnnpnk.....',
+    '....knnnppppppk....',
+    '....knnpkkppkkpk...',
+    '.....knpqkppqkPk...',
+    '......kppppppk.....',
+    '....qqqqcccqqq.....',
+    '...qPqccBccPqqq.W..',
+    '...PBBBccBBBPqBBWk.',
+    '...BBBwBBBBwBBqqk..',
+    '..qBBBBwBBwBBBPq...',
+    '..pBBwwwwwwwwBBq...',
+    '..pbBBRReBBBBBb....',
+    '...bBOBReBOBBOb....',
+    '...bOBBBBBOBBBb....',
+    '...qqqqqnnnqqqqq...',
+    '....nnnn..nnnn.....',
+    '....qqqq..qqqq.....',
+    '....WWWW..WWWW.....',
+    '...kWWWWkkWWWWk....',
+  ],
+  [
+    '........k..........',
+    '.......knk.........',
+    '.......kRk.........',
+    '.....knnnnnk.......',
+    '....knnnnnnnk......',
+    '....knnnnnnnnk.....',
+    '....knnnnnnpnk.....',
+    '....knnnppppppk....',
+    '....knnpkkppkkpk...',
+    '.....knpqkppqkPk...',
+    '......kppppppk.....',
+    '....qqqqcccqqq.....',
+    '...qPqccBccPqqq.W..',
+    '...PBBBccBBBPqBBWk.',
+    '...BBBwBBBBwBBqqk..',
+    '..qBBBBwBBwBBBPq...',
+    '..pBBwwwwwwwwBBq...',
+    '..pbBBRReBBBBBb....',
+    '...bBOBReBOBBOb....',
+    '...bOBBBBBOBBBb....',
+    '...qqqqqnnnqqqqq...',
+    '...nnnn....nnnn....',
+    '...qqqq....qqqq....',
+    '...WWWW....WWWW....',
+    '..kWWWWk..kWWWWk...',
+  ],
+  [
+    '........k..........',
+    '.......knk.........',
+    '.......kRk.........',
+    '.....knnnnnk.......',
+    '....knnnnnnnk......',
+    '....knnnnnnnnk.....',
+    '....knnnnnnpnk.....',
+    '....knnnppppppk....',
+    '....knnpkkppkkpk...',
+    '.....knpqkppqkPk...',
+    '......kppppppk.....',
+    '....qqqqcccqqq.....',
+    '...qPqccBccPqqq.W..',
+    '...PBBBccBBBPqBBWk.',
+    '...BBBwBBBBwBBqqk..',
+    '..qBBBBwBBwBBBPq...',
+    '..pBBwwwwwwwwBBq...',
+    '..pbBBRReBBBBBb....',
+    '...bBOBReBOBBOb....',
+    '...bOBBBBBOBBBb....',
+    '...qqqqqnnnqqqqq...',
+    '.....nnnnnnnnn.....',
+    '.....qqqq.qqqq.....',
+    '.....WWWW.WWWW.....',
+    '....kWWWWkWWWWk....',
+  ],
+];
+const cacheZinro = new Map();
+function zinroGrande(frame) {
+  if (cacheZinro.has(frame)) return cacheZinro.get(frame);
+  const m = matrizVacia(19, 25);
+  pintar(m, ZINRO_GRANDE[frame]);
+  const der = aCanvas(contornear(m));
+  const r = { der, izq: espejo(der) };
+  cacheZinro.set(frame, r);
+  return r;
+}
+// el halcón: posado (9×11) y en vuelo visto desde arriba (15×11, 2 aleteos)
+const HALCON_POSADO = [
+  '...kkk...',
+  '..kOOWk..',
+  '..kOPkyk.',
+  '..kWOWkk.',
+  '.kWWmWWk.',
+  'kWmWWWmWk',
+  'kWmWmWmWk',
+  '.kWmWmWWk',
+  '..kWWWWk.',
+  '..kpkpk..',
+  '...y.y...',
+];   // Seba (22-11 r2): halcón rediseñado (nuca dorada, plumas, cola a bandas)
+const HALCON_VUELO = [[
+  '.........k.........',
+  '........kyk........',
+  '........kOk........',
+  '..kkk..kWOWk..kkk..',
+  '.kmWWkkWWmWWkkWWmk.',
+  'kWmWmWWWmWmWWWmWmWk',
+  '.kWkWkWWWWWWWkWkWk.',
+  '..k.k.kkWWWkk.k.k..',
+  '.......kWWWk.......',
+  '......kpWpWpk......',
+  '......kWpWpWk......',
+  '.......kkkkk.......',
+], [
+  '.........k.........',
+  '....k...kyk...k....',
+  '...kWk..kOk..kWk...',
+  '...kmWkkWOWkkWmk...',
+  '....kWmWWmWWmWk....',
+  '....kWWWmWmWWWk....',
+  '.....kWWWWWWWk.....',
+  '......kkWWWkk......',
+  '.......kWWWk.......',
+  '......kpWpWpk......',
+  '......kWpWpWk......',
+  '.......kkkkk.......',
+]];
+Object.assign(ARMAS_SPR, {   // Seba (22-11 r3): halcón en vuelo visto desde arriba, mirando a la derecha (se rota hacia donde vuela); 3 aleteos
+  halconVueloA: { g: [7, 10], S: 29, rows: [
+      '.......kk......',
+      '......kWmk.....',
+      '.....kWmWmk....',
+      '......kWmmk....',
+      '.....kWmWWk....',
+      '......kWWWk....',
+      '.kk..kWWWk.....',
+      'kpWkkkWWWk.....',
+      'kWppWWWmWWkkk..',
+      'kpWWWWWWmWWOkk.',
+      'kWppmmWWWWOqOyk',
+      'kpWWWWWWmWWOkk.',
+      'kWppWWWmWWkkk..',
+      'kpWkkkWWWk.....',
+      '.kk..kWWWk.....',
+      '......kWWWk....',
+      '.....kWmWWk....',
+      '......kWmmk....',
+      '.....kWmWmk....',
+      '......kWmk.....',
+      '.......kk......',
+    ] },
+  halconVueloB: { g: [7, 10], S: 29, rows: [
+      '...............',
+      '...............',
+      '...............',
+      '.........kk....',
+      '.......kkWmk...',
+      '......kWWmWk...',
+      '.kk..kWWmWk....',
+      'kpWkk.kmWk.....',
+      'kWppWkWWWWkkk..',
+      'kpWWWWWWmWWOkk.',
+      'kWppmmWWWWOqOyk',
+      'kpWWWWWWmWWOkk.',
+      'kWppWkWWWWkkk..',
+      'kpWkk.kmWk.....',
+      '.kk..kWWmWk....',
+      '......kWWmWk...',
+      '.......kkWmk...',
+      '.........kk....',
+      '...............',
+      '...............',
+      '...............',
+    ] },
+  halconVueloC: { g: [7, 10], S: 29, rows: [
+      '...............',
+      '...............',
+      '...............',
+      '...............',
+      '...............',
+      '............kk.',
+      '.kk.......kkWmk',
+      'kpWkk..kkkWWmWk',
+      'kWppWkkWWWWmWk.',
+      'kpWWWWWWmWWOkk.',
+      'kWppmmWWWWOqOyk',
+      'kpWWWWWWmWWOkk.',
+      'kWppWkkWWWWmWk.',
+      'kpWkk..kkkWWmWk',
+      '.kk.......kkWmk',
+      '............kk.',
+      '...............',
+      '...............',
+      '...............',
+      '...............',
+      '...............',
+    ] },
+});
+// Seba (22-11 r3): cepo con personalidad — mandíbulas de hierro con dientes, óxido y placa con gatillo rojo (abierto) / cerrado de golpe
+const CEPO_ABIERTO = [
+      '...k.k.k.k.k.k.k...',
+      '..k3k3k3k3k3k3k3k..',
+      '.k2mWmWmWmWmWmWm2k.',
+      'k2knnnnnnnnnnnnnk2k',
+      'k2knnnnkOOOknnnnk2k',
+      'k1knnnnkOeOknnnnk1k',
+      'k2knnnnkOOOknnnnk2k',
+      'k2knnnnnnnnnnnnnk2k',
+      '.k2mWmWmWmWmWmWm2k.',
+      '..k3k3k3k3k3k3k3k..',
+      '...k.k.k.k.k.k.k...',
+    ];
+const CEPO_CERRADO = [
+      '..k3k3k3k3k3k3k3k..',
+      '.k2mWmWmWmWmWmWm2k.',
+      '.k3k3k3k3k3k3k3k3k.',
+      '.k2mWmWmWmWmWmWm2k.',
+      '..kkkkkkkkkkkkkkk..',
+    ];
+const cacheCepo = new Map();
+function cepoSpr(abierto) {
+  if (cacheCepo.has(abierto)) return cacheCepo.get(abierto);
+  const F = abierto ? CEPO_ABIERTO : CEPO_CERRADO, m = matrizVacia(F[0].length, F.length); pintar(m, F);
+  const c = aCanvas(m); cacheCepo.set(abierto, c); return c;
+}
+const cacheHalcon = new Map();
+function halconSpr(tipo, frame = 0) {
+  const k = tipo + frame; if (cacheHalcon.has(k)) return cacheHalcon.get(k);
+  const F = tipo === 'posado' ? HALCON_POSADO : HALCON_VUELO[frame % 2];
+  const m = matrizVacia(F[0].length, F.length); pintar(m, F);
+  const der = aCanvas(m), r = { der, izq: espejo(der) };
+  cacheHalcon.set(k, r); return r;
+}
+
 // Seba (16-11): Smok — sombra humanoide, mitad humo (Errantes); no se distingue nada más que los ojos (cian). El humo que se desprende se dibuja en render.
 Object.assign(CAPAS, {
   cuerpoSmok: L({
@@ -6538,6 +6863,7 @@ class Game {
       p.cd = [0, 0, 0, CONFIG.ULTI_INICIO || 0, 0];   // Seba (28-10): ulti en espera 45 s al empezar
       p.ultiAvisada = false;
       p.habCargas = {};   // Torreta: parte con sus 2 cargas
+      p.halconZ = null; p.picadaZ = null; p.trampasZ = null;   // Zinro: nada pendiente al empezar
       p.fx = {}; p.sedZeal = 0; p.sedCd = 0; p.gotasZeal = null; p.colaGota = null; p.golpesAldor = 0; p.relojFuegoGol = null;   // Zeal: la Sed arcana parte de cero cada ronda
       p.kbx = p.kby = 0;
       p.hidden = false; p.revelado = 0;
@@ -6717,6 +7043,7 @@ class Game {
       if (at && at.fx && at.fx.auraReyEnemiga && !o.pct) amt *= 1 - at.fx.auraReyEnemiga.debil;   // Legios: los enemigos dentro hacen 25% menos
     }   // Seba (31-10): se quitó el +50% de daño de Kazaro durante la Llama (resto de la ulti antigua; `extra` ahora es el +50% de fuego por héroe extra en la arena)
     if (esJugador && target.fx && target.fx.cucko) amt *= CONFIG.CUCKO.buff.recibe;
+    if (esJugador && target.fx && this.presaZinro(target)) amt *= 1 + PASIVAS.presaZinro.extra;   // Zinro: presa acorralada (+2% bajo control, no se acumula)   // Zizzer: cerca de un espantapájaros, +20% de todas las fuentes
     if (esJugador && target.fx && target.fx.enTela) amt *= 1 - target.fx.enTela.buff;   // Aracnida sobre su tela
     if (o.basico && src && !src.esUnidad && src.fx) {   // Fatum: Distancia maldita (+5 desde el 85% del alcance) y furia del Pozo Maldito
       const hf = HEROES[src.build?.heroe];
@@ -7273,6 +7600,93 @@ class Game {
     const habs = HEROES[p.build.heroe].habs;
     for (let i = 1; i < p.cd.length; i++) if (p.cd[i] > 0 && !HABILIDADES[habs[i - 1]]?.ulti) p.cd[i] = Math.max(0, p.cd[i] - PASIVAS.ecosSmok.reduce);   // Seba (16-11): no la ulti
     this.emit({ k: 'ecoSmok', x: clon.x | 0, y: clon.y | 0, id: p.id });
+  }
+  // Seba (22-11): habilidades que se pueden volver a apretar (no se muestran en recarga hasta que ya no se pueda)
+  recastMask(p) {
+    if (!p.build) return 0;
+    const habs = habilidadesDe(p.build), f = p.fx || {};
+    let m = 0;
+    for (let i = 0; i < 3; i++) {
+      const k = habs[i]; let si = false;
+      if (k === 'halconZinro') si = !!(p.halconZ && !p.halconZ.done);
+      else if (k === 'trampasZinro') si = !!(p.trampasZ && p.trampasZ.quedan > 0);
+      else if (k === 'hundidoSmok') si = !!f.hundidoSmok;
+      else if (k === 'escudoAthena') si = !!f.canalEscudo;
+      else if (k === 'cargaGolagore') si = !!f.cargaGolagore;
+      else if (k === 'patadaFenix') si = !!f.canalPatada;
+      else if (k === 'castigo') si = !!f.cargaCastigo;
+      else if (k === 'chaos') si = !!f.canalChaos;
+      else if (k === 'ojoVendaval') si = !!f.vendaval;
+      else if (k === 'pozoMaldito') si = !!f.canalPozoM;
+      else if (k === 'lanzaErrante') si = this.units.some(u => u.alive && u.kind === 'lanza' && u.owner === p.id && u.estado === 'clavada');
+      if (si) m |= 1 << i;
+    }
+    return m;
+  }
+  // Zinro: ¿el objetivo está bajo algún control y hay un Zinro enemigo vivo? (pasiva, +2%)
+  presaZinro(t) {
+    const f = t.fx;
+    if (!(f.aturdido || f.silence || f.slow || f.lentos || f.encantado || f.confusoKiro || f.arrastre || f.enraizando || f.encadenado || f.polvo || (f.dot && f.dot.maldicion))) return false;
+    for (const q of this.players.values()) if (q.alive && HEROES[q.build?.heroe]?.pasiva === 'presaZinro' && this.teamOf(q.id) !== this.teamOf(t.id)) return true;
+    return false;
+  }
+  // Zinro: la Volea alcanzó a hit; si detrás hay otro enemigo, invocación enemiga o árbol, los ata
+  voleaAtar(p, hit, pr) {
+    const H = HABILIDADES.voleaZinro, a = Math.atan2(pr.vy, pr.vx);
+    const valido = (e) => e !== hit && e.alive && e.kind !== 'muro' && !(e.esUnidad && (UNIDADES[e.kind]?.invulnerable || e.sinCuerpo));
+    let otro = null, bd = 1e9;
+    const prueba = (x, y, ref, arbol) => {
+      const d = Math.hypot(x - hit.x, y - hit.y); if (d > H.enlace + (arbol ? CONFIG.RADIO_COPA * 0.5 : 0) || d < 1) return;
+      if (angDiff(Math.atan2(y - hit.y, x - hit.x), a) > H.cono) return;
+      if (d < bd) { bd = d; otro = { x, y, ref, arbol }; }
+    };
+    for (const e of this.enemigos(p.id, false)) if (valido(e)) prueba(e.x, e.y, e, false);
+    for (const [tx, ty] of CONFIG.ARBOLES) prueba(tx, ty, null, true);
+    const golpe = (e, t) => { this.damage(e, H.dano, p, { tipo: 'fis', desde: pr }); if (e.alive) this.aplicarEfecto(e, 'aturdido', { t }); };
+    if (!otro) { golpe(hit, H.aturde); this.emit({ k: 'boleaToca', x: hit.x | 0, y: hit.y | 0 }); return; }
+    const atados = [hit]; if (otro.ref) atados.push(otro.ref);
+    for (const e of atados) { golpe(e, H.aturde2); if (e.alive && e.fx) this.aplicarEfecto(e, 'voleaZ', { t: H.aturde2 }); }
+    this.zones.push({ id: this.nextId++, kind: 'voleaLazo', x: hit.x, y: hit.y, ox: otro.x, oy: otro.y, r: 10, t: H.aturde2, total: H.aturde2, owner: p.id, a: otro.arbol ? 1 : 0,
+      tick: (z) => { if (hit.alive) { z.x = hit.x; z.y = hit.y; } if (otro.ref && otro.ref.alive) { z.ox = otro.ref.x; z.oy = otro.ref.y; } },
+      fin: () => { for (const e of atados) if (e.alive) { this.damage(e, H.extra, p, { tipo: 'mag' }); this.emit({ k: 'lazoEstalla', x: e.x | 0, y: e.y | 0 }); } } });
+    this.emit({ k: 'boleaAta', x: hit.x | 0, y: hit.y | 0, x2: otro.x | 0, y2: otro.y | 0 });
+  }
+  // Zinro: el halcón se lanza en picada contra el héroe enemigo más cercano del radio
+  picadaHalcon(p) {
+    const z = p.halconZ, H = HABILIDADES.halconZinro;
+    let presa = null, bd = 1e9;
+    for (const q of this.jugadoresEnemigos(p.id)) { if (!q.alive) continue; const d = dist(q, z); if (d <= z.r + CONFIG.RADIO_JUGADOR && d < bd) { bd = d; presa = q; } }
+    if (!presa) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'SIN PRESA EN EL RADIO', id: p.id }); return; }
+    const R = z.r * 0.45 * z.llega, fx = z.x + Math.cos(z.a) * R, fy = z.y + Math.sin(z.a) * R * 0.6;
+    z.done = true; p.halconZ = null;
+    const pz = { id: this.nextId++, kind: 'picadaHalcon', x: fx, y: fy, r: 8, t: 3, total: 3, owner: p.id, a: Math.atan2(presa.y - fy, presa.x - fx),
+      tick: (q, dt) => {
+        if (!presa.alive) { q.done = true; p.picadaZ = null; return; }
+        const d = Math.hypot(presa.x - q.x, presa.y - q.y), st = H.velPicada * dt;
+        q.a = Math.atan2(presa.y - q.y, presa.x - q.x);
+        if (d > st + 10) { q.x += Math.cos(q.a) * st; q.y += Math.sin(q.a) * st; return; }
+        q.x = presa.x; q.y = presa.y; q.done = true; p.picadaZ = null;
+        for (const e of this.enemigos(p.id, false)) {
+          if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (e !== presa && dist(e, presa) > H.radioPicada + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          this.damage(e, H.dano, p, { tipo: 'fis' }); if (e.alive) this.aplicarEfecto(e, 'aturdido', { t: H.aturde });
+        }
+        this.emit({ k: 'picadaHalcon', x: presa.x | 0, y: presa.y | 0, r: H.radioPicada });
+      },
+      fin: () => { p.picadaZ = null; } };
+    this.zones.push(pz); p.picadaZ = pz;
+    this.emit({ k: 'chillido', x: fx | 0, y: fy | 0 });
+  }
+  trampaMuyCerca(p) { return this.units.some(u => u.alive && u.kind === 'trampaZinro' && u.owner === p.id && dist(u, p) < HABILIDADES.trampasZinro.separacion); }
+  // Zinro: deja una trampa a sus pies (separada de las demás; máximo 3 vivas)
+  ponerTrampa(p, slot) {
+    const H = HABILIDADES.trampasZinro;
+    if (this.trampaMuyCerca(p)) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'MUY CERCA DE OTRA TRAMPA', id: p.id }); return; }
+    const mias = this.units.filter(u => u.alive && u.kind === 'trampaZinro' && u.owner === p.id);
+    if (mias.length >= H.trampas) mias[0].alive = false;
+    this.units.push({ id: this.nextId++, kind: 'trampaZinro', owner: p.id, esUnidad: true, alive: true, sinCuerpo: true, x: p.x, y: p.y + 6, hp: 1, maxHp: 0, cd: 0, t: 0, dur: 0, facing: 0, fx: {}, armada: false });
+    this.emit({ k: 'trampaZinro', id: p.id, x: p.x | 0, y: (p.y + 6) | 0 });
+    if (p.trampasZ && --p.trampasZ.quedan <= 0) { p.trampasZ = null; p.cd[slot + 1] = H.cd; }
   }
   clonSmok(p, x, y) {
     const H = HABILIDADES.hundidoSmok, q = { x, y }; this.clampWall(q);
@@ -7944,6 +8358,7 @@ class Game {
     if (p.fx.auraRey) v *= 1 + p.fx.auraRey.vel;   // Legios: Por el Rey
     if (p.fx.olaVel) v *= 1 + p.fx.olaVel.v;   // Ora: la ola acelera a los aliados
     if (p.fx.prisaBambaa) v *= 1 + HABILIDADES.calacaBambaa.prisa;   // Bambaa: la calaca alcanzó a un héroe
+    if (p.fx.cazaZinro) v *= 1 + HABILIDADES.trampasZinro.prisa;   // Zinro: cerca de un enemigo atrapado, +10%
     if (p.fx.templeAldor) v *= 1.05;   // Aldor: Temple de enano
     if (p.fx.ascension) v *= 1 + p.fx.ascension.n.vel;   // Lire: Ascensión élfica
     if (p.fx.luzMina) v *= 1 + p.fx.luzMina.vel;   // Jürgen: Lámpara de mina   // Vario: Polvo de estrellas
@@ -7995,6 +8410,21 @@ class Game {
       p.facing = a;
       this.spawnProj(p, a, { vel: H.vel, alcance: H.alcance, radio: 7, dmg: p.st.dano + f.n.extra, tipo: 'fis', basico: true, spr: 'abanicoVuelo', efecto: 'abanicoViento', extra: f.n });
       if (--f.quedan <= 0) delete p.fx.abanicosViento;
+      this._apunte = null;
+      return;
+    }
+    if (at.tipo === 'dual') {   // Zinro (Seba 22-11): cuchillo si hay un enemigo en rango cuerpo a cuerpo; si no, boleadora a distancia
+      let cerca = null, bd = 1e9;
+      for (const e of this.enemigos(p.id, false)) {
+        if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable) || ((e.hidden || (e.fx && e.fx.invisible)) && !(e.fx && e.fx.expuesto))) continue;
+        const d = dist(e, p) - (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR); if (d <= at.rango && d < bd) { bd = d; cerca = e; }
+      }
+      if (cerca) { const a = Math.atan2(cerca.y - p.y, cerca.x - p.x); p.facing = a; this.meleeArc(p, a, at.rango + CONFIG.RADIO_JUGADOR, at.arco, p.st.dano); }
+      else {
+        const { a } = this.aim(p, at.alcance); p.facing = a;
+        this.spawnProj(p, a, { vel: at.vel, alcance: at.alcance, radio: 6, dmg: at.danoDist * p.st.dano / HEROES.zinro.dano, tipo: 'fis', basico: true, spr: 'kunaiZinro' });
+        this.emit({ k: 'tiraBolea', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });
+      }
       this._apunte = null;
       return;
     }
@@ -8362,6 +8792,7 @@ class Game {
       }
       return;
     }
+    if (pr.efecto === 'voleaZinro') { if (hit && owner) this.voleaAtar(owner, hit, pr); return; }   // Zinro: Volea
     if (pr.efecto === 'aturde') {
       this.aplicarEfecto(hit, 'aturdido', { t: pr.extra.t });
       this.emit({ k: 'txt', x: hit.x | 0, y: hit.y | 0, s: 'ATURDIDO' });
@@ -8469,6 +8900,8 @@ class Game {
     if (key === 'hundidoSmok' && p.fx.hundidoSmok) { if (this.combatTime - p.fx.hundidoSmok.inicio >= 0.3) this.emergeSmok(p); return; }   // Smok: segunda apretada = reaparecer
     if (p.fx.hundidoSmok) return;   // hundido no usa otras habilidades
     if (p.fx.dashRin) return;   // Rin: en pleno dash
+    if (key === 'halconZinro' && p.halconZ && !p.halconZ.done) { if (!p.fx.aturdido && !p.fx.silence) this.picadaHalcon(p); return; }   // Zinro: segunda apretada = picada
+    if (key === 'trampasZinro' && p.trampasZ && p.trampasZ.quedan > 0) { if (!p.fx.aturdido && !p.fx.silence && !canalizando(p.fx)) this.ponerTrampa(p, slot); return; }   // Zinro: las trampas que quedan en la ventana
     if (key === 'cargaGolagore' && p.fx.cargaGolagore) { if (p.fx.cargaGolagore.edad >= 0.2) this.golpeEmbestida(p); return; }   // Golagore (Seba 13-11): segunda apretada = golpe anticipado
     if (key === 'fortalezaGolagore' && p.fx.canalGolagore) { if (this.combatTime - p.fx.canalGolagore.inicio >= 0.3) this.explotaGolagore(p); return; }   // Golagore: segunda apretada = explotar antes
     if (p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol) return;   // Golagore: embistiendo, saltando o en el Núcleo no usa otras habilidades
@@ -8535,6 +8968,7 @@ class Game {
     if ((key === 'escudoMusgo' || key === 'mantoLuz') && p.fx.silencioEscudo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'ESCUDO SILENCIADO', id: p.id }); return; }   // Siega de Tenebris
     if (key === 'escudoMusgo' && p.fx.sobre) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'NO MIENTRAS CRECE', id: p.id }); return; }   // Seba (28-10)
     if (h.ulti && p.ulti < 1) return;   // la ulti necesita la carga completa
+    if (key === 'trampasZinro' && this.trampaMuyCerca(p)) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'MUY CERCA DE OTRA TRAMPA', id: p.id }); return; }
     const n = numerosHab(key, p.build.niv[slot]);
     // Torreta de Lire (Seba 28-10): con el máximo activas no deja poner otra y no gasta la carga
     if (key === 'torreta' && this.units.filter(u => u.alive && u.owner === p.id && u.kind === 'torreta').length >= h.max) {
@@ -8963,6 +9397,40 @@ class Game {
           } };
         this.zones.push(z);
         this.emit({ k: 'danzaRin', x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'voleaZinro': {   // Zinro: boleadora
+        const { a } = this.aim(p, h.alcance); p.facing = a; p.disparo = null;
+        this.spawnProj(p, a, { vel: h.vel, alcance: h.alcance, radio: 8, dmg: h.dano, tipo: 'fis', spr: 'voleaZinro', efecto: 'voleaZinro', extra: {} });
+        this.emit({ k: 'tiraBolea', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2), grande: 1 });
+        break;
+      }
+      case 'halconZinro': {   // Zinro: el halcón vuela hasta el punto y patrulla
+        let c;
+        if (this._apunte) { const d = this.distApunte(h.alcance); c = { x: p.x + Math.cos(this._apunte.a) * d, y: p.y + Math.sin(this._apunte.a) * d }; }
+        else { const t = this.target(p, h.alcance); c = t ? { x: t.x, y: t.y } : { x: p.x + Math.cos(p.facing) * h.alcance * 0.5, y: p.y + Math.sin(p.facing) * h.alcance * 0.5 }; }
+        this.clampWall(c);
+        const z = { id: this.nextId++, kind: 'halconZinro', x: c.x, y: c.y, r: h.radio, t: h.dur, total: h.dur, owner: p.id, a: Math.atan2(p.y - c.y, p.x - c.x), llega: 0,
+          tick: (z, dt) => {
+            if (!p.alive) { z.done = true; return; }
+            z.a += dt * 0.9; z.llega = Math.min(1, z.llega + dt * 1.5);
+            for (const q of this.jugadoresEnemigos(p.id)) {
+              if (!q.alive || dist(q, z) > z.r + CONFIG.RADIO_JUGADOR) continue;
+              if (q.fx.invisible || q.hidden) { this.aplicarEfecto(q, 'expuesto', { t: 0.3 }); q.vistoHalcon = this.combatTime + 0.3; }   // Seba (22-11 r4): visibles y con «!»
+              if (q.build?.heroe === 'smok') q.vistoHalcon = this.combatTime + 0.3;   // ¡! sobre el Smok verdadero
+            }
+            for (const q of this.zones) if (q.kind === 'munecoVudu' && !q.done && q.w && this.teamOf(q.owner) !== this.teamOf(p.id) && dist(q, z) <= z.r) q.revelada = this.combatTime + 0.3;   // Seba (22-11 r4): muñecos de Bambaa plantados
+            for (const u of this.units) if (u.alive && (u.kind === 'mina' || u.kind === 'trampaZinro' || u.kind === 'trampa') && this.teamOf(u.owner) !== this.teamOf(p.id) && dist(u, z) <= z.r) u.revelada = this.combatTime + 0.3;
+          },
+          fin: (z) => { if (p.halconZ === z) p.halconZ = null; } };
+        this.zones.push(z); p.halconZ = z;
+        this.emit({ k: 'sueltaHalcon', id: p.id, x: p.x | 0, y: p.y | 0, x2: c.x | 0, y2: c.y | 0 });
+        break;
+      }
+      case 'trampasZinro': {   // Zinro: primera trampa; quedan 2 durante 15 s
+        p.trampasZ = { quedan: h.trampas, hasta: this.combatTime + h.ventana, slot };
+        p.cd[slot + 1] = h.ventana + h.cd;   // la recarga real parte al terminar la ventana (o al dejar la 3.ª)
+        this.ponerTrampa(p, slot);
         break;
       }
       case 'hundidoSmok': {   // Smok: se hunde, deja un clon con su vida actual y viaja como un círculo negro
@@ -9972,6 +10440,29 @@ class Game {
 
   // ================================================================ unidades
   updateUnits(dt) {
+    // Zinro: trampas del Cazador maestro
+    for (const p of this.players.values()) if (p.trampasZ && this.combatTime >= p.trampasZ.hasta) { const sl = p.trampasZ.slot; p.trampasZ = null; p.cd[sl + 1] = Math.min(p.cd[sl + 1], HABILIDADES.trampasZinro.cd); }
+    for (const u of this.units) {
+      if (!u.alive || u.kind !== 'trampaZinro') continue;
+      const H = HABILIDADES.trampasZinro;
+      u.t += dt; if (!u.armada && u.t >= H.armado) u.armada = true;
+      if (!u.armada) continue;
+      const own = this.players.get(u.owner);
+      for (const e of this.jugadoresEnemigos(u.owner)) {
+        if (!e.alive || dist(e, u) > H.radio) continue;
+        u.alive = false;
+        this.damage(e, H.dano, own || null, { tipo: 'fis', ulti: true, desde: u });
+        if (e.alive && !e.fx.trampaZ) { this.aplicarEfecto(e, 'slow', { t: H.lentoDur, mult: 1 - H.lento, k: 'trampaZinro' }); this.aplicarEfecto(e, 'trampaZ', { t: H.lentoDur, owner: u.owner }); }
+        this.emit({ k: 'trampaSalta', x: u.x | 0, y: u.y | 0 });
+        this.emit({ k: 'txt', x: e.x | 0, y: e.y | 0, s: '¡TRAMPA!' });
+        break;
+      }
+    }
+    for (const e of this.players.values()) {   // Zinro: +10% de velocidad a sus aliados cerca de un atrapado
+      if (!e.alive || !e.fx.trampaZ) continue;
+      const H = HABILIDADES.trampasZinro, ow = e.fx.trampaZ.owner;
+      for (const q of this.players.values()) if (q.alive && this.teamOf(q.id) === this.teamOf(ow) && dist(q, e) <= H.cerca) this.aplicarEfecto(q, 'cazaZinro', { t: 0.25 });
+    }
     for (const u of this.units) {
       if (!u.alive || u.kind !== 'mina') continue;
       u.t += dt;
@@ -10237,7 +10728,7 @@ class Game {
       if (u.t >= u.dur) { u.alive = false; this.emit({ k: 'poof', x: u.x | 0, y: u.y | 0, c: 'magia' }); }
     }
     for (const u of this.units) {
-      if (!u.alive || u.enemigo || u.mapaU || u.kind === 'orbeVida' || u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'nubeTormenta' || u.kind === 'clon' || u.kind === 'clonSmok' || u.kind === 'tela' || u.kind === 'lanza' || u.kind === 'arenaEstepa' || u.kind === 'muroRoca' || u.kind === 'almaErrante' || u.kind === 'totemGaia' || u.kind === 'torretaBrasas') continue;
+      if (!u.alive || u.enemigo || u.mapaU || u.kind === 'orbeVida' || u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'nubeTormenta' || u.kind === 'clon' || u.kind === 'trampaZinro' || u.kind === 'clonSmok' || u.kind === 'tela' || u.kind === 'lanza' || u.kind === 'arenaEstepa' || u.kind === 'muroRoca' || u.kind === 'almaErrante' || u.kind === 'totemGaia' || u.kind === 'torretaBrasas') continue;
       const d = UNIDADES[u.kind];
       const own = this.players.get(u.owner);
       if (u.kind === 'cucko') { this.tickEfectos(u, dt); continue; }   // se mueve en updateCucko
@@ -11328,16 +11819,18 @@ class Game {
         (fx.cargaGolagore ? 1 : 0) | (fx.saltoGol ? 2 : 0) | (fx.canalGolagore ? 4 : 0) | (fx.escudo && fx.escudo.magma ? 8 : 0) | (p.magmaQuema ? 16 : 0), fx.saltoGol ? Math.round(Math.min(1, fx.saltoGol.e / fx.saltoGol.T) * 100) : 0, fx.canalGolagore ? Math.round((this.combatTime - fx.canalGolagore.inicio) * 10) : 0, fx.canalGolagore ? Math.round(fx.canalGolagore.recibido) : 0,
         (fx.encantado && fx.encantado.vudu ? 1 : 0) | (fx.prisaBambaa ? 2 : 0) | (fx.canalAncestro ? 4 : 0) | (p.enPolvoVudu && this.combatTime - p.enPolvoVudu < 0.25 ? 8 : 0),   // 65: Bambaa (1 confundido por el muñeco, 2 prisa, 4 canalizando la ulti, 8 maldito)   // 61: Golagore bits (1 embiste, 2 salto, 4 núcleo, 8 coraza, 16 quema), 62: salto ×100, 63: núcleo ×10, 64: daño guardado   // 56: tajos de Kiro que quedan, 57: acumulaciones, 58: bits (1 confuso, 2 tornado, 4 dash, 8×arena, 64 emboscada, 128 arenado), 59: golpes de tormenta, 60: ocultamiento   // 51–53: marca de la ola de Ora (flag, x, y), 54: acelerado por la ola (1) / levantado (2) / canal (4) / ulti activa (8), 55: gotas de la pasiva   // 50: Aldor, básicos acertados hacia el empuje (0–3)   // 46–49: Legios (carga, Rey, aura/sello, escudos)   // 44–45: Sed arcana (lo acumulado o −1 en recarga, segundos que quedan)   // 40: Zeal canalizando el Festín (2), 41: Festín restante ×10, 42: gota de Zeal (nivel×100 + progreso), 43: escudo de sangre de Zeal   // 37–39: muñeco (daño en curso, segundos que faltan, total final)   // 36: f4 (estados nuevos: 1 Ascensión élfica de Lire)   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
         (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.ocaso && fx.ocaso.cerca ? 32 : 0) | (fx.ocaso && this.combatTime - (fx.ocaso.tg ?? -9) < 0.35 ? 64 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0),   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
-        (fx.dashRin ? 1 : 0) | (fx.canalDanza ? 2 : 0) | (fx.marcaRin ? 4 : 0) | (fx.dashRin && fx.dashRin.salto ? 8 : 0)]);   // Rin: 67 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.dashRin ? 1 : 0) | (fx.canalDanza ? 2 : 0) | (fx.marcaRin ? 4 : 0) | (fx.dashRin && fx.dashRin.salto ? 8 : 0),   // Rin: 67 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (p.vistoHalcon > this.combatTime ? 1 : 0) | (fx.trampaZ ? 2 : 0) | (fx.voleaZ ? 4 : 0) | ((p.halconZ && !p.halconZ.done) || p.picadaZ ? 8 : 0) | (fx.cazaZinro ? 16 : 0) | ((p.trampasZ ? p.trampasZ.quedan : 0) << 5),
+        this.recastMask(p)]);   // 69: habilidades que se pueden volver a apretar ahora (bit por slot) — el HUD no las muestra en recarga   // Zinro: 68 bits (visto por el halcón 1, atrapado 2, atado 4, halcón fuera 8, +10% de caza 16)   // Zizzer: 66 bits (golpe de sombra listo 1, confundido por Zizzer 2, vulnerable por espantapájaros 4)   // Rin: 65 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
       p: ps,
       u: this.units.map(u => [u.id, u.kind, Math.round(u.x), Math.round(u.y), r1(u.hp), u.maxHp, u.owner, +u.facing.toFixed(2),
-        (u.fx.dot ? 4 : 0) | (u.fx.fuegoAzul ? 8192 : 0) | (u.fuego || (u.kind === 'lanza' && this.players.get(u.owner)?.fx.llama) ? 16384 : 0) | (u.fx.burn ? 16 : 0) | (u.fx.vuln ? 256 : 0) | (u.carga > 0 ? 512 : 0) | (u.fx.bombaPegada ? 1024 : 0) | (u.armada ? 2048 : 0) | (u.fx.aturdido ? 32768 : 0) | (u.fx.ampRunico ? 65536 : 0), u.dur ? +Math.max(0, u.dur - u.t).toFixed(1) : 0,
+        (u.fx.dot ? 4 : 0) | (u.fx.fuegoAzul ? 8192 : 0) | (u.fuego || (u.kind === 'lanza' && this.players.get(u.owner)?.fx.llama) ? 16384 : 0) | (u.fx.burn ? 16 : 0) | (u.fx.vuln ? 256 : 0) | (u.carga > 0 ? 512 : 0) | (u.fx.bombaPegada ? 1024 : 0) | (u.armada ? 2048 : 0) | (u.revelada > this.combatTime ? 262144 : 0) | (u.fx.aturdido ? 32768 : 0) | (u.fx.ampRunico ? 65536 : 0), u.dur ? +Math.max(0, u.dur - u.t).toFixed(1) : 0,
         u.kind === 'lanza' ? u.estado : (u.tipo || null), u.kind === 'arenaEstepa' ? +(u.mult || 1).toFixed(1) : u.elite ? 1 : 0]),
       pr: this.projectiles.map(q => [q.id, Math.round(q.x), Math.round(q.y), q.spr, q.colorIdx, +Math.atan2(q.vy, q.vx).toFixed(2), q.owner]),
-      z: this.zones.map(z => [z.id, Math.round(z.x), Math.round(z.y), z.r, z.kind, +(1 - z.t / z.total).toFixed(2), +(z.a || 0).toFixed(2), +(z.w || 0).toFixed(2), Math.round(z.ox || 0), Math.round(z.oy || 0), z.owner || 0, +(z.oculto || 0).toFixed(2)]),
+      z: this.zones.map(z => [z.id, Math.round(z.x), Math.round(z.y), z.r, z.kind, +(1 - z.t / z.total).toFixed(2), +(z.a || 0).toFixed(2), +(z.w || 0).toFixed(2), Math.round(z.ox || 0), Math.round(z.oy || 0), z.owner || 0, +(z.oculto || 0).toFixed(2), z.revelada > this.combatTime ? 1 : 0]),
       pv: this.modo === 'pve' && this.pve ? this.pveSnap() : null,
       vc: this.vc ? this.vcSnap() : null,
       zo: this.objetivos ? { ab: Math.max(0, Math.ceil(CONFIG.OBJETIVOS.apertura - this.combatTime)), o: this.objetivos.map(o => [o.x, o.y, this.colorDeEquipo(o.dueno), this.colorDeEquipo(o.equipo), +(o.prog / CONFIG.OBJETIVOS.captura).toFixed(2), o.disputado ? 1 : 0, o.dueno, o.lado]), ck: !CONFIG.CUCKO.activo ? 0 : this.cucko ? -1 : Math.max(0, Math.ceil(this.cuckoT || 0)) } : null,
@@ -11587,6 +12080,9 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'estocadaRin': { const L = HABILIDADES.estocadaRin.largo; si = d < L || game.espadasRin(p).some(q => Math.hypot(q.x - p.x, q.y - p.y) <= L) || game.jugadoresEnemigos(p.id).some(e => e.alive && e.fx && e.fx.marcaRin && e.fx.marcaRin.src === p.id && Math.hypot(e.x - p.x, e.y - p.y) <= L); break; }   // V9.4: también si hay marca o espada a su alcance
       case 'trapRin': si = d < 240; break;
       case 'danzaRin': si = d < 70 && !target.esUnidad; break;
+      case 'voleaZinro': si = d < 400; break;
+      case 'halconZinro': si = d < 450 && !target.esUnidad; break;
+      case 'trampasZinro': si = d < 220 && !target.esUnidad; break;
       case 'esferaSmok': si = d < 300; break;
       case 'ocasoSmok': si = d < 260 && !target.esUnidad; break;
       case 'bladeDance': si = d < 110 || (p.athPaso === 2 && d < 150); break;
@@ -13177,7 +13673,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, zn: pb[68] || 0, rc: pb[69] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -13189,7 +13685,7 @@ class StateBuffer {
       const q = pra.get(pb[0]);
       return { id: pb[0], x: q ? lerp(q[1], pb[1], k) : pb[1], y: q ? lerp(q[2], pb[2], k) : pb[2], spr: pb[3], c: pb[4], a: pb[5], owner: pb[6] };
     });
-    const zones = (b.s.z || []).map(z => ({ id: z[0], x: z[1], y: z[2], r: z[3], kind: z[4], prog: z[5], a: z[6], w: z[7], ox: z[8], oy: z[9], owner: z[10] || 0, oculto: z[11] || 0 }));
+    const zones = (b.s.z || []).map(z => ({ id: z[0], x: z[1], y: z[2], r: z[3], kind: z[4], prog: z[5], a: z[6], w: z[7], ox: z[8], oy: z[9], owner: z[10] || 0, rev: z[12] || 0, oculto: z[11] || 0 }));
     return { players, units, projs, zones, ar: lerp(a.s.ar, b.s.ar, k), vc: b.s.vc || null, zo: b.s.zo || null };
   }
 }
@@ -13453,7 +13949,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { boleaToca: 0.5, boleaAta: 0.5, lazoEstalla: 0.6, picadaHalcon: 0.7, chillido: 0.6, trampaZinro: 0.5, trampaSalta: 0.6, sueltaHalcon: 0.7, tiraBolea: 0.2, rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -13465,6 +13961,8 @@ class Renderer {
     if (ev.k === 'slash' && ev.h === 'lei') { this.leiCombo = (this.leiCombo || 0) + 1; f.lado = this.leiCombo % 2; f.dur = 0.3; }   // Lei: el abanico barre de un lado y luego del otro
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
     if (ev.k === 'slash' && ev.h === 'golagore') f.dur = 0.5;   // Golagore: hachazo pesado
+    if (ev.k === 'slash' && ev.h === 'zinro' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.25, T: 0.25, a: ev.a, tipo: 'cuchillo' });   // Zinro: cuchillada
+    if (ev.k === 'tiraBolea' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.3, T: 0.3, a: ev.a, tipo: ev.grande ? 'bolea' : 'kunai' });   // Zinro: boleadora (Volea) o kunai (básico)
     if (ev.k === 'slash' && ev.h === 'rin' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.28, T: 0.28, a: ev.a });   // Rin: estocada rápida
     if (ev.k === 'slash' && ev.id !== undefined && ev.h === 'golagore') this.swing.set(ev.id, { t: 0.42, T: 0.42, a: ev.a });
     else if (ev.k === 'slash' && ev.id !== undefined) this.swing.set(ev.id, { t: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, T: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, a: ev.a });
@@ -14370,6 +14868,8 @@ class Renderer {
           for (let i = 0; i < 16; i++) { const b = i * TAU / 16 + T * 0.4; g.fillStyle = PALETA.vacio2; g.fillRect(Math.round(cx + Math.cos(b) * r), Math.round(cy + Math.sin(b) * r), 2, 1); }
           const s = sprBambaa('muneco0'); g.drawImage(s, cx - (s.width >> 1), cy + 4 - s.height);
           g.globalAlpha = 1;
+        } else if (z.rev) {   // Seba (22-11 r4): el halcón de Zinro lo descubrió — se ve con «!»
+          const s = sprBambaa('muneco0'); g.drawImage(s, cx - (s.width >> 1), cy + 4 - s.height); this.signoAlerta(cx, cy - s.height - 2);
         }
       } else if (z.kind === 'canalAncestro') {
         // Bambaa canaliza la ulti: círculo rúnico bajo sus pies que se dibuja y chispas moradas que suben
@@ -14670,10 +15170,10 @@ class Renderer {
       const pp = (p.id === myId && pred) ? { ...p, x: pred.x, y: pred.y } : p;
       ents.push({ y: pp.y, tipo: 'p', e: pp });
     }
-    for (const u of view.units) if (u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'arenaEstepa' || u.kind === 'torretaBrasas') this.drawUnit(u, metaById);   // Seba (05-11): la torreta de Jürgen siempre debajo de los personajes
+    for (const u of view.units) if (u.kind === 'circuloVida' || u.kind === 'mina' || u.kind === 'trampaZinro' || u.kind === 'arenaEstepa' || u.kind === 'torretaBrasas') this.drawUnit(u, metaById);   // Seba (05-11): la torreta de Jürgen siempre debajo de los personajes
     for (const u of view.units) if (u.kind === 'totemGaia') { this._piso = true; this.drawUnit(u, metaById); this._piso = false; }   // Driiar: círculo del tótem en el suelo   // en el suelo, debajo de todos
     for (const u of view.units) if (u.kind === 'arenaEstepa') for (const c of this.columnasArena(u)) ents.push({ y: c.y, tipo: 'col', e: c });   // ruinas de la arena (se ordenan con los personajes)
-    for (const u of view.units) if (u.kind !== 'trampa' && u.kind !== 'circuloVida' && u.kind !== 'mina' && u.kind !== 'arenaEstepa' && u.kind !== 'torretaBrasas') ents.push({ y: u.y, tipo: 'u', e: u });
+    for (const u of view.units) if (u.kind !== 'trampa' && u.kind !== 'circuloVida' && u.kind !== 'mina' && u.kind !== 'trampaZinro' && u.kind !== 'arenaEstepa' && u.kind !== 'torretaBrasas') ents.push({ y: u.y, tipo: 'u', e: u });
     ents.sort((a, b) => a.y - b.y);
     for (const it of ents) {
       const e = it.e;
@@ -14722,6 +15222,40 @@ class Renderer {
       } else if (z.kind === 'espadaRin') {
         // Rin (V9.4): espada espiritual suelta que deja la ulti (la Estocada salta hasta ella); parpadea antes de irse
         if (!(z.w & 1)) { const fin = z.prog > 0.8 && Math.floor(T * 10) % 2; this.espadaEspiritu(cx, cy, 14, fin ? 0.45 : 1, z.id || 0); }
+      } else if (z.kind === 'voleaLazo') {
+        // Zinro: los atados por la boleadora — cuerda tensa con sobrecarga de energía que crece hasta el golpe final
+        const x2 = this.gx(z.ox), y2 = this.gy(z.oy), k = z.prog, yb = -10;
+        this.linea(cx, cy + yb, x2, y2 + (z.a ? -14 : yb), PALETA.tinta, 0, 0, 3); this.linea(cx, cy + yb, x2, y2 + (z.a ? -14 : yb), PALETA.madera2, 0, 0, 1);
+        const n = 1 + Math.floor(k * 3), sd = Math.floor(T * 14);
+        for (let i = 0; i < n; i++) this.linea(cx, cy + yb, x2, y2 + (z.a ? -14 : yb), i % 2 ? PALETA.pergamino2 : PALETA.acero2, 3 + Math.round(k * 4), sd + i * 7, 1);
+        for (const [ex, ey] of z.a ? [[cx, cy]] : [[cx, cy], [x2, y2]]) {
+          g.globalAlpha = 0.3 + 0.5 * k; this.discDither(ex, ey - 8, 7 + Math.round(k * 5), PALETA.acero2, 2, sd); g.globalAlpha = 1;
+          this.ring(ex, ey - 8, 6 + Math.round(k * 6 + (Math.floor(T * 12) % 2)), PALETA.pergamino2, 1, 1);
+          for (let i = 0; i < 3; i++) { const b = T * 8 + i * 2.1; g.fillStyle = PALETA.pergamino2; g.fillRect(Math.round(ex + Math.cos(b) * (8 + k * 4)), Math.round(ey - 8 + Math.sin(b) * 5), 1, 1); }
+        }
+        if (z.a) { this.ring(x2, y2 - 14, 6, PALETA.madera2, 1, 1); }   // la cuerda enrollada en el árbol
+      } else if (z.kind === 'halconZinro') {
+        // Zinro: el halcón patrulla en círculos; Zinro y sus aliados ven el radio
+        // Seba (22-11 r3): vuelo fluido en rondas definidas (ángulo calculado en el cliente), aleteo y planeo, brillo dorado para que el rival lo note; el radio solo lo ve su equipo
+        this.halconT = this.halconT || new Map();
+        let hv = this.halconT.get(z.id); if (!hv) { hv = { t0: this.time, a0: z.a }; this.halconT.set(z.id, hv); }
+        const el = this.time - hv.t0, ll = Math.min(1, 0.3 + el * 0.7), Rr = z.r * 0.45 * ll * ESC, ang = hv.a0 + el * 0.9;
+        const fx = cx + Math.cos(ang) * Rr, fy = cy + Math.sin(ang) * Rr * 0.6, dir = Math.atan2(Math.cos(ang) * 0.6, -Math.sin(ang));
+        if (this.esAliadoDe(z.owner)) {
+          const RR = Math.round(z.r * ESC);
+          // V10.0 (rendimiento): el radio (trama + bordes) se pinta una sola vez por tamaño y se reusa; cada cuadro es 1 imagen + 12 puntos que giran
+          const rc = this.radioHalcon(RR); g.drawImage(rc, cx - (rc.width >> 1), cy - (rc.height >> 1));
+          g.globalAlpha = 0.8; g.fillStyle = PALETA.oro2;
+          for (let i = 0; i < 12; i++) { const b = T * 0.4 + i * TAU / 12; g.fillRect(Math.round(cx + Math.cos(b) * RR) - 1, Math.round(cy + Math.sin(b) * RR) - 1, 3, 3); }
+          g.globalAlpha = 1;
+        }
+        g.globalAlpha = 0.3; g.fillStyle = PALETA.tinta; g.fillRect(Math.round(fx) - 6, Math.round(fy) + 2, 13, 2); g.globalAlpha = 1;   // sombra
+        this.halconVolando(Math.round(fx), Math.round(fy) - 30, dir, el, z.prog > 0.9);
+      } else if (z.kind === 'picadaHalcon') {
+        // Zinro: picada — el halcón baja en diagonal con estela
+        const ca = Math.cos(z.a), sa = Math.sin(z.a);
+        for (let i = 1; i <= 5; i++) { g.globalAlpha = 0.6 - i * 0.1; this.linea(Math.round(cx - ca * i * 6), Math.round(cy - 14 - sa * i * 6) - i * 2, Math.round(cx - ca * (i + 1) * 6), Math.round(cy - 14 - sa * (i + 1) * 6) - (i + 1) * 2, PALETA.oro2, 0, 0, 1); }
+        g.globalAlpha = 1; this.halconVolando(cx, cy - 14, z.a, 0, false, 'C');
       } else if (z.kind === 'trapRinProj') {
         // Rin: la espada de luz vuela horizontal, con estela magenta
         const ca = Math.cos(z.a), sa = Math.sin(z.a);
@@ -14959,7 +15493,8 @@ class Renderer {
     const esBam = meta.build.heroe === 'bambaa' && gigante === 1;   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
     const esSmok = meta.build.heroe === 'smok' && gigante === 1;   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
     const esRin = meta.build.heroe === 'rin' && gigante === 1;   // Rin (Seba 17-11): modelo 18×21 con la rapiera aparte   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : 0);
+    const esZin = meta.build.heroe === 'zinro' && gigante === 1;   // Zinro (Seba 22-11): 22×29 con el halcón aparte   // Zizzer (Seba 17-11): espantapájaros 26×29 con las garras aparte
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : esZin ? 5 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -15169,7 +15704,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios || esGol || esBam || esSmok || esRin) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol || esBam || esSmok || esRin || esZin) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -15225,6 +15760,7 @@ class Renderer {
     else if (esGol) this.dibujaGolagore(p, cx, cy, izq, moviendo, sw, sube);
     else if (esBam) this.bambaaChica(p, cx, cy, izq, moviendo, sube);   // Seba (13-11, V8.4–8.6): Bambaa más chica sin perder la cara
     else if (esRin) this.dibujaRin(p, cx, cy, izq, moviendo, sw, sube);
+    else if (esZin) this.dibujaZinro(p, cx, cy, izq, moviendo, sw, sube);
     else if (esSmok) { if (p.sm & 1) { const al = this.esAliadoDe(p.id); this.dibujaHundido(p, cx, cy, al); if (!al) return; } else this.dibujaSmok(p, cx, cy, izq, moviendo, sube, 1, p.sm); }   // hundido: el enemigo solo ve el círculo (sin nombre ni barra)
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
@@ -15324,6 +15860,20 @@ class Renderer {
         g.fillStyle = i % 2 ? PALETA.piedra0 : PALETA.noche; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3); g.fillStyle = PALETA.espectro2; g.fillRect(x, y, 1, 1);
       }
       const tq = texto('?', PALETA.espectro2); g.drawImage(tq, cx - (tq.width >> 1), cy - 36 + (Math.floor(T * 4) % 2));
+    }
+    if ((p.zn & 1) && !this.esAliadoDe(p.id)) this.signoAlerta(cx, cy - 34);
+    const q = ((p.zn || 0) >> 5) & 3;   // trampas que le quedan en la ventana del Cazador maestro
+    if (q > 0 && this.esAliadoDe(p.id)) for (let i = 0; i < q; i++) {   // mini cepos sobre la cabeza
+      const x = cx - (q - 1) * 5 + i * 10, y = cy - 48;
+      g.fillStyle = PALETA.tinta; g.fillRect(x - 4, y - 2, 9, 5); g.fillStyle = PALETA.piedra2; g.fillRect(x - 3, y - 1, 7, 3); g.fillStyle = PALETA.piedra0; g.fillRect(x - 2, y, 5, 1);
+      g.fillStyle = PALETA.piedra3; g.fillRect(x - 3, y - 1, 1, 1); g.fillRect(x - 1, y - 1, 1, 1); g.fillRect(x + 1, y - 1, 1, 1); g.fillRect(x + 3, y - 1, 1, 1);
+    }   // Zinro: el halcón marca al Smok verdadero
+    if (p.zn & 2) {   // atrapado por el cepo de Zinro: mandíbulas de hierro en los pies
+      this.cepo(cx, cy + 4, false, 1); g.fillStyle = PALETA.carmesi2; g.fillRect(cx - 3, cy + 1, 1, 1); g.fillRect(cx + 3, cy + 1, 1, 1);
+    }
+    if (p.zn & 4) {   // atado por la Volea: vueltas de cuerda alrededor del cuerpo con chispas azules
+      const T = this.time; for (const yy of [-6, -12]) { this.linea(cx - 8, cy + yy, cx + 8, cy + yy + 2, PALETA.tinta, 0, 0, 3); this.linea(cx - 8, cy + yy, cx + 8, cy + yy + 2, PALETA.madera2, 0, 0, 1); }
+      for (let i = 0; i < 3; i++) { const b = T * 9 + i * 2.1; g.fillStyle = i % 2 ? PALETA.acero2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * 10), Math.round(cy - 9 + Math.sin(b) * 5), 1, 2); }
     }
     if (p.bb & 1) {   // confundido por el muñeco vudú: estrellas moradas que giran sobre la cabeza (como el aturdido) y un «?»
       const T = this.time;
@@ -15951,6 +16501,69 @@ class Renderer {
     g.globalAlpha = 1;
   }
   // Rin (Seba 17-11): esgrimista; el cuerpo no se mueve (solo los pies), la rapiera en la mano de adelante, en guardia
+  // Zinro: halcón en vuelo (rotado hacia donde vuela), aleteo A-B-C-B con planeo, brillo dorado que late
+  radioHalcon(RR) {   // Zinro: radio del halcón ya compuesto (trama dorada tenue + borde), guardado por tamaño
+    const C = this._radHalcon || (this._radHalcon = new Map());
+    let c = C.get(RR);
+    if (!c) {
+      const S = 2 * RR + 8; c = document.createElement('canvas'); c.width = S; c.height = S;
+      const g0 = this.g; this.g = c.getContext('2d');
+      try { const o = S >> 1; this.g.globalAlpha = 0.12; this.discDither(o, o, RR, PALETA.oro1, 3, 0); this.g.globalAlpha = 0.8; this.ring(o, o, RR, PALETA.tinta, 1, 3); this.ring(o, o, RR, PALETA.oro1, 1, 1); this.g.globalAlpha = 1; }
+      finally { this.g = g0; }
+      C.set(RR, c);
+    }
+    return c;
+  }
+  halconVolando(x, y, dir, el, parpadea, fija = null) {
+    const g = this.g, T = this.time, k = (Math.sin(T * 4) + 1) / 2;
+    g.globalAlpha = 0.25 + 0.2 * k; this.discDither(x, y, 13, PALETA.oro1, 2, Math.floor(T * 6)); g.globalAlpha = 0.5 + 0.4 * k; this.ring(x, y, 12 + Math.round(k), PALETA.oro2, 1, 1); g.globalAlpha = 1;
+    const ciclo = el % 3, planea = ciclo > 2.2;   // aletea 2,2 s y planea 0,8 s
+    const fr = fija || (planea ? 'A' : ['A', 'B', 'C', 'B'][Math.floor(el * 10) % 4]);
+    const s = armaRotada('halconVuelo' + fr, idxAng(dir));
+    g.drawImage(s, x - (s.width >> 1), y - (s.height >> 1));
+    if (parpadea && Math.floor(T * 10) % 2) this.ring(x, y, 14, PALETA.oro2, 1, 1);
+  }
+  // Zinro: signo «!» de alerta (lo que el halcón descubrió)
+  signoAlerta(x, y) {
+    const g = this.g, b = Math.floor(this.time * 4) % 2; y -= b;
+    g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 7, 5, 7); g.fillRect(x - 2, y + 1, 5, 3);
+    g.fillStyle = PALETA.oro2; g.fillRect(x - 1, y - 6, 3, 5); g.fillRect(x - 1, y + 2, 3, 1);
+  }
+  // Zinro: trampa de cepo (mandíbulas de hierro con dientes)
+  cepo(cx, cy, armada, alfa = 1) {   // Seba (22-11 r3): cepo con personalidad (sprite) + cadena con estaca
+    const g = this.g, s = cepoSpr(!!armada); g.globalAlpha = alfa;
+    g.fillStyle = PALETA.tinta; g.fillRect(cx + 9, cy + 1, 7, 3); g.fillStyle = PALETA.piedra1; for (let i = 0; i < 3; i++) g.fillRect(cx + 10 + i * 2, cy + 2, 1, 1);   // cadena
+    g.fillStyle = PALETA.tinta; g.fillRect(cx + 15, cy - 1, 3, 6); g.fillStyle = PALETA.madera2; g.fillRect(cx + 16, cy, 1, 4);   // estaca
+    g.drawImage(s, cx - (s.width >> 1), cy - (s.height >> 1));
+    g.globalAlpha = 1;
+  }
+  // Zinro: boleadora que gira (2 o 3 bolas unidas por cuerdas)
+  boleadora(cx, cy, giro, grande) {
+    const g = this.g, n = grande ? 3 : 2, R = grande ? 8 : 4;   // Seba (22-11 r3): la de la Volea, más grande
+    const pts = []; for (let i = 0; i < n; i++) { const b = giro + i * TAU / n; pts.push([Math.round(cx + Math.cos(b) * R), Math.round(cy + Math.sin(b) * R * 0.7)]); }
+    for (const [x, y] of pts) this.linea(cx, cy, x, y, PALETA.madera2, 0, 0, 1);
+    for (const [x, y] of pts) { const b = grande ? 3 : 2; g.fillStyle = PALETA.tinta; g.fillRect(x - b, y - b, b * 2, b * 2); g.fillStyle = grande ? PALETA.madera2 : PALETA.piedra2; g.fillRect(x - b + 1, y - b + 1, b * 2 - 2, b * 2 - 2); if (grande) { g.fillStyle = PALETA.acero2; g.fillRect(x - 1, y - 1, 1, 1); } }
+    if (grande) { g.globalAlpha = 0.5; this.ring(cx, cy, R + 2, PALETA.acero2, 1, 1); g.globalAlpha = 1; }
+  }
+  // Zinro (Seba 22-11): cazador de las montañas; el cuerpo no se mueve (solo los pies); halcón en el brazo y cuchillo en la otra mano
+  dibujaZinro(p, cx, cy, izq, moviendo, sw, sube) {   // Seba (22-11 r2): 15% más pequeño (19×25)
+    const g = this.g, T = this.time, zn = p.zn || 0;
+    let fr = 0;
+    if (moviendo) fr = [1, 0, 2, 0][Math.floor(T * 6) % 4];
+    const lx = cx - 9, ly = cy + 8 - 25 - sube, X = (x) => lx + (izq ? 18 - x : x);
+    let ak = 1.9, bolea = 0, kunai = 0;
+    if (sw && sw.t > 0) {
+      const t = 1 - Math.max(0, sw.t) / (sw.T || 0.25);
+      if (sw.tipo === 'cuchillo') ak = t < 0.3 ? 1.9 - 3.0 * (t / 0.3) : t < 0.6 ? -1.1 + 2.6 * ((t - 0.3) / 0.3) : 1.5 + 0.4 * ((t - 0.6) / 0.4);
+      else if (sw.tipo === 'bolea') bolea = 1 - t;
+      else if (sw.tipo === 'kunai') { kunai = 1 - t; ak = t < 0.4 ? 1.9 - 2.6 * (t / 0.4) : -0.7 + 2.6 * ((t - 0.4) / 0.6); }   // lanza el kunai con la mano del cuchillo
+    }
+    const fk = izq ? Math.PI - ak : ak, kn = armaRotada('cuchilloZinro', idxAng(fk));
+    g.drawImage(kn, X(2) - (kn.width >> 1), ly + 16 - (kn.height >> 1));
+    g.drawImage(zinroGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    if (!(zn & 8)) { const h = halconSpr('posado')[izq ? 'izq' : 'der']; g.drawImage(h, izq ? X(16) - 6 : X(16) - 2, ly + 1); }   // el halcón posado en el guante
+    if (bolea > 0) this.boleadora(X(16), ly + 4, T * 30, true);
+  }
   dibujaRin(p, cx, cy, izq, moviendo, sw, sube) {
     const g = this.g, T = this.time, dash = p.rn & 1, salto = p.rn & 8;
     let fr = 0;
@@ -16566,9 +17179,19 @@ class Renderer {
         g.drawImage(s, cx - (s.width >> 1), cy - (s.height >> 1));
         const orden = this.unidadesVista ? this.unidadesVista.filter(m => m.kind === 'mina' && m.owner === u.owner && m.id <= u.id).length : 0;
         if (orden) { const n = texto(String(orden), PALETA.pergamino2); g.fillStyle = PALETA.tinta; g.fillRect(cx + 5, cy - 12, n.width + 2, n.height + 1); g.drawImage(n, cx + 6, cy - 12); }
+      } else if (u.flags & 262144) {   // Zinro: el halcón la descubrió — se ve entera con un «!»
+        const s = otro('mina'); this.g.drawImage(s, cx - (s.width >> 1), cy - (s.height >> 1)); this.signoAlerta(cx, cy - 12);
       } else if ((u.flags & 2048) && Math.floor(this.time * 3 + u.id) % 2) {
         this.g.fillStyle = PALETA.carmesi2; this.g.fillRect(cx, cy, 1, 1);
       }
+      return;
+    }
+    if (u.kind === 'trampaZinro') {   // Zinro: trampa de cepo — la ven Zinro y sus aliados; los rivales solo si un halcón la descubre
+      const cx = this.gx(u.x), cy = this.gy(u.y), propia = this.esAliadoDe(u.owner), rev = u.flags & 262144;
+      if (!propia && !rev) return;
+      if (u.owner === this._myId) { this.g.globalAlpha = 0.45; this.ring(cx, cy, Math.round(HABILIDADES.trampasZinro.separacion * ESC), PALETA.carmesi1, 0.5, 1); this.g.globalAlpha = 1; }   // Seba (22-11 r3): Zinro ve dónde no puede plantar otra
+      this.cepo(cx, cy, !!(u.flags & 2048), propia ? 1 : 0.9);
+      if (rev && !propia) this.signoAlerta(cx, cy - 12);
       return;
     }
     if (u.kind === 'circuloVida') {
@@ -16772,6 +17395,24 @@ class Renderer {
     if (p.spr === 'runaAethar') { this.runaProj(cx, cy, p.a); return; }
     if (p.spr === 'ruedaLei') { this.ruedaLei(p, cx, cy); return; }   // Lei: rueda de la ulti
     if (p.spr === 'abanicoLei' || p.spr === 'abanicoVuelo') { if (p.spr === 'abanicoLei') this.rastroAbanico(p); this.abanicoProj(cx, cy - 8, p.a, p.spr === 'abanicoLei' ? 9 : 6); return; }   // Lei
+    if (p.spr === 'kunaiZinro') {   // Zinro (Seba 22-11 r2): kunai — hoja de acero, anilla y cinta roja; levemente grande para que se vea
+      const g = this.g, ca = Math.cos(p.a), sa = Math.sin(p.a), y = cy - 8;
+      for (let i = 1; i <= 3; i++) { g.globalAlpha = 0.5 - i * 0.12; g.fillStyle = PALETA.piedra3; g.fillRect(Math.round(cx - ca * (8 + i * 4)), Math.round(y - sa * (8 + i * 4)), 1, 1); }
+      g.globalAlpha = 1;
+      const tx = Math.round(cx + ca * 7), ty = Math.round(y + sa * 7), bx = Math.round(cx - ca * 2), by = Math.round(y - sa * 2), hx = Math.round(cx - ca * 6), hy = Math.round(y - sa * 6);
+      this.linea(bx, by, tx, ty, PALETA.tinta, 0, 0, 4); this.linea(bx, by, tx, ty, PALETA.piedra2, 0, 0, 2); this.linea(bx, by, tx, ty, PALETA.piedra3, 0, 0, 1);
+      this.linea(hx, hy, bx, by, PALETA.tinta, 0, 0, 3); this.linea(hx, hy, bx, by, PALETA.madera1, 0, 0, 1);
+      this.ring(Math.round(cx - ca * 8), Math.round(y - sa * 8), 2, PALETA.piedra2, 1, 1);
+      const ox = Math.round(cx - ca * 11 + Math.sin(this.time * 30) * sa * 2), oy = Math.round(y - sa * 11 - Math.sin(this.time * 30) * ca * 2);
+      g.fillStyle = PALETA.carmesi1; g.fillRect(ox - 1, oy, 2, 1); g.fillRect(ox, oy + 1, 1, 1);
+      g.fillStyle = PALETA.pergamino2; g.fillRect(tx, ty, 1, 1);
+      return;
+    }
+    if (p.spr === 'boleaZinro' || p.spr === 'voleaZinro') {   // Zinro: boleadora girando (la de la Volea, con energía azul)
+      const gr = p.spr === 'voleaZinro', ca = Math.cos(p.a), sa = Math.sin(p.a);
+      if (gr) for (let i = 1; i <= 4; i++) { this.g.globalAlpha = 0.5 - i * 0.1; this.g.fillStyle = PALETA.acero2; this.g.fillRect(Math.round(cx - ca * i * 5), Math.round(cy - 8 - sa * i * 5), 2, 2); }
+      this.g.globalAlpha = 1; this.boleadora(cx, cy - 8, this.time * (gr ? 18.75 : 25), gr); return;   // Seba (22-11 r3): gira 25% más lento
+    }
     if (p.spr === 'cartaVario') { this.cartaVarioProj(cx, cy, p.a); return; }
     if (p.spr === 'dagaUlti') {
       // Daga del Secreto Templario: empuñadura oscura, hoja color magenta (carmesí claro con filo magia), punta blanca y estela
@@ -16837,6 +17478,11 @@ class Renderer {
             this.linea(x0, y0, x0 + Math.round(ca * L), y0 + Math.round(sa * L * 0.8), PALETA.acero2, 0, 0, 1);
             g.fillStyle = PALETA.pergamino2; g.fillRect(x0 + Math.round(ca * L) - 1, y0 + Math.round(sa * L * 0.8) - 1, 2, 2);
             g.globalAlpha = 1;
+            break;
+          }
+          if (f.h === 'zinro') {   // Zinro: cuchillada corta
+            const R = Math.round(f.r * ESC), e = Math.min(1, t * 4), a0 = f.a - 0.8, a1 = a0 + 1.6 * e, yc = cy - 8;
+            g.globalAlpha = Math.min(1, (1 - t) * 2); this.arc(cx, yc, R, a0, a1, PALETA.tinta, 2); this.arc(cx, yc, R, a0, a1, PALETA.piedra3, 1); g.globalAlpha = 1;
             break;
           }
           if (f.h === 'rin') {   // Rin: estocada de rapiera (línea fina con brillo magenta)
@@ -17409,6 +18055,32 @@ class Renderer {
           g.globalAlpha = 1;
           break;
         }
+        case 'boleaToca': case 'boleaAta': {   // Zinro: la boleadora se enrolla
+          g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 10), PALETA.madera2, 1, 2); this.ring(cx, cy - 8, Math.round(2 + t * 7), PALETA.acero2, 1, 1); g.globalAlpha = 1;
+          if (f.k === 'boleaAta') { g.globalAlpha = 1 - t; const x2 = this.gx(f.x2), y2 = this.gy(f.y2); this.linea(cx, cy - 10, x2, y2 - 10, PALETA.acero2, 4, Math.floor(t * 20), 1); g.globalAlpha = 1; }
+          break;
+        }
+        case 'lazoEstalla': {   // Zinro: descarga final del lazo
+          g.globalAlpha = 1 - t; this.discDither(cx, cy - 8, Math.round(6 + t * 14), PALETA.acero2, 2, Math.floor(t * 10)); this.ring(cx, cy - 8, Math.round(8 + t * 16), PALETA.pergamino2, 1, 2);
+          for (let i = 0; i < 6; i++) { const b = i * TAU / 6; this.linea(cx, cy - 8, Math.round(cx + Math.cos(b) * (8 + t * 18)), Math.round(cy - 8 + Math.sin(b) * (8 + t * 18) * 0.7), PALETA.acero2, 2, i, 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'picadaHalcon': {   // Zinro: impacto de la picada — plumas y anillo
+          g.globalAlpha = 1 - t; this.ring(cx, cy, Math.round(f.r * ESC * Math.min(1, t * 3)), PALETA.oro1, 1, 2);
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + 0.3, d = 4 + t * 18; g.fillStyle = i % 2 ? PALETA.madera2 : PALETA.pergamino1; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 10 + Math.sin(b) * d * 0.6 + t * 6), 2, 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'chillido': { if (Math.floor(t * 8) % 2) this.signoAlerta(cx, cy - 34); break; }   // el halcón chilla al lanzarse
+        case 'sueltaHalcon': {   // Zinro suelta al halcón: vuela del brazo al punto
+          const x2 = this.gx(f.x2), y2 = this.gy(f.y2), k = Math.min(1, t * 1.6), hx = Math.round(cx + (x2 - cx) * k), hy = Math.round(cy - 14 + (y2 - cy) * k - Math.sin(k * Math.PI) * 20);
+          this.halconVolando(hx, hy - 8, Math.atan2(y2 - cy, x2 - cx), t * 3, false); break;
+        }
+        case 'trampaZinro': case 'trampaSalta': {   // polvo al enterrar / chasquido de las mandíbulas
+          g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 3 + t * 12; g.fillStyle = i % 2 ? PALETA.madera2 : PALETA.piedra2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.5 - t * 4), 2, 1); }
+          if (f.k === 'trampaSalta') { this.cepo(cx, cy - Math.round((1 - t) * 4), false, 1 - t); this.ring(cx, cy, Math.round(6 + t * 12), PALETA.carmesi2, 1, 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'tiraBolea': break;
         case 'estocadaRin': {   // Rin: estocada mágica — la hoja se ensancha en luz magenta hasta su alcance
           const L = Math.round(f.r * ESC) + 4, e = Math.min(1, t * 5), ca = Math.cos(f.a), sa = Math.sin(f.a), yc = cy - 8, x1 = Math.round(cx + ca * L * e), y1 = Math.round(yc + sa * L * e);
           g.globalAlpha = Math.min(1, (1 - t) * 1.5);
@@ -19404,6 +20076,15 @@ function updateHud(latest, now) {
     }
     const restante = me[8 + i];
     const cd = btn.querySelector('.cd'), cdn = btn.querySelector('.cdn');
+    // Seba (22-11): se puede volver a apretar (halcón de Zinro, trampas, Smok hundido, etc.): sin recarga a la vista y con brillo ↻
+    const recast = !!((me[69] || 0) & (1 << i));
+    btn.classList.toggle('recast', recast);
+    if (recast) {
+      cd.style.setProperty('--p', '0%');
+      if (cdn) cdn.textContent = k === 'trampasZinro' ? '×' + (((me[68] || 0) >> 5) & 3) : '↻';
+      if (H.ulti) btn.classList.remove('lista');
+      continue;
+    }
     if (H.ulti) {
       // La ulti se llena desde abajo a medida que haces daño
       // y además tiene recarga propia: mientras corre, se muestran los segundos
@@ -19571,6 +20252,12 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V10.0', f: '22-11-2026', n: [
+    'Nuevo héroe: Zinro (Errantes), cazador de las montañas con su halcón. Básico doble: cuchillo cuerpo a cuerpo o kunai a distancia. Volea: boleadora que aturde y ata al enemigo con lo que tenga detrás. Llamada al halcón: patrulla una gran zona, revela lo invisible y las trampas, y con un segundo toque cae en picada. Ulti Cazador maestro: hasta 3 trampas invisibles en 15 s.',
+    'Zinro, Presa acorralada: los enemigos bajo cualquier control reciben 2% más de daño.',
+    'Habilidades que se pueden volver a apretar (halcón y trampas de Zinro, Hundido de Smok, carga de Golagore, etc.): el botón ya no muestra la recarga mientras se pueda usar de nuevo; brilla en dorado con ↻ (o ×n con las trampas que quedan).',
+    'Rendimiento: el radio del halcón se dibuja con una imagen guardada.',
+  ] },
   { v: 'V9.9', f: '19-11-2026', n: [
     'Arena de entrenamiento: el tótem de Bambaa ahora se activa al dañar a los muñecos (antes no lanzaba rayos ahí; en partidas sí funcionaba).',
   ] },
