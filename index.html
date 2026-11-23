@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V10.0</title>
+<title>LOLA V10.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V10.0</p>
+        <p class="sub version">LOLA V10.1</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1718,6 +1718,26 @@ Object.assign(HEROES, {
     habs: ['voleaZinro', 'halconZinro', 'trampasZinro'],
     pasiva: 'presaZinro',
   },
+// Seba (22-11): Xerxius (Aliados): mago druida del bosque con báculo de gema dorada. Números (C) salvo los que fijó Seba.
+  xerxius: {
+    casa: 'aliados',
+    nombre: 'Xerxius', rol: 'Mago · naturaleza', fondo: 'xerxius', arma: 'baculoXerxius',
+    desc: 'Viejo mago druida del bosque. Su báculo de gema dorada canaliza runas verdes que estallan, enredan y arrasan todo el mapa.',
+    vida: 360, dano: 26, recarga: 1.3, ultiCarga: 320, velocidad: 144,   // (C); Seba (23-11): velocidad 110 en juego (144 × 0,765), recarga del básico más lenta (1,1 → 1,3; C)
+    ataque: { tipo: 'proyectil', proj: 'chispaXerxius', vel: 520, alcance: 400, radio: 6 },   // Seba: chispa del báculo; (C) números
+    habs: ['blastXerxius', 'enredoXerxius', 'naturaXerxius'],
+    pasiva: 'savia',
+  },
+// Seba (22-11): Ann (Renegados): joven de pelo negro y ojos morados, traje de servicio (no sexualizado) con paleta propia, paraguas como arma. Números (C) salvo los que fijó Seba.
+  ann: {
+    casa: 'renegados',
+    nombre: 'Ann', rol: 'Duelista · paraguas', fondo: 'ann', arma: 'paraguasAnn',
+    desc: 'Joven de mirada violeta que pelea con su paraguas: golpea, dispara ráfagas, se cubre de proyectiles y salta bajo una lluvia de chispas.',
+    vida: 365, dano: 30, recarga: 0.95, ultiCarga: 300, velocidad: 165,   // (C); Seba (23-11): vida −5
+    ataque: { tipo: 'melee', rango: 60, arco: 100 },   // Seba: golpe con el paraguas
+    habs: ['rafagaAnn', 'paraguasAnn', 'tormentaAnn'],
+    pasiva: 'duelo',
+  },
 });
 
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
@@ -2120,6 +2140,40 @@ Object.assign(HABILIDADES, {
   trampasZinro: { nombre: 'Cazador maestro', glifo: 'trampasZinro', cd: 50, cdFijo: true, ulti: true, trampas: 3, ventana: 15, separacion: 80, armado: 1, radio: 31, dano: 100, lento: 0.8, lentoDur: 3, cerca: 200, prisa: 0.1,   // Seba: hasta 3 trampas, 15 s; 100 y −80% 3 s; radio de la mina +20%; +10% de velocidad cerca de un atrapado; invisibles; separadas entre sí; (C) recarga 50, separación 80, cerca 200
                   desc: (n) => `Dejas una trampa invisible a tus pies; puedes dejar hasta ${HABILIDADES.trampasZinro.trampas} (separadas entre sí) en ${HABILIDADES.trampasZinro.ventana} s antes de que entre en recarga. El enemigo que la pisa recibe ${HABILIDADES.trampasZinro.dano} de daño y queda ${Math.round(HABILIDADES.trampasZinro.lento * 100)}% más lento ${HABILIDADES.trampasZinro.lentoDur} s (si ya está atrapado, solo el daño). Tú y tus aliados cerca de un atrapado ganan +${Math.round(HABILIDADES.trampasZinro.prisa * 100)}% de velocidad.`,
                   n1: {}, n2: {} },
+  // ---- Xerxius (Seba, 22-11; números (C) salvo los que fijó Seba)
+  blastXerxius:  { nombre: 'Estallido rúnico', glifo: 'blastXerxius', cd: 7.5,   // Seba (23-11): recarga +1,5 s
+                   cdFijo: true, alcance: 380, canal: 0.75, radio: 81, dano: 80,   // Seba (22-11 r2): radio +15% (70 → 81)
+                     // Seba: 80 mágico, recarga 6, canaliza 0,75 s caminando (sin atacar ni lanzar); (C) alcance 380, radio 70
+                   desc: (n) => `Levantas el báculo y canalizas ${fmtN(HABILIDADES.blastXerxius.canal)} s (puedes caminar, pero no atacar ni lanzar otras habilidades); runas verdes marcan el punto (${DIST(HABILIDADES.blastXerxius.alcance)}). Al terminar estalla: ${HABILIDADES.blastXerxius.dano} de daño en ${RADIO(HABILIDADES.blastXerxius.radio)}. Un aturdido o un silencio la cortan.`,
+                   n1: {}, n2: {} },
+  enredoXerxius: { nombre: 'Raíces del bosque', glifo: 'enredoXerxius', cd: 12, cdFijo: true, alcance: 380, espera: 0.5, radio: 80, dur: 2, detiene: 1, dano: 75,   // Seba: 0,5 s, detiene 1 s (cada vez que entran), dura 2 s, 75 al terminar; (C) recarga 12, alcance 380, radio 80
+                   desc: (n) => `Tras ${fmtN(HABILIDADES.enredoXerxius.espera)} s brotan raíces en un área (${RADIO(HABILIDADES.enredoXerxius.radio)}) por ${HABILIDADES.enredoXerxius.dur} s: los enemigos dentro, o que entran, quedan detenidos ${HABILIDADES.enredoXerxius.detiene} s (pueden atacar y usar habilidades). Al terminar, los que siguen dentro reciben ${HABILIDADES.enredoXerxius.dano} de daño.`,
+                   n1: {}, n2: {} },
+  naturaXerxius: { nombre: 'Fuerza de la naturaleza', glifo: 'naturaXerxius', cd: 60, cdFijo: true, ulti: true, canal: 1.5, vel: 234, alcance: 1200, radio: 69, dano: 160,   // Seba (23-11): 10% más lento (260 → 234) y 10% más grande (63 → 69)
+                     // Seba (22-11 r2): proyectil 75% más grande (36 → 63), bola de fuego verde y amarilla
+                   escudo: 50, escudoDur: 4,   // Seba: canaliza 1,5 s; cruza el mapa, lento, grande; 160 a enemigos y escudo 50 a aliados; (C) velocidad 260, radio 36, escudo 4 s
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.naturaXerxius.canal)} s dibujando un sello de runas del bosque y disparas una gran esfera verde que cruza todo el mapa, lenta: ${HABILIDADES.naturaXerxius.dano} de daño a cada enemigo que atraviesa y un escudo de ${HABILIDADES.naturaXerxius.escudo} a cada aliado. Un aturdido o un silencio cortan la canalización.`,
+                   n1: {}, n2: {} },
+  // ---- Ann (Seba, 22-11; números (C) salvo los que fijó Seba)
+  rafagaAnn:     { nombre: 'Ráfaga de paraguas', glifo: 'rafagaAnn', cd: 5, cdFijo: true, dur: 1.2, punta: 44, largo: 126, ancho: 40,   // Seba (23-11 r8): el daño se calcula desde la punta del paraguas (44 delante de Ann) hasta el alcance, no desde Ann
+                     // Seba (23-11 r5): +5% de rango (120 → 126), recto, sin abrir
+                   cadIni: 4.4, cadFin: 14.3, golpe: 6.9, prisa: 0.33,   // Seba (23-11 r4): hacia donde apunta, en rango corto, daña en todo ese rango; +10% de estallidos (sube el total); estallidos con láseres; (C) largo 120, ancho 64, 6,9 por estallido
+                     // Seba (23-11): el paraguas gira cada vez más rápido y suelta golpes simultáneos en un rango corto (cada vez más seguidos); recarga baja; +33% de velocidad; (C) 1,2 s, radio 62, de 4 a 13 golpes por segundo (~10), recarga 5; daño a ajustar
+                   desc: (n) => `Tu paraguas gira cada vez más rápido durante ${fmtN(HABILIDADES.rafagaAnn.dur)} s y suelta estallidos y láseres hacia donde apuntas (${DIST(HABILIDADES.rafagaAnn.largo)}), cada vez más seguidos: ${HABILIDADES.rafagaAnn.golpe} por estallido a todo lo que esté en ese rango. Mientras gira, +${Math.round(HABILIDADES.rafagaAnn.prisa * 100)}% de velocidad, pero no puedes atacar ni lanzar otras habilidades.`,
+                   n1: {}, n2: {} },
+  paraguasAnn:   { nombre: 'Paraguas abierto', glifo: 'paraguasAnn', cd: 12, cdFijo: true, dur: 3, mango: 24, radio: 48, arco: 130, extra: 25, buff: 5, escudo: 75,   // Seba (23-11): escudo de 75 mientras dura; se pierde al terminar
+                     // Seba (23-11): 10% más grande (44 → 48)
+                     // Seba (22-11 r2): el paraguas sale desde Ann hacia adelante (con el largo del mango), 15% más grande; (C) mango 24, media cúpula 44 (antes 38)
+                     // Seba: bloquea todo proyectil que no sea de ulti; 3 s, la sigue y gira hacia donde apuntas; al terminar el siguiente básico +25; (C) recarga 12, arco 130°
+                   desc: (n) => `Abres el paraguas en grande hacia donde apuntas por ${HABILIDADES.paraguasAnn.dur} s (te sigue y gira contigo): bloquea todos los proyectiles enemigos que no sean de ultis y te da un escudo de ${HABILIDADES.paraguasAnn.escudo} mientras dura. Al terminar, tu siguiente ataque básico (hasta ${HABILIDADES.paraguasAnn.buff} s) hace +${HABILIDADES.paraguasAnn.extra}.`,
+                   n1: {}, n2: {} },
+  tormentaAnn:   { nombre: 'Tormenta de seda', glifo: 'tormentaAnn', cd: 55, cdFijo: true, ulti: true, canal: 0.5, alcance: 420, vuelo: 1.2, gotaCada: 0.01, gotaRetraso: 0.3, estela: 0.6, sigue: 3, velFinal: 469,   // Seba (23-11 r4): la lluvia sigue 1,5 s más en cada tramo; disparo final 33% más grande y 33% más lento (700 → 469)
+                     // Seba (23-11): vuelo 33% más lento (0,9 → 1,2), muchas más gotas que caen con retraso en la zona por donde pasó y siguen cayendo atrás; (C) retraso 0,3 s, estela 0,6 s
+                   gotaRadio: 26, gotaDano: 4, lento: 0.02, lentoTope: 0.3, lentoDur: 2, area: 77, dano: 60, ancho: 35,   // Seba (23-11): lluvia +33% (58 → 77)
+                     // Seba (22-11 r2): lluvia 25% más ancha (46 → 58) y muchas más gotas (cada 0,02 s); (C) 4 por gota mientras ajustamos el daño
+                     // Seba: canaliza 0,5 s, salta bajo el paraguas con lluvia (daño mágico, lento 2% por gota hasta 30%), al aterrizar dispara de vuelta por el camino; (C) alcance 420, vuelo 0,9 s, 8 por gota, 60 el disparo final
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.tormentaAnn.canal)} s, tu paraguas crece y saltas hasta el punto (${DIST(HABILIDADES.tormentaAnn.alcance)}). Bajo el paraguas cae una lluvia de chispas: ${HABILIDADES.tormentaAnn.gotaDano} de daño por gota y ${Math.round(HABILIDADES.tormentaAnn.lento * 100)}% más lento por gota (hasta ${Math.round(HABILIDADES.tormentaAnn.lentoTope * 100)}%). Al aterrizar disparas un proyectil de vuelta por todo el camino del salto: ${HABILIDADES.tormentaAnn.dano} de daño.`,
+                   n1: {}, n2: {} },
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
                      // Seba (16-11): recarga 14 → 15,5
@@ -2291,6 +2345,10 @@ const PASIVAS = {
   marcaRin: { nombre: 'Marca de esgrima', glifo: 'marcaRin', dur: 5, cada: 10, extra: 10, desc: 'Tus habilidades marcan a los enemigos que alcanzan (cada habilidad puede marcar una vez cada 10 s). Tu Estocada salta hasta un marcado y le hace +10 (saltar gasta la marca); también salta hasta tus espadas espirituales.' },   // Seba (17-11); (C) la marca dura 5 s
   presaZinro: { nombre: 'Presa acorralada', glifo: 'presaZinro', extra: 0.02,   // Seba: +2% de daño a enemigos bajo cualquier control (de Zinro o de sus aliados), no se acumula
     desc: 'Los enemigos bajo cualquier efecto de control (aturdido, confusión, lentos, maldición, silencio…) reciben 2% más de daño de todas las fuentes mientras dure.' },
+  savia: { nombre: 'Savia compartida', glifo: 'savia', radio: 120, parte: 0.05,   // Seba: recupera el 5% de lo que se cure 1 héroe aliado en un radio pequeño; (C) radio 120
+    desc: 'Cuando el héroe aliado más cercano dentro de un radio pequeño a tu alrededor recupera vida, tú recuperas el 5% de esa cantidad.' },
+  duelo: { nombre: 'Uno contra uno', glifo: 'duelo', radio: 220, reduce: 0.05,   // Seba: −5% de daño si está 1 contra 1 en un radio pequeño; (C) radio 220
+    desc: 'Si hay un solo héroe enemigo cerca de ti, recibes 5% menos de daño de todas las fuentes.' },
   ecosSmok: { nombre: 'Ecos de humo', glifo: 'ecosSmok', reduce: 0.5, cada: 4, desc: 'Cada 4.º ataque básico tuyo que acierta deja un clon donde estás. Cuando los enemigos destruyen un clon tuyo, tus habilidades se recargan 0,5 s (no la ulti).' },   // Seba (16-11): ya no cuenta el golpe del clon   // Seba (16-11): + clon cada 4.º básico acertado   // Seba (16-11): 1 golpe por clon + destruido; no la ulti   // Seba (16-11); nombre (C)
   amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
   corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 30, dur: 4,   /* Seba (13-11, V7.6): 20 → 30 */ quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 30 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
@@ -2441,6 +2499,8 @@ const GUIAS = {
   hundidoSmok: { tipo: 'propio', r: 90 }, esferaSmok: { tipo: 'punto', alcance: 280, r: 45 }, ocasoSmok: { tipo: 'propio', r: 160 },
   estocadaRin: { tipo: 'linea', alcance: 209, ancho: 34 }, trapRin: { tipo: 'linea', alcance: 240, ancho: 24 }, danzaRin: { tipo: 'propio', r: 70 },
   voleaZinro: { tipo: 'linea', alcance: 420, ancho: 16 }, halconZinro: { tipo: 'punto', alcance: 450, r: 320 }, trampasZinro: { tipo: 'propio', r: 31 },
+  blastXerxius: { tipo: 'punto', alcance: 380, r: 81 }, enredoXerxius: { tipo: 'punto', alcance: 380, r: 80 }, naturaXerxius: { tipo: 'linea', alcance: 900, ancho: 126 },
+  rafagaAnn: { tipo: 'linea', alcance: 126, ancho: 40 }, paraguasAnn: { tipo: 'linea', alcance: 40, ancho: 50 }, tormentaAnn: { tipo: 'punto', alcance: 420, r: 77 },
   olaOra: { tipo: 'punto', alcance: 280, r: 24 }, olaOraLinea: { tipo: 'linea', alcance: 300, ancho: 110 }, burbujaOra: { tipo: 'punto', alcance: 300, r: 100 }, geiserOra: { tipo: 'propio', r: 200 },
   cargaLegios: { tipo: 'propio', r: 30 }, escudoJuramento: { tipo: 'propio', r: 110 }, porElRey: { tipo: 'propio', r: 180 },
   manoInfierno: { tipo: 'linea', alcance: 280, ancho: 90 }, pozoSangre: { tipo: 'punto', alcance: 280, r: 110 }, festinSangre: { tipo: 'propio', r: 150 },
@@ -2483,13 +2543,13 @@ for (const h of Object.values(HEROES)) h.recarga = Math.round((h.recarga + 0.2) 
 for (const hb of Object.values(HABILIDADES)) if (hb.cd) hb.cd = Math.round((hb.cd + 1) * 10) / 10;
 
 // ===== matchups.js =====
-// Generado por tools/matchups.js (2026-11-10): % de duelos 1v1 que gana la fila contra la columna.
+// Generado por tools/matchups.js (2026-11-23): % de duelos 1v1 que gana la fila contra la columna.
 // Medido con bots (apuntado automático), 4 duelos por par.
 const MATCHUPS = {
  "beast": {
-  "lire": 50,
+  "lire": 75,
   "nigromante": 100,
-  "maidas": 25,
+  "maidas": 75,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
@@ -2503,104 +2563,159 @@ const MATCHUPS = {
   "fatum": 75,
   "aethar": 100,
   "vario": 0,
+  "kiro": 75,
+  "golagore": 100,
+  "bambaa": 100,
+  "smok": 75,
+  "rin": 75,
+  "zinro": 75,
+  "xerxius": 100,
+  "ann": 100,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
-  "lei": 100,
+  "lei": 75,
   "ash": 100,
   "driiar": 50,
-  "tenebris": 50,
-  "shai": 100
+  "tenebris": 75,
+  "shai": 75
  },
  "lire": {
-  "beast": 50,
+  "beast": 25,
   "nigromante": 0,
-  "maidas": 0,
-  "monh": 75,
+  "maidas": 50,
+  "monh": 50,
   "biteroi": 75,
-  "rasho": 25,
+  "rasho": 50,
   "takichi": 0,
-  "aracnida": 50,
-  "kazaro": 75,
+  "aracnida": 75,
+  "kazaro": 50,
   "trelgon": 25,
   "gaia": 75,
-  "vatrius": 25,
-  "jurgen": 75,
+  "vatrius": 50,
+  "jurgen": 100,
   "fatum": 75,
-  "aethar": 75,
+  "aethar": 100,
   "vario": 100,
-  "aldor": 100,
+  "kiro": 25,
+  "golagore": 75,
+  "bambaa": 25,
+  "smok": 75,
+  "rin": 0,
+  "zinro": 75,
+  "xerxius": 25,
+  "ann": 25,
+  "ora": 25,
+  "legios": 25,
+  "zeal": 100,
+  "aldor": 75,
   "lei": 25,
-  "ash": 75,
-  "driiar": 75,
-  "tenebris": 100,
-  "shai": 0
+  "ash": 50,
+  "driiar": 100,
+  "tenebris": 50,
+  "shai": 25
  },
  "nigromante": {
   "beast": 0,
   "lire": 100,
   "maidas": 50,
   "monh": 100,
-  "biteroi": 25,
+  "biteroi": 75,
   "rasho": 75,
   "takichi": 0,
   "aracnida": 100,
-  "kazaro": 25,
+  "kazaro": 0,
   "trelgon": 75,
-  "gaia": 75,
-  "vatrius": 75,
-  "jurgen": 25,
+  "gaia": 100,
+  "vatrius": 100,
+  "jurgen": 100,
   "fatum": 100,
   "aethar": 100,
-  "vario": 100,
-  "aldor": 25,
+  "vario": 75,
+  "kiro": 25,
+  "golagore": 0,
+  "bambaa": 100,
+  "smok": 75,
+  "rin": 0,
+  "zinro": 100,
+  "xerxius": 100,
+  "ann": 0,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 50,
   "lei": 75,
   "ash": 100,
   "driiar": 50,
   "tenebris": 100,
-  "shai": 25
+  "shai": 75
  },
  "maidas": {
-  "beast": 75,
-  "lire": 100,
+  "beast": 25,
+  "lire": 50,
   "nigromante": 50,
   "monh": 100,
   "biteroi": 75,
-  "rasho": 100,
+  "rasho": 50,
   "takichi": 0,
-  "aracnida": 75,
-  "kazaro": 75,
-  "trelgon": 50,
-  "gaia": 100,
-  "vatrius": 100,
-  "jurgen": 75,
+  "aracnida": 50,
+  "kazaro": 100,
+  "trelgon": 75,
+  "gaia": 75,
+  "vatrius": 75,
+  "jurgen": 100,
   "fatum": 75,
   "aethar": 100,
   "vario": 100,
+  "kiro": 75,
+  "golagore": 100,
+  "bambaa": 100,
+  "smok": 75,
+  "rin": 50,
+  "zinro": 100,
+  "xerxius": 50,
+  "ann": 50,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
-  "lei": 50,
-  "ash": 100,
-  "driiar": 50,
+  "lei": 100,
+  "ash": 75,
+  "driiar": 100,
   "tenebris": 100,
-  "shai": 25
+  "shai": 75
  },
  "monh": {
   "beast": 0,
-  "lire": 25,
+  "lire": 50,
   "nigromante": 0,
   "maidas": 0,
-  "biteroi": 50,
-  "rasho": 25,
+  "biteroi": 100,
+  "rasho": 50,
   "takichi": 0,
   "aracnida": 0,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 50,
+  "gaia": 25,
   "vatrius": 0,
   "jurgen": 75,
-  "fatum": 75,
-  "aethar": 75,
-  "vario": 75,
-  "aldor": 0,
-  "lei": 50,
+  "fatum": 25,
+  "aethar": 100,
+  "vario": 100,
+  "kiro": 0,
+  "golagore": 0,
+  "bambaa": 0,
+  "smok": 75,
+  "rin": 0,
+  "zinro": 100,
+  "xerxius": 75,
+  "ann": 0,
+  "ora": 100,
+  "legios": 0,
+  "zeal": 100,
+  "aldor": 25,
+  "lei": 75,
   "ash": 0,
   "driiar": 0,
   "tenebris": 100,
@@ -2609,20 +2724,31 @@ const MATCHUPS = {
  "biteroi": {
   "beast": 100,
   "lire": 25,
-  "nigromante": 75,
+  "nigromante": 25,
   "maidas": 25,
-  "monh": 50,
+  "monh": 0,
   "rasho": 50,
   "takichi": 100,
   "aracnida": 100,
   "kazaro": 75,
-  "trelgon": 0,
-  "gaia": 25,
+  "trelgon": 25,
+  "gaia": 50,
   "vatrius": 100,
-  "jurgen": 25,
-  "fatum": 100,
-  "aethar": 75,
-  "vario": 25,
+  "jurgen": 100,
+  "fatum": 50,
+  "aethar": 100,
+  "vario": 100,
+  "kiro": 100,
+  "golagore": 100,
+  "bambaa": 50,
+  "smok": 50,
+  "rin": 50,
+  "zinro": 100,
+  "xerxius": 100,
+  "ann": 100,
+  "ora": 50,
+  "legios": 50,
+  "zeal": 75,
   "aldor": 100,
   "lei": 100,
   "ash": 100,
@@ -2632,21 +2758,32 @@ const MATCHUPS = {
  },
  "rasho": {
   "beast": 100,
-  "lire": 75,
+  "lire": 50,
   "nigromante": 25,
-  "maidas": 0,
-  "monh": 75,
+  "maidas": 50,
+  "monh": 50,
   "biteroi": 50,
-  "takichi": 75,
-  "aracnida": 100,
-  "kazaro": 100,
+  "takichi": 50,
+  "aracnida": 75,
+  "kazaro": 75,
   "trelgon": 100,
-  "gaia": 75,
+  "gaia": 50,
   "vatrius": 100,
-  "jurgen": 50,
-  "fatum": 75,
+  "jurgen": 0,
+  "fatum": 0,
   "aethar": 50,
   "vario": 100,
+  "kiro": 100,
+  "golagore": 100,
+  "bambaa": 75,
+  "smok": 50,
+  "rin": 50,
+  "zinro": 100,
+  "xerxius": 25,
+  "ann": 0,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
   "lei": 100,
   "ash": 100,
@@ -2661,24 +2798,175 @@ const MATCHUPS = {
   "maidas": 100,
   "monh": 100,
   "biteroi": 0,
-  "rasho": 25,
-  "aracnida": 100,
-  "kazaro": 50,
-  "trelgon": 75,
-  "gaia": 75,
-  "vatrius": 50,
+  "rasho": 50,
+  "aracnida": 50,
+  "kazaro": 25,
+  "trelgon": 100,
+  "gaia": 25,
+  "vatrius": 75,
   "jurgen": 25,
   "fatum": 100,
   "aethar": 100,
-  "vario": 25,
+  "vario": 0,
+  "kiro": 100,
+  "golagore": 50,
+  "bambaa": 75,
+  "smok": 100,
+  "rin": 100,
+  "zinro": 75,
+  "xerxius": 100,
+  "ann": 75,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
-  "lei": 75,
+  "lei": 100,
   "ash": 0,
-  "driiar": 25,
+  "driiar": 0,
   "tenebris": 75,
-  "shai": 25
+  "shai": 50
  },
  "aracnida": {
+  "beast": 0,
+  "lire": 25,
+  "nigromante": 0,
+  "maidas": 50,
+  "monh": 100,
+  "biteroi": 0,
+  "rasho": 25,
+  "takichi": 50,
+  "kazaro": 25,
+  "trelgon": 50,
+  "gaia": 50,
+  "vatrius": 75,
+  "jurgen": 0,
+  "fatum": 0,
+  "aethar": 0,
+  "vario": 0,
+  "kiro": 50,
+  "golagore": 50,
+  "bambaa": 0,
+  "smok": 0,
+  "rin": 100,
+  "zinro": 50,
+  "xerxius": 50,
+  "ann": 0,
+  "ora": 0,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 50,
+  "ash": 75,
+  "driiar": 25,
+  "tenebris": 100,
+  "shai": 100
+ },
+ "kazaro": {
+  "beast": 0,
+  "lire": 50,
+  "nigromante": 100,
+  "maidas": 0,
+  "monh": 100,
+  "biteroi": 25,
+  "rasho": 25,
+  "takichi": 75,
+  "aracnida": 75,
+  "trelgon": 100,
+  "gaia": 75,
+  "vatrius": 100,
+  "jurgen": 75,
+  "fatum": 100,
+  "aethar": 100,
+  "vario": 0,
+  "kiro": 100,
+  "golagore": 75,
+  "bambaa": 100,
+  "smok": 0,
+  "rin": 75,
+  "zinro": 100,
+  "xerxius": 100,
+  "ann": 100,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 25,
+  "ash": 100,
+  "driiar": 50,
+  "tenebris": 25,
+  "shai": 75
+ },
+ "trelgon": {
+  "beast": 0,
+  "lire": 75,
+  "nigromante": 25,
+  "maidas": 25,
+  "monh": 100,
+  "biteroi": 75,
+  "rasho": 0,
+  "takichi": 0,
+  "aracnida": 50,
+  "kazaro": 0,
+  "gaia": 75,
+  "vatrius": 50,
+  "jurgen": 25,
+  "fatum": 25,
+  "aethar": 100,
+  "vario": 0,
+  "kiro": 50,
+  "golagore": 25,
+  "bambaa": 100,
+  "smok": 25,
+  "rin": 75,
+  "zinro": 50,
+  "xerxius": 25,
+  "ann": 0,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 75,
+  "ash": 75,
+  "driiar": 0,
+  "tenebris": 100,
+  "shai": 0
+ },
+ "gaia": {
+  "beast": 25,
+  "lire": 25,
+  "nigromante": 0,
+  "maidas": 25,
+  "monh": 75,
+  "biteroi": 50,
+  "rasho": 50,
+  "takichi": 75,
+  "aracnida": 50,
+  "kazaro": 25,
+  "trelgon": 25,
+  "vatrius": 100,
+  "jurgen": 50,
+  "fatum": 75,
+  "aethar": 100,
+  "vario": 50,
+  "kiro": 0,
+  "golagore": 75,
+  "bambaa": 100,
+  "smok": 25,
+  "rin": 25,
+  "zinro": 75,
+  "xerxius": 100,
+  "ann": 25,
+  "ora": 75,
+  "legios": 0,
+  "zeal": 25,
+  "aldor": 75,
+  "lei": 100,
+  "ash": 75,
+  "driiar": 75,
+  "tenebris": 75,
+  "shai": 0
+ },
+ "vatrius": {
   "beast": 0,
   "lire": 50,
   "nigromante": 0,
@@ -2686,113 +2974,28 @@ const MATCHUPS = {
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 0,
-  "kazaro": 0,
-  "trelgon": 75,
-  "gaia": 25,
-  "vatrius": 75,
-  "jurgen": 25,
-  "fatum": 0,
-  "aethar": 25,
-  "vario": 0,
-  "aldor": 100,
-  "lei": 100,
-  "ash": 50,
-  "driiar": 0,
-  "tenebris": 75,
-  "shai": 75
- },
- "kazaro": {
-  "beast": 0,
-  "lire": 25,
-  "nigromante": 75,
-  "maidas": 25,
-  "monh": 100,
-  "biteroi": 25,
-  "rasho": 0,
-  "takichi": 50,
-  "aracnida": 100,
-  "trelgon": 100,
-  "gaia": 25,
-  "vatrius": 100,
-  "jurgen": 100,
-  "fatum": 100,
-  "aethar": 100,
-  "vario": 0,
-  "aldor": 100,
-  "lei": 75,
-  "ash": 75,
-  "driiar": 50,
-  "tenebris": 75,
-  "shai": 100
- },
- "trelgon": {
-  "beast": 0,
-  "lire": 75,
-  "nigromante": 25,
-  "maidas": 50,
-  "monh": 100,
-  "biteroi": 100,
-  "rasho": 0,
   "takichi": 25,
   "aracnida": 25,
   "kazaro": 0,
-  "gaia": 75,
-  "vatrius": 0,
-  "jurgen": 25,
-  "fatum": 75,
-  "aethar": 100,
-  "vario": 0,
-  "aldor": 100,
-  "lei": 50,
-  "ash": 100,
-  "driiar": 25,
-  "tenebris": 50,
-  "shai": 0
- },
- "gaia": {
-  "beast": 25,
-  "lire": 25,
-  "nigromante": 25,
-  "maidas": 0,
-  "monh": 50,
-  "biteroi": 75,
-  "rasho": 25,
-  "takichi": 25,
-  "aracnida": 75,
-  "kazaro": 75,
-  "trelgon": 25,
-  "vatrius": 100,
-  "jurgen": 75,
-  "fatum": 100,
-  "aethar": 75,
-  "vario": 75,
-  "aldor": 50,
-  "lei": 25,
-  "ash": 50,
-  "driiar": 100,
-  "tenebris": 100,
-  "shai": 50
- },
- "vatrius": {
-  "beast": 0,
-  "lire": 75,
-  "nigromante": 25,
-  "maidas": 0,
-  "monh": 100,
-  "biteroi": 0,
-  "rasho": 0,
-  "takichi": 50,
-  "aracnida": 25,
-  "kazaro": 0,
-  "trelgon": 100,
+  "trelgon": 50,
   "gaia": 0,
   "jurgen": 0,
-  "fatum": 0,
+  "fatum": 75,
   "aethar": 75,
   "vario": 0,
+  "kiro": 50,
+  "golagore": 0,
+  "bambaa": 25,
+  "smok": 0,
+  "rin": 50,
+  "zinro": 25,
+  "xerxius": 25,
+  "ann": 25,
+  "ora": 0,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 75,
-  "lei": 25,
+  "lei": 0,
   "ash": 0,
   "driiar": 0,
   "tenebris": 0,
@@ -2800,26 +3003,37 @@ const MATCHUPS = {
  },
  "jurgen": {
   "beast": 0,
-  "lire": 25,
-  "nigromante": 75,
-  "maidas": 25,
+  "lire": 0,
+  "nigromante": 0,
+  "maidas": 0,
   "monh": 25,
-  "biteroi": 75,
-  "rasho": 50,
+  "biteroi": 0,
+  "rasho": 100,
   "takichi": 75,
-  "aracnida": 75,
-  "kazaro": 0,
+  "aracnida": 100,
+  "kazaro": 25,
   "trelgon": 75,
-  "gaia": 25,
+  "gaia": 50,
   "vatrius": 100,
-  "fatum": 50,
-  "aethar": 0,
-  "vario": 25,
+  "fatum": 25,
+  "aethar": 75,
+  "vario": 75,
+  "kiro": 25,
+  "golagore": 100,
+  "bambaa": 25,
+  "smok": 50,
+  "rin": 0,
+  "zinro": 75,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 75,
-  "lei": 50,
-  "ash": 75,
+  "lei": 25,
+  "ash": 25,
   "driiar": 0,
-  "tenebris": 75,
+  "tenebris": 50,
   "shai": 0
  },
  "fatum": {
@@ -2827,66 +3041,99 @@ const MATCHUPS = {
   "lire": 25,
   "nigromante": 0,
   "maidas": 25,
-  "monh": 25,
-  "biteroi": 0,
-  "rasho": 25,
+  "monh": 75,
+  "biteroi": 50,
+  "rasho": 100,
   "takichi": 0,
   "aracnida": 100,
   "kazaro": 0,
-  "trelgon": 25,
-  "gaia": 0,
-  "vatrius": 100,
-  "jurgen": 50,
-  "aethar": 0,
-  "vario": 50,
-  "aldor": 50,
+  "trelgon": 75,
+  "gaia": 25,
+  "vatrius": 25,
+  "jurgen": 75,
+  "aethar": 25,
+  "vario": 100,
+  "kiro": 0,
+  "golagore": 0,
+  "bambaa": 50,
+  "smok": 100,
+  "rin": 0,
+  "zinro": 50,
+  "xerxius": 50,
+  "ann": 25,
+  "ora": 50,
+  "legios": 100,
+  "zeal": 25,
+  "aldor": 75,
   "lei": 25,
-  "ash": 100,
-  "driiar": 0,
-  "tenebris": 75,
-  "shai": 0
+  "ash": 75,
+  "driiar": 25,
+  "tenebris": 50,
+  "shai": 25
  },
  "aethar": {
   "beast": 0,
-  "lire": 25,
+  "lire": 0,
   "nigromante": 0,
   "maidas": 0,
-  "monh": 25,
-  "biteroi": 25,
+  "monh": 0,
+  "biteroi": 0,
   "rasho": 50,
   "takichi": 0,
-  "aracnida": 75,
+  "aracnida": 100,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 25,
+  "gaia": 0,
   "vatrius": 25,
-  "jurgen": 100,
-  "fatum": 100,
-  "vario": 75,
-  "aldor": 0,
-  "lei": 75,
-  "ash": 100,
-  "driiar": 0,
-  "tenebris": 75,
+  "jurgen": 25,
+  "fatum": 75,
+  "vario": 100,
+  "kiro": 0,
+  "golagore": 25,
+  "bambaa": 75,
+  "smok": 0,
+  "rin": 0,
+  "zinro": 100,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 50,
+  "legios": 50,
+  "zeal": 50,
+  "aldor": 50,
+  "lei": 25,
+  "ash": 75,
+  "driiar": 25,
+  "tenebris": 100,
   "shai": 0
  },
  "vario": {
   "beast": 100,
   "lire": 0,
-  "nigromante": 0,
+  "nigromante": 25,
   "maidas": 0,
-  "monh": 25,
-  "biteroi": 75,
+  "monh": 0,
+  "biteroi": 0,
   "rasho": 0,
-  "takichi": 75,
+  "takichi": 100,
   "aracnida": 100,
   "kazaro": 100,
   "trelgon": 100,
-  "gaia": 25,
+  "gaia": 50,
   "vatrius": 100,
-  "jurgen": 75,
-  "fatum": 50,
-  "aethar": 25,
+  "jurgen": 25,
+  "fatum": 0,
+  "aethar": 0,
+  "kiro": 75,
+  "golagore": 100,
+  "bambaa": 75,
+  "smok": 75,
+  "rin": 100,
+  "zinro": 50,
+  "xerxius": 25,
+  "ann": 100,
+  "ora": 0,
+  "legios": 100,
+  "zeal": 0,
   "aldor": 100,
   "lei": 100,
   "ash": 100,
@@ -2894,24 +3141,420 @@ const MATCHUPS = {
   "tenebris": 100,
   "shai": 100
  },
- "aldor": {
-  "beast": 0,
-  "lire": 0,
+ "kiro": {
+  "beast": 25,
+  "lire": 75,
   "nigromante": 75,
+  "maidas": 25,
+  "monh": 100,
+  "biteroi": 0,
+  "rasho": 0,
+  "takichi": 0,
+  "aracnida": 50,
+  "kazaro": 0,
+  "trelgon": 50,
+  "gaia": 100,
+  "vatrius": 50,
+  "jurgen": 75,
+  "fatum": 100,
+  "aethar": 100,
+  "vario": 25,
+  "golagore": 25,
+  "bambaa": 75,
+  "smok": 50,
+  "rin": 50,
+  "zinro": 75,
+  "xerxius": 100,
+  "ann": 25,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 0,
+  "ash": 0,
+  "driiar": 0,
+  "tenebris": 25,
+  "shai": 0
+ },
+ "golagore": {
+  "beast": 0,
+  "lire": 25,
+  "nigromante": 100,
   "maidas": 0,
   "monh": 100,
+  "biteroi": 0,
+  "rasho": 0,
+  "takichi": 50,
+  "aracnida": 50,
+  "kazaro": 25,
+  "trelgon": 75,
+  "gaia": 25,
+  "vatrius": 100,
+  "jurgen": 0,
+  "fatum": 100,
+  "aethar": 75,
+  "vario": 0,
+  "kiro": 75,
+  "bambaa": 100,
+  "smok": 0,
+  "rin": 75,
+  "zinro": 50,
+  "xerxius": 25,
+  "ann": 0,
+  "ora": 25,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 100,
+  "driiar": 25,
+  "tenebris": 100,
+  "shai": 25
+ },
+ "bambaa": {
+  "beast": 0,
+  "lire": 75,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 100,
+  "biteroi": 50,
+  "rasho": 25,
+  "takichi": 25,
+  "aracnida": 100,
+  "kazaro": 0,
+  "trelgon": 0,
+  "gaia": 0,
+  "vatrius": 75,
+  "jurgen": 75,
+  "fatum": 50,
+  "aethar": 25,
+  "vario": 25,
+  "kiro": 25,
+  "golagore": 0,
+  "smok": 50,
+  "rin": 25,
+  "zinro": 100,
+  "xerxius": 50,
+  "ann": 25,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 75,
+  "lei": 75,
+  "ash": 100,
+  "driiar": 25,
+  "tenebris": 75,
+  "shai": 0
+ },
+ "smok": {
+  "beast": 25,
+  "lire": 25,
+  "nigromante": 25,
+  "maidas": 25,
+  "monh": 25,
+  "biteroi": 50,
+  "rasho": 50,
+  "takichi": 0,
+  "aracnida": 100,
+  "kazaro": 100,
+  "trelgon": 75,
+  "gaia": 75,
+  "vatrius": 100,
+  "jurgen": 50,
+  "fatum": 0,
+  "aethar": 100,
+  "vario": 25,
+  "kiro": 50,
+  "golagore": 100,
+  "bambaa": 50,
+  "rin": 100,
+  "zinro": 75,
+  "xerxius": 0,
+  "ann": 50,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 75,
+  "ash": 100,
+  "driiar": 100,
+  "tenebris": 100,
+  "shai": 100
+ },
+ "rin": {
+  "beast": 25,
+  "lire": 100,
+  "nigromante": 100,
+  "maidas": 50,
+  "monh": 100,
+  "biteroi": 50,
+  "rasho": 50,
+  "takichi": 0,
+  "aracnida": 0,
+  "kazaro": 25,
+  "trelgon": 25,
+  "gaia": 75,
+  "vatrius": 50,
+  "jurgen": 100,
+  "fatum": 100,
+  "aethar": 100,
+  "vario": 0,
+  "kiro": 50,
+  "golagore": 25,
+  "bambaa": 75,
+  "smok": 0,
+  "zinro": 100,
+  "xerxius": 100,
+  "ann": 25,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 25,
+  "driiar": 0,
+  "tenebris": 0,
+  "shai": 0
+ },
+ "zinro": {
+  "beast": 25,
+  "lire": 25,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 0,
+  "biteroi": 0,
+  "rasho": 0,
+  "takichi": 25,
+  "aracnida": 50,
+  "kazaro": 0,
+  "trelgon": 50,
+  "gaia": 25,
+  "vatrius": 75,
+  "jurgen": 25,
+  "fatum": 50,
+  "aethar": 0,
+  "vario": 50,
+  "kiro": 25,
+  "golagore": 50,
+  "bambaa": 0,
+  "smok": 25,
+  "rin": 0,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 25,
+  "legios": 100,
+  "zeal": 25,
+  "aldor": 75,
+  "lei": 75,
+  "ash": 100,
+  "driiar": 75,
+  "tenebris": 75,
+  "shai": 50
+ },
+ "xerxius": {
+  "beast": 0,
+  "lire": 75,
+  "nigromante": 0,
+  "maidas": 50,
+  "monh": 25,
+  "biteroi": 0,
+  "rasho": 75,
+  "takichi": 0,
+  "aracnida": 50,
+  "kazaro": 0,
+  "trelgon": 75,
+  "gaia": 0,
+  "vatrius": 75,
+  "jurgen": 100,
+  "fatum": 50,
+  "aethar": 100,
+  "vario": 75,
+  "kiro": 0,
+  "golagore": 75,
+  "bambaa": 50,
+  "smok": 100,
+  "rin": 0,
+  "zinro": 100,
+  "ann": 0,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 75,
+  "driiar": 25,
+  "tenebris": 25,
+  "shai": 0
+ },
+ "ann": {
+  "beast": 0,
+  "lire": 75,
+  "nigromante": 100,
+  "maidas": 50,
+  "monh": 100,
+  "biteroi": 0,
+  "rasho": 100,
+  "takichi": 25,
+  "aracnida": 100,
+  "kazaro": 0,
+  "trelgon": 100,
+  "gaia": 75,
+  "vatrius": 75,
+  "jurgen": 100,
+  "fatum": 75,
+  "aethar": 100,
+  "vario": 0,
+  "kiro": 75,
+  "golagore": 100,
+  "bambaa": 75,
+  "smok": 50,
+  "rin": 75,
+  "zinro": 100,
+  "xerxius": 100,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 0,
+  "driiar": 25,
+  "tenebris": 0,
+  "shai": 25
+ },
+ "ora": {
+  "beast": 25,
+  "lire": 75,
+  "nigromante": 0,
+  "maidas": 25,
+  "monh": 0,
+  "biteroi": 50,
+  "rasho": 0,
+  "takichi": 0,
+  "aracnida": 100,
+  "kazaro": 0,
+  "trelgon": 25,
+  "gaia": 25,
+  "vatrius": 100,
+  "jurgen": 25,
+  "fatum": 50,
+  "aethar": 50,
+  "vario": 100,
+  "kiro": 0,
+  "golagore": 75,
+  "bambaa": 25,
+  "smok": 0,
+  "rin": 0,
+  "zinro": 75,
+  "xerxius": 25,
+  "ann": 0,
+  "legios": 100,
+  "zeal": 50,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 50,
+  "driiar": 0,
+  "tenebris": 75,
+  "shai": 25
+ },
+ "legios": {
+  "beast": 0,
+  "lire": 75,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 100,
+  "biteroi": 50,
+  "rasho": 0,
+  "takichi": 0,
+  "aracnida": 0,
+  "kazaro": 0,
+  "trelgon": 0,
+  "gaia": 100,
+  "vatrius": 0,
+  "jurgen": 0,
+  "fatum": 0,
+  "aethar": 50,
+  "vario": 0,
+  "kiro": 0,
+  "golagore": 0,
+  "bambaa": 0,
+  "smok": 0,
+  "rin": 0,
+  "zinro": 0,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 0,
+  "zeal": 100,
+  "aldor": 25,
+  "lei": 0,
+  "ash": 0,
+  "driiar": 0,
+  "tenebris": 0,
+  "shai": 0
+ },
+ "zeal": {
+  "beast": 0,
+  "lire": 0,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 0,
+  "biteroi": 25,
+  "rasho": 0,
+  "takichi": 0,
+  "aracnida": 0,
+  "kazaro": 0,
+  "trelgon": 0,
+  "gaia": 75,
+  "vatrius": 0,
+  "jurgen": 0,
+  "fatum": 75,
+  "aethar": 50,
+  "vario": 100,
+  "kiro": 0,
+  "golagore": 0,
+  "bambaa": 0,
+  "smok": 0,
+  "rin": 0,
+  "zinro": 75,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 50,
+  "legios": 0,
+  "aldor": 0,
+  "lei": 0,
+  "ash": 50,
+  "driiar": 0,
+  "tenebris": 50,
+  "shai": 0
+ },
+ "aldor": {
+  "beast": 0,
+  "lire": 25,
+  "nigromante": 50,
+  "maidas": 0,
+  "monh": 75,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 0,
   "aracnida": 0,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 50,
+  "gaia": 25,
   "vatrius": 25,
   "jurgen": 25,
-  "fatum": 50,
-  "aethar": 100,
+  "fatum": 25,
+  "aethar": 50,
   "vario": 0,
+  "kiro": 0,
+  "golagore": 0,
+  "bambaa": 25,
+  "smok": 0,
+  "rin": 0,
+  "zinro": 25,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 0,
+  "legios": 75,
+  "zeal": 100,
   "lei": 0,
   "ash": 0,
   "driiar": 0,
@@ -2919,47 +3562,69 @@ const MATCHUPS = {
   "shai": 0
  },
  "lei": {
-  "beast": 0,
+  "beast": 25,
   "lire": 75,
   "nigromante": 25,
-  "maidas": 50,
-  "monh": 50,
+  "maidas": 0,
+  "monh": 25,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 25,
-  "aracnida": 0,
-  "kazaro": 25,
-  "trelgon": 50,
-  "gaia": 75,
-  "vatrius": 75,
-  "jurgen": 50,
+  "takichi": 0,
+  "aracnida": 50,
+  "kazaro": 75,
+  "trelgon": 25,
+  "gaia": 0,
+  "vatrius": 100,
+  "jurgen": 75,
   "fatum": 75,
-  "aethar": 25,
+  "aethar": 75,
   "vario": 0,
+  "kiro": 100,
+  "golagore": 0,
+  "bambaa": 25,
+  "smok": 25,
+  "rin": 0,
+  "zinro": 25,
+  "xerxius": 0,
+  "ann": 0,
+  "ora": 0,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
   "ash": 50,
   "driiar": 50,
   "tenebris": 50,
-  "shai": 50
+  "shai": 0
  },
  "ash": {
   "beast": 0,
-  "lire": 25,
+  "lire": 50,
   "nigromante": 0,
-  "maidas": 0,
+  "maidas": 25,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 100,
-  "aracnida": 50,
-  "kazaro": 25,
-  "trelgon": 0,
-  "gaia": 50,
+  "aracnida": 25,
+  "kazaro": 0,
+  "trelgon": 25,
+  "gaia": 25,
   "vatrius": 100,
-  "jurgen": 25,
-  "fatum": 0,
-  "aethar": 0,
+  "jurgen": 75,
+  "fatum": 25,
+  "aethar": 25,
   "vario": 0,
+  "kiro": 100,
+  "golagore": 0,
+  "bambaa": 0,
+  "smok": 0,
+  "rin": 75,
+  "zinro": 0,
+  "xerxius": 25,
+  "ann": 100,
+  "ora": 50,
+  "legios": 100,
+  "zeal": 50,
   "aldor": 100,
   "lei": 50,
   "driiar": 25,
@@ -2968,78 +3633,111 @@ const MATCHUPS = {
  },
  "driiar": {
   "beast": 50,
-  "lire": 25,
+  "lire": 0,
   "nigromante": 50,
-  "maidas": 50,
+  "maidas": 0,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 75,
-  "aracnida": 100,
+  "takichi": 100,
+  "aracnida": 75,
   "kazaro": 50,
-  "trelgon": 75,
-  "gaia": 0,
+  "trelgon": 100,
+  "gaia": 25,
   "vatrius": 100,
   "jurgen": 100,
-  "fatum": 100,
-  "aethar": 100,
+  "fatum": 75,
+  "aethar": 75,
   "vario": 0,
+  "kiro": 100,
+  "golagore": 75,
+  "bambaa": 75,
+  "smok": 0,
+  "rin": 100,
+  "zinro": 25,
+  "xerxius": 75,
+  "ann": 75,
+  "ora": 100,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
   "lei": 50,
   "ash": 75,
-  "tenebris": 100,
-  "shai": 75
+  "tenebris": 75,
+  "shai": 25
  },
  "tenebris": {
-  "beast": 50,
-  "lire": 0,
+  "beast": 25,
+  "lire": 50,
   "nigromante": 0,
   "maidas": 0,
   "monh": 0,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 25,
-  "aracnida": 25,
-  "kazaro": 25,
-  "trelgon": 50,
-  "gaia": 0,
+  "aracnida": 0,
+  "kazaro": 75,
+  "trelgon": 0,
+  "gaia": 25,
   "vatrius": 100,
-  "jurgen": 25,
-  "fatum": 25,
-  "aethar": 25,
+  "jurgen": 50,
+  "fatum": 50,
+  "aethar": 0,
   "vario": 0,
+  "kiro": 75,
+  "golagore": 0,
+  "bambaa": 25,
+  "smok": 0,
+  "rin": 100,
+  "zinro": 25,
+  "xerxius": 75,
+  "ann": 100,
+  "ora": 25,
+  "legios": 100,
+  "zeal": 50,
   "aldor": 100,
   "lei": 50,
   "ash": 0,
-  "driiar": 0,
+  "driiar": 25,
   "shai": 100
  },
  "shai": {
-  "beast": 0,
-  "lire": 100,
-  "nigromante": 75,
-  "maidas": 75,
+  "beast": 25,
+  "lire": 75,
+  "nigromante": 25,
+  "maidas": 25,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 75,
-  "aracnida": 25,
-  "kazaro": 0,
+  "takichi": 50,
+  "aracnida": 0,
+  "kazaro": 25,
   "trelgon": 100,
-  "gaia": 50,
+  "gaia": 100,
   "vatrius": 100,
   "jurgen": 100,
-  "fatum": 100,
+  "fatum": 75,
   "aethar": 100,
   "vario": 0,
+  "kiro": 100,
+  "golagore": 75,
+  "bambaa": 100,
+  "smok": 0,
+  "rin": 100,
+  "zinro": 50,
+  "xerxius": 100,
+  "ann": 75,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
   "aldor": 100,
-  "lei": 50,
+  "lei": 100,
   "ash": 100,
-  "driiar": 25,
+  "driiar": 75,
   "tenebris": 0
  }
 };
-const MATCHUPS_INFO = { fecha: '2026-11-10', duelos: 4 };
+const MATCHUPS_INFO = { fecha: '2026-11-23', duelos: 4 };
 
 // ===== sprites.js =====
 // =====================================================================
@@ -5898,6 +6596,267 @@ function halconSpr(tipo, frame = 0) {
   cacheHalcon.set(k, r); return r;
 }
 
+// Seba (22-11): Xerxius (Aliados) — mago druida: sombrero verde puntiagudo con ramitas, barba blanca, túnica de hojas, cinturón con hebilla dorada; el báculo con gema dorada va aparte (render)
+// Seba (22-11): Ann (Renegados) — pelo negro largo, cofia de encaje, ojos morados, vestido azul de servicio con delantal crema y lazo morado; el paraguas va aparte (render)
+Object.assign(CAPAS, {
+  cuerpoXerxius: L({
+    0: '.........k..........',
+    1: '........kGk.........',
+    2: '.......kGGk.........',
+    3: '......kGGGk.........',
+    4: '.....kGlGGGk........',
+    5: '....kGGlGGlGk.......',
+    6: '...kGGGGGGGGGk......',
+    7: '.kkGGGGlGGGGGGkk....',
+    8: 'kgGGGGGGGGGGGGGGgk..',
+    9: '....kPpkpppPk.......',
+    10: '...kPPpppppPPk......',
+    11: '...kqPPqqqPPqk......',
+    12: '..lkqqqPqqqqqkl.....',
+    13: '.lGkkqqqqqqqkkGl.pk.',
+    14: 'GGlGGGkqqqkGGlGGGk..',
+    15: 'gGGGwwwwOwwwGGGgG...',
+    16: '.gGlGGGwGGGlGwWg....',
+    17: '.gGGGlGGGGGGGWWg....',
+    18: '..glGGgGGGGGlGg.....',
+    19: '...gGGGg..GGGg......',
+    20: '....WWW...WWW.......',
+    21: '...kWWWk..WWWk......',
+  }),
+  cuerpoAnn: L({
+    0: '.......kkkkk.k......',
+    1: '......kqPqPqkDk.....',
+    2: '.....kqkkkkkqkIk....',
+    3: '....knnnnnnnnnk.....',
+    4: '...knnDnnnnnDnnk....',
+    5: '..knnDnnnqnnqnnk....',
+    6: '..knDnnkqqqqqqnk....',
+    7: '..knnnkqIDqqIDqk....',
+    8: '.knnnnkqpqRqpk......',
+    9: '.knDnnnkqqqqk.......',
+    10: 'knnnnkBkqDIDqkBk....',
+    11: 'knnDkcBBkqDqkBBck...',
+    12: 'knnkqBBBBqOqBBBBqk..',
+    13: '.knkbBBBbPqPbBBBbk..',
+    14: '.knkbBBBqqOqqBBBbk..',
+    15: '...kpbBBqqqqqBBbpk..',
+    16: '..kbbBBBqPqPqBBBbk..',
+    17: '.kbBBcBBqqqqqBBcBBk.',
+    18: '.kbBBBBBPqPqPBBBBBk.',
+    19: '.kqPqPqPqPqPqPqPqPqk',
+    20: '..kkknnnnk.knnnnkkk.',
+    21: '....knOnk...knOnk...',
+  }),
+});
+Object.assign(APARIENCIA, {
+  xerxius: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoXerxius'], ['cuerpoXerxius']], cabeza: [[], []] },
+  ann: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoAnn'], ['cuerpoAnn']], cabeza: [[], []] },
+});
+Object.assign(GLIFOS, {
+  blastXerxius:  ['...l.l...', '..lGyGl..', '.lG...Gl.', 'lG.yyy.Gl', '.G.yOy.G.', 'lG.yyy.Gl', '.lG...Gl.', '..lGyGl..', '...l.l...'],
+  enredoXerxius: ['.........', '.w...w...', '..w.w..w.', 'G..w..w..', '.GwGw.w.G', '..wGwGw..', '.wGwGwGw.', 'wwwwwwwww', '.........'],
+  naturaXerxius: ['...lll...', '..lGGGl..', '.lGyyyGl.', 'lGyOOOyGl', 'lGyOqOyGl', 'lGyOOOyGl', '.lGyyyGl.', '..lGGGl..', '...lll...'],
+  savia:         ['....l....', '...lGl...', '..lGGGl..', '..lGwGl..', '...lwl...', '....w....', '.q..w..q.', 'qqq.w.qqq', '.q.....q.'],
+  rafagaAnn:     ['.........', '..kBBk...', '.kBcBBk..', 'kBBBBBBk.', '...w..I.I', '...w.....', '...w...I.', '..ww.....', '.........'],
+  paraguasAnn:   ['..kkkkk..', '.kBBcBBk.', 'kBBBBBBBk', 'kBBcBcBBk', 'qkqkqkqkq', '....w....', '....w....', '....w.w..', '.....w...'],
+  tormentaAnn:   ['.kkkkkkk.', 'kBBBcBBBk', 'qkqkqkqkq', '..I...I..', '....w....', '.I..w..I.', '....w....', '..I.w.I..', '....ww...'],
+  duelo:         ['.........', 'I.......I', '.I.....I.', '..I...I..', '...I.I...', '....k....', '...I.I...', '..I...I..', '.k.....k.'],
+});
+Object.assign(FONDOS, { xerxius: ['G', 'y'], ann: ['B', 'I'] });
+Object.assign(ARMAS_SPR, {
+  baculoXerxius: { g: [2, 5], S: 39, rows: [
+    '..................', '..................', '..............kk..', '...........kkkyyk.',
+    '..........kWWkyOyk', 'wWwWWwWWWWWk.kyyk.', '..........kWWk.kk.', '...........kk.....',
+    '..................', '..................', '..................', '..................',
+  ] },
+  paraguasAnn: { g: [2, 5], S: 39, rows: [
+    '..................', '..................', '..........kkk.....', '.........kBBck.....',
+    '........kBBBBBk...', 'wWwwwwwwBBBBBBBkO.', '........kBBBBBk...', '.........kBBck.....',
+    '..........kkk.....', '..................', '..................', '..................',
+  ] },
+});
+const XERXIUS_GRANDE = [
+  [
+    '.........kk...........',
+    '........kGGk..........',
+    '.......kGGlk..........',
+    '......kGGGGk..........',
+    '.....kGlGGGGk.........',
+    '....kGGGGwGGk.........',
+    '....kGGlGGwlGk........',
+    '...kGGGGGGGGGGk.......',
+    '.kkGGGGlGGGGGGGkk.....',
+    'kgGGGGGGGGGGGGGGGgk...',
+    '.kkkkpppppppkkkkk.....',
+    '....kPpkppkpPk........',
+    '...kPPppppppPPk.......',
+    '...kqPPqqqqPPqk.......',
+    '..lkqqqPqqPqqqkl......',
+    '.lGkkqqqqqqqqkkGl.pk..',
+    'lGGGGkqqqPqqkGGGGlpk..',
+    'GGlGGGkqqqqkGGlGGGk...',
+    'gGGGwwwwOwwwwGGGgG....',
+    '.gGlGGGwGGGGlGwWg.....',
+    '.gGGGlGGGGlGGGWWg.....',
+    '..gGGGGGGGGGGGGg......',
+    '..glGGgGGGgGGlGg......',
+    '...gGGGg..gGGGg.......',
+    '....WWW....WWW........',
+    '...kWWWk..kWWWk.......',
+    '...kkkkk..kkkkk.......',
+  ],
+  [
+    '.........kk...........',
+    '........kGGk..........',
+    '.......kGGlk..........',
+    '......kGGGGk..........',
+    '.....kGlGGGGk.........',
+    '....kGGGGwGGk.........',
+    '....kGGlGGwlGk........',
+    '...kGGGGGGGGGGk.......',
+    '.kkGGGGlGGGGGGGkk.....',
+    'kgGGGGGGGGGGGGGGGgk...',
+    '.kkkkpppppppkkkkk.....',
+    '....kPpkppkpPk........',
+    '...kPPppppppPPk.......',
+    '...kqPPqqqqPPqk.......',
+    '..lkqqqPqqPqqqkl......',
+    '.lGkkqqqqqqqqkkGl.pk..',
+    'lGGGGkqqqPqqkGGGGlpk..',
+    'GGlGGGkqqqqkGGlGGGk...',
+    'gGGGwwwwOwwwwGGGgG....',
+    '.gGlGGGwGGGGlGwWg.....',
+    '.gGGGlGGGGlGGGWWg.....',
+    '..gGGGGGGGGGGGGg......',
+    '..glGGgGGGgGGlGg......',
+    '..gGGGg....gGGGg......',
+    '...WWW......WWW.......',
+    '..kWWWk....kWWWk......',
+    '..kkkkk....kkkkk......',
+  ],
+  [
+    '.........kk...........',
+    '........kGGk..........',
+    '.......kGGlk..........',
+    '......kGGGGk..........',
+    '.....kGlGGGGk.........',
+    '....kGGGGwGGk.........',
+    '....kGGlGGwlGk........',
+    '...kGGGGGGGGGGk.......',
+    '.kkGGGGlGGGGGGGkk.....',
+    'kgGGGGGGGGGGGGGGGgk...',
+    '.kkkkpppppppkkkkk.....',
+    '....kPpkppkpPk........',
+    '...kPPppppppPPk.......',
+    '...kqPPqqqqPPqk.......',
+    '..lkqqqPqqPqqqkl......',
+    '.lGkkqqqqqqqqkkGl.pk..',
+    'lGGGGkqqqPqqkGGGGlpk..',
+    'GGlGGGkqqqqkGGlGGGk...',
+    'gGGGwwwwOwwwwGGGgG....',
+    '.gGlGGGwGGGGlGwWg.....',
+    '.gGGGlGGGGlGGGWWg.....',
+    '..gGGGGGGGGGGGGg......',
+    '..glGGgGGGgGGlGg......',
+    '....gGGGggGGGg........',
+    '.....WWWWWWW..........',
+    '....kWWWkWWWk.........',
+    '....kkkkkkkkk.........',
+  ],
+];
+const ANN_GRANDE = [   // Seba (23-11 r2): mechones con brillo morado, ojos con brillo, vestido con sombras y luces, delantal con pliegues, encaje y botas con hebilla
+  [
+    '.......kkkkk.k......',
+    '......kqPqPqkDk.....',
+    '.....kqkkkkkqkIk....',
+    '....knnnnnnnnnk.....',
+    '...knnDnnnnnDnnk....',
+    '..knnDnnnqnnqnnk....',
+    '..knDnnkqqqqqqnk....',
+    '..knnnkqIDqqIDqk....',
+    '.knnDnkqqqqqqqk.....',
+    '.knnnnkqpqRqpk......',
+    '.knDnnnkqqqqk.......',
+    'knnnnkBkqDIDqkBk....',
+    'knnDkcBBkqDqkBBck...',
+    'knnkqBBBBqOqBBBBqk..',
+    '.knkbBBBbPqPbBBBbk..',
+    '.knkbBBBqqOqqBBBbk..',
+    '..kqkbBBqPqPqBBkqk..',
+    '...kpbBBqqqqqBBbpk..',
+    '..kbbBBBqPqPqBBBbk..',
+    '.kbBBcBBqqqqqBBcBBk.',
+    '.kbBBBBBPqPqPBBBBBk.',
+    '.kqPqPqPqPqPqPqPqPqk',
+    '..kkknnnnk.knnnnkkk.',
+    '....knOnk...knOnk...',
+    '....kkkkk...kkkkk...',
+  ],
+  [
+    '.......kkkkk.k......',
+    '......kqPqPqkDk.....',
+    '.....kqkkkkkqkIk....',
+    '....knnnnnnnnnk.....',
+    '...knnDnnnnnDnnk....',
+    '..knnDnnnqnnqnnk....',
+    '..knDnnkqqqqqqnk....',
+    '..knnnkqIDqqIDqk....',
+    '.knnDnkqqqqqqqk.....',
+    '.knnnnkqpqRqpk......',
+    '.knDnnnkqqqqk.......',
+    'knnnnkBkqDIDqkBk....',
+    'knnDkcBBkqDqkBBck...',
+    'knnkqBBBBqOqBBBBqk..',
+    '.knkbBBBbPqPbBBBbk..',
+    '.knkbBBBqqOqqBBBbk..',
+    '..kqkbBBqPqPqBBkqk..',
+    '...kpbBBqqqqqBBbpk..',
+    '..kbbBBBqPqPqBBBbk..',
+    '.kbBBcBBqqqqqBBcBBk.',
+    '.kbBBBBBPqPqPBBBBBk.',
+    '.kqPqPqPqPqPqPqPqPqk',
+    '...knnnnk...knnnnk..',
+    '...knOnk.....knOnk..',
+    '...kkkkk.....kkkkk..',
+  ],
+  [
+    '.......kkkkk.k......',
+    '......kqPqPqkDk.....',
+    '.....kqkkkkkqkIk....',
+    '....knnnnnnnnnk.....',
+    '...knnDnnnnnDnnk....',
+    '..knnDnnnqnnqnnk....',
+    '..knDnnkqqqqqqnk....',
+    '..knnnkqIDqqIDqk....',
+    '.knnDnkqqqqqqqk.....',
+    '.knnnnkqpqRqpk......',
+    '.knDnnnkqqqqk.......',
+    'knnnnkBkqDIDqkBk....',
+    'knnDkcBBkqDqkBBck...',
+    'knnkqBBBBqOqBBBBqk..',
+    '.knkbBBBbPqPbBBBbk..',
+    '.knkbBBBqqOqqBBBbk..',
+    '..kqkbBBqPqPqBBkqk..',
+    '...kpbBBqqqqqBBbpk..',
+    '..kbbBBBqPqPqBBBbk..',
+    '.kbBBcBBqqqqqBBcBBk.',
+    '.kbBBBBBPqPqPBBBBBk.',
+    '.kqPqPqPqPqPqPqPqPqk',
+    '....kknnnnkknnnnk...',
+    '......knOnkknOnk....',
+    '......kkkkkkkkkk....',
+  ],
+];
+const cacheXA = new Map();
+function xerxiusGrande(frame) { return grandeDe('x' + frame, 22, 27, XERXIUS_GRANDE[frame]); }
+function annGrande(frame) { return grandeDe('a' + frame, 20, 25, ANN_GRANDE[frame]); }
+function grandeDe(k, W, H, F) {
+  if (cacheXA.has(k)) return cacheXA.get(k);
+  const m = matrizVacia(W, H); pintar(m, F);
+  const der = aCanvas(contornear(m)), r = { der, izq: espejo(der) };
+  cacheXA.set(k, r); return r;
+}
+
 // Seba (16-11): Smok — sombra humanoide, mitad humo (Errantes); no se distingue nada más que los ojos (cian). El humo que se desprende se dibuja en render.
 Object.assign(CAPAS, {
   cuerpoSmok: L({
@@ -6539,7 +7498,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso', 'canalDanza'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso', 'canalDanza', 'canalNatura', 'canalAnn'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 // Seba (09-11): proyectiles que atraviesan el muro de Aldor (magia y lo que vuela). Todo lo demás (físico) se frena.
 // Fatum entero, sombra de Karilthal, orbes de Monh, Rasho, runas de Æthar, orbe de Driiar, corazones de Vario (C) y lo de las ultis.
@@ -6586,7 +7545,7 @@ class Game {
   constructor() {
     this.players = new Map();
     this.units = [];
-    this.projectiles = [];
+    this.projectiles = []; this.gotasAnn = [];
     this.events = [];
     this.phase = 'lobby';
     this.timer = 0;
@@ -6694,7 +7653,7 @@ class Game {
     this.phase = 'lobby'; this.winner = null; this.results = null; this.pausa = false;
     if (this.marcador) this.marcador = { A: 0, B: 0 };
     this.equipoGanador = null;
-    this.projectiles = []; this.units = []; this.zones = []; this.events = [];
+    this.projectiles = []; this.units = []; this.gotasAnn = []; this.zones = []; this.events = [];
     // Seba (10-11, V5.7): la revancha parte de cero — se borra todo lo que quedó de la partida anterior (cargas de pasivas, efectos, fuegos, dagas, contadores)
     const BASE = ['id', 'name', 'bot', 'colorIdx', 'connected', 'ack', 'input', 'seen', 'seenD', 'lives', 'puntos', 'build', 'st'];
     for (const p of this.players.values()) {
@@ -6807,7 +7766,7 @@ class Game {
     this.round++;
     this.phase = 'mejoras';
     this.timer = CONFIG.TIEMPO_MEJORAS;
-    this.projectiles = []; this.units = []; this.zones = [];
+    this.projectiles = []; this.units = []; this.gotasAnn = []; this.zones = [];
     for (const p of this.activePlayers()) {
       p.ready = false; p.alive = false;
       if (p.bot) { botMejoras(this, p); p.ready = true; }
@@ -6863,7 +7822,7 @@ class Game {
       p.cd = [0, 0, 0, CONFIG.ULTI_INICIO || 0, 0];   // Seba (28-10): ulti en espera 45 s al empezar
       p.ultiAvisada = false;
       p.habCargas = {};   // Torreta: parte con sus 2 cargas
-      p.halconZ = null; p.picadaZ = null; p.trampasZ = null;   // Zinro: nada pendiente al empezar
+      p.halconZ = null; p.picadaZ = null; p.trampasZ = null; p.annBuff = 0;   // Zinro: nada pendiente al empezar
       p.fx = {}; p.sedZeal = 0; p.sedCd = 0; p.gotasZeal = null; p.colaGota = null; p.golpesAldor = 0; p.relojFuegoGol = null;   // Zeal: la Sed arcana parte de cero cada ronda
       p.kbx = p.kby = 0;
       p.hidden = false; p.revelado = 0;
@@ -6875,7 +7834,7 @@ class Game {
       p.seenD = p.input.d; p.disparo = null;
       p.sincronizar = true;   // el primer input de la partida solo fija los contadores (no dispara ni lanza nada)
     });
-    this.projectiles = []; this.units = []; this.zones = []; this.events = [];   // Seba (05-11): el mapa se limpia cada ronda (dagas clavadas, zonas, sellos...)
+    this.projectiles = []; this.units = []; this.gotasAnn = []; this.zones = []; this.events = [];   // Seba (05-11): el mapa se limpia cada ronda (dagas clavadas, zonas, sellos...)
     this.iniciarVolcan();   // Seba (13-11): jefe del centro del Volcán
     if (this.modo === 'entreno') this.crearMunecos();
     this.deathOrder = [];
@@ -7044,6 +8003,7 @@ class Game {
     }   // Seba (31-10): se quitó el +50% de daño de Kazaro durante la Llama (resto de la ulti antigua; `extra` ahora es el +50% de fuego por héroe extra en la arena)
     if (esJugador && target.fx && target.fx.cucko) amt *= CONFIG.CUCKO.buff.recibe;
     if (esJugador && target.fx && this.presaZinro(target)) amt *= 1 + PASIVAS.presaZinro.extra;   // Zinro: presa acorralada (+2% bajo control, no se acumula)   // Zizzer: cerca de un espantapájaros, +20% de todas las fuentes
+    if (esJugador && HEROES[target.build?.heroe]?.pasiva === 'duelo' && this.enDuelo(target)) amt *= 1 - PASIVAS.duelo.reduce;   // Ann: 1 contra 1, −5%   // Zinro: presa acorralada (+2% bajo control, no se acumula)   // Zizzer: cerca de un espantapájaros, +20% de todas las fuentes
     if (esJugador && target.fx && target.fx.enTela) amt *= 1 - target.fx.enTela.buff;   // Aracnida sobre su tela
     if (o.basico && src && !src.esUnidad && src.fx) {   // Fatum: Distancia maldita (+5 desde el 85% del alcance) y furia del Pozo Maldito
       const hf = HEROES[src.build?.heroe];
@@ -7146,6 +8106,7 @@ class Game {
     p.hp = Math.min(max, p.hp + amt);
     if (p.esUnidad) return;
     p.curaAcum = (p.curaAcum || 0) + (p.hp - antes);
+    if (!this._savia) this.saviaXerxius(p, p.hp - antes);   // Xerxius: recupera el 5% de lo que se cure su aliado más cercano
     if (sanador && !sanador.esUnidad) { this.sumarStat(sanador, sanador === p ? 'curaPropia' : 'curaAliados', p.hp - antes); sanador.curaHecha = (sanador.curaHecha || 0) + (p.hp - antes); }
   }
 
@@ -7208,6 +8169,7 @@ class Game {
     if ((key === 'aturdido' || key === 'silence') && t.fx.canalGolagore) this.explotaGolagore(t);   // Golagore (C): aturdido o silencio hacen explotar el Núcleo antes
     if (key === 'aturdido' && t.fx.cargaGolagore) { const sl = (HEROES[t.build?.heroe]?.habs || []).indexOf('cargaGolagore'); if (sl >= 0 && t.cd) t.cd[sl + 1] *= 1 - HABILIDADES.cargaGolagore.devuelve; delete t.fx.cargaGolagore;   /* Seba (13-11, V7.5): aturdido en la carga → recupera 50% de la recarga */ this.emit({ k: 'chocaGolagore', x: t.x | 0, y: t.y | 0 }); }   // Golagore (C): un aturdido corta la Embestida (sin golpe)
     if (t.fx.saltoGol && CONTROL.has(key)) return;   // Golagore (C): en el aire no le afecta el control
+    if ((key === 'aturdido' || key === 'silence' || key === 'encantado') && t.fx.canalBlast) { const z = t.fx.canalBlast.zona; if (z) { z.cancelado = true; z.t = 0; } delete t.fx.canalBlast; }   // Xerxius: se corta el Estallido   // Golagore (C): aturdido o silencio hacen explotar el Núcleo antes
     if (t.fx && t.fx.hundidoSmok && (CONTROL.has(key) || key === 'dot' || key === 'burn' || key === 'confusoKiro')) return;   // Smok hundido (C)   // Golagore (C): en el aire no le afecta el control
     if ((CONTROL.has(key) || key === 'confusoKiro') && val && val.t && !t.esUnidad && HEROES[t.build?.heroe]?.pasiva === 'amuletosBambaa') val = { ...val, t: val.t * (1 - PASIVAS.amuletosBambaa.red) };   // Bambaa: Amuletos viejos, −5% de control
     const canal = (key === 'aturdido' || key === 'silence' || key === 'encantado') && (CANALES.find(k => k !== 'embateGiro' && t.fx[k]) || null);
@@ -7600,6 +8562,36 @@ class Game {
     const habs = HEROES[p.build.heroe].habs;
     for (let i = 1; i < p.cd.length; i++) if (p.cd[i] > 0 && !HABILIDADES[habs[i - 1]]?.ulti) p.cd[i] = Math.max(0, p.cd[i] - PASIVAS.ecosSmok.reduce);   // Seba (16-11): no la ulti
     this.emit({ k: 'ecoSmok', x: clon.x | 0, y: clon.y | 0, id: p.id });
+  }
+  // Ann: ¿hay un solo héroe enemigo cerca? (pasiva 1 contra 1)
+  enDuelo(p) {
+    let n = 0; for (const q of this.jugadoresEnemigos(p.id)) if (q.alive && dist(q, p) <= PASIVAS.duelo.radio) n++;
+    return n === 1;
+  }
+  // Xerxius: savia compartida — si el aliado más cercano (dentro del radio) se cura, Xerxius recupera el 5%
+  saviaXerxius(t, curado) {
+    if (t.esUnidad || curado <= 0) return;
+    for (const x of this.players.values()) {
+      if (x === t || !x.alive || HEROES[x.build?.heroe]?.pasiva !== 'savia' || this.teamOf(x.id) !== this.teamOf(t.id)) continue;
+      let cerca = null, bd = PASIVAS.savia.radio + CONFIG.RADIO_JUGADOR;
+      for (const q of this.players.values()) if (q !== x && q.alive && this.teamOf(q.id) === this.teamOf(x.id)) { const d = dist(q, x); if (d <= bd) { bd = d; cerca = q; } }
+      if (cerca !== t) continue;
+      this._savia = true; this.heal(x, curado * PASIVAS.savia.parte, x); this._savia = false;
+      this.emit({ k: 'saviaXerxius', x: x.x | 0, y: x.y | 0, x2: t.x | 0, y2: t.y | 0 });
+    }
+  }
+  // Ann: ¿el paraguas abierto de un enemigo frena este proyectil? (los de ultis pasan)
+  paraguasBloquea(pr) {
+    if (pr.deUlti) return false;
+    const H = HABILIDADES.paraguasAnn;
+    for (const q of this.players.values()) {
+      const f = q.fx && q.fx.paraguasAnn; if (!f || !q.alive || this.teamOf(q.id) === this.teamOf(pr.owner)) continue;
+      // la cúpula está delante de Ann, al final del mango
+      const dx = pr.x - q.x, dy = pr.y - q.y, ca = Math.cos(f.a), sa = Math.sin(f.a), u = dx * ca + dy * sa, v = -dx * sa + dy * ca, r = pr.radio || 4;
+      if (u < H.mango * 0.5 - r || u > H.mango + H.radio * 0.7 + r || Math.abs(v) > H.radio + r) continue;
+      return true;
+    }
+    return false;
   }
   // Seba (22-11): habilidades que se pueden volver a apretar (no se muestran en recarga hasta que ya no se pueda)
   recastMask(p) {
@@ -8333,6 +9325,8 @@ class Game {
   velocidadDe(p) {
     if (!p.fx.aturdido && p.fx.cargaGolagore) return this.velocidadBase(p) * (1 + HABILIDADES.cargaGolagore.vel);   // Golagore: Embestida +20%
     if (p.fx.saltoGol) return 0;   // Golagore: en el aire lo mueve el salto
+    if (p.fx.enredado || p.fx.saltoAnn) return 0;   // Xerxius: enredado en las raíces   // Ann: en el aire la mueve el salto
+    if (!p.fx.aturdido && p.fx.rafagaAnn) return this.velocidadBase(p) * (1 + HABILIDADES.rafagaAnn.prisa);   // Ann: +33% en la ráfaga
     if (p.fx.canalOcaso) return 0;
     if (p.fx.dashRin) return 0;   // Rin: la mueve el dash
     if (!p.fx.aturdido && p.fx.hundidoSmok) return this.velocidadBase(p) * (1 + HABILIDADES.hundidoSmok.vel);   // Smok hundido: +15%
@@ -8382,6 +9376,7 @@ class Game {
   }
 
   basicAttack(p, ang = null, dd = null) {
+    if (p.fx.canalBlast || p.fx.rafagaAnn || p.fx.saltoAnn) return;   // Xerxius canalizando / Ann en la ráfaga o saltando: sin básicos
     if (p.esMuneco) return;
     if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol || p.fx.hundidoSmok || p.fx.dashRin) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
     const at = p.st.ataque;
@@ -8508,6 +9503,7 @@ class Game {
     // Kiro: atacar lo revela en el pozo (vuelve a esperar 0,75 s) y gasta un golpe de la Tormenta de arena (aunque falle)
     p.kiroOculto = 0;
     p._kiroUlti = 0;
+    if (p.annBuff && this.combatTime >= p.annBuff && this.combatTime <= p.annBuff + HABILIDADES.paraguasAnn.buff) { p.annBuff = 0; dmg += HABILIDADES.paraguasAnn.extra; this.emit({ k: 'annGolpeFuerte', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) }); }   // Ann: tras el paraguas, +25
     if (p.kiroEmbos) { p.kiroEmbos = false; dmg += HABILIDADES.pozoArena.emboscada; this.emit({ k: 'emboscadaKiro', x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) }); }   // Kiro: emboscada desde el pozo (se gasta aunque falle)
     if (p.fx && p.fx.tormentaKiro) {
       const v = p.fx.tormentaKiro; v.golpe++; p._kiroUlti = v.golpe;
@@ -8919,7 +9915,7 @@ class Game {
       if (key !== 'nephilim') this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'SELLADA', id: p.id });
       return;
     }
-    if (p.cd[slot + 1] > 0 || p.fx.silence || p.fx.aturdido || canalizando(p.fx) || p.fx.canalLluvia || p.fx.renacer) return;
+    if (p.cd[slot + 1] > 0 || p.fx.silence || p.fx.aturdido || canalizando(p.fx) || p.fx.canalLluvia || p.fx.renacer || p.fx.canalBlast || p.fx.rafagaAnn || p.fx.saltoAnn) return;
     // Aracnida: la mordida necesita un héroe enemigo cerca (si no, no se gasta)
     if (key === 'mordida') {
       if (p.ulti < 1) return;
@@ -9397,6 +10393,122 @@ class Game {
           } };
         this.zones.push(z);
         this.emit({ k: 'danzaRin', x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'blastXerxius': {   // Xerxius: canaliza 0,75 s caminando (báculo en alto) y estalla en el punto
+        let c;
+        if (this._apunte) { const d = this.distApunte(h.alcance); c = { x: p.x + Math.cos(this._apunte.a) * d, y: p.y + Math.sin(this._apunte.a) * d }; }
+        else { const t = this.target(p, h.alcance); c = t ? { x: t.x, y: t.y } : { x: p.x + Math.cos(p.facing) * h.alcance * 0.6, y: p.y + Math.sin(p.facing) * h.alcance * 0.6 }; }
+        this.clampWall(c); p.facing = Math.atan2(c.y - p.y, c.x - p.x);
+        const z = { id: this.nextId++, kind: 'blastXerxius', x: c.x, y: c.y, r: h.radio, t: h.canal, total: h.canal, owner: p.id,
+          tick: (z) => { if (!p.alive) { z.cancelado = true; z.done = true; } },
+          fin: (z) => {
+            delete p.fx.canalBlast; if (z.cancelado) return;
+            for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              if (dist(e, z) <= h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) this.damage(e, h.dano, p, { tipo: 'mag', desde: z });
+            }
+            this.emit({ k: 'blastXerxius', x: z.x | 0, y: z.y | 0, r: h.radio });
+          } };
+        this.zones.push(z); this.aplicarEfecto(p, 'canalBlast', { t: h.canal + 0.05, zona: z });
+        break;
+      }
+      case 'enredoXerxius': {   // Xerxius: raíces — tras 0,5 s detienen 1 s a quien está o entra; 75 al terminar
+        let c;
+        if (this._apunte) { const d = this.distApunte(h.alcance); c = { x: p.x + Math.cos(this._apunte.a) * d, y: p.y + Math.sin(this._apunte.a) * d }; }
+        else { const t = this.target(p, h.alcance); c = t ? { x: t.x, y: t.y } : { x: p.x + Math.cos(p.facing) * h.alcance * 0.6, y: p.y + Math.sin(p.facing) * h.alcance * 0.6 }; }
+        this.clampWall(c);
+        const dentro = new Set();
+        this.zones.push({ id: this.nextId++, kind: 'enredoXerxius', x: c.x, y: c.y, r: h.radio, t: h.espera + h.dur, total: h.espera + h.dur, owner: p.id, w: 0, e: 0,
+          tick: (z, dt) => {
+            z.e += dt; if (z.e < h.espera) return;
+            if (!z.w) { z.w = 1; this.emit({ k: 'brotanRaices', x: z.x | 0, y: z.y | 0, r: h.radio }); }
+            for (const e of this.jugadoresEnemigos(p.id)) {
+              if (!e.alive) continue;
+              const ins = dist(e, z) <= h.radio + CONFIG.RADIO_JUGADOR * 0.5;
+              if (ins && !dentro.has(e.id)) { dentro.add(e.id); this.aplicarEfecto(e, 'enredado', { t: h.detiene }); this.emit({ k: 'enreda', x: e.x | 0, y: e.y | 0 }); }
+              if (!ins) dentro.delete(e.id);
+            }
+          },
+          fin: (z) => {
+            for (const e of this.enemigos(p.id, false)) {
+              if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+              if (dist(e, z) <= h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR) * 0.5) this.damage(e, h.dano, p, { tipo: 'mag', desde: z });
+            }
+            this.emit({ k: 'raicesEstallan', x: z.x | 0, y: z.y | 0, r: h.radio });
+          } });
+        break;
+      }
+      case 'naturaXerxius': {   // Xerxius: canaliza 1,5 s (sello vertical) y dispara la esfera que cruza el mapa
+        const { a } = this.aim(p, h.alcance); p.facing = a; p.disparo = null;
+        const z = { id: this.nextId++, kind: 'naturaCanal', x: p.x, y: p.y, r: 20, t: h.canal, total: h.canal, owner: p.id, a, sigue: p,
+          fin: (z) => {
+            if (z.cancelado || !p.alive) return;
+            const ca = Math.cos(z.a), sa = Math.sin(z.a), tocados = new Set();
+            this.zones.push({ id: this.nextId++, kind: 'naturaOrbe', x: p.x + ca * 20, y: p.y + sa * 20, r: h.radio, t: h.alcance / h.vel, total: h.alcance / h.vel, owner: p.id, a: z.a,
+              tick: (o, dt) => {
+                o.x += ca * h.vel * dt; o.y += sa * h.vel * dt;
+                if (Math.hypot(o.x, o.y) > CONFIG.RADIO_ARENA + 60) { o.done = true; return; }   // cruza todo el mapa
+                for (const e of this.enemigos(p.id, false)) {
+                  if (tocados.has(e.id) || !e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+                  if (dist(e, o) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+                  tocados.add(e.id); this.damage(e, h.dano, p, { tipo: 'mag', ulti: true, desde: o }); this.emit({ k: 'naturaToca', x: e.x | 0, y: e.y | 0 });
+                }
+                for (const q of this.players.values()) {
+                  if (q === p || tocados.has(q.id) || !q.alive || this.teamOf(q.id) !== this.teamOf(p.id)) continue;   // (C) no se escuda a sí mismo
+                  if (dist(q, o) > h.radio + CONFIG.RADIO_JUGADOR) continue;
+                  tocados.add(q.id); this.sumaEscudoZel(q, h.escudo, h.escudoDur); this.emit({ k: 'naturaEscudo', x: q.x | 0, y: q.y | 0 });
+                }
+              } });
+            this.emit({ k: 'naturaSale', x: p.x | 0, y: p.y | 0, a: +z.a.toFixed(2) });
+          } };
+        this.zones.push(z); this.aplicarEfecto(p, 'canalNatura', { t: h.canal + 0.05, zona: z });
+        break;
+      }
+      case 'rafagaAnn': {   // Ann: ráfaga en línea hacia donde apunta; +33% de velocidad
+        const { a } = this.aim(p, h.alcance); p.facing = a; p.disparo = null;
+        this.aplicarEfecto(p, 'rafagaAnn', { t: h.dur, e: 0, acc: 0.6, a });
+        this.emit({ k: 'giroAnn', id: p.id, x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'paraguasAnn': {   // Ann: paraguas grande 3 s que la sigue y gira hacia donde apunta; al terminar, el siguiente básico +25
+        const { a } = this.aim(p, 60); p.facing = a;
+        this.aplicarEfecto(p, 'paraguasAnn', { t: h.dur, a });
+        this.sumaEscudoZel(p, h.escudo, h.dur);   // escudo de 75 que se pierde al terminar
+        p.annBuff = this.combatTime + h.dur;
+        this.emit({ k: 'abreParaguas', id: p.id, x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'tormentaAnn': {   // Ann: canaliza 0,5 s y salta bajo el paraguas con lluvia
+        let c;
+        if (this._apunte) { const d = this.distApunte(h.alcance); c = { x: p.x + Math.cos(this._apunte.a) * d, y: p.y + Math.sin(this._apunte.a) * d }; }
+        else { const t = this.target(p, h.alcance); c = t ? { x: t.x, y: t.y } : { x: p.x + Math.cos(p.facing) * h.alcance, y: p.y + Math.sin(p.facing) * h.alcance }; }
+        this.clampWall(c);
+        const z = { id: this.nextId++, kind: 'tormentaCanal', x: p.x, y: p.y, r: 30, t: h.canal, total: h.canal, owner: p.id, ox: c.x, oy: c.y,
+          fin: (z) => {
+            if (z.cancelado || !p.alive) return;
+            this.aplicarEfecto(p, 'saltoAnn', { t: h.vuelo + 1, x0: p.x, y0: p.y, x1: z.ox, y1: z.oy, T: h.vuelo, e: 0, gota: 0 });
+            // Seba (23-11): las gotas caen con retraso por donde pasó; (r4) cada tramo sigue lloviendo 1,5 s más
+            const camino = []; let gota = 0;
+            this.zones.push({ id: this.nextId++, kind: 'lluviaAnn', x: p.x, y: p.y, r: h.area, t: h.vuelo + h.estela + h.sigue + 0.5, total: h.vuelo + h.estela + h.sigue + 0.5, owner: p.id,
+              tick: (zl, dt) => {
+                if (p.fx.saltoAnn) camino.push({ x: p.x, y: p.y, t: this.combatTime });
+                const vivos = camino.filter(c => this.combatTime - c.t <= h.estela + h.sigue);
+                if (!vivos.length) { if (!p.fx.saltoAnn) zl.done = true; return; }
+                zl.x = vivos[0].x; zl.y = vivos[0].y; zl.ox = vivos[vivos.length - 1].x; zl.oy = vivos[vivos.length - 1].y;   // tramo donde llueve (para el aura)
+                const largo = Math.hypot(vivos[0].x - vivos[vivos.length - 1].x, vivos[0].y - vivos[vivos.length - 1].y);
+                gota -= dt * Math.max(1, largo / 150);
+                while (gota <= 0) {
+                  gota += h.gotaCada;
+                  const c = vivos[Math.floor(Math.random() * vivos.length)], b = Math.random() * TAU, d = Math.sqrt(Math.random()) * h.area;
+                  const gx = c.x + Math.cos(b) * d, gy = c.y + Math.sin(b) * d;
+                  this.gotasAnn.push({ owner: p.id, x: gx, y: gy, cae: this.combatTime + h.gotaRetraso });
+                  this.emit({ k: 'gotaAnn', x: gx | 0, y: gy | 0 });
+                }
+              } });
+            this.emit({ k: 'saltaAnn', id: p.id, x: p.x | 0, y: p.y | 0, x2: z.ox | 0, y2: z.oy | 0 });
+          } };
+        this.zones.push(z); this.aplicarEfecto(p, 'canalAnn', { t: h.canal + 0.05, zona: z });
         break;
       }
       case 'voleaZinro': {   // Zinro: boleadora
@@ -10440,6 +11552,24 @@ class Game {
 
   // ================================================================ unidades
   updateUnits(dt) {
+    // Ann: gotas de la Tormenta que caen con retraso
+    if (this.gotasAnn && this.gotasAnn.length) {
+      const H = HABILIDADES.tormentaAnn, quedan = [];
+      for (const gt of this.gotasAnn) {
+        if (gt.cae > this.combatTime) { quedan.push(gt); continue; }
+        const p = this.players.get(gt.owner); if (!p) continue;
+        for (const e of this.enemigos(p.id, false)) {
+          if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (Math.hypot(e.x - gt.x, e.y - gt.y) > H.gotaRadio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR) * 0.5) continue;
+          this.damage(e, H.gotaDano, p, { tipo: 'mag', ulti: true });
+          if (e.alive && !e.esUnidad) {
+            const L = e.lluviaAnn && this.combatTime - e.lluviaAnn.t < H.lentoDur ? e.lluviaAnn.n + 1 : 1; e.lluviaAnn = { n: L, t: this.combatTime };
+            this.aplicarEfecto(e, 'slow', { t: H.lentoDur, mult: 1 - Math.min(H.lentoTope, L * H.lento), k: 'tormentaAnn' });
+          }
+        }
+      }
+      this.gotasAnn = quedan;
+    }
     // Zinro: trampas del Cazador maestro
     for (const p of this.players.values()) if (p.trampasZ && this.combatTime >= p.trampasZ.hasta) { const sl = p.trampasZ.slot; p.trampasZ = null; p.cd[sl + 1] = Math.min(p.cd[sl + 1], HABILIDADES.trampasZinro.cd); }
     for (const u of this.units) {
@@ -10883,7 +12013,7 @@ class Game {
       const x0 = p.x, y0 = p.y;
       p.x += (mx * v + p.kbx) * dt;
       p.y += (my * v + p.kby) * dt;
-      if (Math.hypot(mx, my) > 0.1 && p.cd[0] <= 0.05) p.facing = Math.atan2(my, mx);
+      if (Math.hypot(mx, my) > 0.1 && p.cd[0] <= 0.05 && !p.fx.rafagaAnn) p.facing = Math.atan2(my, mx);   // Ann: en la ráfaga mira fijo hacia donde apuntó
       const decay = Math.exp(-7 * dt);
       p.kbx *= decay; p.kby *= decay;
       this.clampWall(p);
@@ -11126,6 +12256,39 @@ class Game {
             this.damage(e, n.dano, p, { tipo: 'mag', desde: p });
             if (e.alive && e.fx) this.aplicarEfecto(e, 'slow', { t: n.lentoDur, mult: 1 - n.lento, k: 'mecha' });
           }
+        }
+      }
+      if (p.fx.paraguasAnn && Number.isFinite(p.input?.a)) p.fx.paraguasAnn.a = p.input.a;   // Ann: el paraguas gira hacia donde apunta
+      if (p.fx.rafagaAnn) {   // Ann (r4): el paraguas gira al frente cada vez más rápido y suelta estallidos (con láseres) hacia donde apunta; cada uno daña todo el rango
+        const v = p.fx.rafagaAnn, H = HABILIDADES.rafagaAnn; v.e += dt;
+        p.facing = v.a;   // Seba (23-11 r6): el paraguas manda — la dirección queda fija desde el casteo hasta el final (aunque camine)
+        const k = Math.min(1, v.e / H.dur), cad = H.cadIni + (H.cadFin - H.cadIni) * k;
+        v.acc += cad * dt;
+        while (v.acc >= 1) {
+          v.acc -= 1;
+          const ca = Math.cos(v.a), sa = Math.sin(v.a);
+          for (const e of this.enemigos(p.id, false)) {
+            if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+            const rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR, dx = e.x - p.x, dy = e.y - p.y, u = dx * ca + dy * sa, w = Math.abs(-dx * sa + dy * ca);
+            if (u < H.punta - rr || u > H.largo + rr || w > H.ancho / 2 + rr) continue;   // franja desde la punta del paraguas
+            this.damage(e, H.golpe, p, { tipo: 'mag', desde: { x: p.x + ca * H.punta, y: p.y + sa * H.punta } });
+          }
+          this.emit({ k: 'estallidoAnn', x: p.x | 0, y: p.y | 0, a: +v.a.toFixed(2), n: 1 + Math.round(k * 4), r: H.largo, w: H.ancho });
+        }
+      }
+      if (p.fx.saltoAnn) {   // Ann: salto bajo el paraguas con lluvia; al caer dispara de vuelta por el camino
+        const v = p.fx.saltoAnn, H = HABILIDADES.tormentaAnn; v.e += dt; const k = Math.min(1, v.e / v.T);
+        const q = { x: v.x0 + (v.x1 - v.x0) * k, y: v.y0 + (v.y1 - v.y0) * k }; this.clampWall(q); p.x = q.x; p.y = q.y; p.kbx = p.kby = 0;
+        if (v.e >= v.T) {
+          delete p.fx.saltoAnn;
+          const dx = v.x0 - p.x, dy = v.y0 - p.y, L = Math.hypot(dx, dy);
+          if (L > 10) {
+            this._enUlti = true;
+            this.spawnProj(p, Math.atan2(dy, dx), { vel: H.velFinal, alcance: L, radio: H.ancho / 2, dmg: H.dano, tipo: 'mag', spr: 'rayoAnn', deUlti: true });
+            this._enUlti = false;
+            const pr = this.projectiles[this.projectiles.length - 1]; pr.perfora = new Set();
+          }
+          this.emit({ k: 'aterrizaAnn', x: p.x | 0, y: p.y | 0 });
         }
       }
       if (p.fx.dashRin) {   // Rin: avance corto o salto hasta la marca / espada (la estocada ya golpeó al castear)
@@ -11479,6 +12642,7 @@ class Game {
       }
       const step = Math.hypot(pr.vx, pr.vy) * dt;
       const frena = this.frenaMuroAldor(pr, pr.x + pr.vx * dt, pr.y + pr.vy * dt);   // Aldor: su muro frena los proyectiles
+      if (this.paraguasBloquea(pr)) { pr.dead = true; this.emit({ k: 'paraguasBloquea', x: pr.x | 0, y: pr.y | 0 }); continue; }   // Ann: el paraguas abierto
       if (frena) {
         pr.dead = true;
         if (pr.efecto === 'pulso') {   // Seba (09-11): el orbe de Maidas estalla en el muro; los del otro lado no reciben la explosión
@@ -11704,7 +12868,7 @@ class Game {
     this.results = { round: this.round, list, ganador, marcador: { ...this.marcador }, meta: this.killsMeta(), porObjetivos: !!this.objGanador };
     this.resumenFinal = list;
     for (const p of this.players.values()) { p.alive = false; p.hidden = false; }
-    this.projectiles = []; this.units = []; this.zones = []; this.cucko = null;
+    this.projectiles = []; this.units = []; this.gotasAnn = []; this.zones = []; this.cucko = null;
     this.equipoGanador = ganador || 'empate';
     for (const p of this.players.values()) if (this.teamOf(p.id) !== this.equipoGanador) p.lives = 0;
     this.phase = 'results';
@@ -11732,7 +12896,7 @@ class Game {
       }),
     };
     for (const p of this.players.values()) { p.alive = false; p.hidden = false; }
-    this.projectiles = []; this.units = [];
+    this.projectiles = []; this.units = []; this.gotasAnn = [];
     this.phase = 'results';
     this.timer = CONFIG.TIEMPO_RESULTADOS;
     this.checkGameOver();
@@ -11821,7 +12985,9 @@ class Game {
         (fx.hundidoSmok ? 1 : 0) | (fx.ocaso ? 2 : 0) | (fx.ocaso && fx.ocaso.cerca ? 32 : 0) | (fx.ocaso && this.combatTime - (fx.ocaso.tg ?? -9) < 0.35 ? 64 : 0) | (fx.canalOcaso ? 4 : 0) | (fx.ocasoSmok ? 8 : 0) | (fx.confusoKiro && fx.confusoKiro.smok ? 16 : 0),   // Smok: 66 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
         (fx.dashRin ? 1 : 0) | (fx.canalDanza ? 2 : 0) | (fx.marcaRin ? 4 : 0) | (fx.dashRin && fx.dashRin.salto ? 8 : 0),   // Rin: 67 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
         (p.vistoHalcon > this.combatTime ? 1 : 0) | (fx.trampaZ ? 2 : 0) | (fx.voleaZ ? 4 : 0) | ((p.halconZ && !p.halconZ.done) || p.picadaZ ? 8 : 0) | (fx.cazaZinro ? 16 : 0) | ((p.trampasZ ? p.trampasZ.quedan : 0) << 5),
-        this.recastMask(p)]);   // 69: habilidades que se pueden volver a apretar ahora (bit por slot) — el HUD no las muestra en recarga   // Zinro: 68 bits (visto por el halcón 1, atrapado 2, atado 4, halcón fuera 8, +10% de caza 16)   // Zizzer: 66 bits (golpe de sombra listo 1, confundido por Zizzer 2, vulnerable por espantapájaros 4)   // Rin: 65 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        this.recastMask(p),   // 69: habilidades que se pueden volver a apretar ahora (bit por slot) — el HUD no las muestra en recarga   // Zinro: 68 bits (visto por el halcón 1, atrapado 2, atado 4, halcón fuera 8, +10% de caza 16)   // Zizzer: 66 bits (golpe de sombra listo 1, confundido por Zizzer 2, vulnerable por espantapájaros 4)   // Rin: 65 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        (fx.canalBlast ? 1 : 0) | (fx.canalNatura ? 2 : 0) | (fx.enredado ? 4 : 0) | (fx.rafagaAnn ? 8 : 0) | (fx.paraguasAnn ? 16 : 0) | (fx.saltoAnn ? 32 : 0) | (p.annBuff && this.combatTime >= p.annBuff && this.combatTime <= p.annBuff + 5 ? 64 : 0) | (fx.canalAnn ? 128 : 0) | (HEROES[p.build?.heroe]?.pasiva === 'duelo' && this.enDuelo(p) ? 256 : 0),   // 69: Xerxius / Ann
+        fx.paraguasAnn ? +fx.paraguasAnn.a.toFixed(2) : fx.rafagaAnn ? +fx.rafagaAnn.a.toFixed(2) : fx.saltoAnn ? +(fx.saltoAnn.e / fx.saltoAnn.T).toFixed(2) : fx.canalAnn ? +(1 - fx.canalAnn.t / (HABILIDADES.tormentaAnn.canal + 0.05)).toFixed(2) : 0]);   // 70: ángulo del paraguas / avance del salto   // 68: habilidades que se pueden volver a apretar ahora (bit por slot) — el HUD no las muestra en recarga   // Zinro: 67 bits (visto por el halcón 1, atrapado 2, atado 4, halcón fuera 8, +10% de caza 16)   // Zizzer: 66 bits (golpe de sombra listo 1, confundido por Zizzer 2, vulnerable por espantapájaros 4)   // Rin: 65 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -12081,6 +13247,12 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'trapRin': si = d < 240; break;
       case 'danzaRin': si = d < 70 && !target.esUnidad; break;
       case 'voleaZinro': si = d < 400; break;
+      case 'blastXerxius': si = d < 380; break;
+      case 'enredoXerxius': si = d < 380 && !target.esUnidad; break;
+      case 'naturaXerxius': si = d < 700 && !target.esUnidad; break;
+      case 'rafagaAnn': si = d < 120; break;
+      case 'paraguasAnn': si = d < 400 && !target.esUnidad; break;
+      case 'tormentaAnn': si = d < 420 && d > 120 && !target.esUnidad; break;
       case 'halconZinro': si = d < 450 && !target.esUnidad; break;
       case 'trampasZinro': si = d < 220 && !target.esUnidad; break;
       case 'esferaSmok': si = d < 300; break;
@@ -13673,7 +14845,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, zn: pb[68] || 0, rc: pb[69] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, zn: pb[68] || 0, rc: pb[69] || 0, xa: pb[70] || 0, xa2: pb[71] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -13949,7 +15121,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { boleaToca: 0.5, boleaAta: 0.5, lazoEstalla: 0.6, picadaHalcon: 0.7, chillido: 0.6, trampaZinro: 0.5, trampaSalta: 0.6, sueltaHalcon: 0.7, tiraBolea: 0.2, rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { estallidoAnn: 0.3, blastXerxius: 0.9, brotanRaices: 0.5, enreda: 0.5, raicesEstallan: 0.9, naturaToca: 0.6, naturaEscudo: 0.7, naturaSale: 0.5, saviaXerxius: 0.6, giroAnn: 0.3, abreParaguas: 0.4, paraguasBloquea: 0.35, saltaAnn: 0.4, gotaAnn: 0.55, aterrizaAnn: 0.5, annGolpeFuerte: 0.4, boleaToca: 0.5, boleaAta: 0.5, lazoEstalla: 0.6, picadaHalcon: 0.7, chillido: 0.6, trampaZinro: 0.5, trampaSalta: 0.6, sueltaHalcon: 0.7, tiraBolea: 0.2, rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiser: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -13961,6 +15133,7 @@ class Renderer {
     if (ev.k === 'slash' && ev.h === 'lei') { this.leiCombo = (this.leiCombo || 0) + 1; f.lado = this.leiCombo % 2; f.dur = 0.3; }   // Lei: el abanico barre de un lado y luego del otro
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
     if (ev.k === 'slash' && ev.h === 'golagore') f.dur = 0.5;   // Golagore: hachazo pesado
+    if (ev.k === 'slash' && ev.h === 'ann' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.3, T: 0.3, a: ev.a });   // Ann: paraguazo
     if (ev.k === 'slash' && ev.h === 'zinro' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.25, T: 0.25, a: ev.a, tipo: 'cuchillo' });   // Zinro: cuchillada
     if (ev.k === 'tiraBolea' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.3, T: 0.3, a: ev.a, tipo: ev.grande ? 'bolea' : 'kunai' });   // Zinro: boleadora (Volea) o kunai (básico)
     if (ev.k === 'slash' && ev.h === 'rin' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.28, T: 0.28, a: ev.a });   // Rin: estocada rápida
@@ -15222,6 +16395,68 @@ class Renderer {
       } else if (z.kind === 'espadaRin') {
         // Rin (V9.4): espada espiritual suelta que deja la ulti (la Estocada salta hasta ella); parpadea antes de irse
         if (!(z.w & 1)) { const fin = z.prog > 0.8 && Math.floor(T * 10) % 2; this.espadaEspiritu(cx, cy, 14, fin ? 0.45 : 1, z.id || 0); }
+      } else if (z.kind === 'lluviaAnn') {
+        // Ann (r5): donde llueve — nube de tormenta magenta que cubre el tramo: sombra en el suelo, bruma que se mueve y chispas
+        const x2 = this.gx(z.ox || z.x), y2 = this.gy(z.oy || z.y), R = Math.round(z.r * ESC), L = Math.hypot(x2 - cx, y2 - cy), n = Math.max(1, Math.ceil(L / (R * 0.5)));
+        for (let i = 0; i <= n; i++) {
+          const k = i / n, x = Math.round(cx + (x2 - cx) * k), y = Math.round(cy + (y2 - cy) * k);
+          g.globalAlpha = 0.14; this.discDither(x, y, R, PALETA.tinta, 2, 0);   // sombra de la nube
+          g.globalAlpha = 0.2; this.discDither(x, y, Math.round(R * 0.85), PALETA.magenta1, 2, Math.floor(T * 5) + i);   // aura magenta
+        }
+        g.globalAlpha = 1;
+        for (let i = 0; i < 18; i++) {   // bruma que deriva y chispas magenta
+          const k = ((i * 0.618) + T * 0.15) % 1, b = i * 2.4 + T * 0.8, d = R * (0.3 + ((i * 37) % 60) / 100);
+          const x = Math.round(cx + (x2 - cx) * k + Math.cos(b) * d), y = Math.round(cy + (y2 - cy) * k + Math.sin(b) * d * 0.7);
+          g.globalAlpha = 0.55; g.fillStyle = i % 3 ? PALETA.magenta1 : PALETA.magenta2; g.fillRect(x, y, i % 3 ? 3 : 1, 1);
+        }
+        g.globalAlpha = 1;
+      } else if (z.kind === 'blastXerxius') {
+        // Xerxius: el Estallido se está cargando — círculo de runas verdes que se cierra (lo ven todos)
+        const R = Math.round(z.r * ESC), k = z.prog;
+        g.globalAlpha = 0.15 + 0.25 * k; this.discDither(cx, cy, R, PALETA.bosque1, 2, Math.floor(T * 8)); g.globalAlpha = 0.1 + 0.3 * k; this.discDither(cx, cy, Math.round(R * 0.5), PALETA.oro2, 2, Math.floor(T * 8) + 1); g.globalAlpha = 1;
+        this.ring(cx, cy, R, PALETA.tinta, 1, 3); this.ring(cx, cy, R, PALETA.oro2, 1, 1); this.ring(cx, cy, R - 3, PALETA.bosque2, 0.6, 1);
+        this.ring(cx, cy, Math.round(R * (1 - k * 0.85)), PALETA.oro2, 1, 2);
+        for (let i = 0; i < 8; i++) { const b = -T * 2 + i * TAU / 8, x = Math.round(cx + Math.cos(b) * (R - 4)), y = Math.round(cy + Math.sin(b) * (R - 4)); g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 5, 5); g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.oro2; g.fillRect(x - 1, y - 1, 3, 1); g.fillRect(x, y - 1, 1, 3); }
+      } else if (z.kind === 'enredoXerxius') {
+        // Xerxius: raíces — primero brotan brotes; luego enredaderas que se retuercen
+        const R = Math.round(z.r * ESC);
+        const rest = Math.max(0, 1 - z.prog), cierra = Math.round(R * (0.15 + 0.85 * rest));   // Seba (23-11): el radio se ve desde el inicio, con un anillo que se cierra hasta el golpe final (como el Estallido)
+        if (!z.w) {
+          g.globalAlpha = 0.25; this.discDither(cx, cy, R, PALETA.bosque1, 2, Math.floor(T * 6)); g.globalAlpha = 1;
+          this.ring(cx, cy, R, PALETA.tinta, 1, 3); this.ring(cx, cy, R, PALETA.oro2, 1, 1);
+          for (let i = 0; i < 14; i++) { const b = i * 2.4, d = (i / 14) * R; const x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d); g.fillStyle = PALETA.bosque2; g.fillRect(x, y - (Math.floor(T * 8 + i) % 2), 1, 2); }
+        }
+        else {
+          g.globalAlpha = 0.3; this.discDither(cx, cy, R, PALETA.madera0, 2, 0); g.globalAlpha = 1;
+          this.ring(cx, cy, R, PALETA.tinta, 1, 3); this.ring(cx, cy, R, PALETA.bosque1, 1, 1);
+          for (let i = 0; i < 7; i++) { const b0 = i * TAU / 7 + Math.sin(T * 2 + i) * 0.2; let x0 = cx, y0 = cy;
+            for (let s = 1; s <= 4; s++) { const b = b0 + Math.sin(T * 3 + i + s) * 0.4, x1 = Math.round(cx + Math.cos(b) * R * s / 4), y1 = Math.round(cy + Math.sin(b) * R * s / 4); this.linea(x0, y0, x1, y1, PALETA.tinta, 0, 0, 3); this.linea(x0, y0, x1, y1, s % 2 ? PALETA.madera2 : PALETA.bosque1, 0, 0, 1); x0 = x1; y0 = y1; }
+            g.fillStyle = PALETA.bosque2; g.fillRect(x0 - 1, y0 - 1, 2, 2); }
+          this.ring(cx, cy, R, PALETA.oro2, 0.7, 1); this.ring(cx, cy, cierra, PALETA.oro2, 1, 2);   // anillo que se cierra hasta el golpe
+          if (z.prog > 0.8 && Math.floor(T * 10) % 2) this.ring(cx, cy, R - 2, PALETA.pergamino2, 1, 1);   // va a estallar
+        }
+      } else if (z.kind === 'naturaCanal') {
+        // Xerxius: sello rúnico VERTICAL — el círculo y las runas del bosque se dibujan de a poco frente a él
+        const k = z.prog, ca = Math.cos(z.a), sa = Math.sin(z.a), ox = Math.round(cx + ca * 24), oy = Math.round(cy - 22 + sa * 10);   // Seba (22-11 r2): 75% más grande
+        const rx = 7 + Math.round(Math.abs(sa) * 16), ry = 26, n = Math.round(56 * k);
+        g.globalAlpha = 0.25 + 0.3 * k; this.discDither(ox, oy, 21, PALETA.bosque1, 2, Math.floor(T * 8)); g.globalAlpha = 0.15 + 0.35 * k; this.discDither(ox, oy, 12, PALETA.oro2, 2, Math.floor(T * 8) + 1); g.globalAlpha = 1;
+        this.ring(ox, oy, 6 + Math.round(k * 4 + Math.sin(T * 9)), PALETA.oro2, 1, 1);
+        for (let i = 0; i < n; i++) { const b = -Math.PI / 2 + i * TAU / 56, x = Math.round(ox + Math.cos(b) * rx), y = Math.round(oy + Math.sin(b) * ry); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 3, 3); g.fillStyle = i % 4 === 0 ? PALETA.oro2 : PALETA.bosque2; g.fillRect(x, y, 2, 1); }
+        for (let i = 0; i < Math.floor(8 * k); i++) { const b = -Math.PI / 2 + i * TAU / 8, x = Math.round(ox + Math.cos(b) * rx * 0.6), y = Math.round(oy + Math.sin(b) * ry * 0.6); g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 5, 5); g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.bosque2; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3); }   // hojas-runa
+        if (k > 0.6) { g.fillStyle = PALETA.oro2; g.fillRect(ox - 2, oy - 2, 5, 5); g.fillStyle = PALETA.pergamino2; g.fillRect(ox - 1, oy - 1, 2, 2); }
+      } else if (z.kind === 'naturaOrbe') {
+        // Xerxius (r2): bola de fuego verde y amarilla, 75% más grande — cabeza ardiente y lenguas de fuego hacia atrás
+        const R = Math.round(z.r * ESC), ca = Math.cos(z.a), sa = Math.sin(z.a), y = cy - 12, px = -sa, py = ca;
+        for (let i = 9; i >= 1; i--) {   // cola de fuego
+          const d = i * R * 0.22, w = R * (1 - i / 11), fl = Math.sin(T * 18 + i * 1.7) * R * 0.12;
+          const x = Math.round(cx - ca * d + px * fl), yy = Math.round(y - sa * d + py * fl);
+          g.globalAlpha = 0.85 - i * 0.07; this.discDither(x, yy, Math.max(2, Math.round(w)), i > 5 ? PALETA.bosque1 : i > 2 ? PALETA.bosque2 : PALETA.oro2, i > 6 ? 2 : 1, i + Math.floor(T * 12));
+        }
+        for (let i = 0; i < 4; i++) { const s = i % 2 ? 1 : -1, d = R * (1.2 + (Math.floor(T * 10 + i) % 3) * 0.3), off = s * R * (0.4 + 0.15 * i); g.globalAlpha = 0.7; this.linea(Math.round(cx + px * off * 0.5), Math.round(y + py * off * 0.5), Math.round(cx - ca * d + px * off), Math.round(y - sa * d + py * off), i < 2 ? PALETA.oro2 : PALETA.bosque2, 2, Math.floor(T * 14) + i, 2); }   // lenguas
+        g.globalAlpha = 1;
+        this.discDither(cx, y, R, PALETA.bosque2, 1, 0); this.discDither(cx, y, Math.round(R * 0.72), PALETA.oro2, 1, 0); this.discDither(cx, y, Math.round(R * 0.4), PALETA.pergamino2, 1, 0);
+        this.ring(cx, y, R, PALETA.tinta, 1, 2); this.ring(cx, y, Math.round(R * 0.85 + Math.sin(T * 10)), PALETA.oro2, 0.6, 1);
+        for (let i = 0; i < 8; i++) { const b = T * 4 + i * TAU / 8, x = Math.round(cx + Math.cos(b) * (R + 4)), yy = Math.round(y + Math.sin(b) * (R + 4) * 0.7); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, yy - 1, 4, 3); g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.bosque2; g.fillRect(x, yy, 2, 1); }
       } else if (z.kind === 'voleaLazo') {
         // Zinro: los atados por la boleadora — cuerda tensa con sobrecarga de energía que crece hasta el golpe final
         const x2 = this.gx(z.ox), y2 = this.gy(z.oy), k = z.prog, yb = -10;
@@ -15494,7 +16729,8 @@ class Renderer {
     const esSmok = meta.build.heroe === 'smok' && gigante === 1;   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
     const esRin = meta.build.heroe === 'rin' && gigante === 1;   // Rin (Seba 17-11): modelo 18×21 con la rapiera aparte   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
     const esZin = meta.build.heroe === 'zinro' && gigante === 1;   // Zinro (Seba 22-11): 22×29 con el halcón aparte   // Zizzer (Seba 17-11): espantapájaros 26×29 con las garras aparte
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : esZin ? 5 : 0);
+    const esXer = meta.build.heroe === 'xerxius' && gigante === 1, esAnn = meta.build.heroe === 'ann' && gigante === 1;   // Xerxius / Ann (Seba 22-11)   // Zinro (Seba 22-11): 22×29 con el halcón aparte   // Zizzer (Seba 17-11): espantapájaros 26×29 con las garras aparte
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : esZin ? 5 : esXer ? 7 : esAnn ? 5 : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -15704,7 +16940,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios || esGol || esBam || esSmok || esRin || esZin) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol || esBam || esSmok || esRin || esZin || esXer || esAnn) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -15761,6 +16997,8 @@ class Renderer {
     else if (esBam) this.bambaaChica(p, cx, cy, izq, moviendo, sube);   // Seba (13-11, V8.4–8.6): Bambaa más chica sin perder la cara
     else if (esRin) this.dibujaRin(p, cx, cy, izq, moviendo, sw, sube);
     else if (esZin) this.dibujaZinro(p, cx, cy, izq, moviendo, sw, sube);
+    else if (esXer) this.dibujaXerxius(p, cx, cy, izq, moviendo, sw, sube);
+    else if (esAnn) this.dibujaAnn(p, cx, cy, izq, moviendo, sw, sube);
     else if (esSmok) { if (p.sm & 1) { const al = this.esAliadoDe(p.id); this.dibujaHundido(p, cx, cy, al); if (!al) return; } else this.dibujaSmok(p, cx, cy, izq, moviendo, sube, 1, p.sm); }   // hundido: el enemigo solo ve el círculo (sin nombre ni barra)
     else if (gigante === 1) g.drawImage(spr, sx + atras, sy - sube);
     else g.drawImage(spr, sx, sy - sube, Math.round(spr.width * gigante), Math.round(spr.height * gigante));
@@ -15861,6 +17099,15 @@ class Renderer {
       }
       const tq = texto('?', PALETA.espectro2); g.drawImage(tq, cx - (tq.width >> 1), cy - 36 + (Math.floor(T * 4) % 2));
     }
+    if (p.xa & 4) {   // enredado por Xerxius: raíces alrededor de los pies
+      const T = this.time; for (let i = 0; i < 5; i++) { const b = i * TAU / 5 + Math.sin(T * 3) * 0.2, x = Math.round(cx + Math.cos(b) * 9), y = Math.round(cy + 3 + Math.sin(b) * 4); this.linea(cx + Math.round(Math.cos(b) * 3), cy + 2, x, y - 6, PALETA.tinta, 0, 0, 3); this.linea(cx + Math.round(Math.cos(b) * 3), cy + 2, x, y - 6, i % 2 ? PALETA.madera2 : PALETA.bosque1, 0, 0, 1); g.fillStyle = PALETA.bosque2; g.fillRect(x, y - 7, 2, 1); }
+    }
+    if (p.xa & 64) {   // Ann: el siguiente básico hace +25 — mini paraguas violeta y «+25» sobre la cabeza
+      const T = this.time, y = cy - 46 - (Math.floor(T * 3) % 2);
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 12, y - 3, 9, 5); g.fillStyle = PALETA.vacio2; g.fillRect(cx - 11, y - 2, 7, 2); g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 11, y, 7, 1); g.fillStyle = PALETA.madera2; g.fillRect(cx - 8, y + 1, 1, 3);
+      const tq = texto('+' + HABILIDADES.paraguasAnn.extra, PALETA.vacio2); g.drawImage(tq, cx - 1, y - 3);
+    }
+    if ((p.xa & 256) && this.esAliadoDe(p.id)) { g.globalAlpha = 0.6; this.ring(cx, cy + 2, 11, PALETA.vacio2, 0.5, 1); g.globalAlpha = 1; }   // Ann 1 contra 1 (−5%)
     if ((p.zn & 1) && !this.esAliadoDe(p.id)) this.signoAlerta(cx, cy - 34);
     const q = ((p.zn || 0) >> 5) & 3;   // trampas que le quedan en la ventana del Cazador maestro
     if (q > 0 && this.esAliadoDe(p.id)) for (let i = 0; i < q; i++) {   // mini cepos sobre la cabeza
@@ -16501,6 +17748,112 @@ class Renderer {
     g.globalAlpha = 1;
   }
   // Rin (Seba 17-11): esgrimista; el cuerpo no se mueve (solo los pies), la rapiera en la mano de adelante, en guardia
+  // Ann: paraguas abierto — cúpula azul con varillas, borde de encaje crema y puntera dorada; ang = hacia dónde apunta la cúpula; giro = rota las franjas
+  paraguas(cx, cy, R, ang, giro = 0, alfa = 1, mango = null) {
+    const g = this.g, ca = Math.cos(ang), sa = Math.sin(ang), H = R * 0.6, B = Math.ceil(R + 2);
+    g.globalAlpha = alfa;
+    // mango (hacia atrás) con gancho
+    const ml = mango == null ? R * 0.9 : mango, hx = Math.round(cx - ca * ml), hy = Math.round(cy - sa * ml);
+    this.linea(cx, cy, hx, hy, PALETA.tinta, 0, 0, 3); this.linea(cx, cy, hx, hy, PALETA.madera2, 0, 0, 1);
+    g.fillStyle = PALETA.madera2; g.fillRect(hx - 1 + Math.round(-sa * 2), hy - 1 + Math.round(ca * 2), 2, 2);
+    for (let y = -B; y <= B; y++) for (let x = -B; x <= B; x++) {
+      const u = x * ca + y * sa, v = -x * sa + y * ca;   // u: hacia la punta; v: a lo ancho
+      if (u < 0 || Math.abs(v) > R) continue;
+      const lim = H * Math.sqrt(Math.max(0, 1 - (v / R) * (v / R)));
+      if (u > lim + 0.8) continue;
+      let col;
+      if (u > lim - 0.6 || Math.abs(v) > R - 0.8) col = PALETA.tinta;
+      else if (u < 1.6) col = (Math.floor(v + 50) % 3 === 0) ? PALETA.tinta : PALETA.pergamino2;   // encaje
+      else { const sec = Math.floor(((v / R) + 1) * 3 + giro) % 2; col = sec ? PALETA.acero1 : PALETA.acero0; if (u > lim - 2) col = PALETA.acero2; }
+      g.fillStyle = col; g.fillRect(cx + x, cy + y, 1, 1);
+    }
+    g.fillStyle = PALETA.oro2; g.fillRect(Math.round(cx + ca * (H + 1)) - 1, Math.round(cy + sa * (H + 1)) - 1, 2, 2);   // puntera
+    g.globalAlpha = 1;
+  }
+  // Xerxius: báculo retorcido con gema dorada (alto: levantado al canalizar)
+  baculo(x, yTop, yBot, brillo, runas) {
+    const g = this.g, T = this.time;
+    for (let y = yTop + 6; y <= yBot; y++) { const dx = Math.round(Math.sin(y * 0.5) * 0.8); g.fillStyle = PALETA.tinta; g.fillRect(x - 2 + dx, y, 4, 1); g.fillStyle = (y % 3) ? PALETA.madera1 : PALETA.madera2; g.fillRect(x - 1 + dx, y, 2, 1); }
+    // marco del rombo y gema
+    g.fillStyle = PALETA.tinta; g.fillRect(x - 4, yTop - 1, 9, 9); g.fillStyle = PALETA.madera2; g.fillRect(x - 3, yTop, 7, 7);
+    g.fillStyle = PALETA.bosque1; g.fillRect(x - 2, yTop + 1, 5, 5);
+    g.fillStyle = PALETA.oro2; g.fillRect(x - 1, yTop + 1, 3, 5); g.fillRect(x - 2, yTop + 2, 5, 3); g.fillStyle = PALETA.pergamino2; g.fillRect(x, yTop + 2, 1, 1);
+    const k = (Math.sin(T * 5) + 1) / 2, b = Math.max(0.25, brillo);
+    g.globalAlpha = (0.2 + 0.25 * k) * b * 1.6; this.discDither(x, yTop + 3, 7 + Math.round(b * 4), PALETA.oro2, 2, Math.floor(T * 8)); g.globalAlpha = 1;
+    for (let i = 0; i < 3; i++) { const ph = (T * 0.9 + i / 3) % 1; g.globalAlpha = (1 - ph) * b; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.bosque2; g.fillRect(Math.round(x - 5 + i * 5 + Math.sin(T * 3 + i) * 2), Math.round(yTop + 3 - ph * 12), 1, 1); }
+    g.globalAlpha = 1;
+    if (runas) for (let i = 0; i < 6; i++) { const a = T * 4 + i * TAU / 6; g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.oro2; g.fillRect(Math.round(x + Math.cos(a) * 9), Math.round(yTop + 3 + Math.sin(a) * 4), 2, 1); }
+  }
+  // Xerxius (Seba 22-11): mago druida; el cuerpo no se mueve (solo los pies); báculo en la mano de adelante
+  dibujaXerxius(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, xa = p.xa || 0;
+    let fr = 0; if (moviendo) fr = [1, 0, 2, 0][Math.floor(T * 6) % 4];
+    const lx = cx - 11, ly = cy + 8 - 27 - sube, X = (x) => lx + (izq ? 21 - x : x);
+    // Seba (22-11 r2): aura amarilla para que no se pierda en el pasto
+    const ka = (Math.sin(T * 3) + 1) / 2;
+    g.globalAlpha = 0.22 + 0.1 * ka; this.discDither(cx, cy - 6, 15, PALETA.oro2, 2, Math.floor(T * 4)); g.globalAlpha = 0.5; this.ring(cx, cy + 3, 11, PALETA.oro2, 0.5, 1); g.globalAlpha = 1;
+    g.drawImage(xerxiusGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    for (let i = 0; i < 3; i++) { const ph = (T * 0.6 + i / 3) % 1; g.globalAlpha = (1 - ph) * 0.9; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(Math.round(cx - 9 + i * 9 + Math.sin(T * 2 + i) * 2), Math.round(cy + 2 - ph * 26), 1, 1); }
+    g.globalAlpha = 1;
+    let sube2 = 0, brillo = 0.4;
+    if (sw && sw.t > 0) { const t = 1 - Math.max(0, sw.t) / (sw.T || 0.25); sube2 = Math.round(Math.sin(t * Math.PI) * 3); brillo = 1; }
+    if (xa & 1) { sube2 = 7; brillo = 1.3; }   // Estallido: báculo en alto y encendido
+    if (xa & 2) { sube2 = 4; brillo = 1.5; }
+    this.baculo(X(19), ly + 3 - sube2, ly + 26 - sube2, brillo, !!(xa & 3));
+  }
+  // Ann (Seba 22-11): paraguas abierto al hombro; golpea con él, lo gira en la ráfaga, lo agranda para cubrirse y para saltar
+  dibujaAnn(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, xa = p.xa || 0, xa2 = p.xa2 || 0;
+    if (xa & 32) sube += Math.round(Math.sin(Math.min(1, xa2) * Math.PI) * 22);   // en el salto de la Tormenta
+    let fr = 0; if (moviendo && !(xa & 32)) fr = [1, 0, 2, 0][Math.floor(T * 6) % 4];
+    const lx = cx - 10, ly = cy + 8 - 25 - sube, X = (x) => lx + (izq ? 19 - x : x), sg = izq ? -1 : 1;
+    let pAng = -Math.PI / 2 - 0.45 * sg, pR = 12, px = X(5), py = ly + 1, giro = 0, delante = false;   // al hombro, bien visible
+    let cerrado = null;
+    if (sw && sw.t > 0) {   // Seba (23-11): paraguazo — lo cierra, lo levanta atrás y lo descarga de arriba hacia adelante con estela y chispas
+      const t = 1 - Math.max(0, sw.t) / (sw.T || 0.3), a0 = izq ? Math.PI - (-2.3) : -2.3, a1 = izq ? Math.PI - 0.9 : 0.9;
+      let aa; if (t < 0.25) aa = (izq ? Math.PI + 1.6 : -1.6) + (a0 - (izq ? Math.PI + 1.6 : -1.6)) * (t / 0.25); else if (t < 0.55) aa = a0 + (a1 - a0) * ((t - 0.25) / 0.3); else aa = a1;
+      cerrado = { a: aa, t };
+    }
+    if (xa & 8) { pAng = izq ? Math.PI : 0; px = X(18); py = ly + 13; giro = T * 14; delante = true; }   // ráfaga: el paraguas gira al frente
+    let pM = null;
+    if (xa & 16) { const M = HABILIDADES.paraguasAnn.mango * ESC + 2; pAng = xa2; pR = Math.round(HABILIDADES.paraguasAnn.radio * ESC); pM = M; px = cx + Math.round(Math.cos(xa2) * M); py = cy - 8 + Math.round(Math.sin(xa2) * M); delante = Math.sin(xa2) > -0.3; }   // Seba (22-11 r2): el paraguas sale desde Ann hacia adelante, con su mango
+    if (xa & (32 | 128)) { const RR = Math.round(HABILIDADES.tormentaAnn.area * ESC); pAng = -Math.PI / 2; pR = (xa & 128) ? Math.round(12 + (RR - 12) * Math.min(1, xa2)) : RR; pM = 14; px = cx; py = ly - 2; delante = false; giro = T * 3; }   // Tormenta: el paraguas crece hasta cubrir toda la lluvia
+    if (xa & 8) { pAng = xa2; pR = 14; pM = 10; px = cx + Math.round(Math.cos(xa2) * 12); py = cy - 8 + Math.round(Math.sin(xa2) * 12); delante = Math.sin(xa2) > -0.3; giro = T * 40;   // ráfaga (r4): el paraguas gira al frente, hacia donde apunta, como un trompo
+      g.globalAlpha = 0.6; for (let i = 0; i < 6; i++) { const b = -T * 25 + i * TAU / 6; g.fillStyle = i % 2 ? PALETA.vacio2 : PALETA.pergamino2; g.fillRect(Math.round(px + Math.cos(b) * 16), Math.round(py + Math.sin(b) * 16), 2, 1); } g.globalAlpha = 1; }
+    if (cerrado) {   // paraguas cerrado como garrote
+      const hx = X(13), hy = ly + 15, ca = Math.cos(cerrado.a), sa = Math.sin(cerrado.a), L = 17;
+      if (cerrado.t > 0.25 && cerrado.t < 0.7) { const al = 1 - Math.max(0, (cerrado.t - 0.55) / 0.15); g.globalAlpha = al * 0.8; const ini = izq ? Math.PI + 2.3 : -2.3, fin = cerrado.a; this.arc(hx, hy, L, Math.min(ini, fin), Math.max(ini, fin), PALETA.acero2, 2); this.arc(hx, hy, L + 2, Math.min(ini, fin), Math.max(ini, fin), PALETA.pergamino2, 1); g.globalAlpha = 1; }
+      g.drawImage(annGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+      const tx = Math.round(hx + ca * L), ty = Math.round(hy + sa * L);
+      this.linea(hx, hy, tx, ty, PALETA.tinta, 0, 0, 5); this.linea(hx, hy, tx, ty, PALETA.acero1, 0, 0, 3); this.linea(Math.round(hx + ca * 5), Math.round(hy + sa * 5), tx, ty, PALETA.acero2, 0, 0, 1);
+      this.linea(Math.round(hx - ca * 4), Math.round(hy - sa * 4), hx, hy, PALETA.madera2, 0, 0, 2); g.fillStyle = PALETA.oro2; g.fillRect(tx - 1, ty - 1, 2, 2);
+      if (cerrado.t > 0.4 && cerrado.t < 0.7) for (let i = 0; i < 3; i++) { g.fillStyle = i % 2 ? PALETA.vacio2 : PALETA.pergamino2; g.fillRect(tx + Math.round(Math.sin(T * 40 + i) * 4), ty + Math.round(Math.cos(T * 33 + i) * 4), 1, 1); }
+    } else {
+      if (!delante) this.paraguas(px, py, pR, pAng, giro, 1, pM);
+      g.drawImage(annGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+      if (delante) this.paraguas(px, py, pR, pAng, giro, 1, pM);
+    }
+    // Seba (23-11 r7): la ráfaga es un continuo pegado al paraguas — láseres desde la punta y estallidos en la franja, que se mueven con Ann
+    this.rafT = this.rafT || new Map();
+    if (xa & 8) {
+      let r0 = this.rafT.get(p.id); if (r0 == null) { r0 = T; this.rafT.set(p.id, r0); }
+      const H = HABILIDADES.rafagaAnn, el = T - r0, k = Math.min(1, el / H.dur), ca = Math.cos(xa2), sa = Math.sin(xa2);
+      const tip = H.punta * ESC, ox = Math.round(cx + ca * tip), oy = Math.round(cy - 8 + sa * tip), L = H.largo * ESC, W = H.ancho * ESC;   // misma franja que el daño: desde la punta del paraguas
+      const cad = H.cadIni + (H.cadFin - H.cadIni) * k, vida = 0.28, slot = 1 / cad, n0 = Math.floor(el / slot);
+      for (let s = n0; s >= 0 && s > n0 - Math.ceil(vida / slot) - 1; s--) {
+        const t = (el - s * slot) / vida; if (t < 0 || t > 1) continue;
+        for (let i = 0; i < 1 + Math.round(k * 3); i++) {
+          const h1 = ((s * 37 + i * 61 + 13) % 100) / 100, h2 = ((s * 53 + i * 29 + 7) % 100) / 100 - 0.5;
+          const u = tip + (L - tip) * (0.1 + 0.9 * h1), v = W * h2 * 0.8, x = Math.round(cx + ca * u - sa * v), y = Math.round(cy - 8 + sa * u + ca * v);
+          if (t < 0.45) { g.globalAlpha = 1 - t / 0.45; this.linea(ox, oy, x, y, PALETA.vacio1, 0, 0, 3); this.linea(ox, oy, x, y, PALETA.pergamino2, 0, 0, 1); }
+          g.globalAlpha = 1 - t; this.discDither(x, y, Math.round(3 + t * 6), PALETA.vacio2, 1, i + s); this.ring(x, y, Math.round(2 + t * 8), PALETA.pergamino2, 1, 1);
+          g.fillStyle = PALETA.pergamino2; g.fillRect(x - 1, y - 1, 2, 2);
+        }
+      }
+      g.globalAlpha = 0.6 + 0.4 * Math.sin(T * 40); this.discDither(ox, oy, 3, PALETA.pergamino2, 1, 0); g.globalAlpha = 1;   // fogonazo continuo en la punta
+    } else this.rafT.delete(p.id);
+
+  }
   // Zinro: halcón en vuelo (rotado hacia donde vuela), aleteo A-B-C-B con planeo, brillo dorado que late
   radioHalcon(RR) {   // Zinro: radio del halcón ya compuesto (trama dorada tenue + borde), guardado por tamaño
     const C = this._radHalcon || (this._radHalcon = new Map());
@@ -17395,6 +18748,27 @@ class Renderer {
     if (p.spr === 'runaAethar') { this.runaProj(cx, cy, p.a); return; }
     if (p.spr === 'ruedaLei') { this.ruedaLei(p, cx, cy); return; }   // Lei: rueda de la ulti
     if (p.spr === 'abanicoLei' || p.spr === 'abanicoVuelo') { if (p.spr === 'abanicoLei') this.rastroAbanico(p); this.abanicoProj(cx, cy - 8, p.a, p.spr === 'abanicoLei' ? 9 : 6); return; }   // Lei
+    if (p.spr === 'chispaXerxius') {   // Xerxius (23-11): esfera de luz dorada con anillo de hojas, ~75% más grande
+      const g = this.g, ca = Math.cos(p.a), sa = Math.sin(p.a), y = cy - 9, T = this.time;
+      for (let i = 1; i <= 5; i++) { g.globalAlpha = 0.55 - i * 0.09; this.discDither(Math.round(cx - ca * i * 5), Math.round(y - sa * i * 5), Math.max(1, 5 - i), i % 2 ? PALETA.bosque2 : PALETA.oro1, 1, i); }
+      g.globalAlpha = 0.45; this.discDither(cx, y, 9, PALETA.oro2, 2, Math.floor(T * 10)); g.globalAlpha = 1;
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - 4, y - 4, 9, 9); g.fillStyle = PALETA.bosque2; g.fillRect(cx - 3, y - 3, 7, 7); g.fillStyle = PALETA.oro2; g.fillRect(cx - 2, y - 2, 5, 5); g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, y - 1, 2, 2);
+      for (let i = 0; i < 4; i++) { const b = T * 9 + i * TAU / 4, x = Math.round(cx + Math.cos(b) * 7), yy = Math.round(y + Math.sin(b) * 5); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, yy - 1, 3, 3); g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.oro2; g.fillRect(x, yy, 1, 1); }
+      return;
+    }
+    if (p.spr === 'laserAnn') {   // Ann: láser corto de la minigun (violeta con núcleo blanco)
+      const ca = Math.cos(p.a), sa = Math.sin(p.a), y = cy - 8;
+      this.linea(Math.round(cx - ca * 7), Math.round(y - sa * 7), cx, y, PALETA.vacio1, 0, 0, 3); this.linea(Math.round(cx - ca * 6), Math.round(y - sa * 6), cx, y, PALETA.vacio2, 0, 0, 1);
+      this.g.fillStyle = PALETA.pergamino2; this.g.fillRect(cx, y, 1, 1);
+      return;
+    }
+    if (p.spr === 'chispaAnn' || p.spr === 'chispaAnnG' || p.spr === 'rayoAnn') {   // Ann: chispas violeta del paraguas (la última más grande) / disparo de la Tormenta
+      const g = this.g, ca = Math.cos(p.a), sa = Math.sin(p.a), y = cy - 8, gr = p.spr !== 'chispaAnn', rayo = p.spr === 'rayoAnn', R = rayo ? 10 : gr ? 4 : 3;   // Seba (23-11 r4): el disparo final 33% más grande
+      for (let i = 1; i <= (rayo ? 8 : 4); i++) { g.globalAlpha = 0.6 - i * (rayo ? 0.06 : 0.12); this.discDither(Math.round(cx - ca * i * 4), Math.round(y - sa * i * 4), Math.max(1, R - (i >> 1)), PALETA.vacio2, 1, i); }
+      g.globalAlpha = 1; g.fillStyle = PALETA.tinta; g.fillRect(cx - R, y - R, R * 2, R * 2); g.fillStyle = PALETA.vacio1; g.fillRect(cx - R + 1, y - R + 1, R * 2 - 2, R * 2 - 2);
+      g.fillStyle = PALETA.vacio2; g.fillRect(cx - R + 2, y - R + 2, Math.max(1, R * 2 - 4), Math.max(1, R * 2 - 4)); g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, y - 1, 2, 1);
+      return;
+    }
     if (p.spr === 'kunaiZinro') {   // Zinro (Seba 22-11 r2): kunai — hoja de acero, anilla y cinta roja; levemente grande para que se vea
       const g = this.g, ca = Math.cos(p.a), sa = Math.sin(p.a), y = cy - 8;
       for (let i = 1; i <= 3; i++) { g.globalAlpha = 0.5 - i * 0.12; g.fillStyle = PALETA.piedra3; g.fillRect(Math.round(cx - ca * (8 + i * 4)), Math.round(y - sa * (8 + i * 4)), 1, 1); }
@@ -17478,6 +18852,11 @@ class Renderer {
             this.linea(x0, y0, x0 + Math.round(ca * L), y0 + Math.round(sa * L * 0.8), PALETA.acero2, 0, 0, 1);
             g.fillStyle = PALETA.pergamino2; g.fillRect(x0 + Math.round(ca * L) - 1, y0 + Math.round(sa * L * 0.8) - 1, 2, 2);
             g.globalAlpha = 1;
+            break;
+          }
+          if (f.h === 'ann') {   // Ann: paraguazo — arco azul con borde de encaje
+            const R = Math.round(f.r * ESC) + 2, e = Math.min(1, t * 3.5), a0 = f.a - 0.9, a1 = a0 + 1.8 * e, yc = cy - 8;
+            g.globalAlpha = Math.min(1, (1 - t) * 2); this.arc(cx, yc, R, a0, a1, PALETA.tinta, 3); this.arc(cx, yc, R, a0, a1, PALETA.acero1, 1); this.arc(cx, yc, R + 2, a0, a1, PALETA.pergamino2, 1); g.globalAlpha = 1;
             break;
           }
           if (f.h === 'zinro') {   // Zinro: cuchillada corta
@@ -18055,6 +19434,57 @@ class Renderer {
           g.globalAlpha = 1;
           break;
         }
+        case 'blastXerxius': {   // Xerxius (r2): estallido con más energía — destello, columna de luz, rayos, ondas dobles, runas que salen volando y hojas
+          const R = Math.round(f.r * ESC), e = Math.min(1, t * 3);
+          if (t < 0.12) { g.globalAlpha = 1 - t / 0.12; this.discDither(cx, cy, R + 4, PALETA.pergamino2, 1, 0); g.globalAlpha = 1; }   // destello blanco
+          g.globalAlpha = (1 - t) * 0.85; this.discDither(cx, cy, Math.round(R * e), PALETA.bosque2, 2, Math.floor(t * 14)); this.discDither(cx, cy, Math.round(R * e * 0.6), PALETA.oro2, 2, Math.floor(t * 14) + 1);
+          g.globalAlpha = 1 - t;
+          this.ring(cx, cy, Math.round(R * (0.5 + t * 0.8)), PALETA.tinta, 1, 3); this.ring(cx, cy, Math.round(R * (0.5 + t * 0.8)), PALETA.oro2, 1, 2); this.ring(cx, cy, Math.round(R * (0.2 + t * 1.1)), PALETA.bosque2, 1, 1);
+          for (let i = 0; i < 12; i++) { const b = i * TAU / 12 + 0.2, d0 = R * 0.2, d1 = R * (0.6 + t * 0.7); this.linea(Math.round(cx + Math.cos(b) * d0), Math.round(cy + Math.sin(b) * d0 * 0.8), Math.round(cx + Math.cos(b) * d1), Math.round(cy + Math.sin(b) * d1 * 0.8), i % 2 ? PALETA.oro2 : PALETA.bosque2, 2, i + Math.floor(t * 20), 1); }
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8, d = R * (0.4 + t * 0.9), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.7 - t * 18); g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 5, 5); g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.bosque2; g.fillRect(x - 1, y - 1, 3, 1); g.fillRect(x, y - 1, 1, 3); }   // runas volando
+          const hC = Math.round(20 + t * 40); g.fillStyle = PALETA.oro2; g.fillRect(cx - 3, cy - hC, 7, hC); g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, cy - hC, 3, hC);   // columna de luz
+          for (let i = 0; i < 10; i++) { const b = i * 2.4 + f.x, d = 6 + t * (R + 10); g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.bosque1; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.6 - t * 14), 2, 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'brotanRaices': {
+          const R = Math.round(f.r * ESC); g.globalAlpha = 1 - t;
+          for (let i = 0; i < 12; i++) { const b = i * TAU / 12, d = R * 0.9; g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.madera2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.8 - t * 8), 2, 2); }
+          g.globalAlpha = 1; break;
+        }
+        case 'raicesEstallan': {   // Xerxius (r2): el golpe final de las raíces — espinas que brotan hacia arriba, destello amarillo y onda
+          const R = Math.round(f.r * ESC), up = Math.sin(Math.min(1, t * 2.5) * Math.PI / 2);
+          if (t < 0.15) { g.globalAlpha = 0.8 * (1 - t / 0.15); this.discDither(cx, cy, R, PALETA.oro2, 1, 0); }
+          g.globalAlpha = 1 - t;
+          this.ring(cx, cy, Math.round(R * (0.7 + t * 0.5)), PALETA.tinta, 1, 3); this.ring(cx, cy, Math.round(R * (0.7 + t * 0.5)), PALETA.oro2, 1, 2);
+          for (let i = 0; i < 14; i++) {   // espinas
+            const b = i * TAU / 14 + 0.3, d = R * (0.25 + (i % 3) * 0.25), x = Math.round(cx + Math.cos(b) * d), y = Math.round(cy + Math.sin(b) * d * 0.8), h = Math.round((10 + (i % 4) * 4) * up);
+            g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - h, 4, h + 1); g.fillStyle = PALETA.madera2; g.fillRect(x - 1, y - h + 1, 2, h); g.fillStyle = PALETA.bosque2; g.fillRect(x - 1, y - h, 1, 2); g.fillStyle = PALETA.oro2; g.fillRect(x, y - h - 1, 1, 1);
+          }
+          for (let i = 0; i < 10; i++) { const b = i * TAU / 10, d = R * (0.5 + t); g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.oro2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.7 - t * 14), 2, 2); }
+          g.globalAlpha = 1; break;
+        }
+        case 'enreda': case 'naturaToca': case 'naturaEscudo': case 'saviaXerxius': {
+          g.globalAlpha = 1 - t;
+          if (f.k === 'saviaXerxius') { const x2 = this.gx(f.x2), y2 = this.gy(f.y2); this.linea(x2, y2 - 10, cx, cy - 10, PALETA.bosque2, 2, Math.floor(t * 10), 1); g.fillStyle = PALETA.bosque2; g.fillRect(cx - 1, cy - 20 - Math.round(t * 6), 3, 1); g.fillRect(cx, cy - 21 - Math.round(t * 6), 1, 3); }
+          else { const col = f.k === 'naturaEscudo' ? PALETA.oro2 : PALETA.bosque2; this.ring(cx, cy - 8, Math.round(5 + t * 10), col, 1, 2); for (let i = 0; i < 5; i++) { const b = i * TAU / 5; g.fillStyle = col; g.fillRect(Math.round(cx + Math.cos(b) * (4 + t * 12)), Math.round(cy - 8 + Math.sin(b) * (4 + t * 12) * 0.7), 2, 1); } }
+          g.globalAlpha = 1; break;
+        }
+        case 'naturaSale': case 'abreParaguas': case 'saltaAnn': case 'aterrizaAnn': {
+          const col = f.k === 'naturaSale' ? PALETA.bosque2 : PALETA.vacio2; g.globalAlpha = 1 - t; this.ring(cx, cy, Math.round(6 + t * 16), col, 1, 2);
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8, d = 5 + t * 16; g.fillStyle = i % 2 ? col : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.6 - 4), 2, 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'paraguasBloquea': {   // el paraguas frena un proyectil
+          g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 2 + t * 9; g.fillStyle = i % 2 ? PALETA.pergamino2 : PALETA.acero2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 8 + Math.sin(b) * d), 1, 1); } this.ring(cx, cy - 8, Math.round(2 + t * 6), PALETA.pergamino2, 1, 1); g.globalAlpha = 1; break;
+        }
+        case 'gotaAnn': {   // gota de la Tormenta: chispa violeta que cae y salpica
+          if (t < 0.55) { const k = t / 0.55, y = cy - Math.round((1 - k) * 34); g.fillStyle = PALETA.tinta; g.fillRect(cx - 1, y - 1, 4, 7); g.fillStyle = PALETA.vacio2; g.fillRect(cx, y, 2, 5); g.fillStyle = PALETA.pergamino2; g.fillRect(cx, y + 4, 2, 1); }
+          else { const k = (t - 0.55) / 0.45; g.globalAlpha = 1 - k; this.ring(cx, cy, Math.round(2 + k * 9), PALETA.vacio2, 1, 1); this.discDither(cx, cy, Math.round(2 + k * 3), PALETA.vacio1, 2, 0); g.globalAlpha = 1; }
+          break;
+        }
+        case 'annGolpeFuerte': { g.globalAlpha = 1 - t; this.arc(cx, cy - 8, 18, f.a - 0.9, f.a + 0.9, PALETA.vacio2, 2); g.globalAlpha = 1; break; }
+        case 'giroAnn': break;
+        case 'estallidoAnn': break;   // Seba (23-11 r7): los estallidos se dibujan pegados al paraguas (dibujaAnn)
         case 'boleaToca': case 'boleaAta': {   // Zinro: la boleadora se enrolla
           g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 10), PALETA.madera2, 1, 2); this.ring(cx, cy - 8, Math.round(2 + t * 7), PALETA.acero2, 1, 1); g.globalAlpha = 1;
           if (f.k === 'boleaAta') { g.globalAlpha = 1 - t; const x2 = this.gx(f.x2), y2 = this.gy(f.y2); this.linea(cx, cy - 10, x2, y2 - 10, PALETA.acero2, 4, Math.floor(t * 20), 1); g.globalAlpha = 1; }
@@ -20252,6 +21682,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V10.1', f: '23-11-2026', n: [
+    'Nuevo héroe: Xerxius, guardián del bosque con báculo. Estallido: carga un sello y explota (puede caminar mientras carga). Raíces: enreda a los enemigos en una zona. Ulti Natura: un orbe que cruza el mapa. Pasiva Savia: potencia las curas.',
+    'Nueva heroína: Ann, con su paraguas. Ráfaga: el paraguas gira y suelta estallidos al frente. Paraguas: lo abre, bloquea proyectiles por delante y da 75 de escudo. Ulti Tormenta: salta bajo el paraguas con lluvia y al caer dispara de vuelta por el camino. Pasiva Duelo: −5% de daño recibido en 1 contra 1.',
+    'Tabla de matchups actualizada con todos los héroes del live.',
+  ] },
   { v: 'V10.0', f: '22-11-2026', n: [
     'Nuevo héroe: Zinro (Errantes), cazador de las montañas con su halcón. Básico doble: cuchillo cuerpo a cuerpo o kunai a distancia. Volea: boleadora que aturde y ata al enemigo con lo que tenga detrás. Llamada al halcón: patrulla una gran zona, revela lo invisible y las trampas, y con un segundo toque cae en picada. Ulti Cazador maestro: hasta 3 trampas invisibles en 15 s.',
     'Zinro, Presa acorralada: los enemigos bajo cualquier control reciben 2% más de daño.',
