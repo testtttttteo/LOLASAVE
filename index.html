@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V11.1</title>
+<title>LOLA V11.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V11.1</p>
+        <p class="sub version">LOLA V11.2</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2303,7 +2303,7 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}; a los ${fmtN(HABILIDADES.pozoSangre.canal)} s se abre un pozo de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s. Los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota que estalla a los ${HABILIDADES.pozoSangre.gotaDur} s: ${n.danos[0]} de daño. Cada estallido contagia una gota a los enemigos cercanos (${n.danos[1]}), y esas otra más (${n.danos[2]}). Cada enemigo recibe cada gota una vez por pozo.`,
                    n1: { lento: 0.25, danos: [50, 25, 10] }, n2: { lento: 0.25, danos: [50, 25, 10] } },
   festinSangre:  { nombre: 'Festín de sangre', glifo: 'festinSangre', cd: 50, cdFijo: true, ulti: true, canal: 1, radio: 150, dur: 5, cada: 1, alcance: 90, escudoDur: 4,   // Seba: canal 1 s infrenable, escudo 75 y status 5 s a aliados y a él, 8%/s de la vida máxima, al final escudo del 25% de lo consumido; (C) radios, recarga, duración de los escudos
-                   desc: (n) => `Canalizas ${HABILIDADES.festinSangre.canal} s sin que nada te detenga. Tú y los aliados en un radio ${RADIO(HABILIDADES.festinSangre.radio)} ganan un escudo de ${n.escudo} y, por ${HABILIDADES.festinSangre.dur} s, cada segundo le quitan el ${Math.round(n.pct * 100)}% de la vida máxima a los enemigos a distancia ${DIST(HABILIDADES.festinSangre.alcance)}. Al terminar, cada uno gana un escudo del ${Math.round(n.escudoFin * 100)}% de la vida que consumió.`,
+                   desc: (n) => `Canalizas ${HABILIDADES.festinSangre.canal} s sin que nada te detenga. Tú y los héroes aliados (no las invocaciones) en un radio ${RADIO(HABILIDADES.festinSangre.radio)} ganan un escudo de ${n.escudo} y, por ${HABILIDADES.festinSangre.dur} s, cada segundo le quitan el ${Math.round(n.pct * 100)}% de la vida máxima a los enemigos a distancia ${DIST(HABILIDADES.festinSangre.alcance)}. Al terminar, cada uno gana un escudo del ${Math.round(n.escudoFin * 100)}% de la vida que consumió.`,
                    n1: { escudo: 75, pct: 0.08, escudoFin: 0.25 }, n2: { escudo: 75, pct: 0.08, escudoFin: 0.25 } },
   // ---- Lire, rework de la ulti (Seba 09-11): se imbuye de poder élfico. Números (C) salvo los que fijó Seba
   ascensionElfica: { nombre: 'Ascensión élfica', glifo: 'ascensionElfica', cd: 45, ulti: true, rafagas: 5,   /* Seba (10-11): 4 → 5 */ flechas: 3, entre: 0.07,   // ojo: no se llama «cargas» (eso la volvía una habilidad de 4 usos sin recarga)
@@ -22890,6 +22890,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V11.2', f: '25-11-2026', n: [
+    'Zeal: el texto del Festín de sangre aclara que solo da el efecto a héroes aliados, no a invocaciones.',
+  ] },
   { v: 'V11.1', f: '25-11-2026', n: [
     'Xerxius: Estallido rúnico estalla 0,2 s antes (1,05 → 0,85 s).',
     'Bipper: tras la explosión del robot, las piezas caen un 33% más lejos del centro.',
