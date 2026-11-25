@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V10.6</title>
+<title>LOLA V10.7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V10.6</p>
+        <p class="sub version">LOLA V10.7</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2204,7 +2204,7 @@ Object.assign(HABILIDADES, {
   // ---- Kaio (Seba, 23-11; números (C) salvo los que fijó Seba)
   energiaKaio:   { nombre: 'Imbuir energía', glifo: 'energiaKaio', cd: 10, cdFijo: true, dur: 2, vel: 0.33, ritmo: 0.5, radio: 85, lento: 0.33, lentoDur: 2, escudo: 50, escudoDur: 4.5, escudoCada: 0.25, escudoDano: 2.5,   // Seba (24-11): escudo tipo Ion Shell — absorbe 50 y quema a los enemigos en radio 85: 2,5 cada 0,25 s, hasta 45 por enemigo (4,5 s)
                      // Seba: 2 s, +33% vel, mejor recarga del básico; al final lento 33% 2 s en radio chico; (C) cd 10, recarga +50%, radio 85
-                   desc: (n) => `Te imbuyes de energía ${HABILIDADES.energiaKaio.dur} s: +${Math.round(HABILIDADES.energiaKaio.vel * 100)}% de velocidad y tus cargas de ataque se recargan ${Math.round(HABILIDADES.energiaKaio.ritmo * 100)}% más rápido. Al terminar, la energía estalla en una descarga: los enemigos cerca de ti quedan ${Math.round(HABILIDADES.energiaKaio.lento * 100)}% más lentos por ${HABILIDADES.energiaKaio.lentoDur} s. Además te envuelve un escudo eléctrico por ${fmtN(HABILIDADES.energiaKaio.escudoDur)} s que absorbe ${HABILIDADES.energiaKaio.escudo} de daño y quema a los enemigos cercanos: ${fmtN(HABILIDADES.energiaKaio.escudoDano)} cada ${fmtN(HABILIDADES.energiaKaio.escudoCada)} s (hasta ${Math.round(HABILIDADES.energiaKaio.escudoDano * HABILIDADES.energiaKaio.escudoDur / HABILIDADES.energiaKaio.escudoCada)}).`,
+                   desc: (n) => `Durante ${HABILIDADES.energiaKaio.dur} s: +${Math.round(HABILIDADES.energiaKaio.vel * 100)}% de velocidad y tus cargas de ataque se recargan ${Math.round(HABILIDADES.energiaKaio.ritmo * 100)}% más rápido. Al terminar, los enemigos cerca de ti quedan ${Math.round(HABILIDADES.energiaKaio.lento * 100)}% más lentos por ${HABILIDADES.energiaKaio.lentoDur} s. Además ganas un escudo de ${HABILIDADES.energiaKaio.escudo} por ${fmtN(HABILIDADES.energiaKaio.escudoDur)} s que quema a los enemigos cercanos: ${fmtN(HABILIDADES.energiaKaio.escudoDano)} cada ${fmtN(HABILIDADES.energiaKaio.escudoCada)} s (hasta ${Math.round(HABILIDADES.energiaKaio.escudoDano * HABILIDADES.energiaKaio.escudoDur / HABILIDADES.energiaKaio.escudoCada)}).`,
                    n1: {}, n2: {} },
   golpesKaio:    { nombre: 'Ráfaga de puños', glifo: 'golpesKaio', cd: 12, cdFijo: true, golpes: 4, aturde: 0.5, final: 20,   // Seba: 4 básicos que aturden 0,5 s; (24-11) estalla solo al usar el 4.º (sin límite de 5 s); 20 × golpes a cada enemigo; (C) cd 12
                    desc: (n) => `Potencias tus próximos ${HABILIDADES.golpesKaio.golpes} ataques básicos: cada uno aturde ${fmtN(HABILIDADES.golpesKaio.aturde)} s. Al usar el último, la energía acumulada estalla: ${HABILIDADES.golpesKaio.final} de daño por cada golpe potenciado que recibió cada enemigo.`,
@@ -2212,22 +2212,22 @@ Object.assign(HABILIDADES, {
   koKaio:        { nombre: 'Gancho K.O.', glifo: 'koKaio', cd: 50, cdFijo: true, ulti: true, canal: 1.25, avance: 47, punto: 92, radioGolpe: 45,   // Seba (24-11): canalización −0,25 s; se apunta a un punto hasta 15% más lejos (alcance total 119 → 137): avanza hasta 47 hacia el punto y golpea en radio 45 (C)
                      // Seba (24-11): traslado +5%
                    alcance: 72, arco: 110, pct: 0.6,   // Seba: canaliza 1,5 s, gancho hacia adelante y arriba, avanza un poco, 60% de la vida total a todos los que alcanza; (C) avance 45, alcance 72
-                   desc: (n) => `Apuntas un punto cercano y canalizas ${fmtN(HABILIDADES.koKaio.canal)} s mientras la luz se concentra ahí. Luego avanzas un poco hacia él y sueltas un gancho enorme de energía hacia arriba: a cada enemigo en la zona del golpe le quita el ${Math.round(HABILIDADES.koKaio.pct * 100)}% de su vida total. Un aturdimiento o silencio corta la canalización.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.koKaio.canal)} s sobre un punto cercano (se corta si te aturden o silencian). Luego avanzas un poco y das un gancho: cada enemigo en la zona pierde el ${Math.round(HABILIDADES.koKaio.pct * 100)}% de su vida total.`,
                    n1: {}, n2: {} },
   // ---- Bipper (Seba, 23-11; números (C) salvo los que fijó Seba)
   misilesBipper: { nombre: 'Misiles buscadores', glifo: 'misilesBipper', cd: 9, cdFijo: true,   // Seba (24-11): 11 → 9
                    misiles: 2, dano: 50, cura: 50, vel: 300, giro: 5.5,   // Seba: 2 misiles, alcance infinito, 50 c/u, 1 por enemigo, el que sobra se va del mapa, cura 50 si mata; (C) cd 9
-                   desc: (n) => `El robot lanza ${HABILIDADES.misilesBipper.misiles} misiles que persiguen a los enemigos sin límite de alcance: ${HABILIDADES.misilesBipper.dano} de daño cada uno, un misil por enemigo (el que sobra se pierde fuera del mapa). Si los dos misiles alcanzan a su objetivo, la recarga baja a 1 s. Si un misil mata, recuperas ${HABILIDADES.misilesBipper.cura} de vida. Solo con el robot.`,
+                   desc: (n) => `Lanzas ${HABILIDADES.misilesBipper.misiles} misiles que persiguen a enemigos distintos sin límite de alcance: ${HABILIDADES.misilesBipper.dano} de daño cada uno. Si los dos aciertan, la recarga baja a ${HABILIDADES.misilesBipper.recargaAcierto} s. Si un misil mata, recuperas ${HABILIDADES.misilesBipper.cura} de vida. Solo con el robot.`,
                    n1: {}, n2: {} },
   antenaBipper:  { nombre: 'Campo magnético', glifo: 'antenaBipper', cd: 14, cdFijo: true, dur: 6, radio: 130, ritmo: 0.33, shock: 20, shockLento: 0.2, shockDur: 2, shockCada: 2,   // Seba (24-11): el enemigo dentro que daña a Bipper recibe un shock de 20 y 20% de lentitud 2 s (1 vez cada 2 s)
                      // Seba (24-11): la antena se planta a los pies de Bipper
                    bajo: 0.33, vulnera: 0.10,   // Seba: +33% velocidad de ataque dentro; enemigos bajo 33% de vida +10% de daño de todas las fuentes; (C) cd 14, 6 s, radio 130
-                   desc: (n) => `El robot planta a sus pies una antena eléctrica por ${HABILIDADES.antenaBipper.dur} s. Dentro de su campo, tus cargas de ataque se recargan ${Math.round(HABILIDADES.antenaBipper.ritmo * 100)}% más rápido, los enemigos con menos del ${Math.round(HABILIDADES.antenaBipper.bajo * 100)}% de su vida reciben ${Math.round(HABILIDADES.antenaBipper.vulnera * 100)}% más de daño de todas las fuentes, y el enemigo dentro que te daña recibe un shock: ${HABILIDADES.antenaBipper.shock} de daño y ${Math.round(HABILIDADES.antenaBipper.shockLento * 100)}% más lento ${HABILIDADES.antenaBipper.shockDur} s (una vez cada ${HABILIDADES.antenaBipper.shockCada} s). Solo con el robot.`,
+                   desc: (n) => `Plantas una antena a tus pies por ${HABILIDADES.antenaBipper.dur} s. Dentro de su campo: tus cargas de ataque se recargan ${Math.round(HABILIDADES.antenaBipper.ritmo * 100)}% más rápido; los enemigos con menos del ${Math.round(HABILIDADES.antenaBipper.bajo * 100)}% de vida reciben ${Math.round(HABILIDADES.antenaBipper.vulnera * 100)}% más de daño; y el enemigo que te daña recibe ${HABILIDADES.antenaBipper.shock} de daño y queda ${Math.round(HABILIDADES.antenaBipper.shockLento * 100)}% más lento ${HABILIDADES.antenaBipper.shockDur} s (una vez cada ${HABILIDADES.antenaBipper.shockCada} s). Solo con el robot.`,
                    n1: {}, n2: {} },
   robotBipper:   { nombre: 'Sobrecarga', glifo: 'robotBipper', cd: 40, cdFijo: true, ulti: true, sinCarga: true, pasos: 4, paso: 20, andar: 1, sobrecarga: 0.75, radio: 100, dano: 150,   // Seba (24-11): radio +5% (95 → 100)
                    lento: 0.33, lentoDur: 3,   // Seba: sin carga, recarga fija 40 s; el robot camina 4 pasos, 0,75 s de sobrecarga, 150 y lento 33% 3 s; (C) radio 95, paso 20
                    piezas: 4, piezaVuela: 61, piezaRetraso: 1.5, piezaRadio: 50, golpesVolver: 27,   // Seba: 4 piezas con la mitad del efecto; (24-11) caen 10% más lejos y esperan 1 s más en el piso (0,5 → 1,5 s); 27 chispas a héroes para recuperar el robot
-                   desc: (n) => `Saltas del robot y lo mandas a caminar ${HABILIDADES.robotBipper.pasos} pasos hacia adelante. Tras ${fmtN(HABILIDADES.robotBipper.sobrecarga)} s de sobrecarga explota: ${HABILIDADES.robotBipper.dano} de daño y ${Math.round(HABILIDADES.robotBipper.lento * 100)}% más lento por ${HABILIDADES.robotBipper.lentoDur} s alrededor. Suelta ${HABILIDADES.robotBipper.piezas} piezas que estallan ${fmtN(HABILIDADES.robotBipper.piezaRetraso)} s después con la mitad del efecto. No necesita carga: recarga fija de ${HABILIDADES.robotBipper.cd} s. A pie, tras acertar ${HABILIDADES.robotBipper.golpesVolver} chispas a héroes enemigos este botón recupera el robot con toda su vida.`,
+                   desc: (n) => `Saltas del robot y camina ${HABILIDADES.robotBipper.pasos} pasos hacia adelante. Tras ${fmtN(HABILIDADES.robotBipper.sobrecarga)} s explota: ${HABILIDADES.robotBipper.dano} de daño y ${Math.round(HABILIDADES.robotBipper.lento * 100)}% más lento por ${HABILIDADES.robotBipper.lentoDur} s alrededor, y suelta ${HABILIDADES.robotBipper.piezas} piezas que estallan ${fmtN(HABILIDADES.robotBipper.piezaRetraso)} s después con la mitad del efecto. Recarga fija de ${HABILIDADES.robotBipper.cd} s (no usa carga). A pie, con ${HABILIDADES.robotBipper.golpesVolver} chispas acertadas a héroes, este botón recupera el robot con toda su vida.`,
                    n1: {}, n2: {} },
   // ---- Smok (Seba, 16-11; números (C) salvo los que fijó Seba)
   hundidoSmok:  { nombre: 'Hundido', glifo: 'hundidoSmok', cd: 16.5, cdFijo: true, dur: 4, vel: 0.15, radio: 90,   // Seba (16-11): +1 s de recarga a todo; hundido 4 s
@@ -2293,14 +2293,14 @@ Object.assign(HABILIDADES, {
                      n1: {}, n2: {} },
   porElRey:        { nombre: 'Por el Rey', glifo: 'porElRey', cd: 56, cdFijo: true, ulti: true, canal: 0.5, dur: 8, radio: 180, espadaCada: 0.5, espadaCae: 0.4, espadaRadio: 14, espadaLentoDur: 2,   // Seba (12-11): 8 s y recarga 56
                        // Seba: canal 0,5 s visible para todos que no lo frena ni se corta (12-11), 7 s, escudo 50 una vez, +25% velocidad y daño a aliados, −25% de daño y +5% de daño recibido a enemigos (12-11), solo dentro del radio; (C) radio, recarga
-                     desc: (n) => `La luz del Rey cae sobre ti en ${fmtN(HABILIDADES.porElRey.canal)} s (todos la ven, sigues moviéndote y nada la corta) y dura ${HABILIDADES.porElRey.dur} s, en un radio ${RADIO(HABILIDADES.porElRey.radio)} que te acompaña. Dentro, tus aliados y tú ganan +${Math.round(n.vel * 100)}% de velocidad y +${Math.round(n.dano * 100)}% de daño, y un escudo de ${n.escudo} (una sola vez). Los enemigos dentro hacen ${Math.round(n.debil * 100)}% menos de daño, y cada ${fmtN(HABILIDADES.porElRey.espadaCada)} s cae una espada donde está cada enemigo: si no se movió, ${n.espada} de daño y ${Math.round(n.espadaLento * 100)}% más lento por ${HABILIDADES.porElRey.espadaLentoDur} s (no se acumula, se renueva).`,
+                     desc: (n) => `A los ${fmtN(HABILIDADES.porElRey.canal)} s (nada lo corta) se abre un aura de radio ${RADIO(HABILIDADES.porElRey.radio)} que te sigue por ${HABILIDADES.porElRey.dur} s. Dentro, tú y tus aliados ganan +${Math.round(n.vel * 100)}% de velocidad, +${Math.round(n.dano * 100)}% de daño y un escudo de ${n.escudo} (una vez). Los enemigos dentro hacen ${Math.round(n.debil * 100)}% menos de daño, y cada ${fmtN(HABILIDADES.porElRey.espadaCada)} s cae una espada sobre cada uno: si no se movió, ${n.espada} de daño y ${Math.round(n.espadaLento * 100)}% más lento por ${HABILIDADES.porElRey.espadaLentoDur} s.`,
                      n1: { escudo: 50, vel: 0.25, dano: 0.25, debil: 0.25, vulnera: 0, espada: 25, espadaLento: 0.10 }, n2: { escudo: 50, vel: 0.25, dano: 0.25, debil: 0.25, vulnera: 0, espada: 25, espadaLento: 0.10 } },   // Seba (12-11, V6.5): sin el +5% recibido; espadas cada 0,5 s
   // ---- Zeal (Seba, 11-11; números (C) salvo los que fijó Seba)
   manoInfierno:  { nombre: 'Mano del infierno', glifo: 'manoInfierno', cd: 12, cdFijo: true, alcance: 280, ancho: 90, ida: 0.3, buffer: 0.25, vuelta: 0.6, arrastre: 100, lentoDur: 2,   // Seba (11-11): sale desde Zeal hacia adelante, espera, y daña/arrastra/frena solo a la vuelta, hacia el punto de casteo; (C) tiempos 0,3+0,25+0,6, alcance, ancho, arrastre 100, lento 2 s, recarga
                    desc: (n) => `Una mano del infierno brota a tus pies y avanza hasta distancia ${DIST(HABILIDADES.manoInfierno.alcance)}; tras una pausa vuelve barriendo el suelo: a cada enemigo que toca a la vuelta le hace ${n.dano} de daño, lo arrastra hacia donde la lanzaste y lo deja ${Math.round(n.lento * 100)}% más lento por ${HABILIDADES.manoInfierno.lentoDur} s.`,
                    n1: { dano: 75, lento: 0.25 }, n2: { dano: 75, lento: 0.25 } },
   pozoSangre:    { nombre: 'Pozo de sangre', glifo: 'pozoSangre', cd: 14, cdFijo: true, canal: 1.5, alcance: 280, radio: 110, dur: 4, gotaDur: 2, contagio: 110,   // Seba: canal 1,5 s visible, lento 25% dentro, gota 2 s → 50, contagio 25 y luego 10; (C) alcance, radio, duración del pozo, radio de contagio, recarga
-                   desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}: la marca se llena de sangre durante ${fmtN(HABILIDADES.pozoSangre.canal)} s a la vista de todos (tú puedes seguir moviéndote) y entonces se abre un pozo de sangre de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s: los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota de sangre que a los ${HABILIDADES.pozoSangre.gotaDur} s estalla por ${n.danos[0]} (una vez por enemigo en cada pozo). Cada estallido contagia una gota a los enemigos cercanos, por ${n.danos[1]}, y esas por ${n.danos[2]}. Cada enemigo recibe cada gota una vez por pozo.`,
+                   desc: (n) => `Marcas el suelo a distancia ${DIST(HABILIDADES.pozoSangre.alcance)}; a los ${fmtN(HABILIDADES.pozoSangre.canal)} s se abre un pozo de radio ${RADIO(HABILIDADES.pozoSangre.radio)} por ${HABILIDADES.pozoSangre.dur} s. Los enemigos dentro van ${Math.round(n.lento * 100)}% más lentos y reciben una gota que estalla a los ${HABILIDADES.pozoSangre.gotaDur} s: ${n.danos[0]} de daño. Cada estallido contagia una gota a los enemigos cercanos (${n.danos[1]}), y esas otra más (${n.danos[2]}). Cada enemigo recibe cada gota una vez por pozo.`,
                    n1: { lento: 0.25, danos: [50, 25, 10] }, n2: { lento: 0.25, danos: [50, 25, 10] } },
   festinSangre:  { nombre: 'Festín de sangre', glifo: 'festinSangre', cd: 50, cdFijo: true, ulti: true, canal: 1, radio: 150, dur: 5, cada: 1, alcance: 90, escudoDur: 4,   // Seba: canal 1 s infrenable, escudo 75 y status 5 s a aliados y a él, 8%/s de la vida máxima, al final escudo del 25% de lo consumido; (C) radios, recarga, duración de los escudos
                    desc: (n) => `Canalizas ${HABILIDADES.festinSangre.canal} s sin que nada te detenga. Tú y los aliados en un radio ${RADIO(HABILIDADES.festinSangre.radio)} ganan un escudo de ${n.escudo} y, por ${HABILIDADES.festinSangre.dur} s, cada segundo le quitan el ${Math.round(n.pct * 100)}% de la vida máxima a los enemigos a distancia ${DIST(HABILIDADES.festinSangre.alcance)}. Al terminar, cada uno gana un escudo del ${Math.round(n.escudoFin * 100)}% de la vida que consumió.`,
@@ -2338,10 +2338,10 @@ Object.assign(HABILIDADES, {
   // del lento) y una tercera vez corta la levitación. La rueda recorre hasta ese punto y queda girando 5 s.
   ojoVendaval:   { nombre: 'Ojo del vendaval', glifo: 'ojoVendaval', cd: 50, cdFijo: true, ulti: true, dur: 3, radio: 150, vel: 960, rueda: 60, giro: 5, tick: 0.25, lentoRueda: 0.05, lentoRuedaDur: 1,   // Seba (06-11, V5.3): −5% por golpe de la rueda, acumulable sin tope; (C) dura 1 s desde el último golpe
                    minRecast: 0.15,   // Seba: velocidad +50% (640 → 960); (C) tamaño de la rueda
-                   desc: (n) => `Te elevas ${HABILIDADES.ojoVendaval.dur} s en un torbellino de viento: quieta, imparable y con ${Math.round(n.red * 100)}% menos de daño recibido (el daño por porcentaje de vida te afecta normal). Los enemigos en un radio ${RADIO(HABILIDADES.ojoVendaval.radio)} van ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una gran rueda celeste dentro de ese radio: ${n.dano} de daño a quien alcanza, y luego gira ${HABILIDADES.ojoVendaval.giro} s en el lugar con ${n.dps} de daño por segundo. Cada golpe de la rueda frena ${Math.round(HABILIDADES.ojoVendaval.lentoRueda * 100)}% más, acumulable. Una tercera vez cortas la levitación.`,
+                   desc: (n) => `Te elevas ${HABILIDADES.ojoVendaval.dur} s: quieta, imparable y con ${Math.round(n.red * 100)}% menos de daño recibido (salvo el daño por porcentaje de vida). Los enemigos en un radio ${RADIO(HABILIDADES.ojoVendaval.radio)} van ${Math.round(n.lento * 100)}% más lentos. Vuelve a apretar para lanzar una rueda dentro de ese radio: ${n.dano} de daño a quien alcanza y luego gira ${HABILIDADES.ojoVendaval.giro} s en el lugar con ${n.dps} de daño por segundo; cada golpe frena ${Math.round(HABILIDADES.ojoVendaval.lentoRueda * 100)}% más (se acumula). Una tercera vez cortas la levitación.`,
                    n1: { dano: 125, dps: 25, lento: 0.33, red: 0.60 }, n2: { dano: 125, dps: 25, lento: 0.33, red: 0.60 } },   // Seba: lento 33%
   embate:        { nombre: 'Embate de halabarda', glifo: 'embate', cd: 10, cdFijo: true, ventana: 3, avance: 45, alcance: 35, radio: 45, giro: 0.4, cura: 25,   // Seba (31-10): recarga 9 → 10, cura 50 → 25 (una vez por giro que daña al menos a un héroe)   // Seba (30-10): físico, con vueltas en el aire; golpe en un radio chico al frente
-                   desc: (n) => `Hasta 3 veces, con ${HABILIDADES.embate.ventana} s entre una y otra: giras en el aire avanzando con la halabarda y golpeas al frente (${n.dano} de daño); cada giro que acierta a un héroe te cura ${HABILIDADES.embate.cura}. El tercero es un golpe de frente que además aturde ${fmtN(n.aturde)} s. No eres inmune al control: un aturdimiento o un silencio no corta el giro en curso, pero te afecta igual y no te deja seguir la serie.`,
+                   desc: (n) => `Hasta 3 veces, con ${HABILIDADES.embate.ventana} s entre una y otra: avanzas girando y golpeas al frente (${n.dano} de daño); cada giro que acierta a un héroe te cura ${HABILIDADES.embate.cura}. El tercero además aturde ${fmtN(n.aturde)} s. Si te aturden o silencian, el giro en curso termina, pero no puedes seguir la serie.`,
                    n1: { dano: 50, aturde: 0.75 }, n2: { dano: 50, aturde: 0.75 } },
   totemGaia:     { nombre: 'Tótem de Gaia', glifo: 'totemGaia', cd: 16, cdFijo: true, radio: 90,
                    desc: (n) => `Plantas un tótem tallado a tus pies por ${n.dur} s. En un radio pequeño cura ${n.cura} por segundo a los aliados y hace ${n.dps} de daño por segundo a los enemigos.`,
@@ -2354,7 +2354,7 @@ Object.assign(HABILIDADES, {
                    desc: (n) => `Sueltas un alma que cruza el mapa en línea recta, acelerando, y vuelve hasta el borde contrario. El primer héroe enemigo que toca queda maldito: ${n.dps} de daño por segundo y ${Math.round(n.lento * 100)}% más lento por ${n.dur} s, y silenciado los primeros ${fmtN(n.silencio)} s. Atraviesa invocaciones. Si el maldito muere con la maldición encima, recuperas ${HABILIDADES.almaErrante.curaKill} de vida y la habilidad se recarga al instante.`,
                    n1: { dps: 20, dur: 4, lento: 0.2, silencio: 1.5 }, n2: { dps: 20, dur: 4, lento: 0.2, silencio: 1.5 } },   // Seba (30-10): silencia 2 s   // Seba (31-10): 2 → 1,5 s
   siega:         { nombre: 'Siega', glifo: 'siega', cd: 14, cdFijo: true, canal: 1, rango: 80, arco: 180, cura: 75,   // Seba (30-10): +75 de vida por héroe golpeado
-                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.siega.canal)} s quieto (se corta si te aturden o silencian), girando el arco hacia donde apuntas, y das un tajo de guadaña: los enemigos pierden el ${Math.round(n.pct * 100)}% de su vida actual. Rompe los escudos (Escudo de musgo, Manto de luz) y bloquea esas habilidades ${fmtN(n.silencio)} s. Recuperas ${HABILIDADES.siega.cura} de vida por cada héroe enemigo golpeado. Mata a los esqueletos; al gólem y al dragón les quita el ${Math.round(n.pct * 100)}% de su vida.`,
+                   desc: (n) => `Canalizas ${fmtN(HABILIDADES.siega.canal)} s quieto (se corta si te aturden o silencian) y das un tajo en arco hacia donde apuntas: los enemigos pierden el ${Math.round(n.pct * 100)}% de su vida actual y se les rompen todos los escudos. Recuperas ${HABILIDADES.siega.cura} de vida por cada héroe golpeado. Mata a los esqueletos; al gólem y al dragón les quita el ${Math.round(n.pct * 100)}% de su vida.`,
                    n1: { pct: 0.5, silencio: 1 }, n2: { pct: 0.5, silencio: 1 } },
   pozoMaldad:    { nombre: 'Pozo de la maldad', glifo: 'pozoMaldad', cd: 45, ulti: true, canal: 1.5, alcance: 300, radio: 100, curaKill: 50,   // Seba (30-10): canal 2 → 1,5 s; +50 de vida si un enemigo muere dentro   // Seba (30-10): 50 → 45 s
                    desc: (n) => `Apuntas un punto a distancia ${DIST(HABILIDADES.pozoMaldad.alcance)} y canalizas ${fmtN(HABILIDADES.pozoMaldad.canal)} s quieto (se corta si te aturden o silencian). Apareces ahí y silencias ${fmtN(n.silencio)} s a los enemigos cercanos; el pozo te sigue bajo los pies ${n.dur} s: ${n.dps} de daño por segundo y ${Math.round(n.lento * 100)}% más lentos a los enemigos dentro. Si un héroe enemigo muere en el pozo, recuperas ${HABILIDADES.pozoMaldad.curaKill} de vida.`,
@@ -2407,7 +2407,7 @@ const PASIVAS = {
   ritmoKaio: { nombre: 'Ritmo de combate', glifo: 'ritmoKaio', cada: 5, vel: 0.05, dano: 0.05,   // Seba: se alternan +5% vel y +5% daño, cada uno dura 5 s, luego 5 s sin nada
     desc: 'Alternas dos impulsos: 5 s con +5% de velocidad, 5 s sin nada, 5 s con +5% de daño de ataque, 5 s sin nada, y vuelta a empezar.' },
   dosVidasBipper: { nombre: 'Dos vidas', glifo: 'dosVidasBipper',   // Seba: el robot (350) se rompe y Bipper sigue a pie (100); 9 golpes para recuperarlo con la ulti
-    desc: 'Peleas montado en el robot (350 de vida). Si el robot se rompe, sigues a pie como el pequeño Bipper (100 de vida): más chico y rápido, ataca con ráfagas de 3 chispas a distancia y solo puede usar la ulti. Con 27 chispas acertadas a héroes enemigos, la ulti recupera el robot con toda su vida.' },
+    desc: '' },
   ecosSmok: { nombre: 'Ecos de humo', glifo: 'ecosSmok', reduce: 0.5, cada: 4, desc: 'Cada 4.º ataque básico tuyo que acierta deja un clon donde estás. Cuando los enemigos destruyen un clon tuyo, tus habilidades se recargan 0,5 s (no la ulti).' },   // Seba (16-11): ya no cuenta el golpe del clon   // Seba (16-11): + clon cada 4.º básico acertado   // Seba (16-11): 1 golpe por clon + destruido; no la ulti   // Seba (16-11); nombre (C)
   amuletosBambaa: { nombre: 'Amuletos viejos', glifo: 'amuletosBambaa', red: 0.05, desc: 'Los efectos de control enemigos (aturdido, silencio, lentos, confusión y demás) te duran un 5% menos.' },   // Seba (13-11); nombre (C)
   corazaMagma: { nombre: 'Coraza de magma', glifo: 'corazaMagma', escudo: 30, dur: 4,   /* Seba (13-11, V7.6): 20 → 30 */ quema: 25, quemaDur: 2, desc: 'Cada vez que alcanzas a 2 o más enemigos (héroes o invocaciones) con una habilidad, ganas un escudo de 30 por 4 s (no se acumula: se renueva) y tu siguiente habilidad quema a los enemigos que alcanza: 25 de daño en 2 s.' },   // Seba (13-11): + quemadura en la siguiente habilidad   // Seba (13-11); (C) duración 4 s, no se acumula
@@ -2418,7 +2418,7 @@ const PASIVAS = {
   sedArcana: { nombre: 'Sed arcana', glifo: 'sedArcana', cada: 100, cura: 50, escudo: 25, escudoDur: 4, ventana: 15, cd: 10,   // Seba (11-11, V6.1): 100 de daño en 15 s; recarga 10 s
     desc: 'Si haces 100 de daño con habilidades en 15 s (desde el primer golpe), recuperas 50 de vida. Si eso te pasa de tu vida máxima, aunque sea por 1, ganas un escudo de 25. Luego la pasiva se recarga 10 s. La barra bajo tus pies muestra cuánto llevas.' },   // Seba (11-11); nombre y 4 s (C)
   templeEnano: { nombre: 'Temple de enano', glifo: 'templeEnano', cada: 4, empuje: 40, empujeDur: 0.2, choque: 40, choqueAturde: 1,   // Seba (12-11, V6.5): + empuje cada 4.º golpe; choque contra borde o muros: 40 y 1 s aturdido
-    desc: 'Cada 100 de daño que recibes (sin contar escudos) llena tu medidor. Lleno, durante 3 s ganas +5% de velocidad, +5% de daño y 5% de resistencia al control; luego se recarga 5 s. Si no se llena, se vacía de a poco. Además, cada 4.º básico que golpea empuja un poco al enemigo: no puede moverse mientras vuela y se le cortan las canalizaciones que se pueden cortar. Si choca contra el borde o un muro, recibe 40 de daño y queda aturdido 1 s.' },   // Seba (09-11); nombre (C)
+    desc: '' },   // Seba (09-11); nombre (C)
   flotar: { nombre: 'Flotar', glifo: 'flotar', desc: 'Cada 3 habilidades que usas ganas +5% de velocidad por 4 s (recarga de 8 s; mientras recarga, no cuentan).' },   // Seba (05-11)
   pielBrasa: { nombre: 'Piel de brasa', glifo: 'pielBrasa', desc: 'Recibes 10% menos de daño de ataques básicos.' },
   dueloBosque: { nombre: 'Duelo del bosque', glifo: 'dueloBosque', desc: 'Por cada héroe aliado muerto regeneras 5 de vida por segundo, hasta que reaparece.' },
@@ -2618,6 +2618,8 @@ HABILIDADES.burbujaOra.canal = 1; HABILIDADES.burbujaOra.dur = 4;   // Ora: burb
 // PARCHE 25-11 (Seba, V10.5)
 HEROES.bipper.velocidad = 109;   // Bipper: velocidad en el robot (a pie no cambia)
 HABILIDADES.misilesBipper.recargaAcierto = 1;   // si los 2 cohetes alcanzan a su objetivo, la recarga baja a 1 s
+PASIVAS.dosVidasBipper.desc = 'Peleas montado en el robot (' + HEROES.bipper.vida + ' de vida). Si se rompe, sigues a pie (' + HEROES.bipper.mago.vida + ' de vida): más chico y rápido, atacas con ráfagas de chispas a distancia y solo puedes usar la ulti. Con ' + HABILIDADES.robotBipper.golpesVolver + ' chispas acertadas a héroes, la ulti recupera el robot.';   // V10.7: redacción simple (valores al día)
+PASIVAS.templeEnano.desc = 'Cada 100 de daño que recibes (sin contar escudos) llena tu medidor. Lleno, durante 3 s ganas +5% de velocidad, +5% de daño y 5% de resistencia al control; luego se recarga 5 s. Además, cada 4.º básico que golpea empuja al enemigo (no puede moverse mientras vuela y se le cortan las canalizaciones); si choca contra el borde o un muro, recibe 40 de daño y queda aturdido 1 s.';   // V10.7: redacción simple (valores al día)
 
 // ===== matchups.js =====
 // Generado por tools/matchups.js (2026-11-25): % de duelos 1v1 que gana la fila contra la columna.
@@ -8454,6 +8456,17 @@ class Game {
   emit(ev) { this.events.push(ev); }
 
   // ================================================================ objetivos
+  // Seba (25-11, V10.7): ¿un muro corta el camino de A a B? (muro de Aldor de cualquier equipo, o muro de Maidas enemigo del dueño)
+  muroEntre(owner, ax, ay, bx, by) {
+    if (this.frenaMuroAldor({ x: ax, y: ay, owner }, bx, by)) return true;
+    const team = this.teamOf(owner), dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1;
+    for (const u of this.units) {
+      if (!u.alive || u.kind !== 'muro' || this.teamOf(u.owner) === team) continue;
+      const t = Math.max(0, Math.min(1, ((u.x - ax) * dx + (u.y - ay) * dy) / L2));
+      if (Math.hypot(ax + dx * t - u.x, ay + dy * t - u.y) <= UNIDADES.muro.grosor / 2) return true;
+    }
+    return false;
+  }
   muroEnemigoEn(pr) {
     const team = this.teamOf(pr.owner);
     for (const u of this.units) if (u.alive && u.kind === 'muro' && this.teamOf(u.owner) !== team && distA(u, pr) <= UNIDADES.muro.grosor / 2 + pr.radio) return u;
@@ -9239,6 +9252,7 @@ class Game {
       const g = H.giro * (1 + M.e) * dt; cur += Math.max(-g, Math.min(g, d));
     }
     pr.vx = Math.cos(cur) * v; pr.vy = Math.sin(cur) * v;
+    if (this.muroEntre(pr.owner, pr.x, pr.y, pr.x + pr.vx * dt, pr.y + pr.vy * dt)) { pr.dead = true; this.emit({ k: 'boom', x: pr.x | 0, y: pr.y | 0, r: 14, c: 'fuego' }); return; }   // V10.7: los muros lo frenan
     pr.x += pr.vx * dt; pr.y += pr.vy * dt;
     if (t && t.alive && dist(t, pr) <= (t.esUnidad ? 12 : CONFIG.RADIO_JUGADOR) + pr.radio) {
       pr.dead = true;
@@ -9796,8 +9810,7 @@ class Game {
   // ¿Un proyectil choca con un muro de Aldor? (los de las ultis lo atraviesan, salvo la flecha del Tiro del bosque de Lire)
   frenaMuroAldor(pr, bx, by) {
     if (!this.units.some(m => m.alive && m.bloqueaProy)) return null;
-    if (pr.deUlti && pr.spr !== 'brasa') return null;   // Seba (12-11, V6.9): los disparos de torretas (Jürgen y Lire) sí los frena el muro   // Seba (09-11): los proyectiles de ultis lo atraviesan (también las flechas de la Ascensión élfica)
-    if (PASA_MURO_ALDOR.has(pr.spr)) return null;   // Seba (09-11): el muro frena lo físico; la magia y lo que vuela pasan
+    if (pr.deUlti) return null;   // Seba (25-11, V10.7): los muros son un «hard stop» para todo proyectil que no sea de ulti (las torretas de ulti pasan; las de Lire no)
     for (const m of this.units) {
       if (!m.alive || !m.bloqueaProy) continue;
       const [x1, y1, x2, y2] = this.extremosRoca(m), ax = pr.x, ay = pr.y;
@@ -11824,8 +11837,8 @@ class Game {
               if (d > CONFIG.RADIO_JUGADOR && angDiff(Math.atan2(e.y - p.y, e.x - p.x), a) > mitad + 0.2) continue;
               if (e.esUnidad) { this.damage(e, e.kind === 'esqueleto' ? e.hp + 1 : e.hp * n.pct, p, { tipo: 'puro', desde: p }); continue; }
               // rompe escudos y los silencia 1 s; después quita la mitad de la vida actual
-              if (e.fx.escudo || e.fx.manto || e.fx.juramento) { delete e.fx.escudo; delete e.fx.manto; delete e.fx.juramento;   /* Seba (12-11): también el Escudo del juramento de Legios */ this.emit({ k: 'escudoRoto', x: e.x | 0, y: e.y | 0 }); }
-              this.aplicarEfecto(e, 'silencioEscudo', { t: n.silencio });
+              if (e.fx.escudo || e.fx.manto || e.fx.juramento || e.fx.escudoKaio) { delete e.fx.escudo; delete e.fx.manto; delete e.fx.juramento; delete e.fx.escudoKaio;   /* Seba (12-11): también el Escudo del juramento de Legios */ this.emit({ k: 'escudoRoto', x: e.x | 0, y: e.y | 0 }); }
+              /* Seba (25-11, V10.7): ya no bloquea las habilidades de escudo */
               this.damage(e, e.hp * n.pct, p, { tipo: 'puro', desde: p, pct: true });
               this.emit({ k: 'txt', x: e.x | 0, y: e.y | 0, s: 'SEGADO' });
               this.heal(p, h.cura, p);   // Seba (30-10): +75 por héroe golpeado
@@ -13072,6 +13085,7 @@ class Game {
             if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
             const rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR, dx = e.x - p.x, dy = e.y - p.y, u = dx * ca + dy * sa, w = Math.abs(-dx * sa + dy * ca);
             if (u < H.punta - rr || u > H.largo + rr || w > H.ancho / 2 + rr) continue;   // franja desde la punta del paraguas
+            if (this.muroEntre(p.id, p.x + ca * H.punta, p.y + sa * H.punta, e.x, e.y)) continue;   // Seba (25-11, V10.7): no daña a través de muros
             this.damage(e, H.golpe, p, { tipo: 'mag', desde: { x: p.x + ca * H.punta, y: p.y + sa * H.punta } });
           }
           this.emit({ k: 'estallidoAnn', x: p.x | 0, y: p.y | 0, a: +v.a.toFixed(2), n: 1 + Math.round(k * 4), r: H.largo, w: H.ancho });
@@ -13410,6 +13424,7 @@ class Game {
         const nx = (1 - u) * (1 - u) * p0x + 2 * u * (1 - u) * cx + u * u * p2x, ny = (1 - u) * (1 - u) * p0y + 2 * u * (1 - u) * cy + u * u * p2y;
         const frenaA = this.frenaMuroAldor(pr, nx, ny);
         if (frenaA) { pr.dead = true; this.emit({ k: 'boom', x: frenaA.x | 0, y: frenaA.y | 0, r: 10, c: 'piedra' }); continue; }
+        if (!pr.deUlti && this.muroEnemigoEn(pr)) { pr.dead = true; this.emit({ k: 'block', x: pr.x | 0, y: pr.y | 0 }); continue; }   // V10.7: también el muro de Maidas
         pr.vx = nx - pr.x; pr.vy = ny - pr.y; pr.x = nx; pr.y = ny;
         const own = this.players.get(pr.owner), set = ida ? A.ida : A.vuelta;
         for (const e of this.enemigos(pr.owner, false)) {
@@ -13432,7 +13447,7 @@ class Game {
         pr.vx = dx / d * v; pr.vy = dy / d * v;
         const paso = Math.min(d, v * dt);
         pr.x += dx / d * paso; pr.y += dy / d * paso;
-        if (this.muroEnemigoEn(pr)) { pr.dead = true; this.emit({ k: 'block', x: pr.x | 0, y: pr.y | 0 }); continue; }   // Seba (05-11): el muro también las frena
+        if (!pr.deUlti && (this.muroEnemigoEn(pr) || this.frenaMuroAldor(pr, pr.x, pr.y))) { pr.dead = true; this.emit({ k: 'block', x: pr.x | 0, y: pr.y | 0 }); continue; }   // Seba (05-11 / 25-11): los muros de Maidas y Aldor las frenan
         for (const e of this.enemigos(pr.owner, false)) {
           if (V.golpes.has(e.id) || dist(e, pr) > pr.radio + (e.esUnidad ? 10 : R)) continue;
           V.golpes.add(e.id);
@@ -13451,6 +13466,10 @@ class Game {
         } else this.emit({ k: 'boom', x: frena.x | 0, y: frena.y | 0, r: 10, c: 'piedra' });
         continue;
       }
+      if (!pr.deUlti) {   // Seba (25-11, V10.7): el muro de Maidas frena todo proyectil que no sea de ulti (y recibe el golpe)
+        const m = this.muroEnemigoEn(pr);
+        if (m) { pr.dead = true; const own = this.players.get(pr.owner); if (own && pr.dmg > 0) this.damage(m, pr.dmg, own, { tipo: pr.tipo || 'mag', desde: pr }); this.emit({ k: 'block', x: pr.x | 0, y: pr.y | 0 }); continue; }
+      }
       if (pr.misil) { this.misilBipper(pr, dt); continue; }   // Bipper: misil buscador (V10.6: después del muro de Aldor, que también lo frena)
       pr.x += pr.vx * dt; pr.y += pr.vy * dt; pr.left -= step;
       let hit = null;
@@ -13468,7 +13487,7 @@ class Game {
           if (pr.perfora.has(q.id)) continue;
           const rq = q.esUnidad ? (q.kind === 'muro' ? UNIDADES.muro.grosor / 2 : q.kind === 'cucko' ? 26 : q.kind === 'golem' ? 22 : 16) : R;
           if (distA(q, pr) > rq + pr.radio) continue;
-          if (q.kind === 'muro') { hit = q; break; }
+          if (q.kind === 'muro') { if (pr.deUlti) continue; hit = q; break; }
           pr.perfora.add(q.id); this.impacto(pr, q);
           this.emit({ k: 'boom', x: q.x | 0, y: q.y | 0, r: 18, c: 'espectro' });
         }
@@ -13477,6 +13496,7 @@ class Game {
         for (const q of lista) {
           const rq = q.esUnidad ? (q.kind === 'muro' ? UNIDADES.muro.grosor / 2 : q.kind === 'cucko' ? 26 : q.kind === 'golem' ? 22 : 16) : R;
           if (distA(q, pr) <= rq + pr.radio) {
+            if (pr.deUlti && q.kind === 'muro') continue;   // V10.7: lo de ulti atraviesa el muro de Maidas
             if (this.frenaMuroAldor(pr, q.x, q.y)) continue;   // Seba (10-11, V5.7): quien está pegado detrás del muro de Aldor no recibe el golpe a través de la roca
             hit = q; break;
           }
@@ -14732,7 +14752,7 @@ function vcEmpujar(e, rad) {
     if (r || !ROCAS_MAPA.length) return r;
     if (!pr.basico) {   // Seba (13-11): todos los básicos a distancia se frenan en las rocas; el resto, como el muro de Aldor
       if (pr.deUlti && pr.spr !== 'brasa') return null;
-      if (PASA_MURO_ALDOR.has(pr.spr)) return null;
+      if (PASA_MURO_ALDOR.has(pr.spr)) return null;   // (las rocas del Volcán mantienen su regla: la magia pasa)
     }
     return vcCruzaRoca(pr.x, pr.y, bx, by);
   };
@@ -22855,6 +22875,12 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V10.7', f: '25-11-2026', n: [
+    'Muros (Maidas y Aldor): son un freno total para todo proyectil que no sea de ulti, sea físico o mágico (los disparos de la torreta de ulti de Jürgen pasan; los de las torretas de Lire no). Los misiles de Bipper y la daga que vuelve de Shai también se frenan.',
+    'Ann, Ráfaga: no daña a través de los muros.',
+    'Tenebris, Siega: rompe todos los escudos y ya no bloquea las habilidades de escudo.',
+    'Textos más simples en Siega, Kaio, Bipper (con la vida del robot al día), Zeal, Lei, Legios, Driiar y Aldor.',
+  ] },
   { v: 'V10.6', f: '25-11-2026', n: [
     'Arreglo: la Erupción mostraba el chorro de agua del géiser de Ora en vez de sus géiseres de magma (los dos efectos tenían el mismo nombre interno).',
     'Arreglo: el muro de Aldor ahora también frena los misiles de Bipper, como al resto de los proyectiles que no son de ulti.',
