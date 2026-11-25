@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V10.8</title>
+<title>LOLA V10.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V10.8</p>
+        <p class="sub version">LOLA V10.9</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2616,7 +2616,7 @@ for (const k of HEROES.bambaa.habs) HABILIDADES[k].cd = Math.round((HABILIDADES[
 HABILIDADES.fuga.n1.dur = HABILIDADES.fuga.n2.dur = 3.5;   // Lire: Fuga 3 → 3,5 s
 HABILIDADES.burbujaOra.canal = 1; HABILIDADES.burbujaOra.dur = 4;   // Ora: burbuja lista en 1 s y dura 4 s
 // PARCHE 25-11 (Seba, V10.5)
-HEROES.bipper.velocidad = 109;   // Bipper: velocidad en el robot (a pie no cambia)
+HEROES.bipper.velocidad = 106;   // Seba (25-11, V10.9): 109 → 106. Bipper: velocidad en el robot (a pie no cambia)
 HABILIDADES.misilesBipper.recargaAcierto = 1;   // si los 2 cohetes alcanzan a su objetivo, la recarga baja a 1 s
 PASIVAS.dosVidasBipper.desc = 'Peleas montado en el robot (' + HEROES.bipper.vida + ' de vida). Si se rompe, sigues a pie (' + HEROES.bipper.mago.vida + ' de vida): más chico y rápido, atacas con ráfagas de chispas a distancia y solo puedes usar la ulti. Con ' + HABILIDADES.robotBipper.golpesVolver + ' chispas acertadas a héroes, la ulti recupera el robot.';   // V10.7: redacción simple (valores al día)
 PASIVAS.templeEnano.desc = 'Cada 100 de daño que recibes (sin contar escudos) llena tu medidor. Lleno, durante 3 s ganas +5% de velocidad, +5% de daño y 5% de resistencia al control; luego se recarga 5 s. Además, cada 4.º básico que golpea empuja al enemigo (no puede moverse mientras vuela y se le cortan las canalizaciones); si choca contra el borde o un muro, recibe 40 de daño y queda aturdido 1 s.';   // V10.7: redacción simple (valores al día)
@@ -22887,6 +22887,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V10.9', f: '25-11-2026', n: [
+    'Bipper: velocidad en el robot 109 → 106.',
+  ] },
   { v: 'V10.8', f: '25-11-2026', n: [
     'Kazaro: la Lanza errante choca con los muros (Maidas y Aldor) y queda clavada antes del muro; al volver, si un muro la corta, cae ahí. Si la lanza ya está al otro lado de un muro, Kazaro sí puede saltar por encima.',
   ] },
