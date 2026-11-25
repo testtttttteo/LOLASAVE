@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V10.4</title>
+<title>LOLA V10.5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V10.4</p>
+        <p class="sub version">LOLA V10.5</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2217,7 +2217,7 @@ Object.assign(HABILIDADES, {
   // ---- Bipper (Seba, 23-11; números (C) salvo los que fijó Seba)
   misilesBipper: { nombre: 'Misiles buscadores', glifo: 'misilesBipper', cd: 9, cdFijo: true,   // Seba (24-11): 11 → 9
                    misiles: 2, dano: 50, cura: 50, vel: 300, giro: 5.5,   // Seba: 2 misiles, alcance infinito, 50 c/u, 1 por enemigo, el que sobra se va del mapa, cura 50 si mata; (C) cd 9
-                   desc: (n) => `El robot lanza ${HABILIDADES.misilesBipper.misiles} misiles que persiguen a los enemigos sin límite de alcance: ${HABILIDADES.misilesBipper.dano} de daño cada uno, un misil por enemigo (el que sobra se pierde fuera del mapa). Si un misil mata, recuperas ${HABILIDADES.misilesBipper.cura} de vida. Solo con el robot.`,
+                   desc: (n) => `El robot lanza ${HABILIDADES.misilesBipper.misiles} misiles que persiguen a los enemigos sin límite de alcance: ${HABILIDADES.misilesBipper.dano} de daño cada uno, un misil por enemigo (el que sobra se pierde fuera del mapa). Si los dos misiles alcanzan a su objetivo, la recarga baja a 1 s. Si un misil mata, recuperas ${HABILIDADES.misilesBipper.cura} de vida. Solo con el robot.`,
                    n1: {}, n2: {} },
   antenaBipper:  { nombre: 'Campo magnético', glifo: 'antenaBipper', cd: 14, cdFijo: true, dur: 6, radio: 130, ritmo: 0.33, shock: 20, shockLento: 0.2, shockDur: 2, shockCada: 2,   // Seba (24-11): el enemigo dentro que daña a Bipper recibe un shock de 20 y 20% de lentitud 2 s (1 vez cada 2 s)
                      // Seba (24-11): la antena se planta a los pies de Bipper
@@ -2615,6 +2615,9 @@ HEROES.lei.dano -= 2;       // Lei: daño −2
 for (const k of HEROES.bambaa.habs) HABILIDADES[k].cd = Math.round((HABILIDADES[k].cd + 1) * 10) / 10;   // Bambaa: +1 s a todas
 HABILIDADES.fuga.n1.dur = HABILIDADES.fuga.n2.dur = 3.5;   // Lire: Fuga 3 → 3,5 s
 HABILIDADES.burbujaOra.canal = 1; HABILIDADES.burbujaOra.dur = 4;   // Ora: burbuja lista en 1 s y dura 4 s
+// PARCHE 25-11 (Seba, V10.5)
+HEROES.bipper.velocidad = 109;   // Bipper: velocidad en el robot (a pie no cambia)
+HABILIDADES.misilesBipper.recargaAcierto = 1;   // si los 2 cohetes alcanzan a su objetivo, la recarga baja a 1 s
 
 // ===== matchups.js =====
 // Generado por tools/matchups.js (2026-11-23): % de duelos 1v1 que gana la fila contra la columna.
@@ -7797,9 +7800,8 @@ Object.assign(GLIFOS, {
 
 // Seba (24-11, V10.4): Biteroi rediseñado — científico calvo y dañado, más oscuro: cráneo con cicatrices, gafas rajadas en la frente,
 // un ojo quemado que brilla, sonrisa de dientes, bata oscura manchada y un frasco verde al pecho. Conserva la bomba con mecha (se dibuja aparte).
-const BITEROI_GRANDE = [
+const BITEROI_GRANDE = [   // Seba (25-11, V10.5): 20×22, mismo alto que el Biteroi anterior (se quitó la fila vacía de arriba y una de la bata)
   [
-    '....................',
     '........kkkk........',
     '......kk4444kk......',
     '.....k44434444k.....',
@@ -7814,7 +7816,6 @@ const BITEROI_GRANDE = [
     '.....k1nk333kn1k....',
     '....kn1n2kkk2n1nk...',
     '...kn1nn2JuJ2nn1nk..',
-    '...kn1n22JuJ22n1nk..',
     '...k4kn2nnnnn2nk4k..',
     '...k3kn2wnnrn2nk3k..',
     '....kkn2nnnnn2nkk...',
@@ -7825,7 +7826,6 @@ const BITEROI_GRANDE = [
     '.....kwwwk.kwwwk....',
   ],
   [
-    '....................',
     '........kkkk........',
     '......kk4444kk......',
     '.....k44434444k.....',
@@ -7840,7 +7840,6 @@ const BITEROI_GRANDE = [
     '.....k1nk333kn1k....',
     '....kn1n2kkk2n1nk...',
     '...kn1nn2JuJ2nn1nk..',
-    '...kn1n22JuJ22n1nk..',
     '...k4kn2nnnnn2nk4k..',
     '...k3kn2wnnrn2nk3k..',
     '....kkn2nnnnn2nkk...',
@@ -7851,7 +7850,6 @@ const BITEROI_GRANDE = [
     '....kwwwk...kwwwk...',
   ],
   [
-    '....................',
     '........kkkk........',
     '......kk4444kk......',
     '.....k44434444k.....',
@@ -7866,7 +7864,6 @@ const BITEROI_GRANDE = [
     '.....k1nk333kn1k....',
     '....kn1n2kkk2n1nk...',
     '...kn1nn2JuJ2nn1nk..',
-    '...kn1n22JuJ22n1nk..',
     '...k4kn2nnnnn2nk4k..',
     '...k3kn2wnnrn2nk3k..',
     '....kkn2nnnnn2nkk...',
@@ -7877,7 +7874,7 @@ const BITEROI_GRANDE = [
     '......kwwwkwwwk.....',
   ]
 ];
-function biteroiGrande(frame) { return grandeDe('bt' + frame, 20, 24, BITEROI_GRANDE[frame]); }
+function biteroiGrande(frame) { return grandeDe('bt' + frame, 20, 22, BITEROI_GRANDE[frame]); }
 Object.assign(CAPAS, { cuerpoBiteroi: L({ 0: '......kk4444kk......', 1: '.....k44434444k.....', 2: '.....kbbkk4bbkk.....', 3: '.....kckbkkbckk.....', 4: '.....k44r4443k......', 5: '.....k4kq44fk3k.....', 6: '.....k44r44f43k.....', 7: '.....k43r44443k.....', 8: '......k4kqkqk3k.....', 9: '......kk43334kk.....', 10: '.....k1nk333kn1k....', 11: '....kn1n2kkk2n1nk...', 12: '...kn1nn2JuJ2nn1nk..', 13: '...kn1n22JuJ22n1nk..', 14: '...k4kn2nnnnn2nk4k..', 15: '...k3kn2wnnrn2nk3k..', 16: '....kkn2nnnnn2nkk...', 17: '.....kn2nwnnn2nk....', 18: '.....kn1n1kn1n1k....', 19: '......knnk.knnk.....', 20: '......knnk.knnk.....', 21: '.....kwwwk.kwwwk....' }) });
 APARIENCIA.biteroi = { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoBiteroi'], ['cuerpoBiteroi']], cabeza: [[], []] };
 // Seba (24-11, V10.4): mina nueva — carcasa remachada medio enterrada, con foco rojo
@@ -9079,12 +9076,13 @@ class Game {
     let obj = this.jugadoresEnemigos(p.id).filter(vis).sort((a, b) => dist(a, p) - dist(b, p));
     if (!obj.length) obj = this.enemigos(p.id, false).filter(e => e.esUnidad && vis(e)).sort((a, b) => dist(a, p) - dist(b, p));
     const a0 = this._apunte ? this._apunte.a : obj.length ? Math.atan2(obj[0].y - p.y, obj[0].x - p.x) : p.facing;
+    const salva = { n: 0 };   // Seba (25-11, V10.5): si los 2 cohetes alcanzan a su objetivo, la recarga baja a 1 s
     for (let i = 0; i < H.misiles; i++) {
       const t = obj[i] || null, lado = i % 2 ? 1 : -1;
       const a = t ? Math.atan2(t.y - p.y, t.x - p.x) + lado * 1.1 : a0 + lado * 0.15;   // salen abiertos y giran hacia su presa
       this.spawnProj(p, a, { vel: H.vel, alcance: 1e9, radio: 6, dmg: H.dano, tipo: 'mag', spr: 'misilBipper' });
       const pr = this.projectiles[this.projectiles.length - 1];
-      pr.misil = { obj: t, e: 0 };
+      pr.misil = { obj: t, e: 0, salva };
     }
     this.emit({ k: 'misilesBipper', id: p.id, x: p.x | 0, y: p.y | 0 });
   }
@@ -9104,6 +9102,10 @@ class Game {
       pr.dead = true;
       this.emit({ k: 'boom', x: pr.x | 0, y: pr.y | 0, r: 18, c: 'fuego' });
       this.damage(t, pr.dmg, own || null, { tipo: 'mag', desde: pr });
+      if (M.salva && ++M.salva.n >= H.misiles && own) {   // los dos acertaron: recarga a 1 s
+        const sl = HEROES.bipper.habs.indexOf('misilesBipper') + 1;
+        if (sl > 0 && own.cd[sl] > H.recargaAcierto) { own.cd[sl] = H.recargaAcierto; this.emit({ k: 'txt', x: own.x | 0, y: own.y | 0, s: '↻', id: own.id }); }
+      }
       if (!t.alive && !t.esUnidad && own && own.alive) { this.heal(own, H.cura, own); this.emit({ k: 'heal', x: own.x | 0, y: own.y | 0 }); this.emit({ k: 'txt', x: own.x | 0, y: own.y | 0, s: `+${H.cura}`, id: own.id }); }
       return;
     }
@@ -10113,11 +10115,11 @@ class Game {
       if (hizo > 0 && HEROES[p.build?.heroe]?.pasiva === 'templeEnano') {   // Aldor (Seba 12-11, V6.5): cada 4.º básico que golpea empuja
         const P = PASIVAS.templeEnano; p.golpesAldor = (p.golpesAldor || 0) + 1;
         if (p.golpesAldor >= P.cada) { p.golpesAldor = 0; if (q.alive) this.empujeAldor(p, q, p.x, p.y, P.empuje, P.empujeDur); }
-      if (p._kaioG && hizo > 0) {   // Kaio: golpe potenciado — aturde y suma para el estallido
+      }
+      if (p._kaioG && hizo > 0) {   // Kaio: golpe potenciado — aturde y suma para el estallido (V10.5: estaba dentro del bloque de Aldor y nunca contaba)
         const g = p._kaioG; g.hits.set(q, (g.hits.get(q) || 0) + 1);
         if (q.alive) this.aplicarEfecto(q, 'aturdido', { t: HABILIDADES.golpesKaio.aturde });
         this.emit({ k: 'aturdeKaio', x: q.x | 0, y: q.y | 0 });
-      }
       }
       if (p._kiroUlti && hizo > 0 && q.alive) {   // Kiro: efectos de los golpes 1 y 2 de la Tormenta de arena
         const N = HABILIDADES.tormentaArena.n1;
@@ -17428,7 +17430,7 @@ class Renderer {
     const esGaia = meta.build.heroe === 'gaia';   // Gaia flota sobre su vestido (sin nube)
     const bob = flota ? Math.round(Math.sin(this.time * 3 + (p.id.length % 5)) * 1.5) - 3 : esGaia ? Math.round(Math.sin(this.time * 2.4 + (p.id.length % 5)) * 1) - 2 : 0;
     // Trelgon en Sobrecrecimiento: 1,5 veces más grande (los pies quedan en el mismo lugar)
-    const gigante = (p.flags & 134217728) ? 1.6 : (p.f2 & 8192) ? 1.3 : meta.build.heroe === 'trelgon' ? 1.35 : meta.build.heroe === 'tektal' ? 1.2 : 1;   // Tek'Tal también es más grande   // Trelgon es más grande que el resto
+    const gigante = (p.flags & 134217728) ? 1.6 : (p.f2 & 8192) ? 1.3 : meta.build.heroe === 'trelgon' ? 1.485 : meta.build.heroe === 'tektal' ? 1.2 : 1;   // Tek'Tal también es más grande   // Trelgon es más grande que el resto
     const enAire = p.flags & 1073741824;   // Biteroi con el jetpack: sube y deja sombra y llamas
     // Kazaro saltando a su lanza (Seba 29-10): sube en arco por el aire, con sombra y estela de fuego azul
     const alturaSalto = p.salto > 0 ? Math.round(Math.sin(Math.PI * p.salto) * 34) : 0;
@@ -18519,12 +18521,12 @@ class Renderer {
   dibujaBiteroi(p, cx, cy, izq, moviendo, sw, sube) {
     const g = this.g, T = this.time;
     let fr = 0; if (moviendo) fr = [1, 0, 2, 0][Math.floor(T * 6) % 4];
-    const lx = cx - 10, ly = cy + 8 - 24 - sube, X = (x) => lx + (izq ? 21 - x : x);
+    const lx = cx - 10, ly = cy + 8 - 22 - sube, X = (x) => lx + (izq ? 21 - x : x);
     g.drawImage(biteroiGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
     let ver = true, alza = 0;
     if (sw && sw.t > 0) { const t = 1 - Math.max(0, sw.t) / (sw.T || 0.25); if (t < 0.35) alza = Math.round(t / 0.35 * 5); else if (t < 0.8) ver = false; }   // la levanta, la lanza y saca otra
     if (!ver) return;
-    const bx = X(18), by = ly + 18 - alza;   // en la mano de adelante
+    const bx = X(18), by = ly + 16 - alza;   // en la mano de adelante
     this.formaEn('bombaBit', 9, 9, (k) => {
       k.fillStyle = PALETA.tinta; k.fillRect(3, 1, 3, 1); k.fillRect(2, 2, 5, 1); k.fillRect(1, 3, 7, 4); k.fillRect(2, 7, 5, 1); k.fillRect(3, 8, 3, 1);   // bomba redonda
       k.fillStyle = PALETA.piedra0; k.fillRect(3, 2, 3, 1); k.fillRect(2, 3, 5, 4); k.fillRect(3, 7, 3, 1);
@@ -22711,6 +22713,12 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V10.5', f: '25-11-2026', n: [
+    'Kaio, Ráfaga de puños: arreglado — los golpes potenciados no se contaban, así que no aturdían ni estallaba la energía. Ahora cada golpe aturde 0,5 s y al usar el 4.º estalla: 20 de daño por cada golpe potenciado que recibió cada enemigo (80 si le diste los 4).',
+    'Bipper: velocidad en el robot 109. Misiles: si los dos alcanzan a su objetivo, la recarga baja a 1 s.',
+    'Biteroi: vuelve a tener el mismo tamaño que su modelo anterior (mismas proporciones).',
+    'Trelgon: modelo 10% más grande.',
+  ] },
   { v: 'V10.4', f: '24-11-2026', n: [
     'Biteroi: nuevo aspecto, más oscuro — científico calvo y dañado, con gafas rajadas, un ojo quemado que brilla y bata manchada. Conserva su bomba con mecha.',
     'Biteroi: minas con un diseño nuevo (carcasa remachada con foco rojo que parpadea).',
