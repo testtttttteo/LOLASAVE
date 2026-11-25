@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V10.7</title>
+<title>LOLA V10.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V10.7</p>
+        <p class="sub version">LOLA V10.8</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -2029,7 +2029,7 @@ Object.assign(HABILIDADES, {
   // ---- Kazaro (Seba, 29-10; números (C))
   lanzaErrante:  { nombre: 'Lanza errante', glifo: 'lanza', cd: 12, cdFijo: true,   // Seba (29-10): 10 → 12 s
                    alcance: 380, vel: 760, ancho: 26, clavada: 2, radioCura: 120,
-                   desc: (n) => `Arrojas tu lanza en línea recta: ${n.dano} de daño a todos los enemigos que atraviesa. Queda clavada 2 s (si aprietas mientras vuela, la entierras ahí mismo): si vuelves a apretar, saltas hasta ella, aturdes ${fmtN(n.aturde)} s a los enemigos cercanos y recuperas ${n.cura} de vida por cada héroe enemigo cerca de la lanza. Si no, vuelve a tus manos y daña otra vez a quienes cruza.`,
+                   desc: (n) => `Arrojas tu lanza en línea recta: ${n.dano} de daño a todos los enemigos que atraviesa. Queda clavada 2 s (si aprietas mientras vuela, la entierras ahí mismo): si vuelves a apretar, saltas hasta ella, aturdes ${fmtN(n.aturde)} s a los enemigos cercanos y recuperas ${n.cura} de vida por cada héroe enemigo cerca de la lanza. Si no, vuelve a tus manos y daña otra vez a quienes cruza. Los muros la frenan; si ya está al otro lado, puedes saltar por encima.`,
                    n1: { dano: 75, cura: 50, aturde: 1.5 }, n2: { dano: 97.5, cura: 65, aturde: 1.5 } },   // Seba (29-10): al caer aturde 1,5 s (antes 2)
   decimar:       { nombre: 'Decimar', glifo: 'decimar', cd: 18, cdFijo: true, radio: 110,
                    desc: (n) => `Giras la lanza durante ${fmtN(n.dur)} s: ${n.dano} de daño cada ${fmtN(n.cada)} s a los enemigos cercanos (${Math.round(n.dano * n.dur / n.cada)} en total). Mientras giras, ningún control te afecta. Puedes moverte, pero no atacar.`,
@@ -8467,6 +8467,12 @@ class Game {
     }
     return false;
   }
+  // Último punto libre del tramo (x,y)+(sx,sy) antes de un muro
+  puntoAntesMuro(owner, x, y, sx, sy) {
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 8; i++) { const m = (lo + hi) / 2; if (this.muroEntre(owner, x, y, x + sx * m, y + sy * m)) hi = m; else lo = m; }
+    return { x: x + sx * lo + Math.sign(sx) * 2, y: y + sy * lo + Math.sign(sy) * 2 };
+  }
   muroEnemigoEn(pr) {
     const team = this.teamOf(pr.owner);
     for (const u of this.units) if (u.alive && u.kind === 'muro' && this.teamOf(u.owner) !== team && distA(u, pr) <= UNIDADES.muro.grosor / 2 + pr.radio) return u;
@@ -12521,7 +12527,9 @@ class Game {
       if (u.estado === 'vuela') {
         const sx = u.vx * dt, sy = u.vy * dt;
         // Seba (29-10): la lanza choca con el muro de roca de Tek'Tal y queda clavada ahí
-        const choque = this.cruzaRoca(u.x, u.y, u.x + sx, u.y + sy);
+        let choque = this.cruzaRoca(u.x, u.y, u.x + sx, u.y + sy);
+        // Seba (25-11, V10.8): también choca con el muro de Maidas / Aldor (queda clavada antes del muro)
+        if (!choque && this.muroEntre(own.id, u.x, u.y, u.x + sx, u.y + sy)) choque = this.puntoAntesMuro(own.id, u.x, u.y, sx, sy);
         if (choque) { u.x = choque.x - Math.sign(sx) * 2; u.y = choque.y - Math.sign(sy) * 2; u.recorrido = H.alcance; }
         else { u.x += sx; u.y += sy; u.recorrido += Math.hypot(sx, sy); }
         golpear();
@@ -12541,6 +12549,10 @@ class Game {
         u.facing = Math.atan2(dy, dx);
         if (d < 22) { u.alive = false; continue; }
         const paso = Math.min(d, v * dt);
+        // Seba (25-11, V10.8): al volver choca con los muros y cae ahí (vuelve a sus manos sin cruzar)
+        if (this.cruzaRoca(u.x, u.y, u.x + dx / d * paso, u.y + dy / d * paso) || this.muroEntre(own.id, u.x, u.y, u.x + dx / d * paso, u.y + dy / d * paso)) {
+          u.alive = false; this.emit({ k: 'boom', x: u.x | 0, y: u.y | 0, r: 16, c: 'piedra' }); continue;
+        }
         u.x += dx / d * paso; u.y += dy / d * paso;
         golpear();
       }
@@ -22875,6 +22887,9 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V10.8', f: '25-11-2026', n: [
+    'Kazaro: la Lanza errante choca con los muros (Maidas y Aldor) y queda clavada antes del muro; al volver, si un muro la corta, cae ahí. Si la lanza ya está al otro lado de un muro, Kazaro sí puede saltar por encima.',
+  ] },
   { v: 'V10.7', f: '25-11-2026', n: [
     'Muros (Maidas y Aldor): son un freno total para todo proyectil que no sea de ulti, sea físico o mágico (los disparos de la torreta de ulti de Jürgen pasan; los de las torretas de Lire no). Los misiles de Bipper y la daga que vuelve de Shai también se frenan.',
     'Ann, Ráfaga: no daña a través de los muros.',
