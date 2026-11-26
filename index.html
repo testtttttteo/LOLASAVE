@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<title>LOLA V11.2</title>
+<title>LOLA V11.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <style>
@@ -1123,7 +1123,7 @@ select { font: 600 16px var(--f-titulo); color: var(--tinta); background: var(--
       <div class="logo">
         <h1>LOLA</h1>
         <p class="sub">Elige tu héroe y sobrevive en el claro del bosque.</p>
-        <p class="sub version">LOLA V11.2</p>
+        <p class="sub version">LOLA V11.3</p>
       </div>
       <div class="parade" id="parade"></div>
       <div class="panel">
@@ -1765,6 +1765,36 @@ Object.assign(HEROES, {
     habs: ['misilesBipper', 'antenaBipper', 'robotBipper'],
     pasiva: 'dosVidasBipper',
   },
+// Seba (25-11): Argus (Aliados) — mago joven y poderoso, de traje (sin gorro) y varita; poder rúnico celeste. Números (C) salvo los que fijó Seba.
+  argus: {
+    casa: 'aliados',
+    nombre: 'Argus', rol: 'Mago · movilidad', fondo: 'argus', arma: 'ninguna',
+    desc: 'Mago joven y poderoso, de traje negro con ribetes morados y dorados. Con su varita traza runas celestes: aparece de un salto rodeado de runas, canaliza un rayo y se vuelve una bola de energía que cruza el campo.',
+    vida: 360, dano: 26, recarga: 1.0, ultiCarga: 300, velocidad: 160,   // (C) mago a distancia (25-11: 340 → 360 y 24 → 26 tras la primera prueba)
+    ataque: { tipo: 'proyectil', proj: 'runaArgus', vel: 520, alcance: 320, radio: 8 },   // Seba (26-11): proyectil más grande   // (C) runa celeste de la varita
+    habs: ['saltoArgus', 'rayoArgus', 'bolaArgus'],
+    pasiva: 'ecoArgus',
+  },
+// Seba (26-11): Eliza (Renegados) — hechicera joven y elegante de la ciudad (fue del castillo); traje oscuro con dorado y morado, pelo largo índigo, estrella dorada en el pelo; poder de la noche y las estrellas. Números (C) salvo los que fijó Seba.
+  eliza: {
+    casa: 'renegados',
+    nombre: 'Eliza', rol: 'Hechicera · control', fondo: 'eliza', arma: 'ninguna',
+    desc: 'Hechicera joven y elegante que dejó el castillo y vive en la ciudad. Usa la noche y las estrellas: hace caer orbes del cielo, lanza un bumerán estelar que aturde y envuelve a su grupo en la oscuridad.',
+    vida: 370, dano: 26, recarga: 1.0, ultiCarga: 300, velocidad: 162,   // (C) maga a distancia; Seba (26-11): vida 340 → 370, daño 24 → 26
+    ataque: { tipo: 'proyectil', proj: 'orbeEliza', vel: 480, alcance: 320, radio: 9 },   // Seba (26-11): proyectil 25% más grande (7 → 9)   // Seba: orbe estelar a distancia; (C) 24, alcance 320
+    habs: ['estrellasEliza', 'bumeranEliza', 'nocheEliza'],
+    pasiva: 'estrelladaEliza',
+  },
+// Seba (26-11): Om (Aliados) — guardián de piedra de una pirámide (azteca/maya), penacho de plumas, adornos de oro y turquesa, martillo con gemas; sprite grande. Números (C) salvo los que fijó Seba.
+  om: {
+    casa: 'aliados',
+    nombre: 'Om', rol: 'Guardián · tanque', fondo: 'om', arma: 'ninguna',
+    desc: 'Guardián de piedra de una pirámide antigua, con penacho de plumas y adornos de oro y turquesa. Se sacrifica para curar a los suyos, planta un tótem que escupe fuego y encierra a sus enemigos entre murallas.',
+    vida: 430, dano: 29, recarga: 1.25, ultiCarga: 300, velocidad: 155,   // Seba (26-11 r3): vida y velocidad de Trelgon, 3 menos de daño (32 → 29). Antes (C) tanque lento con el golpe más pesado (26-11: 470/34/1,4/135 → 500/40/1,25/140 tras la primera prueba, 6%)
+    ataque: { tipo: 'melee', rango: 60, arco: 110 },   // Seba: martillazo
+    habs: ['sacrificioOm', 'totemOm', 'murallaOm'],
+    pasiva: 'guardianOm',
+  },
 });
 
 // Seba (12-11): Ora, oráculo de las mareas (Errantes). Números (C) salvo los que fijó Seba.
@@ -2201,6 +2231,47 @@ Object.assign(HABILIDADES, {
                      // Seba: canaliza 0,5 s, salta bajo el paraguas con lluvia (daño mágico, lento 2% por gota hasta 30%), al aterrizar dispara de vuelta por el camino; (C) alcance 420, vuelo 0,9 s, 8 por gota, 60 el disparo final
                    desc: (n) => `Canalizas ${fmtN(HABILIDADES.tormentaAnn.canal)} s y saltas hasta un punto a distancia ${DIST(HABILIDADES.tormentaAnn.alcance)} bajo tu paraguas, con una lluvia debajo: ${HABILIDADES.tormentaAnn.gotaDano} de daño por gota y ${Math.round(HABILIDADES.tormentaAnn.lento * 100)}% más lento por gota (hasta ${Math.round(HABILIDADES.tormentaAnn.lentoTope * 100)}%). Al aterrizar disparas de vuelta por todo el camino del salto: ${HABILIDADES.tormentaAnn.dano} de daño.`,
                    n1: {}, n2: {} },
+  // ---- Om (Seba 26-11; números (C) salvo los que fijó Seba)
+  sacrificioOm:  { nombre: 'Sacrificio', glifo: 'sacrificioOm', cd: 0.3, cdFijo: true, pct: 0.15, cada: 1, radio: 176,   // Seba: se activa y desactiva, sin recarga; mientras está activo, cada 1 s Om pierde 15% de su vida actual y cada aliado cercano recibe esa cantidad como curación; (C) radio 220
+                   desc: (n) => `Se activa y se desactiva, sin recarga. Mientras está activo, cada ${HABILIDADES.sacrificioOm.cada} s pierdes el ${Math.round(HABILIDADES.sacrificioOm.pct * 100)}% de tu vida actual y cada aliado cerca de ti (radio ${HABILIDADES.sacrificioOm.radio}) se cura esa misma cantidad.`,
+                   n1: {}, n2: {} },
+  totemOm:       { nombre: 'Tótem de fuego', glifo: 'totemOm', cd: 14, cdFijo: true, dur: 7, alcance: 144, cada: 0.4, giro: 1.28, dano: 14, vel: 363,   // Seba (26-11 r4): dura 1 s más (6 → 7), bolas llegan 5% más lejos (240 → 252), radio del Sacrificio −20% (220 → 176). Seba (26-11 r3): alcance −20% (180 → 144), bolas 10% más rápidas (330 → 363), 25% más bolas (cada 0,5 → 0,4 s)
+                   alcanceFuego: 252, radioFuego: 8,   // Seba (26-11 tarde): tótem 40% más grande, fuego 40% más grande (radio 6 → 8), gira 20% más lento (1,6 → 1,28)
+                     // Seba: tótem chato con caras de dragón o león que gira y dispara bolas de fuego en 4 direcciones desde sus caras; (C) 6 s, cada 0,5 s, 14 de daño, alcance 240
+                   desc: (n) => `Plantas un tótem de piedra con 4 caras de dragón que gira por ${HABILIDADES.totemOm.dur} s. Cada ${fmtN(HABILIDADES.totemOm.cada)} s escupe una bola de fuego por cada cara (${HABILIDADES.totemOm.dano} de daño cada una); como gira, salen en distintas direcciones.`,
+                   n1: {}, n2: {} },
+  murallaOm:     { nombre: 'Muralla del templo', glifo: 'murallaOm', cd: 55, cdFijo: true, ulti: true, largo: 325, ancho: 132, inicio: 30, espera: 1.5, dur: 4, disparos: 12, cadaMin: 0.1, cadaMax: 0.35, dano: 40, vel: 342, fisuraVel: 600, aturde: 1.5, radioFuego: 10,   // Seba (26-11 r3): bolas 10% más lentas (380 → 342). Seba (26-11 tarde): 25% más largo (260 → 325), 20% más ancho (110 → 132), bolas en diferido (C: cada 0,1-0,35 s al azar), 40 c/u, fuego 40% más grande; la fisura aturde 1,5 s al que alcanza; (C) avanza a 600 por s
+                     // Seba: martillazo al piso, fractura (como la de Aldor); a los 1,5 s se levantan 2 muros a los lados y uno al fondo (U); del muro del fondo salen 12 disparos de fuego en posiciones al azar; (C) largo 260, ancho 110, muros 4 s, 25 por disparo
+                   desc: (n) => `Golpeas el piso con el martillo y abres una fisura de tierra hacia adelante que aturde ${fmtN(HABILIDADES.murallaOm.aturde)} s a los enemigos que alcanza. A los ${fmtN(HABILIDADES.murallaOm.espera)} s se levantan murallas a ambos lados y al fondo, formando un pasillo cerrado por ${HABILIDADES.murallaOm.dur} s. Desde la muralla del fondo salen ${HABILIDADES.murallaOm.disparos} bolas de fuego por el pasillo, desde lugares al azar (${HABILIDADES.murallaOm.dano} de daño cada una).`,
+                   n1: {}, n2: {} },
+  // ---- Eliza (Seba 26-11; números (C) salvo los que fijó Seba)
+  estrellasEliza: { nombre: 'Lluvia de estrellas', glifo: 'estrellasEliza', cd: 8, cdFijo: true, n: 3, dano: 40, extra: 10, alcance: 173, sep: 45, radio: 40, caida: 0.625, cada: 0.25,   // Seba (26-11): alcance −25% (230 → 173), 10% más juntas (50 → 45), caen 25% más lento (0,5 → 0,625 s y cada 0,2 → 0,25 s)
+                     // Seba: 3 orbes caen del cielo en línea, 40 c/u y +10 por cada orbe adicional al mismo enemigo; en fila hacia donde apuntas; (C) cd 8, separación 50, radio 40, caen a los 0,5 s, cada 0,2 s
+                   desc: (n) => `Haces caer ${HABILIDADES.estrellasEliza.n} orbes de energía del cielo, en fila hacia donde apuntas. Cada uno hace ${HABILIDADES.estrellasEliza.dano} de daño, y cada orbe más que golpea al mismo enemigo hace +${HABILIDADES.estrellasEliza.extra} (${HABILIDADES.estrellasEliza.dano}, ${HABILIDADES.estrellasEliza.dano + HABILIDADES.estrellasEliza.extra}, ${HABILIDADES.estrellasEliza.dano + 2 * HABILIDADES.estrellasEliza.extra}).`,
+                   n1: {}, n2: {} },
+  bumeranEliza:   { nombre: 'Bumerán estelar', glifo: 'bumeranEliza', cd: 14, cdFijo: true, vel: 468, radio: 22, crece: 0.6, danoIni: 25,   // Seba (26-11): crece a medida que viaja; (C) hasta +60% (radio 22 → 35) al cruzar el mapa
+                     // Seba (26-11): 40% más grande (radio 16 → 22) y 10% más lento (520 → 468)
+                   danoFin: 100, aturdeIni: 0.75, aturdeFin: 2.5, escala: 1040,   // Seba: cruza todo el mapa, aturde a todos los que alcanza; empieza en 0,75 s y 25, escala con el viaje hasta 2,5 s y 100 al cruzar el mapa; (C) cd 14, velocidad 520, escala en 1040 (el ancho de la arena)
+                   desc: (n) => `Lanzas un bumerán de energía estelar que cruza todo el mapa y desaparece al salir. Crece mientras viaja. Aturde y daña a todos los enemigos que atraviesa: al salir, ${fmtN(HABILIDADES.bumeranEliza.aturdeIni)} s y ${HABILIDADES.bumeranEliza.danoIni}; cuanto más lejos llega, más fuerte, hasta ${fmtN(HABILIDADES.bumeranEliza.aturdeFin)} s y ${HABILIDADES.bumeranEliza.danoFin} al otro lado del mapa.`,
+                   n1: {}, n2: {} },
+  nocheEliza:     { nombre: 'Manto de la noche', glifo: 'nocheEliza', cd: 50, cdFijo: true, ulti: true, radio: 160, invis: 4, extra: 25, buffDur: 8,   // Seba: invisibilidad para Eliza y aliados cercanos; su siguiente ataque o habilidad hace +25; (C) radio 160, 4 s, el +25 dura hasta 8 s
+                   desc: (n) => `Tú y los aliados a tu alrededor (radio ${HABILIDADES.nocheEliza.radio}) se vuelven invisibles por ${HABILIDADES.nocheEliza.invis} s. El siguiente ataque o habilidad de cada uno (lo que use primero) hace +${HABILIDADES.nocheEliza.extra} de daño. Atacar o usar una habilidad rompe la invisibilidad.`,
+                   n1: {}, n2: {} },
+  // ---- Argus (Seba 25-11; números (C) salvo los que fijó Seba)
+  saltoArgus:    { nombre: 'Salto rúnico', glifo: 'saltoArgus', cd: 9, cdFijo: true, cargas: 2, max: 2, dist: 150, runas: 6, dano: 30, vel: 420, alcance: 160,   // Seba: blink corto-medio hacia donde se mueve (joystick de movimiento), 2 cargas; (26-11) menos runas y 30 c/u → 6 runas (C); (C) distancia 150, recarga 9 s al gastar la 2.ª, alcance de las runas 160
+                   desc: (n) => `Desapareces y apareces ${HABILIDADES.saltoArgus.dist} más adelante, hacia donde te mueves (atraviesa muros). Al aparecer sueltas ${HABILIDADES.saltoArgus.runas} runas en todas las direcciones: ${HABILIDADES.saltoArgus.dano} de daño cada una. ${HABILIDADES.saltoArgus.cargas} cargas; la recarga empieza al gastar la segunda.`,
+                   n1: {}, n2: {} },
+  rayoArgus:     { nombre: 'Rayo rúnico', glifo: 'rayoArgus', cd: 6, cdFijo: true, dur: 60, cada: 0.1, dano: 2, alcance: 400, giro: 2.025, manaSeg: 15 * 0.95, minimo: 10,   // Seba (26-11): gasta 5% menos (14,25 por s)
+                     // Seba (26-11): alcance +33% (300 → 400) y se gira con el joystick de movimiento; giro 6 → 4 → 2,7 → 2,025 rad/s (Seba: más pesado; 26-11 tarde: −33% y luego −25%); al lanzarlo apunta al héroe enemigo más cercano
+                     // Seba: quieto, 2 de daño cada 0,1 s, se sigue apuntando, se puede cancelar, stun o silencio lo cortan; (26-11) dura mientras tenga maná y lo gasta; (C) 15 de maná por s (barra llena ≈ 6,7 s), mínimo 10, recarga 6 s, alcance 300, se frena en el primer enemigo
+                   desc: (n) => `Te quedas quieto y lanzas un rayo eléctrico que sale hacia el héroe enemigo más cercano y luego giras con el joystick de movimiento: ${HABILIDADES.rayoArgus.dano} de daño cada ${fmtN(HABILIDADES.rayoArgus.cada)} s al primer enemigo que toca. Gasta ${fmtN(HABILIDADES.rayoArgus.manaSeg)} de maná por segundo y dura mientras tengas maná (mínimo ${HABILIDADES.rayoArgus.minimo} para lanzarlo). Vuelve a apretar para cortarlo. Un aturdimiento o un silencio lo cortan.`,
+                   n1: {}, n2: {} },
+  bolaArgus:     { nombre: 'Bola rúnica', glifo: 'bolaArgus', cd: 1.5, cdFijo: true, ulti: true, sinCarga: true, mana: 150, porDist: 7 / 0.95 / 0.95, regen: 5,   // Seba (26-11): maná total 100 → 150 (recarga +5/s igual); bola y rayo gastan 5% menos; la bola, otro 5% menos (26-11 tarde)
+                   minimo: 15, vel: 558, giro: 5.75, danoBase: 40, danoCada: 0.25, danoSuma: 10,   // Seba (26-11 tarde): 10% más lenta (620 → 558); el daño crece con el tiempo de vuelo: +10 cada 0,25 s, sobre 40 de base (C), sin tope
+                   alcance: 700, bloqueo: 6,   // Seba (26-11): sale hacia el joystick, se dirige con él y se corta al volver a apretar; giro 9 → 6,75 → 5,75 rad/s (Seba: −25% y luego −15%, más pesado)
+                     // Seba: barra de maná que se gasta con la distancia; viaja a un punto como bola: rápida, inmune a daño y control; daña cada vez que atraviesa a un enemigo; (26-11) daño que crece con la distancia recorrida; stun o silencio fuera de la bola: recarga y maná a 0; (C) barra 100 = 700 de distancia, +5 por s, 40 → 90 a los 400 recorridos, mínimo 15, velocidad 620, bloqueo 6 s
+                   desc: (n) => `Gasta maná (barra de ${HABILIDADES.bolaArgus.mana}, se llena sola a +${HABILIDADES.bolaArgus.regen} por segundo cuando no la usas). Te conviertes en una bola de energía que sale hacia donde mueves el joystick y se dirige con él: muy rápida y sin recibir daño ni control. Vuelve a apretar para salir; si se acaba el maná, sales solo. Cada vez que atraviesas a un enemigo le haces daño: ${HABILIDADES.bolaArgus.danoBase} al salir y +${HABILIDADES.bolaArgus.danoSuma} por cada ${fmtN(HABILIDADES.bolaArgus.danoCada)} s que llevas volando. La barra llena alcanza para ${Math.round(HABILIDADES.bolaArgus.mana * HABILIDADES.bolaArgus.porDist)} de distancia. Si te aturden o silencian fuera de la bola, pierdes todo el maná y la ulti queda en recarga ${HABILIDADES.bolaArgus.bloqueo} s.`,
+                   n1: {}, n2: {} },
   // ---- Kaio (Seba, 23-11; números (C) salvo los que fijó Seba)
   energiaKaio:   { nombre: 'Imbuir energía', glifo: 'energiaKaio', cd: 10, cdFijo: true, dur: 2, vel: 0.33, ritmo: 0.5, radio: 85, lento: 0.33, lentoDur: 2, escudo: 50, escudoDur: 4.5, escudoCada: 0.25, escudoDano: 2.5,   // Seba (24-11): escudo tipo Ion Shell — absorbe 50 y quema a los enemigos en radio 85: 2,5 cada 0,25 s, hasta 45 por enemigo (4,5 s)
                      // Seba: 2 s, +33% vel, mejor recarga del básico; al final lento 33% 2 s en radio chico; (C) cd 10, recarga +50%, radio 85
@@ -2404,6 +2475,14 @@ const PASIVAS = {
     desc: 'Cuando el héroe aliado más cercano dentro de un radio pequeño a tu alrededor recupera vida, tú recuperas el 5% de esa cantidad.' },
   duelo: { nombre: 'Uno contra uno', glifo: 'duelo', radio: 220, reduce: 0.05,   // Seba: −5% de daño si está 1 contra 1 en un radio pequeño; (C) radio 220
     desc: 'Si hay un solo héroe enemigo cerca de ti, recibes 5% menos de daño de todas las fuentes.' },
+  guardianOm: { nombre: 'Guardián del templo', glifo: 'guardianOm', reduce: 0.10,   // Seba: Om y sus aliados reciben −10% de daño de todas las fuentes cuando pelean en desventaja (héroes aliados muertos y más héroes enemigos vivos)
+    desc: 'Cuando tu equipo pelea en desventaja (tiene héroes muertos y hay más enemigos vivos que aliados), tú y tus aliados reciben 10% menos de daño de todas las fuentes.' },
+  estrelladaEliza: { nombre: 'Noche estrellada', glifo: 'estrelladaEliza', cada: 3, dano: 40, radio: 40, demora: 0.25,   // Seba (26-11): tras 3 aciertos, cuando acierta el 4.º básico, 0,25 s después cae una estrella (como la 1.ª habilidad) donde pegó; puede fallar; (C) 40 de daño, radio 40
+    desc: 'Cada 3 ataques básicos que aciertan, cuando acierta el siguiente cae una estrella del cielo en ese lugar 0,25 s después: 40 de daño en un área pequeña (puede fallar si el enemigo se mueve).' },
+  ecoArgus: { nombre: 'Restos de maná', glifo: 'ecoArgus', mana: 25, dura: 20, porBasico: 5,   // Seba (26-11 tarde): además, +5 de maná por cada básico que acierta
+      // Seba (26-11 tarde): gota 30 → 25
+      // Seba (26-11): rework — un enemigo que muere deja una recarga de maná; Argus la toma pasando por encima (caminando, con el salto o con la bola: no va en el texto); (C) +30, dura 20 s
+    desc: 'Cada ataque básico que aciertas te da 5 de maná. Cuando un enemigo muere, deja en el suelo una recarga de maná (+25) por 20 s.' },
   ritmoKaio: { nombre: 'Ritmo de combate', glifo: 'ritmoKaio', cada: 5, vel: 0.05, dano: 0.05,   // Seba: se alternan +5% vel y +5% daño, cada uno dura 5 s, luego 5 s sin nada
     desc: 'Alternas dos impulsos: 5 s con +5% de velocidad, 5 s sin nada, 5 s con +5% de daño de ataque, 5 s sin nada, y vuelta a empezar.' },
   dosVidasBipper: { nombre: 'Dos vidas', glifo: 'dosVidasBipper',   // Seba: el robot (350) se rompe y Bipper sigue a pie (100); 9 golpes para recuperarlo con la ulti
@@ -2559,6 +2638,9 @@ const GUIAS = {
   estocadaRin: { tipo: 'linea', alcance: 209, ancho: 34 }, trapRin: { tipo: 'linea', alcance: 240, ancho: 24 }, danzaRin: { tipo: 'propio', r: 70 },
   voleaZinro: { tipo: 'linea', alcance: 420, ancho: 16 }, halconZinro: { tipo: 'punto', alcance: 450, r: 320 }, trampasZinro: { tipo: 'propio', r: 31 },
   blastXerxius: { tipo: 'punto', alcance: 380, r: 81 }, enredoXerxius: { tipo: 'punto', alcance: 380, r: 80 }, naturaXerxius: { tipo: 'linea', alcance: 900, ancho: 126 },
+  sacrificioOm: { tipo: 'propio', r: 176 }, totemOm: { tipo: 'punto', alcance: 144, r: 30 }, murallaOm: { tipo: 'linea', alcance: 355, ancho: 132 },
+  estrellasEliza: { tipo: 'punto', alcance: 173, r: 40 }, bumeranEliza: { tipo: 'linea', alcance: 1040, ancho: 44 }, nocheEliza: { tipo: 'propio', r: 160 },
+  saltoArgus: { tipo: 'linea', alcance: 150, ancho: 20 }, rayoArgus: { tipo: 'linea', alcance: 400, ancho: 14 }, bolaArgus: { tipo: 'propio', r: 24 },
   energiaKaio: { tipo: 'propio', r: 85 }, golpesKaio: { tipo: 'propio', r: 30 }, koKaio: { tipo: 'punto', alcance: 92, r: 45 },
   misilesBipper: { tipo: 'propio', r: 30 }, antenaBipper: { tipo: 'propio', r: 130 }, robotBipper: { tipo: 'linea', alcance: 180, ancho: 40 },
   rafagaAnn: { tipo: 'linea', alcance: 126, ancho: 40 }, paraguasAnn: { tipo: 'linea', alcance: 40, ancho: 50 }, tormentaAnn: { tipo: 'punto', alcance: 420, r: 77 },
@@ -2625,7 +2707,7 @@ HABILIDADES.blastXerxius.canal = Math.round((HABILIDADES.blastXerxius.canal - 0.
 HABILIDADES.robotBipper.piezaVuela = Math.round(HABILIDADES.robotBipper.piezaVuela * 1.33);   // Bipper: piezas 33% más lejos del centro (61 → 81)
 
 // ===== matchups.js =====
-// Generado por tools/matchups.js (2026-11-25): % de duelos 1v1 que gana la fila contra la columna.
+// Generado por tools/matchups.js (2026-11-26): % de duelos 1v1 que gana la fila contra la columna.
 // Medido con bots (apuntado automático), 4 duelos por par.
 const MATCHUPS = {
  "beast": {
@@ -2639,84 +2721,90 @@ const MATCHUPS = {
   "aracnida": 100,
   "kazaro": 100,
   "trelgon": 100,
-  "gaia": 75,
+  "gaia": 100,
   "vatrius": 100,
   "jurgen": 100,
-  "fatum": 75,
+  "fatum": 100,
   "aethar": 100,
   "vario": 0,
   "kiro": 100,
   "golagore": 100,
   "bambaa": 100,
   "smok": 0,
-  "rin": 100,
-  "zinro": 75,
+  "rin": 25,
+  "zinro": 100,
   "xerxius": 100,
   "ann": 100,
   "kaio": 100,
-  "bipper": 75,
-  "ora": 100,
-  "legios": 75,
+  "bipper": 50,
+  "argus": 50,
+  "eliza": 50,
+  "om": 100,
+  "ora": 50,
+  "legios": 100,
   "zeal": 100,
   "aldor": 100,
   "lei": 100,
   "ash": 100,
-  "driiar": 75,
+  "driiar": 100,
   "tenebris": 75,
   "shai": 100
  },
  "lire": {
   "beast": 25,
   "nigromante": 0,
-  "maidas": 50,
-  "monh": 50,
+  "maidas": 0,
+  "monh": 25,
   "biteroi": 75,
   "rasho": 75,
-  "takichi": 50,
+  "takichi": 0,
   "aracnida": 100,
   "kazaro": 25,
   "trelgon": 0,
   "gaia": 100,
-  "vatrius": 100,
-  "jurgen": 50,
+  "vatrius": 75,
+  "jurgen": 75,
   "fatum": 100,
   "aethar": 100,
   "vario": 100,
   "kiro": 50,
   "golagore": 100,
   "bambaa": 100,
-  "smok": 75,
+  "smok": 50,
   "rin": 0,
   "zinro": 100,
-  "xerxius": 75,
-  "ann": 50,
+  "xerxius": 100,
+  "ann": 25,
   "kaio": 0,
   "bipper": 100,
+  "argus": 100,
+  "eliza": 50,
+  "om": 100,
   "ora": 100,
   "legios": 0,
   "zeal": 50,
   "aldor": 100,
-  "lei": 25,
-  "ash": 100,
-  "driiar": 100,
-  "tenebris": 75,
-  "shai": 25
+  "lei": 100,
+  "ash": 75,
+  "driiar": 75,
+  "tenebris": 100,
+  "shai": 0
  },
  "nigromante": {
   "beast": 0,
   "lire": 100,
-  "maidas": 50,
+  "maidas": 75,
   "monh": 100,
   "biteroi": 75,
-  "rasho": 75,
+  "rasho": 50,
   "takichi": 0,
   "aracnida": 100,
   "kazaro": 0,
   "trelgon": 75,
   "gaia": 100,
-  "vatrius": 75,
-  "jurgen": 50,
-  "fatum": 75,
+  "vatrius": 100,
+  "jurgen": 100,
+  "fatum": 100,
   "aethar": 100,
   "vario": 100,
   "kiro": 0,
@@ -2729,43 +2817,49 @@ const MATCHUPS = {
   "ann": 50,
   "kaio": 100,
   "bipper": 100,
+  "argus": 100,
+  "eliza": 100,
+  "om": 100,
   "ora": 100,
   "legios": 100,
   "zeal": 100,
-  "aldor": 50,
+  "aldor": 25,
   "lei": 75,
-  "ash": 100,
-  "driiar": 25,
-  "tenebris": 75,
+  "ash": 75,
+  "driiar": 75,
+  "tenebris": 100,
   "shai": 50
  },
  "maidas": {
   "beast": 0,
-  "lire": 50,
-  "nigromante": 50,
-  "monh": 100,
-  "biteroi": 75,
-  "rasho": 100,
-  "takichi": 0,
+  "lire": 100,
+  "nigromante": 25,
+  "monh": 50,
+  "biteroi": 25,
+  "rasho": 75,
+  "takichi": 25,
   "aracnida": 100,
-  "kazaro": 25,
-  "trelgon": 100,
-  "gaia": 75,
+  "kazaro": 75,
+  "trelgon": 25,
+  "gaia": 25,
   "vatrius": 100,
-  "jurgen": 100,
-  "fatum": 25,
-  "aethar": 50,
+  "jurgen": 75,
+  "fatum": 50,
+  "aethar": 100,
   "vario": 100,
-  "kiro": 75,
+  "kiro": 0,
   "golagore": 100,
   "bambaa": 100,
   "smok": 75,
-  "rin": 25,
+  "rin": 100,
   "zinro": 100,
-  "xerxius": 50,
+  "xerxius": 75,
   "ann": 0,
-  "kaio": 75,
+  "kaio": 50,
   "bipper": 100,
+  "argus": 100,
+  "eliza": 100,
+  "om": 100,
   "ora": 100,
   "legios": 75,
   "zeal": 100,
@@ -2773,41 +2867,44 @@ const MATCHUPS = {
   "lei": 75,
   "ash": 50,
   "driiar": 50,
-  "tenebris": 100,
-  "shai": 75
+  "tenebris": 75,
+  "shai": 50
  },
  "monh": {
   "beast": 0,
-  "lire": 50,
+  "lire": 75,
   "nigromante": 0,
-  "maidas": 0,
-  "biteroi": 25,
-  "rasho": 25,
+  "maidas": 50,
+  "biteroi": 50,
+  "rasho": 0,
   "takichi": 0,
   "aracnida": 0,
   "kazaro": 0,
   "trelgon": 0,
   "gaia": 25,
   "vatrius": 0,
-  "jurgen": 100,
-  "fatum": 100,
+  "jurgen": 75,
+  "fatum": 25,
   "aethar": 75,
   "vario": 100,
   "kiro": 0,
   "golagore": 25,
-  "bambaa": 0,
+  "bambaa": 75,
   "smok": 50,
   "rin": 0,
   "zinro": 100,
-  "xerxius": 75,
+  "xerxius": 100,
   "ann": 0,
   "kaio": 0,
   "bipper": 75,
-  "ora": 100,
-  "legios": 0,
-  "zeal": 75,
-  "aldor": 25,
-  "lei": 75,
+  "argus": 100,
+  "eliza": 100,
+  "om": 100,
+  "ora": 75,
+  "legios": 25,
+  "zeal": 100,
+  "aldor": 0,
+  "lei": 50,
   "ash": 0,
   "driiar": 0,
   "tenebris": 100,
@@ -2817,33 +2914,36 @@ const MATCHUPS = {
   "beast": 100,
   "lire": 25,
   "nigromante": 25,
-  "maidas": 25,
-  "monh": 75,
+  "maidas": 75,
+  "monh": 50,
   "rasho": 50,
   "takichi": 100,
   "aracnida": 100,
-  "kazaro": 100,
-  "trelgon": 50,
-  "gaia": 25,
+  "kazaro": 75,
+  "trelgon": 0,
+  "gaia": 75,
   "vatrius": 100,
-  "jurgen": 100,
-  "fatum": 75,
-  "aethar": 75,
+  "jurgen": 0,
+  "fatum": 25,
+  "aethar": 50,
   "vario": 100,
   "kiro": 100,
   "golagore": 75,
-  "bambaa": 75,
-  "smok": 50,
+  "bambaa": 0,
+  "smok": 75,
   "rin": 75,
   "zinro": 100,
-  "xerxius": 100,
+  "xerxius": 25,
   "ann": 100,
   "kaio": 100,
-  "bipper": 75,
-  "ora": 25,
-  "legios": 25,
-  "zeal": 100,
-  "aldor": 75,
+  "bipper": 100,
+  "argus": 100,
+  "eliza": 75,
+  "om": 100,
+  "ora": 50,
+  "legios": 75,
+  "zeal": 25,
+  "aldor": 100,
   "lei": 100,
   "ash": 100,
   "driiar": 100,
@@ -2853,33 +2953,36 @@ const MATCHUPS = {
  "rasho": {
   "beast": 100,
   "lire": 25,
-  "nigromante": 25,
-  "maidas": 0,
-  "monh": 75,
+  "nigromante": 50,
+  "maidas": 25,
+  "monh": 100,
   "biteroi": 50,
   "takichi": 50,
-  "aracnida": 100,
+  "aracnida": 75,
   "kazaro": 100,
   "trelgon": 100,
-  "gaia": 25,
+  "gaia": 50,
   "vatrius": 100,
-  "jurgen": 50,
+  "jurgen": 75,
   "fatum": 75,
   "aethar": 50,
   "vario": 100,
   "kiro": 100,
   "golagore": 100,
-  "bambaa": 25,
-  "smok": 75,
-  "rin": 75,
+  "bambaa": 75,
+  "smok": 50,
+  "rin": 25,
   "zinro": 100,
-  "xerxius": 25,
+  "xerxius": 75,
   "ann": 0,
   "kaio": 100,
   "bipper": 100,
-  "ora": 100,
+  "argus": 75,
+  "eliza": 50,
+  "om": 100,
+  "ora": 75,
   "legios": 100,
-  "zeal": 100,
+  "zeal": 75,
   "aldor": 100,
   "lei": 100,
   "ash": 100,
@@ -2889,40 +2992,43 @@ const MATCHUPS = {
  },
  "takichi": {
   "beast": 0,
-  "lire": 50,
+  "lire": 100,
   "nigromante": 100,
-  "maidas": 100,
+  "maidas": 75,
   "monh": 100,
   "biteroi": 0,
   "rasho": 50,
   "aracnida": 100,
-  "kazaro": 25,
-  "trelgon": 50,
+  "kazaro": 75,
+  "trelgon": 25,
   "gaia": 50,
-  "vatrius": 50,
+  "vatrius": 75,
   "jurgen": 0,
-  "fatum": 50,
+  "fatum": 100,
   "aethar": 100,
-  "vario": 0,
-  "kiro": 0,
-  "golagore": 25,
-  "bambaa": 100,
-  "smok": 75,
-  "rin": 50,
-  "zinro": 100,
+  "vario": 25,
+  "kiro": 75,
+  "golagore": 50,
+  "bambaa": 75,
+  "smok": 50,
+  "rin": 75,
+  "zinro": 25,
   "xerxius": 100,
   "ann": 100,
-  "kaio": 75,
+  "kaio": 100,
   "bipper": 100,
+  "argus": 75,
+  "eliza": 50,
+  "om": 100,
   "ora": 100,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
   "lei": 100,
   "ash": 0,
-  "driiar": 0,
-  "tenebris": 75,
-  "shai": 50
+  "driiar": 25,
+  "tenebris": 0,
+  "shai": 0
  },
  "aracnida": {
   "beast": 0,
@@ -2931,45 +3037,48 @@ const MATCHUPS = {
   "maidas": 0,
   "monh": 100,
   "biteroi": 0,
-  "rasho": 0,
+  "rasho": 25,
   "takichi": 0,
   "kazaro": 0,
   "trelgon": 100,
-  "gaia": 0,
+  "gaia": 50,
   "vatrius": 50,
-  "jurgen": 0,
-  "fatum": 0,
-  "aethar": 100,
+  "jurgen": 50,
+  "fatum": 50,
+  "aethar": 50,
   "vario": 0,
-  "kiro": 50,
-  "golagore": 100,
-  "bambaa": 50,
-  "smok": 25,
-  "rin": 50,
+  "kiro": 100,
+  "golagore": 75,
+  "bambaa": 0,
+  "smok": 0,
+  "rin": 100,
   "zinro": 0,
   "xerxius": 75,
-  "ann": 0,
+  "ann": 25,
   "kaio": 75,
   "bipper": 0,
-  "ora": 25,
+  "argus": 50,
+  "eliza": 0,
+  "om": 75,
+  "ora": 0,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 75,
-  "ash": 25,
-  "driiar": 75,
-  "tenebris": 50,
-  "shai": 100
+  "lei": 100,
+  "ash": 50,
+  "driiar": 50,
+  "tenebris": 100,
+  "shai": 25
  },
  "kazaro": {
   "beast": 0,
   "lire": 75,
   "nigromante": 100,
-  "maidas": 75,
+  "maidas": 25,
   "monh": 100,
-  "biteroi": 0,
+  "biteroi": 25,
   "rasho": 0,
-  "takichi": 75,
+  "takichi": 25,
   "aracnida": 100,
   "trelgon": 100,
   "gaia": 50,
@@ -2978,128 +3087,140 @@ const MATCHUPS = {
   "fatum": 100,
   "aethar": 100,
   "vario": 0,
-  "kiro": 100,
-  "golagore": 75,
+  "kiro": 75,
+  "golagore": 100,
   "bambaa": 100,
-  "smok": 25,
+  "smok": 0,
   "rin": 50,
   "zinro": 100,
   "xerxius": 100,
   "ann": 100,
   "kaio": 100,
   "bipper": 50,
+  "argus": 50,
+  "eliza": 50,
+  "om": 100,
   "ora": 75,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
   "lei": 25,
-  "ash": 75,
+  "ash": 100,
   "driiar": 50,
-  "tenebris": 25,
-  "shai": 50
+  "tenebris": 50,
+  "shai": 100
  },
  "trelgon": {
   "beast": 0,
   "lire": 100,
   "nigromante": 25,
-  "maidas": 0,
+  "maidas": 75,
   "monh": 100,
-  "biteroi": 50,
+  "biteroi": 100,
   "rasho": 0,
-  "takichi": 50,
+  "takichi": 75,
   "aracnida": 0,
   "kazaro": 0,
-  "gaia": 100,
+  "gaia": 50,
   "vatrius": 25,
-  "jurgen": 50,
+  "jurgen": 0,
   "fatum": 75,
   "aethar": 100,
   "vario": 0,
-  "kiro": 50,
-  "golagore": 75,
+  "kiro": 75,
+  "golagore": 0,
   "bambaa": 75,
   "smok": 0,
-  "rin": 100,
-  "zinro": 75,
+  "rin": 75,
+  "zinro": 50,
   "xerxius": 100,
   "ann": 50,
   "kaio": 0,
   "bipper": 25,
-  "ora": 75,
+  "argus": 0,
+  "eliza": 0,
+  "om": 50,
+  "ora": 50,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 100,
-  "ash": 100,
-  "driiar": 0,
-  "tenebris": 100,
-  "shai": 0
- },
- "gaia": {
-  "beast": 25,
-  "lire": 0,
-  "nigromante": 0,
-  "maidas": 25,
-  "monh": 75,
-  "biteroi": 75,
-  "rasho": 75,
-  "takichi": 50,
-  "aracnida": 100,
-  "kazaro": 50,
-  "trelgon": 0,
-  "vatrius": 100,
-  "jurgen": 50,
-  "fatum": 25,
-  "aethar": 25,
-  "vario": 75,
-  "kiro": 25,
-  "golagore": 100,
-  "bambaa": 100,
-  "smok": 50,
-  "rin": 25,
-  "zinro": 100,
-  "xerxius": 75,
-  "ann": 25,
-  "kaio": 25,
-  "bipper": 100,
-  "ora": 100,
-  "legios": 25,
-  "zeal": 75,
-  "aldor": 50,
   "lei": 100,
   "ash": 100,
   "driiar": 50,
   "tenebris": 100,
   "shai": 0
  },
- "vatrius": {
+ "gaia": {
   "beast": 0,
   "lire": 0,
-  "nigromante": 25,
+  "nigromante": 0,
+  "maidas": 75,
+  "monh": 75,
+  "biteroi": 25,
+  "rasho": 50,
+  "takichi": 50,
+  "aracnida": 50,
+  "kazaro": 50,
+  "trelgon": 50,
+  "vatrius": 100,
+  "jurgen": 25,
+  "fatum": 100,
+  "aethar": 50,
+  "vario": 100,
+  "kiro": 0,
+  "golagore": 50,
+  "bambaa": 100,
+  "smok": 50,
+  "rin": 75,
+  "zinro": 100,
+  "xerxius": 100,
+  "ann": 25,
+  "kaio": 25,
+  "bipper": 100,
+  "argus": 100,
+  "eliza": 75,
+  "om": 100,
+  "ora": 100,
+  "legios": 0,
+  "zeal": 75,
+  "aldor": 25,
+  "lei": 100,
+  "ash": 100,
+  "driiar": 50,
+  "tenebris": 100,
+  "shai": 50
+ },
+ "vatrius": {
+  "beast": 0,
+  "lire": 25,
+  "nigromante": 0,
   "maidas": 0,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 50,
+  "takichi": 25,
   "aracnida": 50,
   "kazaro": 0,
   "trelgon": 75,
   "gaia": 0,
   "jurgen": 0,
-  "fatum": 50,
-  "aethar": 50,
+  "fatum": 75,
+  "aethar": 100,
   "vario": 0,
-  "kiro": 100,
+  "kiro": 50,
   "golagore": 0,
   "bambaa": 25,
   "smok": 0,
-  "rin": 75,
+  "rin": 50,
   "zinro": 25,
-  "xerxius": 100,
-  "ann": 50,
+  "xerxius": 75,
+  "ann": 0,
   "kaio": 0,
-  "bipper": 25,
-  "ora": 50,
+  "bipper": 0,
+  "argus": 50,
+  "eliza": 25,
+  "om": 75,
+  "ora": 25,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
@@ -3111,111 +3232,120 @@ const MATCHUPS = {
  },
  "jurgen": {
   "beast": 0,
-  "lire": 50,
-  "nigromante": 50,
-  "maidas": 0,
-  "monh": 0,
-  "biteroi": 0,
-  "rasho": 50,
+  "lire": 25,
+  "nigromante": 0,
+  "maidas": 25,
+  "monh": 25,
+  "biteroi": 100,
+  "rasho": 25,
   "takichi": 100,
-  "aracnida": 100,
+  "aracnida": 50,
   "kazaro": 50,
-  "trelgon": 50,
-  "gaia": 50,
+  "trelgon": 100,
+  "gaia": 75,
   "vatrius": 100,
-  "fatum": 75,
-  "aethar": 75,
-  "vario": 100,
-  "kiro": 75,
+  "fatum": 0,
+  "aethar": 50,
+  "vario": 25,
+  "kiro": 50,
   "golagore": 100,
-  "bambaa": 50,
-  "smok": 75,
-  "rin": 25,
+  "bambaa": 75,
+  "smok": 50,
+  "rin": 0,
   "zinro": 75,
   "xerxius": 25,
-  "ann": 0,
+  "ann": 50,
   "kaio": 0,
-  "bipper": 75,
+  "bipper": 100,
+  "argus": 50,
+  "eliza": 0,
+  "om": 100,
   "ora": 50,
   "legios": 100,
   "zeal": 75,
-  "aldor": 50,
-  "lei": 75,
+  "aldor": 100,
+  "lei": 25,
   "ash": 75,
   "driiar": 0,
-  "tenebris": 75,
+  "tenebris": 100,
   "shai": 0
  },
  "fatum": {
-  "beast": 25,
+  "beast": 0,
   "lire": 0,
-  "nigromante": 25,
-  "maidas": 75,
-  "monh": 0,
-  "biteroi": 25,
+  "nigromante": 0,
+  "maidas": 50,
+  "monh": 75,
+  "biteroi": 75,
   "rasho": 25,
-  "takichi": 50,
-  "aracnida": 100,
+  "takichi": 0,
+  "aracnida": 50,
   "kazaro": 0,
   "trelgon": 25,
-  "gaia": 75,
-  "vatrius": 50,
-  "jurgen": 25,
-  "aethar": 50,
+  "gaia": 0,
+  "vatrius": 25,
+  "jurgen": 100,
+  "aethar": 0,
   "vario": 50,
-  "kiro": 0,
+  "kiro": 25,
   "golagore": 0,
-  "bambaa": 100,
+  "bambaa": 50,
   "smok": 25,
-  "rin": 50,
+  "rin": 0,
   "zinro": 100,
-  "xerxius": 25,
+  "xerxius": 50,
   "ann": 25,
-  "kaio": 50,
-  "bipper": 100,
-  "ora": 100,
+  "kaio": 0,
+  "bipper": 75,
+  "argus": 100,
+  "eliza": 50,
+  "om": 100,
+  "ora": 75,
   "legios": 100,
-  "zeal": 75,
-  "aldor": 50,
+  "zeal": 50,
+  "aldor": 25,
   "lei": 0,
   "ash": 50,
   "driiar": 0,
-  "tenebris": 75,
+  "tenebris": 100,
   "shai": 0
  },
  "aethar": {
   "beast": 0,
   "lire": 0,
   "nigromante": 0,
-  "maidas": 50,
+  "maidas": 0,
   "monh": 25,
-  "biteroi": 25,
+  "biteroi": 50,
   "rasho": 50,
   "takichi": 0,
-  "aracnida": 0,
+  "aracnida": 50,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 75,
-  "vatrius": 50,
-  "jurgen": 25,
-  "fatum": 50,
-  "vario": 75,
+  "gaia": 50,
+  "vatrius": 0,
+  "jurgen": 50,
+  "fatum": 100,
+  "vario": 50,
   "kiro": 0,
   "golagore": 25,
-  "bambaa": 100,
-  "smok": 25,
+  "bambaa": 25,
+  "smok": 75,
   "rin": 0,
-  "zinro": 75,
-  "xerxius": 75,
+  "zinro": 25,
+  "xerxius": 25,
   "ann": 0,
   "kaio": 0,
-  "bipper": 100,
+  "bipper": 50,
+  "argus": 75,
+  "eliza": 25,
+  "om": 100,
   "ora": 50,
-  "legios": 75,
-  "zeal": 50,
-  "aldor": 25,
-  "lei": 25,
-  "ash": 50,
+  "legios": 100,
+  "zeal": 75,
+  "aldor": 0,
+  "lei": 100,
+  "ash": 100,
   "driiar": 0,
   "tenebris": 75,
   "shai": 0
@@ -3228,30 +3358,33 @@ const MATCHUPS = {
   "monh": 0,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 100,
+  "takichi": 75,
   "aracnida": 100,
   "kazaro": 100,
   "trelgon": 100,
-  "gaia": 25,
+  "gaia": 0,
   "vatrius": 100,
-  "jurgen": 0,
+  "jurgen": 75,
   "fatum": 50,
-  "aethar": 25,
+  "aethar": 50,
   "kiro": 100,
-  "golagore": 75,
-  "bambaa": 25,
+  "golagore": 100,
+  "bambaa": 75,
   "smok": 0,
-  "rin": 100,
-  "zinro": 100,
-  "xerxius": 75,
+  "rin": 50,
+  "zinro": 50,
+  "xerxius": 0,
   "ann": 100,
-  "kaio": 100,
-  "bipper": 100,
+  "kaio": 75,
+  "bipper": 75,
+  "argus": 100,
+  "eliza": 50,
+  "om": 100,
   "ora": 25,
   "legios": 100,
-  "zeal": 0,
+  "zeal": 50,
   "aldor": 100,
-  "lei": 100,
+  "lei": 50,
   "ash": 100,
   "driiar": 100,
   "tenebris": 100,
@@ -3261,35 +3394,38 @@ const MATCHUPS = {
   "beast": 0,
   "lire": 50,
   "nigromante": 100,
-  "maidas": 25,
+  "maidas": 100,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 100,
-  "aracnida": 50,
-  "kazaro": 0,
-  "trelgon": 50,
-  "gaia": 75,
-  "vatrius": 0,
-  "jurgen": 25,
-  "fatum": 100,
+  "takichi": 25,
+  "aracnida": 0,
+  "kazaro": 25,
+  "trelgon": 25,
+  "gaia": 100,
+  "vatrius": 50,
+  "jurgen": 50,
+  "fatum": 75,
   "aethar": 100,
   "vario": 0,
   "golagore": 0,
-  "bambaa": 75,
-  "smok": 50,
+  "bambaa": 100,
+  "smok": 25,
   "rin": 75,
-  "zinro": 100,
+  "zinro": 25,
   "xerxius": 100,
   "ann": 100,
   "kaio": 75,
-  "bipper": 25,
-  "ora": 75,
+  "bipper": 0,
+  "argus": 25,
+  "eliza": 0,
+  "om": 50,
+  "ora": 50,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 50,
-  "ash": 50,
+  "lei": 0,
+  "ash": 25,
   "driiar": 0,
   "tenebris": 0,
   "shai": 0
@@ -3302,33 +3438,36 @@ const MATCHUPS = {
   "monh": 75,
   "biteroi": 25,
   "rasho": 0,
-  "takichi": 75,
-  "aracnida": 0,
-  "kazaro": 25,
-  "trelgon": 25,
-  "gaia": 0,
+  "takichi": 50,
+  "aracnida": 25,
+  "kazaro": 0,
+  "trelgon": 100,
+  "gaia": 50,
   "vatrius": 100,
   "jurgen": 0,
   "fatum": 100,
   "aethar": 75,
-  "vario": 25,
+  "vario": 0,
   "kiro": 100,
   "bambaa": 75,
   "smok": 0,
-  "rin": 75,
-  "zinro": 50,
+  "rin": 25,
+  "zinro": 0,
   "xerxius": 100,
   "ann": 100,
   "kaio": 50,
-  "bipper": 25,
-  "ora": 50,
+  "bipper": 50,
+  "argus": 0,
+  "eliza": 0,
+  "om": 100,
+  "ora": 0,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 100,
+  "lei": 50,
   "ash": 75,
-  "driiar": 50,
-  "tenebris": 100,
+  "driiar": 0,
+  "tenebris": 75,
   "shai": 25
  },
  "bambaa": {
@@ -3336,181 +3475,196 @@ const MATCHUPS = {
   "lire": 0,
   "nigromante": 0,
   "maidas": 0,
-  "monh": 100,
-  "biteroi": 25,
-  "rasho": 75,
-  "takichi": 0,
-  "aracnida": 50,
-  "kazaro": 0,
-  "trelgon": 25,
-  "gaia": 0,
-  "vatrius": 75,
-  "jurgen": 50,
-  "fatum": 0,
-  "aethar": 0,
-  "vario": 75,
-  "kiro": 25,
-  "golagore": 25,
-  "smok": 25,
-  "rin": 0,
-  "zinro": 75,
-  "xerxius": 50,
-  "ann": 25,
-  "kaio": 50,
-  "bipper": 100,
-  "ora": 75,
-  "legios": 100,
-  "zeal": 0,
-  "aldor": 75,
-  "lei": 50,
-  "ash": 75,
-  "driiar": 0,
-  "tenebris": 75,
-  "shai": 0
- },
- "smok": {
-  "beast": 100,
-  "lire": 25,
-  "nigromante": 0,
-  "maidas": 25,
-  "monh": 50,
-  "biteroi": 50,
+  "monh": 25,
+  "biteroi": 100,
   "rasho": 25,
   "takichi": 25,
-  "aracnida": 75,
-  "kazaro": 75,
-  "trelgon": 100,
-  "gaia": 50,
-  "vatrius": 100,
-  "jurgen": 25,
-  "fatum": 75,
-  "aethar": 75,
-  "vario": 100,
-  "kiro": 50,
-  "golagore": 100,
-  "bambaa": 75,
-  "rin": 50,
-  "zinro": 100,
-  "xerxius": 50,
-  "ann": 50,
-  "kaio": 75,
-  "bipper": 100,
-  "ora": 100,
-  "legios": 100,
-  "zeal": 100,
-  "aldor": 100,
-  "lei": 50,
-  "ash": 100,
-  "driiar": 75,
-  "tenebris": 100,
-  "shai": 100
- },
- "rin": {
-  "beast": 0,
-  "lire": 100,
-  "nigromante": 100,
-  "maidas": 75,
-  "monh": 100,
-  "biteroi": 25,
-  "rasho": 25,
-  "takichi": 50,
-  "aracnida": 50,
-  "kazaro": 50,
-  "trelgon": 0,
-  "gaia": 75,
-  "vatrius": 25,
-  "jurgen": 75,
-  "fatum": 50,
-  "aethar": 100,
-  "vario": 0,
-  "kiro": 25,
-  "golagore": 25,
-  "bambaa": 100,
-  "smok": 50,
-  "zinro": 75,
-  "xerxius": 100,
-  "ann": 75,
-  "kaio": 100,
-  "bipper": 0,
-  "ora": 100,
-  "legios": 100,
-  "zeal": 100,
-  "aldor": 100,
-  "lei": 100,
-  "ash": 0,
-  "driiar": 25,
-  "tenebris": 25,
-  "shai": 25
- },
- "zinro": {
-  "beast": 25,
-  "lire": 0,
-  "nigromante": 0,
-  "maidas": 0,
-  "monh": 0,
-  "biteroi": 0,
-  "rasho": 0,
-  "takichi": 0,
   "aracnida": 100,
   "kazaro": 0,
   "trelgon": 25,
   "gaia": 0,
   "vatrius": 75,
   "jurgen": 25,
-  "fatum": 0,
-  "aethar": 25,
-  "vario": 0,
+  "fatum": 50,
+  "aethar": 75,
+  "vario": 25,
   "kiro": 0,
-  "golagore": 50,
+  "golagore": 25,
+  "smok": 50,
+  "rin": 0,
+  "zinro": 75,
+  "xerxius": 0,
+  "ann": 25,
+  "kaio": 25,
+  "bipper": 100,
+  "argus": 100,
+  "eliza": 100,
+  "om": 100,
+  "ora": 25,
+  "legios": 100,
+  "zeal": 50,
+  "aldor": 100,
+  "lei": 25,
+  "ash": 75,
+  "driiar": 25,
+  "tenebris": 50,
+  "shai": 0
+ },
+ "smok": {
+  "beast": 100,
+  "lire": 50,
+  "nigromante": 0,
+  "maidas": 25,
+  "monh": 50,
+  "biteroi": 25,
+  "rasho": 50,
+  "takichi": 50,
+  "aracnida": 100,
+  "kazaro": 100,
+  "trelgon": 100,
+  "gaia": 50,
+  "vatrius": 100,
+  "jurgen": 50,
+  "fatum": 75,
+  "aethar": 25,
+  "vario": 100,
+  "kiro": 75,
+  "golagore": 100,
+  "bambaa": 50,
+  "rin": 50,
+  "zinro": 75,
+  "xerxius": 75,
+  "ann": 25,
+  "kaio": 50,
+  "bipper": 100,
+  "argus": 100,
+  "eliza": 50,
+  "om": 100,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 75,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 100,
+  "driiar": 75,
+  "tenebris": 100,
+  "shai": 100
+ },
+ "rin": {
+  "beast": 75,
+  "lire": 100,
+  "nigromante": 100,
+  "maidas": 0,
+  "monh": 100,
+  "biteroi": 25,
+  "rasho": 75,
+  "takichi": 25,
+  "aracnida": 0,
+  "kazaro": 50,
+  "trelgon": 25,
+  "gaia": 25,
+  "vatrius": 50,
+  "jurgen": 100,
+  "fatum": 100,
+  "aethar": 100,
+  "vario": 50,
+  "kiro": 25,
+  "golagore": 75,
+  "bambaa": 100,
+  "smok": 50,
+  "zinro": 75,
+  "xerxius": 100,
+  "ann": 75,
+  "kaio": 100,
+  "bipper": 75,
+  "argus": 25,
+  "eliza": 50,
+  "om": 100,
+  "ora": 75,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 100,
+  "ash": 0,
+  "driiar": 25,
+  "tenebris": 0,
+  "shai": 75
+ },
+ "zinro": {
+  "beast": 0,
+  "lire": 0,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 0,
+  "biteroi": 0,
+  "rasho": 0,
+  "takichi": 75,
+  "aracnida": 100,
+  "kazaro": 0,
+  "trelgon": 50,
+  "gaia": 0,
+  "vatrius": 75,
+  "jurgen": 25,
+  "fatum": 0,
+  "aethar": 75,
+  "vario": 50,
+  "kiro": 75,
+  "golagore": 100,
   "bambaa": 25,
-  "smok": 0,
+  "smok": 25,
   "rin": 25,
   "xerxius": 0,
   "ann": 0,
   "kaio": 25,
-  "bipper": 75,
+  "bipper": 100,
+  "argus": 25,
+  "eliza": 0,
+  "om": 100,
   "ora": 0,
   "legios": 100,
-  "zeal": 0,
+  "zeal": 25,
   "aldor": 100,
-  "lei": 75,
+  "lei": 25,
   "ash": 100,
-  "driiar": 75,
-  "tenebris": 100,
-  "shai": 25
+  "driiar": 25,
+  "tenebris": 50,
+  "shai": 0
  },
  "xerxius": {
   "beast": 0,
-  "lire": 25,
+  "lire": 0,
   "nigromante": 0,
-  "maidas": 50,
-  "monh": 25,
-  "biteroi": 0,
-  "rasho": 75,
+  "maidas": 25,
+  "monh": 0,
+  "biteroi": 75,
+  "rasho": 25,
   "takichi": 0,
   "aracnida": 25,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 25,
-  "vatrius": 0,
+  "gaia": 0,
+  "vatrius": 25,
   "jurgen": 75,
-  "fatum": 75,
-  "aethar": 25,
-  "vario": 25,
+  "fatum": 50,
+  "aethar": 75,
+  "vario": 100,
   "kiro": 0,
   "golagore": 0,
-  "bambaa": 50,
-  "smok": 50,
+  "bambaa": 100,
+  "smok": 25,
   "rin": 0,
   "zinro": 100,
   "ann": 0,
   "kaio": 0,
-  "bipper": 25,
-  "ora": 25,
+  "bipper": 100,
+  "argus": 100,
+  "eliza": 75,
+  "om": 25,
+  "ora": 75,
   "legios": 0,
   "zeal": 75,
   "aldor": 50,
-  "lei": 25,
+  "lei": 50,
   "ash": 50,
   "driiar": 0,
   "tenebris": 100,
@@ -3518,31 +3672,34 @@ const MATCHUPS = {
  },
  "ann": {
   "beast": 0,
-  "lire": 50,
+  "lire": 75,
   "nigromante": 50,
   "maidas": 100,
   "monh": 100,
   "biteroi": 0,
   "rasho": 100,
   "takichi": 0,
-  "aracnida": 100,
+  "aracnida": 75,
   "kazaro": 0,
   "trelgon": 50,
   "gaia": 75,
-  "vatrius": 50,
-  "jurgen": 100,
+  "vatrius": 100,
+  "jurgen": 50,
   "fatum": 75,
   "aethar": 100,
   "vario": 0,
   "kiro": 0,
   "golagore": 0,
   "bambaa": 75,
-  "smok": 50,
+  "smok": 75,
   "rin": 25,
   "zinro": 100,
   "xerxius": 100,
   "kaio": 0,
   "bipper": 25,
+  "argus": 50,
+  "eliza": 25,
+  "om": 25,
   "ora": 100,
   "legios": 100,
   "zeal": 100,
@@ -3550,137 +3707,266 @@ const MATCHUPS = {
   "lei": 100,
   "ash": 0,
   "driiar": 0,
-  "tenebris": 50,
+  "tenebris": 25,
   "shai": 0
  },
  "kaio": {
   "beast": 0,
   "lire": 100,
   "nigromante": 0,
-  "maidas": 25,
+  "maidas": 50,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 25,
+  "takichi": 0,
   "aracnida": 25,
   "kazaro": 0,
   "trelgon": 100,
   "gaia": 75,
   "vatrius": 100,
   "jurgen": 100,
-  "fatum": 50,
+  "fatum": 100,
   "aethar": 100,
-  "vario": 0,
+  "vario": 25,
   "kiro": 25,
   "golagore": 50,
-  "bambaa": 50,
-  "smok": 25,
+  "bambaa": 75,
+  "smok": 50,
   "rin": 0,
   "zinro": 75,
   "xerxius": 100,
   "ann": 100,
   "bipper": 100,
+  "argus": 25,
+  "eliza": 0,
+  "om": 100,
   "ora": 100,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 100,
+  "lei": 75,
   "ash": 100,
-  "driiar": 75,
+  "driiar": 100,
   "tenebris": 100,
   "shai": 0
  },
  "bipper": {
-  "beast": 25,
+  "beast": 50,
   "lire": 0,
   "nigromante": 0,
   "maidas": 0,
   "monh": 25,
-  "biteroi": 25,
+  "biteroi": 0,
   "rasho": 0,
   "takichi": 0,
   "aracnida": 100,
   "kazaro": 50,
   "trelgon": 75,
   "gaia": 0,
-  "vatrius": 75,
-  "jurgen": 25,
-  "fatum": 0,
-  "aethar": 0,
-  "vario": 0,
-  "kiro": 75,
-  "golagore": 75,
+  "vatrius": 100,
+  "jurgen": 0,
+  "fatum": 25,
+  "aethar": 50,
+  "vario": 25,
+  "kiro": 100,
+  "golagore": 50,
   "bambaa": 0,
   "smok": 0,
-  "rin": 100,
-  "zinro": 25,
-  "xerxius": 75,
+  "rin": 25,
+  "zinro": 0,
+  "xerxius": 0,
   "ann": 75,
   "kaio": 0,
+  "argus": 25,
+  "eliza": 0,
+  "om": 100,
+  "ora": 25,
+  "legios": 100,
+  "zeal": 100,
+  "aldor": 100,
+  "lei": 25,
+  "ash": 50,
+  "driiar": 25,
+  "tenebris": 100,
+  "shai": 25
+ },
+ "argus": {
+  "beast": 50,
+  "lire": 0,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 0,
+  "biteroi": 0,
+  "rasho": 25,
+  "takichi": 25,
+  "aracnida": 50,
+  "kazaro": 50,
+  "trelgon": 100,
+  "gaia": 0,
+  "vatrius": 50,
+  "jurgen": 50,
+  "fatum": 0,
+  "aethar": 25,
+  "vario": 0,
+  "kiro": 75,
+  "golagore": 100,
+  "bambaa": 0,
+  "smok": 0,
+  "rin": 75,
+  "zinro": 75,
+  "xerxius": 0,
+  "ann": 50,
+  "kaio": 75,
+  "bipper": 75,
+  "eliza": 0,
+  "om": 100,
   "ora": 0,
+  "legios": 100,
+  "zeal": 25,
+  "aldor": 100,
+  "lei": 50,
+  "ash": 75,
+  "driiar": 75,
+  "tenebris": 75,
+  "shai": 25
+ },
+ "eliza": {
+  "beast": 50,
+  "lire": 50,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 0,
+  "biteroi": 25,
+  "rasho": 50,
+  "takichi": 50,
+  "aracnida": 100,
+  "kazaro": 50,
+  "trelgon": 100,
+  "gaia": 25,
+  "vatrius": 75,
+  "jurgen": 100,
+  "fatum": 50,
+  "aethar": 75,
+  "vario": 50,
+  "kiro": 100,
+  "golagore": 100,
+  "bambaa": 0,
+  "smok": 50,
+  "rin": 50,
+  "zinro": 100,
+  "xerxius": 25,
+  "ann": 75,
+  "kaio": 100,
+  "bipper": 100,
+  "argus": 100,
+  "om": 100,
+  "ora": 75,
   "legios": 100,
   "zeal": 50,
   "aldor": 100,
-  "lei": 25,
-  "ash": 25,
-  "driiar": 25,
+  "lei": 100,
+  "ash": 100,
+  "driiar": 100,
   "tenebris": 100,
-  "shai": 0
+  "shai": 50
  },
- "ora": {
+ "om": {
   "beast": 0,
   "lire": 0,
   "nigromante": 0,
   "maidas": 0,
   "monh": 0,
-  "biteroi": 75,
+  "biteroi": 0,
   "rasho": 0,
   "takichi": 0,
-  "aracnida": 75,
-  "kazaro": 25,
-  "trelgon": 25,
+  "aracnida": 25,
+  "kazaro": 0,
+  "trelgon": 50,
   "gaia": 0,
-  "vatrius": 50,
-  "jurgen": 50,
+  "vatrius": 25,
+  "jurgen": 0,
   "fatum": 0,
-  "aethar": 50,
-  "vario": 75,
-  "kiro": 25,
-  "golagore": 50,
-  "bambaa": 25,
+  "aethar": 0,
+  "vario": 0,
+  "kiro": 50,
+  "golagore": 0,
+  "bambaa": 0,
   "smok": 0,
   "rin": 0,
-  "zinro": 100,
+  "zinro": 0,
   "xerxius": 75,
-  "ann": 0,
+  "ann": 75,
   "kaio": 0,
-  "bipper": 100,
-  "legios": 100,
-  "zeal": 75,
-  "aldor": 50,
-  "lei": 75,
-  "ash": 75,
+  "bipper": 0,
+  "argus": 0,
+  "eliza": 0,
+  "ora": 0,
+  "legios": 75,
+  "zeal": 50,
+  "aldor": 100,
+  "lei": 25,
+  "ash": 0,
   "driiar": 0,
-  "tenebris": 75,
+  "tenebris": 25,
   "shai": 0
  },
+ "ora": {
+  "beast": 50,
+  "lire": 0,
+  "nigromante": 0,
+  "maidas": 0,
+  "monh": 25,
+  "biteroi": 50,
+  "rasho": 25,
+  "takichi": 0,
+  "aracnida": 100,
+  "kazaro": 25,
+  "trelgon": 50,
+  "gaia": 0,
+  "vatrius": 75,
+  "jurgen": 50,
+  "fatum": 25,
+  "aethar": 50,
+  "vario": 75,
+  "kiro": 50,
+  "golagore": 100,
+  "bambaa": 75,
+  "smok": 25,
+  "rin": 25,
+  "zinro": 100,
+  "xerxius": 25,
+  "ann": 0,
+  "kaio": 0,
+  "bipper": 75,
+  "argus": 100,
+  "eliza": 25,
+  "om": 100,
+  "legios": 75,
+  "zeal": 75,
+  "aldor": 100,
+  "lei": 75,
+  "ash": 100,
+  "driiar": 0,
+  "tenebris": 100,
+  "shai": 50
+ },
  "legios": {
-  "beast": 25,
+  "beast": 0,
   "lire": 100,
   "nigromante": 0,
   "maidas": 25,
-  "monh": 100,
-  "biteroi": 75,
+  "monh": 75,
+  "biteroi": 25,
   "rasho": 0,
   "takichi": 0,
   "aracnida": 0,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 75,
+  "gaia": 100,
   "vatrius": 0,
   "jurgen": 0,
   "fatum": 0,
-  "aethar": 25,
+  "aethar": 0,
   "vario": 0,
   "kiro": 0,
   "golagore": 0,
@@ -3692,9 +3978,12 @@ const MATCHUPS = {
   "ann": 0,
   "kaio": 0,
   "bipper": 0,
-  "ora": 0,
-  "zeal": 100,
-  "aldor": 0,
+  "argus": 0,
+  "eliza": 0,
+  "om": 25,
+  "ora": 25,
+  "zeal": 50,
+  "aldor": 50,
   "lei": 0,
   "ash": 0,
   "driiar": 0,
@@ -3706,9 +3995,9 @@ const MATCHUPS = {
   "lire": 50,
   "nigromante": 0,
   "maidas": 0,
-  "monh": 25,
-  "biteroi": 0,
-  "rasho": 0,
+  "monh": 0,
+  "biteroi": 75,
+  "rasho": 25,
   "takichi": 0,
   "aracnida": 0,
   "kazaro": 0,
@@ -3716,24 +4005,27 @@ const MATCHUPS = {
   "gaia": 25,
   "vatrius": 0,
   "jurgen": 25,
-  "fatum": 25,
-  "aethar": 50,
-  "vario": 100,
+  "fatum": 50,
+  "aethar": 25,
+  "vario": 50,
   "kiro": 0,
   "golagore": 0,
-  "bambaa": 100,
-  "smok": 0,
+  "bambaa": 50,
+  "smok": 25,
   "rin": 0,
-  "zinro": 100,
+  "zinro": 75,
   "xerxius": 25,
   "ann": 0,
   "kaio": 0,
-  "bipper": 50,
+  "bipper": 0,
+  "argus": 75,
+  "eliza": 50,
+  "om": 50,
   "ora": 25,
-  "legios": 0,
+  "legios": 50,
   "aldor": 0,
-  "lei": 25,
-  "ash": 50,
+  "lei": 50,
+  "ash": 25,
   "driiar": 0,
   "tenebris": 75,
   "shai": 0
@@ -3741,24 +4033,24 @@ const MATCHUPS = {
  "aldor": {
   "beast": 0,
   "lire": 0,
-  "nigromante": 50,
+  "nigromante": 75,
   "maidas": 25,
-  "monh": 75,
-  "biteroi": 25,
+  "monh": 100,
+  "biteroi": 0,
   "rasho": 0,
   "takichi": 0,
   "aracnida": 0,
   "kazaro": 0,
   "trelgon": 0,
-  "gaia": 50,
+  "gaia": 75,
   "vatrius": 0,
-  "jurgen": 50,
-  "fatum": 50,
-  "aethar": 75,
+  "jurgen": 0,
+  "fatum": 75,
+  "aethar": 100,
   "vario": 0,
   "kiro": 0,
   "golagore": 0,
-  "bambaa": 25,
+  "bambaa": 0,
   "smok": 0,
   "rin": 0,
   "zinro": 0,
@@ -3766,71 +4058,77 @@ const MATCHUPS = {
   "ann": 25,
   "kaio": 0,
   "bipper": 0,
-  "ora": 50,
-  "legios": 100,
+  "argus": 0,
+  "eliza": 0,
+  "om": 0,
+  "ora": 0,
+  "legios": 50,
   "zeal": 100,
   "lei": 0,
-  "ash": 0,
+  "ash": 25,
   "driiar": 0,
   "tenebris": 0,
   "shai": 0
  },
  "lei": {
   "beast": 0,
-  "lire": 75,
+  "lire": 0,
   "nigromante": 25,
   "maidas": 25,
-  "monh": 25,
+  "monh": 50,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 0,
-  "aracnida": 25,
+  "aracnida": 0,
   "kazaro": 75,
   "trelgon": 0,
   "gaia": 0,
   "vatrius": 25,
-  "jurgen": 25,
+  "jurgen": 75,
   "fatum": 100,
-  "aethar": 75,
-  "vario": 0,
-  "kiro": 50,
-  "golagore": 0,
-  "bambaa": 50,
-  "smok": 50,
+  "aethar": 0,
+  "vario": 50,
+  "kiro": 100,
+  "golagore": 50,
+  "bambaa": 75,
+  "smok": 0,
   "rin": 0,
-  "zinro": 25,
-  "xerxius": 75,
+  "zinro": 75,
+  "xerxius": 50,
   "ann": 0,
-  "kaio": 0,
+  "kaio": 25,
   "bipper": 75,
+  "argus": 50,
+  "eliza": 0,
+  "om": 75,
   "ora": 25,
   "legios": 100,
-  "zeal": 75,
+  "zeal": 50,
   "aldor": 100,
-  "ash": 25,
-  "driiar": 25,
+  "ash": 50,
+  "driiar": 50,
   "tenebris": 25,
-  "shai": 50
+  "shai": 25
  },
  "ash": {
   "beast": 0,
-  "lire": 0,
-  "nigromante": 0,
+  "lire": 25,
+  "nigromante": 25,
   "maidas": 50,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
   "takichi": 100,
-  "aracnida": 75,
-  "kazaro": 25,
+  "aracnida": 50,
+  "kazaro": 0,
   "trelgon": 0,
   "gaia": 0,
   "vatrius": 100,
   "jurgen": 25,
   "fatum": 50,
-  "aethar": 50,
+  "aethar": 0,
   "vario": 0,
-  "kiro": 50,
+  "kiro": 75,
   "golagore": 25,
   "bambaa": 25,
   "smok": 0,
@@ -3839,28 +4137,31 @@ const MATCHUPS = {
   "xerxius": 50,
   "ann": 100,
   "kaio": 0,
-  "bipper": 75,
-  "ora": 25,
+  "bipper": 50,
+  "argus": 25,
+  "eliza": 0,
+  "om": 100,
+  "ora": 0,
   "legios": 100,
-  "zeal": 50,
-  "aldor": 100,
-  "lei": 75,
-  "driiar": 50,
+  "zeal": 75,
+  "aldor": 75,
+  "lei": 50,
+  "driiar": 75,
   "tenebris": 100,
   "shai": 0
  },
  "driiar": {
-  "beast": 25,
-  "lire": 0,
-  "nigromante": 75,
+  "beast": 0,
+  "lire": 25,
+  "nigromante": 25,
   "maidas": 50,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 100,
-  "aracnida": 25,
+  "takichi": 75,
+  "aracnida": 50,
   "kazaro": 50,
-  "trelgon": 100,
+  "trelgon": 50,
   "gaia": 50,
   "vatrius": 100,
   "jurgen": 100,
@@ -3868,53 +4169,59 @@ const MATCHUPS = {
   "aethar": 100,
   "vario": 0,
   "kiro": 100,
-  "golagore": 50,
-  "bambaa": 100,
+  "golagore": 100,
+  "bambaa": 75,
   "smok": 25,
   "rin": 75,
-  "zinro": 25,
+  "zinro": 75,
   "xerxius": 100,
   "ann": 100,
-  "kaio": 25,
+  "kaio": 0,
   "bipper": 75,
+  "argus": 25,
+  "eliza": 0,
+  "om": 100,
   "ora": 100,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 75,
-  "ash": 50,
+  "lei": 50,
+  "ash": 25,
   "tenebris": 75,
-  "shai": 25
+  "shai": 0
  },
  "tenebris": {
   "beast": 25,
-  "lire": 25,
-  "nigromante": 25,
-  "maidas": 0,
+  "lire": 0,
+  "nigromante": 0,
+  "maidas": 25,
   "monh": 0,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 25,
-  "aracnida": 50,
-  "kazaro": 75,
+  "takichi": 100,
+  "aracnida": 0,
+  "kazaro": 50,
   "trelgon": 0,
   "gaia": 0,
   "vatrius": 100,
-  "jurgen": 25,
-  "fatum": 25,
+  "jurgen": 0,
+  "fatum": 0,
   "aethar": 25,
   "vario": 0,
   "kiro": 100,
-  "golagore": 0,
-  "bambaa": 25,
+  "golagore": 25,
+  "bambaa": 50,
   "smok": 0,
-  "rin": 75,
-  "zinro": 0,
+  "rin": 100,
+  "zinro": 50,
   "xerxius": 0,
-  "ann": 50,
+  "ann": 75,
   "kaio": 0,
   "bipper": 0,
-  "ora": 25,
+  "argus": 25,
+  "eliza": 0,
+  "om": 75,
+  "ora": 0,
   "legios": 100,
   "zeal": 25,
   "aldor": 100,
@@ -3925,17 +4232,17 @@ const MATCHUPS = {
  },
  "shai": {
   "beast": 0,
-  "lire": 75,
+  "lire": 100,
   "nigromante": 50,
-  "maidas": 25,
+  "maidas": 50,
   "monh": 100,
   "biteroi": 0,
   "rasho": 0,
-  "takichi": 50,
-  "aracnida": 0,
-  "kazaro": 50,
+  "takichi": 100,
+  "aracnida": 75,
+  "kazaro": 0,
   "trelgon": 100,
-  "gaia": 100,
+  "gaia": 50,
   "vatrius": 100,
   "jurgen": 100,
   "fatum": 100,
@@ -3945,23 +4252,26 @@ const MATCHUPS = {
   "golagore": 75,
   "bambaa": 100,
   "smok": 0,
-  "rin": 75,
-  "zinro": 75,
+  "rin": 25,
+  "zinro": 100,
   "xerxius": 100,
   "ann": 100,
   "kaio": 100,
-  "bipper": 100,
-  "ora": 100,
+  "bipper": 75,
+  "argus": 75,
+  "eliza": 50,
+  "om": 100,
+  "ora": 50,
   "legios": 100,
   "zeal": 100,
   "aldor": 100,
-  "lei": 50,
+  "lei": 75,
   "ash": 100,
-  "driiar": 75,
+  "driiar": 100,
   "tenebris": 0
  }
 };
-const MATCHUPS_INFO = { fecha: '2026-11-25', duelos: 4 };
+const MATCHUPS_INFO = { fecha: '2026-11-26', duelos: 4 };
 
 // ===== sprites.js =====
 // =====================================================================
@@ -7293,6 +7603,439 @@ const BIPPER_MAGO = [
 function kaioGrande(frame) { return grandeDe('k' + frame, 15, 21, KAIO_GRANDE[frame]); }
 function bipperGrande(frame) { return grandeDe('b' + frame, 28, 30, BIPPER_GRANDE[frame]); }
 function bipperSolo(frame) { return grandeDe('bs' + frame, 28, 30, BIPPER_GRANDE[frame].map((r, i) => i < 11 ? '.'.repeat(28) : r)); }   // Bipper: el robot sin el enano (Sobrecarga)
+// Seba (25-11): Argus (Aliados) — mago joven de traje negro con solapas moradas y ribetes dorados, pelo castaño revuelto, sin gorro; varita con punta de runa celeste
+const ARGUS_GRANDE = [
+  [
+    '....k.k.k........',
+    '...kWkWkWk.......',
+    '..kWWmWWWWk......',
+    '.kWWWWWmWWWk..k..',
+    '.kWmWWWWWWWk.kck.',
+    '.kWWPPPWPPWk..kk.',
+    '..kPPPPPPPPk.kW..',
+    '..kPkkPPkkPk.kW..',
+    '..kPkBPPkBPk.kW..',
+    '...kpPPPPpk.kPk..',
+    '..kDkkpppkkDkPk..',
+    '.kDykkkkkkkyDkk..',
+    'knkDykknkkyDnnk..',
+    'knnkDykOkyDknkk..',
+    'knnnkDkokDknnk...',
+    'knnnnkyOykknnk...',
+    'kPkknnDkDnnkkk...',
+    'kkknnnDkDnnnk....',
+    '.kDnnnDkDnnnDk...',
+    '.kyDnnkknnnDyk...',
+    '..kkwwk.kwwkk....',
+    '...kOwk.kwOk.....',
+    '...kkkk.kkkk.....',
+  ],
+  [
+    '....k.k.k........',
+    '...kWkWkWk.......',
+    '..kWWmWWWWk......',
+    '.kWWWWWmWWWk..k..',
+    '.kWmWWWWWWWk.kck.',
+    '.kWWPPPWPPWk..kk.',
+    '..kPPPPPPPPk.kW..',
+    '..kPkkPPkkPk.kW..',
+    '..kPkBPPkBPk.kW..',
+    '...kpPPPPpk.kPk..',
+    '..kDkkpppkkDkPk..',
+    '.kDykkkkkkkyDkk..',
+    'knkDykknkkyDnnk..',
+    'knnkDykOkyDknkk..',
+    'knnnkDkokDknnk...',
+    'knnnnkyOykknnk...',
+    'kPkknnDkDnnkkk...',
+    'kkknnnDkDnnnk....',
+    '.kDnnnDkDnnnDk...',
+    '.kyDnnkknnnDyk...',
+    '.kkwwk..kwwkk....',
+    '.kOwk....kwOk....',
+    '.kkkk....kkkk....',
+  ],
+  [
+    '....k.k.k........',
+    '...kWkWkWk.......',
+    '..kWWmWWWWk......',
+    '.kWWWWWmWWWk..k..',
+    '.kWmWWWWWWWk.kck.',
+    '.kWWPPPWPPWk..kk.',
+    '..kPPPPPPPPk.kW..',
+    '..kPkkPPkkPk.kW..',
+    '..kPkBPPkBPk.kW..',
+    '...kpPPPPpk.kPk..',
+    '..kDkkpppkkDkPk..',
+    '.kDykkkkkkkyDkk..',
+    'knkDykknkkyDnnk..',
+    'knnkDykOkyDknkk..',
+    'knnnkDkokDknnk...',
+    'knnnnkyOykknnk...',
+    'kPkknnDkDnnkkk...',
+    'kkknnnDkDnnnk....',
+    '.kDnnnDkDnnnDk...',
+    '.kyDnnkknnnDyk...',
+    '...kkwwkwwkk.....',
+    '...kOwkkkwOk.....',
+    '...kkkk.kkkk.....',
+  ],
+];
+function argusGrande(frame) { return grandeDe('ar' + frame, 17, 23, ARGUS_GRANDE[frame]); }
+// Seba (26-11): Eliza (Renegados) — hechicera joven y elegante: pelo largo índigo con estrella dorada, corbatín blanco, traje oscuro con dorado y faldones con forro morado; mano alzada con luz de estrella
+const ELIZA_GRANDE = [
+  [
+    '....kkkkk........',
+    '...kAADAAk...k...',
+    '..kADAAAAAk.kyk..',
+    '.kAAAAAyAAAk.k...',
+    '.kAAAAPPAyAAk....',
+    'kAADAPPPPAAAk....',
+    'kAAkPkkPkkPAAk...',
+    'kAAkPkIPkIPDAk...',
+    'kADAkPPPPPkAAk.k.',
+    'kAAAAkpPpkAADk.Pk',
+    'kADAkqqqqqkAAkkPk',
+    '.kAknkqqqknkAkPk.',
+    '.kAnyOkqkOynkkPk.',
+    '..knnyOnOynnnkk..',
+    '..knnnyOynnnk....',
+    '..knInnOnnInk....',
+    '.kInInnOnnInIk...',
+    '.kIynnnknnnyIk...',
+    'kIyInnnknnnIyIk..',
+    'kyIkknnknnkkIyk..',
+    'kkk.knnkknnk.kk..',
+    '....kwOk.kOwk....',
+    '....kkkk.kkkk....',
+  ],
+  [
+    '....kkkkk........',
+    '...kAADAAk...k...',
+    '..kADAAAAAk.kyk..',
+    '.kAAAAAyAAAk.k...',
+    '.kAAAAPPAyAAk....',
+    'kAADAPPPPAAAk....',
+    'kAAkPkkPkkPAAk...',
+    'kAAkPkIPkIPDAk...',
+    'kADAkPPPPPkAAk.k.',
+    'kAAAAkpPpkAADk.Pk',
+    'kADAkqqqqqkAAkkPk',
+    '.kAknkqqqknkAkPk.',
+    '.kAnyOkqkOynkkPk.',
+    '..knnyOnOynnnkk..',
+    '..knnnyOynnnk....',
+    '..knInnOnnInk....',
+    '.kInInnOnnInIk...',
+    '.kIynnnknnnyIk...',
+    'kIyInnnknnnIyIk..',
+    'kyIkknnknnkkIyk..',
+    'kkkknnkk.knnkk...',
+    '...kwOk...kOwk...',
+    '...kkkk...kkkk...',
+  ],
+  [
+    '....kkkkk........',
+    '...kAADAAk...k...',
+    '..kADAAAAAk.kyk..',
+    '.kAAAAAyAAAk.k...',
+    '.kAAAAPPAyAAk....',
+    'kAADAPPPPAAAk....',
+    'kAAkPkkPkkPAAk...',
+    'kAAkPkIPkIPDAk...',
+    'kADAkPPPPPkAAk.k.',
+    'kAAAAkpPpkAADk.Pk',
+    'kADAkqqqqqkAAkkPk',
+    '.kAknkqqqknkAkPk.',
+    '.kAnyOkqkOynkkPk.',
+    '..knnyOnOynnnkk..',
+    '..knnnyOynnnk....',
+    '..knInnOnnInk....',
+    '.kInInnOnnInIk...',
+    '.kIynnnknnnyIk...',
+    'kIyInnnknnnIyIk..',
+    'kyIkknnknnkkIyk..',
+    'kkk..knnknnk.kk..',
+    '.....kwOkOwk.....',
+    '.....kkkkkkk.....',
+  ],
+];
+function elizaGrande(frame) { return grandeDe('el' + frame, 17, 23, ELIZA_GRANDE[frame]); }
+// Seba (26-11): Om (Aliados) — guardián de piedra de la pirámide: penacho de plumas turquesa, máscara y collar de oro con turquesas, taparrabo rojo, martillo de oro con gemas apoyado en el piso
+// Seba (26-11 tarde): rediseño — piedra gris clara con detalles negros, cabeza grande y cuadrada, boca recta negra, ojos dorados, musgo, martillo con el mazo arriba
+// Seba (26-11 r3): cabeza más chica, piedra con partes más oscuras para contraste, más musgo; el martillo va aparte (martilloOm) y se anima
+// Seba (26-11 r4): más estatua (piedra tallada, grietas, desportillados, taparrabo pintado en la piedra) y penacho de plumas en abanico que se distingue
+// Seba (26-11 r5): 10% más grande manteniendo proporciones (25×38) y lo verde del penacho pasa a dorado
+const OM_GRANDE = [
+  [
+    '...........y.y...........',
+    '...........H.H...........',
+    '.......yy..H.H..yy.......',
+    '.......OOO.H.H.OOO.......',
+    '...yy..OOO.H.H.OOO..yy...',
+    '..yyHHH.OOkH.HkOO.HHHyy..',
+    '...HHHHkOOkH.HkOOkHHHH...',
+    '.yOkHHHHkOkH.HkOkHHHHkOy.',
+    'yyOOkkkHkOkH.HkOkHkkkOOyy',
+    '........kyOyOyOyk........',
+    '........k3g3333gk........',
+    '........k2yy3yy2k........',
+    '........k1332433k........',
+    '........k4kkkkk3k........',
+    '........k23g3332k........',
+    '........k23g3332k........',
+    '.........k23332k.........',
+    '...kkkkkk3OyOyOyO2kkkkk..',
+    '..kGgGG3k4333433k4GGg3k..',
+    '.k432kk3k4gk43333k33kG33k',
+    'k4g33kkk4334H3133kkk4333k',
+    'k3k43kk42k1331kG3k443k1kk',
+    'k3k43kk42k1331kG3k443k1kk',
+    'k4kk4kk433k1k4433kkk4k4k.',
+    'k3k.k44k4333343k1k..k3gk.',
+    'kg3k.kkk4kkkkk4kk...k43k.',
+    'k4Gk.kk3krrrrrk3k...kk4k.',
+    '.kk..kkk43kryrk43kkk.kkk.',
+    '.....kk4G43krk43g3kk.....',
+    '.....kk3Gl3krk4lG3kk.....',
+    '.....kk4333k.k4333kk.....',
+    '.....kkgk43k.k4k33kk.....',
+    '.....kk4132k.k3gGk33k....',
+    '.....kk4312k.k3333kk.....',
+    '.....kk4312k.k3333kk.....',
+    '....k333l33k.k431322k....',
+    '....k334332k.k333122k....',
+    '....kkkkkkkk.kkkkkkkk....',
+  ],
+  [
+    '...........y.y...........',
+    '...........H.H...........',
+    '.......yy..H.H..yy.......',
+    '.......OOO.H.H.OOO.......',
+    '...yy..OOO.H.H.OOO..yy...',
+    '..yyHHH.OOkH.HkOO.HHHyy..',
+    '...HHHHkOOkH.HkOOkHHHH...',
+    '.yOkHHHHkOkH.HkOkHHHHkOy.',
+    'yyOOkkkHkOkH.HkOkHkkkOOyy',
+    '........kyOyOyOyk........',
+    '........k3g3333gk........',
+    '........k2yy3yy2k........',
+    '........k1332433k........',
+    '........k4kkkkk3k........',
+    '........k23g3332k........',
+    '........k23g3332k........',
+    '.........k23332k.........',
+    '...kkkkkk3OyOyOyO2kkkkk..',
+    '..kGgGG3k4333433k4GGg3k..',
+    '.k432kk3k4gk43333k33kG33k',
+    'k4g33kkk4334H3133kkk4333k',
+    'k3k43kk42k1331kG3k443k1kk',
+    'k3k43kk42k1331kG3k443k1kk',
+    'k4kk4kk433k1k4433kkk4k4k.',
+    'k3k.k44k4333343k1k..k3gk.',
+    'kg3k.kkk4kkkkk4kk...k43k.',
+    'k4Gk.kk3krrrrrk3k...kk4k.',
+    '.kk..kkk43kryrk43kkk.kkk.',
+    '.....kk4G43krk43g3kk.....',
+    '.....kk3Gl3krk4lG3kk.....',
+    '.....kkgk43k.k4333kk.....',
+    '.....kk4132k.k4k33kk.....',
+    '.....kk4312k.k3gGk33k....',
+    '.....kk4312k.k3333kk.....',
+    '....k333l33k.k3333kk.....',
+    '....k334332k.k431322k....',
+    '....kkkkkkkk.k333122k....',
+    '.............kkkkkkkk....',
+  ],
+  [
+    '...........y.y...........',
+    '...........H.H...........',
+    '.......yy..H.H..yy.......',
+    '.......OOO.H.H.OOO.......',
+    '...yy..OOO.H.H.OOO..yy...',
+    '..yyHHH.OOkH.HkOO.HHHyy..',
+    '...HHHHkOOkH.HkOOkHHHH...',
+    '.yOkHHHHkOkH.HkOkHHHHkOy.',
+    'yyOOkkkHkOkH.HkOkHkkkOOyy',
+    '........kyOyOyOyk........',
+    '........k3g3333gk........',
+    '........k2yy3yy2k........',
+    '........k1332433k........',
+    '........k4kkkkk3k........',
+    '........k23g3332k........',
+    '........k23g3332k........',
+    '.........k23332k.........',
+    '...kkkkkk3OyOyOyO2kkkkk..',
+    '..kGgGG3k4333433k4GGg3k..',
+    '.k432kk3k4gk43333k33kG33k',
+    'k4g33kkk4334H3133kkk4333k',
+    'k3k43kk42k1331kG3k443k1kk',
+    'k3k43kk42k1331kG3k443k1kk',
+    'k4kk4kk433k1k4433kkk4k4k.',
+    'k3k.k44k4333343k1k..k3gk.',
+    'kg3k.kkk4kkkkk4kk...k43k.',
+    'k4Gk.kk3krrrrrk3k...kk4k.',
+    '.kk..kkk43kryrk43kkk.kkk.',
+    '.....kk4G43krk43g3kk.....',
+    '.....kk3Gl3krk4lG3kk.....',
+    '.....kk4333k.k4k33kk.....',
+    '.....kkgk43k.k3gGk33k....',
+    '.....kk4132k.k3333kk.....',
+    '.....kk4312k.k3333kk.....',
+    '.....kk4312k.k431322k....',
+    '....k333l33k.k333122k....',
+    '....k334332k.kkkkkkkk....',
+    '....kkkkkkkk.............',
+  ],
+];
+const TOTEM_OM = [
+  '......kkkkkkkkkkkkkk......',
+  '.....k44444444444444k.....',
+  '.....k4yOyOyOyOyOyOy4k....',
+  '....kk44kk444444kk44kk....',
+  '...k4444k4kkkkkk4k4444k...',
+  '...k43344k4HqHH4k44334k...',
+  '...kyOyOyOyOyOyOyOyOyOk...',
+  '..kk44444444444444444kkk..',
+  '..k443k44k44kk44k44k3444k.',
+  '..k4434kk4kk44kk4kk43444k.',
+  '..k44444444GG44444444444k.',
+  '.kkyOyOyOyOyOyOyOyOyOyOykk',
+  '.k3333333333333333333333k.',
+  '.k3G33333333333333333G33k.',
+  '.kkkkkkkkkkkkkkkkkkkkkkkk.',
+  '..........................',
+];
+const CARA_OM = [
+  '.kyk.y.kyk.',
+  'kyOykykyOyk',
+  'kOk44444kOk',
+  'ky4k4y4k4yk',
+  'kO4444444Ok',
+  'ky44kkk44yk',
+  'kOkfffffkOk',
+  '.kkeyyyekk.',
+  '..kkkkkkk..',
+];
+const BLOQUE_OM = [
+  '.kkkkkkkkkkkk.',
+  'kgG4444444gG4k',
+  'k444444444444k',
+  'kyOyOyOyOyOyOk',
+  'kOkkOkkOkkOkkk',
+  'k444444444444k',
+  'k44kkkkkkkk44k',
+  'k44k4yk4yk4k4k',
+  'k44k444444k44k',
+  'k44k4kkkk4k44k',
+  'k44kkkkkkkk44k',
+  'k444444HH4444k',
+  'k343334443334k',
+  'k333k33333k33k',
+  'k3333333333g3k',
+  'kkkkkkkkkkkkkk',
+];
+const OM_GEMAS = [[12, 20], [12, 27]], OM_OJOS = [[10, 11], [11, 11], [13, 11], [14, 11]];
+function omGrande(frame) { return grandeDe('om' + frame, 25, 38, OM_GRANDE[frame]); }
+// Om (Seba 26-11 r3): martillo de piedra y oro con turquesa, mazo grande; agarre en (2,6); rotado fino (64 pasos) solo para Om
+const MARTILLO_OM = [
+  '.............kkkkkkkkk',
+  '.............kyOyOyOyk',
+  '.............k4g4G43gk',
+  '.............k443g432k',
+  '.............k43kkk42k',
+  '.kk......kk..k4kFHk32k',
+  'kOWWWWWWWOWWWk3kHyHk2k',
+  'kowwwwwwwowwwk3kFHFk2k',
+  '.kk......kk..k43kkk32k',
+  '.............k34g4422k',
+  '.............kG43g42gk',
+  '.............k4g43Gl2k',
+  '.............kyOyOyOyk',
+  '.............kkkkkkkkk',
+];
+const cacheMartilloOm = new Map();
+function martilloOmRot(a) {
+  const N = 64, idx = ((Math.round(a / (TAU / N)) % N) + N) % N;
+  if (cacheMartilloOm.has(idx)) return cacheMartilloOm.get(idx);
+  const W = MARTILLO_OM[0].length, HA = MARTILLO_OM.length, gx = 2, gy = 6.5, S = 45, C = 22;
+  const src = matrizVacia(W, HA); pintar(src, MARTILLO_OM);
+  const dst = matrizVacia(S, S), b = idx / N * TAU, ca = Math.cos(b), sa = Math.sin(b);
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const dx = x - C, dy = y - C, sx = Math.round(dx * ca + dy * sa + gx - 0.01), sy = Math.round(-dx * sa + dy * ca + gy - 0.01);
+    if (sx >= 0 && sx < W && sy >= 0 && sy < HA && src[sy][sx]) dst[y][x] = src[sy][sx];
+  }
+  const c = aCanvas(contornear(dst)); cacheMartilloOm.set(idx, c); return c;
+}
+// Om (Seba 26-11 r4): el tótem es UNA roca tallada que gira (montada en dos maderas); las caras están talladas en la misma roca
+const ROCA_TOTEM_OM = [
+  '......lGGlGGlGGlGG......',
+  '....GlGGlGGlGGlGGlGG....',
+  '...GgGGGgGGGgGGGgGGGg...',
+  '..g3gg3gg3gg3gg3gg3gg3..',
+  '..4g4233g323232g2221g1..',
+  '.43g43333g33331g2222111.',
+  '444443333333331g22221g11',
+  '.4g44233333332222122111.',
+  '444433333333332222121111',
+  '.4443333333332122211111.',
+  '344433333333332222121111',
+  '.4444333333333222222111.',
+  '344443333333332222221111',
+  '444433333333332222221111',
+  '.4444333333333222222111.',
+  '444333233333332222221111',
+  '.4444333333333222222111.',
+  '.3444333333333222222111.',
+  '434423332333331222221111',
+  '.1111111111111111111111.',
+  '..11111111111111111111..',
+];
+const CARA_ROCA_OM = [
+  '..1111111..',
+  '.134444431.',
+  '13yy141yy31',
+  '13441114431',
+  '13444144431',
+  '13111111131',
+  '131ffeff131',
+  '13111111131',
+  '.134434431.',
+  '..1111111..',
+];
+function rocaTotemOmSpr() { return grandeDe('omRT', 24, 21, ROCA_TOTEM_OM); }
+const cacheCaraRocaOm = {};
+function caraRocaOmSpr() { if (!cacheCaraRocaOm.c) { const m = matrizVacia(11, 10); pintar(m, CARA_ROCA_OM); cacheCaraRocaOm.c = aCanvas(m); } return cacheCaraRocaOm.c; }
+function totemOmSpr() { return grandeDe('omT', 26, 16, TOTEM_OM); }
+function caraOmSpr() { return grandeDe('omC', 11, 9, CARA_OM); }
+function bloqueOmSpr() { return grandeDe('omB', 14, 16, BLOQUE_OM); }
+Object.assign(CAPAS, { cuerpoOm: L(Object.fromEntries(OM_GRANDE[0].slice(7, 29).map((r, i) => [i, r.slice(2, 22)]))) });
+Object.assign(APARIENCIA, { om: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoOm'], ['cuerpoOm']], cabeza: [[], []] } });
+Object.assign(GLIFOS, {
+  sacrificioOm: ['...rr....', '..rRRr...', '.rRRRRr..', '.rRRRRr..', '..rRRr...', '...rr..y.', '......yqy', '.......y.', '.........'],
+  totemOm:      ['...y.y...', '..kOOOk..', '.k2y2y2k.', '.kfk2kfk.', '.k22222k.', '.k2fkf2k.', '.k22222k.', '.kkkkkkk.', '.........'],
+  murallaOm:    ['k3k...k3k', 'k2k...k2k', 'k3k.f.k3k', 'k2k...k2k', 'k3k.f.k3k', 'k2k...k2k', 'k3kkkkk3k', 'k2222222k', 'kkkkkkkkk'],
+  guardianOm:   ['...yyy...', '..yOHOy..', '.k22222k.', '.k2kyk2k.', '.k22222k.', '..k222k..', '...k2k...', '....k....', '.........'],
+});
+Object.assign(FONDOS, { om: ['2', 'y'] });
+Object.assign(CAPAS, { cuerpoEliza: L(Object.fromEntries(ELIZA_GRANDE[0].slice(1, 23).map((r, i) => [i, '.' + r + '..']))) });
+Object.assign(APARIENCIA, { eliza: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoEliza'], ['cuerpoEliza']], cabeza: [[], []] } });
+Object.assign(GLIFOS, {
+  estrellasEliza:  ['.I.....q.', 'III...qqq', '.I.....q.', '....I....', '...III...', '....I....', '.........', '.kIIIIIk.', '.........'],
+  bumeranEliza:    ['...IIq...', '..I..Iq..', '.I....I..', 'I.....q..', 'I....I...', 'I...I....', '.I.I.....', '..q......', '.........'],
+  nocheEliza:      ['...nnn...', '.nnAAAnn.', 'nnA.y.Ann', 'nA.yqy.An', 'nA..y..An', 'nnA...Ann', '.nnAAAnn.', '...nnn...', '.........'],
+  estrelladaEliza: ['....y....', '....y....', '...yqy...', 'yyyqqqyyy', '...yqy...', '....y....', '....y....', '.........', '.........'],
+});
+Object.assign(FONDOS, { eliza: ['A', 'I'] });
+Object.assign(CAPAS, { cuerpoArgus: L(Object.fromEntries(ARGUS_GRANDE[0].slice(1, 23).map((r, i) => [i, '.' + r + '..']))) });
+Object.assign(APARIENCIA, { argus: { piel: OCULTO, back: [[], []], cuerpo: [['cuerpoArgus'], ['cuerpoArgus']], cabeza: [[], []] } });
+Object.assign(GLIFOS, {
+  saltoArgus: ['..c...c..', '.c.....c.', 'c..kkk..c', '...kck...', '..kcqck..', '...kck...', 'c..kkk..c', '.c.....c.', '..c...c..'],
+  rayoArgus:  ['W........', '.W.......', '..Wc.....', '...qcc...', '....qccc.', '...qcc...', '..Wc.....', '.W.......', 'W........'],
+  bolaArgus:  ['...ccc...', '.cc...cc.', 'c..BBB..c', 'c.BcqcB.c', 'c.BqqqB.c', 'c.BcqcB.c', 'c..BBB..c', '.cc...cc.', '...ccc...'],
+  ecoArgus:   ['....c....', '...c.c...', '..c...c..', '.c..q..c.', 'c..qqq..c', '.c..q..c.', '..c...c..', '...c.c...', '....c....'],
+});
+Object.assign(FONDOS, { argus: ['D', 'c'] });
 function bipperMago(frame) { return grandeDe('bm' + frame, 13, 12, BIPPER_MAGO[frame]); }
 Object.assign(CAPAS, {
   cuerpoKaio: L(Object.fromEntries(KAIO_GRANDE[0].map((r, i) => [i + 1, '..' + r + '...']))),
@@ -8044,7 +8787,7 @@ const CONTROL = new Set(['encantado', 'aturdido', 'silence', 'slow', 'arrastre',
 // Cargas del ataque básico: 3 para todos, salvo los héroes que definen otras (Gaia: 2)
 const cargasMax = (p) => (p && p.build && HEROES[p.build.heroe]?.cargas) || CONFIG.CARGAS;
 // Canalizaciones (quieto, se cortan con aturdimiento o silencio)
-const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso', 'canalDanza', 'canalNatura', 'canalAnn', 'canalKO'];
+const CANALES = ['canalSablazo', 'canalJet', 'canalArena', 'canalGrillete', 'canalPortal', 'canalSiega', 'canalPozo', 'embateGiro', 'canalPatada', 'canalArmario', 'canalImpacto', 'canalPozoM', 'canalMuroAldor', 'canalEcosAldor', 'canalFestin', 'canalChaos', 'canalEstocada', 'canalBendicion', 'canalGeiser', 'canalAncestro', 'canalOcaso', 'canalDanza', 'canalNatura', 'canalAnn', 'canalKO', 'rayoArgus'];
 // Seba (05-11): las que el jugador puede cancelar con la X (el giro del Embate no es canalización)
 // Seba (09-11): proyectiles que atraviesan el muro de Aldor (magia y lo que vuela). Todo lo demás (físico) se frena.
 // Fatum entero, sombra de Karilthal, orbes de Monh, Rasho, runas de Æthar, orbe de Driiar, corazones de Vario (C) y lo de las ultis.
@@ -8369,7 +9112,7 @@ class Game {
       p.ultiAvisada = false;
       p.habCargas = {};   // Torreta: parte con sus 2 cargas
       p.halconZ = null; p.picadaZ = null; p.trampasZ = null; p.annBuff = 0;   // Zinro: nada pendiente al empezar
-      p.bp = null; p.kaioT = 0; p.maidasN = 0;   // Bipper: arranca en el robot; Kaio: reloj de la pasiva
+      p.bp = null; p.kaioT = 0; p.maidasN = 0; p.argusMana = HABILIDADES.bolaArgus.mana; p.elizaN = 0; p.elizaLista = false;   // Bipper: arranca en el robot; Kaio: reloj de la pasiva
       p.fx = {}; p.sedZeal = 0; p.sedCd = 0; p.gotasZeal = null; p.colaGota = null; p.golpesAldor = 0; p.relojFuegoGol = null;   // Zeal: la Sed arcana parte de cero cada ronda
       p.kbx = p.kby = 0;
       p.hidden = false; p.revelado = 0;
@@ -8535,6 +9278,7 @@ class Game {
     if (this.modo === 'entreno' && !target.esUnidad && !target.esMuneco) return 0;   // Arena de entrenamiento: los jugadores no reciben daño (sí control)
     const esJugador = !target.esUnidad;
     if (esJugador && target.fx && target.fx.renacer) return 0;   // Seba (28-10): 1,5 s invulnerable al reaparecer
+    if (esJugador && target.fx && target.fx.bolaArgus) return 0;   // Argus: la Bola rúnica no recibe daño
     if (!esJugador && UNIDADES[target.kind].invulnerable) return 0;
 
     if (esJugador && target.fx && target.fx.jetpack) return 0;   // Biteroi en el aire: nada lo daña (Seba)
@@ -8567,6 +9311,8 @@ class Game {
     }   // Seba (31-10): se quitó el +50% de daño de Kazaro durante la Llama (resto de la ulti antigua; `extra` ahora es el +50% de fuego por héroe extra en la arena)
     if (esJugador && target.fx && target.fx.cucko) amt *= CONFIG.CUCKO.buff.recibe;
     if (esJugador && target.fx && this.presaZinro(target)) amt *= 1 + PASIVAS.presaZinro.extra;   // Zinro: presa acorralada (+2% bajo control, no se acumula)   // Zizzer: cerca de un espantapájaros, +20% de todas las fuentes
+    if (esJugador && this.desventajaOm(target)) amt *= 1 - PASIVAS.guardianOm.reduce;   // Om: Guardián del templo (−10% en desventaja)
+    if (src && src.fx && src.fx.buffEliza && src !== target && amt > 0) { delete src.fx.buffEliza; amt += HABILIDADES.nocheEliza.extra; this.emit({ k: 'buffElizaGolpe', x: target.x | 0, y: target.y | 0 }); }   // Eliza: Manto de la noche (+25 a lo primero que pegue)
     if (target.fx && target.fx.vulnAntena) amt *= 1 + HABILIDADES.antenaBipper.vulnera;   // Bipper: campo magnético (+10% bajo el 33% de vida)
     if (esJugador && HEROES[target.build?.heroe]?.pasiva === 'duelo' && this.enDuelo(target)) amt *= 1 - PASIVAS.duelo.reduce;   // Ann: 1 contra 1, −5%   // Zinro: presa acorralada (+2% bajo control, no se acumula)   // Zizzer: cerca de un espantapájaros, +20% de todas las fuentes
     if (esJugador && target.fx && target.fx.enTela) amt *= 1 - target.fx.enTela.buff;   // Aracnida sobre su tela
@@ -8736,6 +9482,11 @@ class Game {
   aplicarEfecto(t, key, val) {
     if (!t.fx) t.fx = {};
     if ((t.fx.jetpack || t.fx.renacer) && NEGATIVOS.has(key)) return;
+    if (t.fx.bolaArgus && NEGATIVOS.has(key)) return;   // Argus: la Bola rúnica es inmune al control
+    if ((key === 'aturdido' || key === 'silence') && this.esArgus(t) && t.alive) {   // Argus (Seba 25-11): aturdido o silenciado fuera de la bola pierde el maná y la ulti queda en recarga
+      t.argusMana = 0; t.cd[3] = Math.max(t.cd[3] || 0, HABILIDADES.bolaArgus.bloqueo);
+      this.emit({ k: 'txt', x: t.x | 0, y: t.y | 0, s: 'SIN MANA', id: t.id });
+    }
     if ((t.fx.decimar || t.fx.danzaCarmesi || t.fx.vendaval || t.fx.canalEcosAldor || t.fx.canalFestin) && CONTROL.has(key)) return;   // Zeal (Seba 11-11): el Festín tampoco se corta   // Vatrius: imparable en la Danza carmesí;   // Seba (05-11): el Embate de Driiar ya no es inmune a control (el control no corta el giro en curso)   // Driiar (Seba 31-10): inmune a control mientras gira   // Kazaro girando   // en el aire (o recién reaparecido) no le afecta nada   // Lei: nada la detiene en el Ojo del vendaval   // Aldor (Seba 09-11): la ulti es infrenable
     // Aldor (Seba 09-11): Temple de enano — 5% de resistencia al control (dura 5% menos y los lentos frenan 5% menos)
     if (t.fx.templeAldor && val && CONTROL.has(key)) { val = Object.assign({}, val); if (Number.isFinite(val.t)) val.t *= 0.95; if (key === 'slow' && Number.isFinite(val.mult)) val.mult = 1 - (1 - val.mult) * 0.95; }
@@ -8817,6 +9568,7 @@ class Game {
   kill(p, src) {
     this.quitarSobre(p);
     this.quitarNephilim(p); if (p.fx) delete p.fx.nephilim;
+    this.dejaManaArgus(p);   // Argus: Restos de maná
     // Tenebris (Seba 30-10): si muere con la maldición del Alma errante encima, el Alma vuelve a 0 de recarga
     if (p.fx && p.fx.dot && p.fx.dot.alma) {
       const ten = this.players.get(p.fx.dot.src), slot = ten ? HEROES[ten.build.heroe]?.habs.indexOf('almaErrante') : -1;
@@ -8902,7 +9654,7 @@ class Game {
 
   knock(t, fromX, fromY, force) {
     if (t.esUnidad && (t.mapaU || t.kind === 'torreta' || t.kind === 'torretaBrasas' || t.kind === 'muro' || t.kind === 'golem' || t.kind === 'cucko')) return;
-    if (t.fx && (t.fx.vendaval || t.fx.canalEcosAldor || t.fx.canalFestin)) return;   // Lei: no la mueve nada mientras levita; Aldor: tampoco mientras canaliza la ulti
+    if (t.fx && (t.fx.vendaval || t.fx.canalEcosAldor || t.fx.canalFestin || t.fx.bolaArgus)) return;   // Lei: no la mueve nada mientras levita; Aldor: tampoco mientras canaliza la ulti
     const dx = t.x - fromX, dy = t.y - fromY, d = Math.hypot(dx, dy) || 1;
     t.kbx = (t.kbx || 0) + dx / d * force;
     t.kby = (t.kby || 0) + dy / d * force;
@@ -9155,6 +9907,254 @@ class Game {
       this.emit({ k: 'saviaXerxius', x: x.x | 0, y: x.y | 0, x2: t.x | 0, y2: t.y | 0 });
     }
   }
+  // ---- Om (Seba 26-11) — todo con nombre propio («Om») para no mezclarse con otros héroes
+  esOm(p) { return !!(p && !p.esUnidad && p.build && p.build.heroe === 'om'); }
+  // Pasiva: ¿el equipo de p pelea en desventaja con un Om vivo? (aliados muertos y más enemigos vivos que aliados)
+  desventajaOm(p) {
+    if (!p || p.esUnidad) return false;
+    const eq = this.teamOf(p.id); let om = false, muertos = 0, vivos = 0, enemigos = 0;
+    for (const q of this.players.values()) {
+      if (this.teamOf(q.id) === eq) { if (q.alive) { vivos++; if (this.esOm(q)) om = true; } else muertos++; }
+      else if (q.alive) enemigos++;
+    }
+    return om && muertos > 0 && enemigos > vivos;
+  }
+  // bola de fuego de Om que sale desde un punto (tótem o muralla)
+  fuegoOm(p, x, y, a, o) {
+    this.spawnProj(p, a, o);
+    const pr = this.projectiles[this.projectiles.length - 1]; pr.x = x + Math.cos(a) * 8; pr.y = y + Math.sin(a) * 8;
+  }
+  // Sacrificio: cada 1 s pierde 15% de la vida actual y cura esa cantidad a cada aliado cercano
+  sacrificioOmTick(p, dt) {
+    const f = p.fx.sacrificioOm, H = HABILIDADES.sacrificioOm; f.acc = (f.acc || 0) + dt;
+    if (f.acc < H.cada) return;
+    f.acc -= H.cada;
+    const cant = Math.floor(p.hp * H.pct); if (cant <= 0) return;
+    p.hp -= cant;
+    this.emit({ k: 'sacrificioOm', id: p.id, x: p.x | 0, y: p.y | 0, n: cant });
+    for (const q of this.players.values()) {
+      if (q === p || !q.alive || this.teamOf(q.id) !== this.teamOf(p.id) || dist(q, p) > H.radio + CONFIG.RADIO_JUGADOR) continue;
+      this.heal(q, cant, p);
+      this.emit({ k: 'curaOm', x: q.x | 0, y: q.y | 0, x2: p.x | 0, y2: p.y | 0, n: cant });
+    }
+  }
+  // Tótem de fuego: gira y dispara por sus 4 caras
+  totemOm(p, h) {
+    const a = this._apunte ? this._apunte.a : this.aim(p, h.alcance).a, t0 = this._apunte ? null : this.target(p, h.alcance);
+    const d = this._apunte ? this.distApunte(h.alcance) : t0 ? Math.min(h.alcance, dist(t0, p)) : 60;
+    const c = { x: p.x + Math.cos(a) * d, y: p.y + Math.sin(a) * d }; this.clampWall(c);
+    const own = p.id;
+    this.zones.push({ id: this.nextId++, kind: 'totemOm', x: c.x, y: c.y, r: 14, t: h.dur, total: h.dur, owner: own, a: 0, acc: 0,
+      tick: (z, dt) => {
+        dt = dt || 1 / 30; z.a = (z.a + h.giro * dt) % TAU; z.acc += dt;
+        const q = this.players.get(own);
+        if (z.acc >= h.cada && q) { z.acc -= h.cada; for (let i = 0; i < 4; i++) { const b = z.a + i * Math.PI / 2; this.fuegoOm(q, z.x + Math.cos(b) * 22, z.y + Math.sin(b) * 14, b, { vel: h.vel, alcance: h.alcanceFuego, radio: h.radioFuego, dmg: h.dano, tipo: 'mag', spr: 'fuegoTotemOm' }); } }   // salen de la boca de cada cara
+      } });
+    // Seba (26-11 r4): el tótem cuenta como terreno/muro — 2 rocas cruzadas invisibles (tipo 4999, el dibujo es el de la zona) que frenan cuerpos, empujones (Aldor, etc.) y proyectiles como un muro de roca
+    const baseT = { owner: own, esUnidad: true, alive: true, sinCuerpo: true, bloqueaProy: true, kind: 'muroRoca', hp: 1, maxHp: 0, cd: 0, t: 0, dur: h.dur, fx: {}, tipo: 4999, totemOm: true };
+    this.units.push({ ...baseT, id: this.nextId++, x: c.x, y: c.y, facing: 0, largo: 30 }, { ...baseT, id: this.nextId++, x: c.x, y: c.y, facing: Math.PI / 2, largo: 14 });
+    for (const q of this.players.values()) if (q.alive) this.chocarRocas(q, CONFIG.RADIO_JUGADOR);
+    this.emit({ k: 'totemOm', x: c.x | 0, y: c.y | 0 });
+  }
+  // Muralla del templo: fractura hacia adelante; a los 1,5 s, murallas en U y 12 disparos de fuego desde el fondo
+  murallaOm(p, h) {
+    const a = this._apunte ? this._apunte.a : this.aim(p, h.largo).a, own = p.id, ox = p.x, oy = p.y;
+    p.facing = a;
+    this.emit({ k: 'martillazoOm', id: own, x: ox | 0, y: oy | 0, a: +a.toFixed(2) });
+    const aturdidos = new Set();
+    this.zones.push({ id: this.nextId++, kind: 'grietaOm', x: ox, y: oy, ox, oy, r: h.ancho / 2, t: h.espera, total: h.espera, a, owner: own,
+      tick: (z) => {   // Seba (26-11 tarde): la fisura de tierra avanza y aturde 1,5 s a quien alcanza
+        const d = Math.min(h.inicio + h.largo, h.fisuraVel * (z.total - z.t)), ca = Math.cos(a), sa = Math.sin(a);
+        z.x = ox + ca * d; z.y = oy + sa * d;
+        for (const e of this.enemigos(own, false)) {
+          if (aturdidos.has(e) || !e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          const ex = e.x - ox, ey = e.y - oy, along = ex * ca + ey * sa, lat = Math.abs(-ex * sa + ey * ca);
+          if (along < 0 || along > d + 8 || lat > 22 + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          aturdidos.add(e); this.aplicarEfecto(e, 'aturdido', { t: h.aturde }); this.emit({ k: 'fisuraOmGolpe', x: e.x | 0, y: e.y | 0 });
+        }
+      },
+      fin: () => {
+        const q = this.players.get(own) || p, ca = Math.cos(a), sa = Math.sin(a), nx = -sa, ny = ca, W = h.ancho / 2;
+        const base = { owner: own, esUnidad: true, alive: true, sinCuerpo: true, bloqueaProy: true, kind: 'muroRoca', hp: 1, maxHp: 0, cd: 0, t: 0, dur: h.dur, fx: {} };
+        const mid = h.inicio + h.largo / 2, fondo = h.inicio + h.largo;
+        for (const s of [-1, 1]) this.units.push({ ...base, id: this.nextId++, x: ox + ca * mid + nx * W * s, y: oy + sa * mid + ny * W * s, facing: a, largo: h.largo, tipo: 5000 + h.largo });   // tipo ≥ 5000 = muralla de Om (dibujo propio)
+        const fx = ox + ca * fondo, fy = oy + sa * fondo;
+        this.units.push({ ...base, id: this.nextId++, x: fx, y: fy, facing: a + Math.PI / 2, largo: h.ancho + 18, tipo: 5000 + h.ancho + 18 });
+        for (const e of this.players.values()) if (e.alive) this.chocarRocas(e, CONFIG.RADIO_JUGADOR);
+        this.emit({ k: 'murallaOm', x: fx | 0, y: fy | 0, a: +a.toFixed(2) });
+        let n = 0, prox = 0.15;   // Seba (26-11 tarde): las bolas salen en diferido (intervalos al azar)
+        this.zones.push({ id: this.nextId++, kind: 'fuegoMurallaOm', x: fx, y: fy, r: 1, t: h.dur, total: h.dur, owner: own, acc: 0,
+          tick: (z, dt) => {
+            z.acc += dt || 1 / 30;
+            if (n < h.disparos && z.acc >= prox) {
+              z.acc = 0; n++; prox = h.cadaMin + Math.random() * (h.cadaMax - h.cadaMin);
+              const off = (Math.random() * 2 - 1) * (W - 14), sx = fx + nx * off - ca * 12, sy = fy + ny * off - sa * 12;
+              this.emit({ k: 'bocaMurallaOm', x: (sx + ca * 6) | 0, y: (sy + sa * 6) | 0 });
+              this.fuegoOm(q, sx, sy, a + Math.PI, { vel: h.vel, alcance: h.largo + 20, radio: h.radioFuego, dmg: h.dano, tipo: 'mag', spr: 'fuegoMurallaOm', deUlti: true });
+            }
+            if (n >= h.disparos) z.t = 0;
+          } });
+      } });
+  }
+  // ---- Eliza (Seba 26-11) — todo con nombre propio («Eliza») para no mezclarse con otros héroes
+  esEliza(p) { return !!(p && !p.esUnidad && p.build && p.build.heroe === 'eliza'); }
+  // Lluvia de estrellas: 3 orbes en fila; el mismo enemigo recibe 40, 50, 60
+  estrellasEliza(p, h) {
+    const a = this._apunte ? this._apunte.a : this.aim(p, h.alcance).a, t0 = this._apunte ? null : this.target(p, h.alcance);
+    const d = Math.max(h.sep, Math.min(h.alcance, this._apunte ? this.distApunte(h.alcance) : t0 ? dist(t0, p) : h.alcance * 0.7));
+    const golpes = new Map(), own = p.id;
+    for (let i = 0; i < h.n; i++) {
+      const dd = d + (i - 1) * h.sep, pt = { x: p.x + Math.cos(a) * dd, y: p.y + Math.sin(a) * dd }; this.clampWall(pt);
+      const t = h.caida + i * h.cada;
+      this.zones.push({ id: this.nextId++, kind: 'estrellaEliza', x: pt.x, y: pt.y, r: h.radio, t, total: t, owner: own, w: i,
+        fin: (z) => {
+          const q = this.players.get(own) || p;
+          this.emit({ k: 'caeEstrellaEliza', x: z.x | 0, y: z.y | 0, r: h.radio });
+          for (const e of this.enemigos(own, false)) {
+            if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+            if (dist(e, z) > h.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+            const n = golpes.get(e) || 0; golpes.set(e, n + 1);
+            this.damage(e, h.dano + h.extra * n, q, { tipo: 'mag', desde: z });
+          }
+        } });
+    }
+  }
+  // Noche estrellada: estrella que cae donde acertó el 4.º básico (puede fallar)
+  estrellaPasivaEliza(p, x, y) {
+    const P = PASIVAS.estrelladaEliza, own = p.id, c = { x, y }; this.clampWall(c);
+    this.zones.push({ id: this.nextId++, kind: 'estrellaEliza', x: c.x, y: c.y, r: P.radio, t: P.demora, total: P.demora, owner: own, w: 9,
+      fin: (z) => {
+        const q = this.players.get(own) || p;
+        this.emit({ k: 'caeEstrellaEliza', x: z.x | 0, y: z.y | 0, r: P.radio });
+        for (const e of this.enemigos(own, false)) {
+          if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (dist(e, z) > P.radio + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;
+          this.damage(e, P.dano, q, { tipo: 'mag', desde: z });
+        }
+      } });
+  }
+  // Bumerán estelar: cruza el mapa; aturde y daña a cada enemigo una vez, más fuerte cuanto más lejos
+  bumeranEliza(p, h) {
+    const a = this._apunte ? this._apunte.a : this.aim(p, 600).a, own = p.id, x0 = p.x, y0 = p.y, ya = new Set();
+    const v = h.vel * RITMO.proyectil;
+    const z = { id: this.nextId++, kind: 'bumeranEliza', x: x0, y: y0, r: h.radio, t: 30, total: 30, a, owner: own, w: 0, ox: x0, oy: y0,
+      tick: (z, dt) => {
+        const paso = v * (dt || 1 / 30), nx = z.x + Math.cos(a) * paso, ny = z.y + Math.sin(a) * paso;
+        // Seba (26-11): el bumerán se frena en los muros (Aldor: cualquier muro; Maidas: muro enemigo, que recibe el golpe)
+        const fa = this.frenaMuroAldor({ x: z.x, y: z.y }, nx, ny);
+        if (fa) { z.x = fa.x; z.y = fa.y; z.t = 0; this.emit({ k: 'golpeBumeranEliza', x: fa.x | 0, y: fa.y | 0, n: 0 }); return; }
+        const mm = this.enemigos(own, true).find(m => m.alive && m.kind === 'muro' && dist(m, { x: nx, y: ny }) <= h.radio + 12);
+        if (mm) { const k0 = Math.min(1, Math.hypot(z.x - x0, z.y - y0) / h.escala); this.damage(mm, h.danoIni + (h.danoFin - h.danoIni) * k0, this.players.get(own) || p, { tipo: 'mag', desde: z }); z.t = 0; this.emit({ k: 'golpeBumeranEliza', x: mm.x | 0, y: mm.y | 0, n: 0 }); return; }
+        z.x = nx; z.y = ny;
+        const viaje = Math.hypot(z.x - x0, z.y - y0), k = Math.min(1, viaje / h.escala); z.w = +k.toFixed(2); z.r = h.radio * (1 + h.crece * k);
+        const q = this.players.get(own) || p;
+        for (const e of this.enemigos(own, false)) {
+          if (ya.has(e) || !e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+          if (dist(e, z) > h.radio * (1 + h.crece * z.w) + (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR)) continue;   // Seba (26-11): crece a medida que viaja
+          ya.add(e);
+          const dn = h.danoIni + (h.danoFin - h.danoIni) * k, st = h.aturdeIni + (h.aturdeFin - h.aturdeIni) * k;
+          this.emit({ k: 'golpeBumeranEliza', x: e.x | 0, y: e.y | 0, n: Math.round(dn) });
+          this.damage(e, dn, q, { tipo: 'mag', desde: z });
+          if (e.alive) this.aplicarEfecto(e, 'aturdido', { t: +st.toFixed(2) });
+        }
+        if (Math.hypot(z.x, z.y) > CONFIG.RADIO_ARENA + 40) z.t = 0;   // al cruzar el mapa desaparece
+      } };
+    this.zones.push(z);
+    this.emit({ k: 'lanzaBumeranEliza', id: own, x: x0 | 0, y: y0 | 0, a: +a.toFixed(2) });
+  }
+  // Manto de la noche: invisibilidad y +25 al siguiente ataque o habilidad, para Eliza y aliados cercanos
+  nocheEliza(p, h) {
+    const lista = [...this.players.values()].filter(q => q.alive && (q === p || (this.teamOf(q.id) === this.teamOf(p.id) && dist(q, p) <= h.radio + CONFIG.RADIO_JUGADOR)));
+    for (const q of lista) {
+      this.aplicarEfecto(q, 'invisible', { t: h.invis });
+      this.aplicarEfecto(q, 'buffEliza', { t: h.buffDur });
+      this.emit({ k: 'mantoEliza', x: q.x | 0, y: q.y | 0 });
+    }
+    this.emit({ k: 'nocheEliza', x: p.x | 0, y: p.y | 0, r: h.radio });
+  }
+  // ---- Argus (Seba 25-11) — todo con nombre propio («Argus») para no mezclarse con otros héroes
+  esArgus(p) { return !!(p && !p.esUnidad && p.build && p.build.heroe === 'argus'); }
+  manaArgus(p) { if (!Number.isFinite(p.argusMana)) p.argusMana = HABILIDADES.bolaArgus.mana; return p.argusMana; }
+  // Salto rúnico: blink hacia donde se mueve (joystick de movimiento) y 10 runas en todas las direcciones
+  saltoArgus(p, h) {
+    const mx = p.input?.mx || 0, my = p.input?.my || 0, a = Math.hypot(mx, my) > 0.1 ? Math.atan2(my, mx) : p.facing;
+    const x0 = p.x, y0 = p.y;
+    p.x += Math.cos(a) * h.dist; p.y += Math.sin(a) * h.dist; this.clampWall(p);   // blink: atraviesa muros
+    p.facing = a;
+    this.emit({ k: 'saltoArgusSale', x: x0 | 0, y: y0 | 0 });
+    this.emit({ k: 'saltoArgusLlega', id: p.id, x: p.x | 0, y: p.y | 0 });
+    for (let i = 0; i < h.runas; i++) this.spawnProj(p, a + i * TAU / h.runas, { vel: h.vel, alcance: h.alcance, radio: 5, dmg: h.dano, tipo: 'mag', spr: 'runaSaltoArgus' });
+  }
+  // Rayo rúnico: sigue el apuntado, se frena en el primer enemigo, 2 de daño cada 0,1 s
+  rayoArgusTick(p, dt) {
+    const f = p.fx.rayoArgus, H = HABILIDADES.rayoArgus;
+    // Seba (26-11): el rayo se gira con el joystick de movimiento (izquierdo), a 6 rad/s; los bots apuntan directo
+    const mx = p.input?.mx || 0, my = p.input?.my || 0;
+    if (p.bot) { if (Number.isFinite(p.input?.a)) f.a = p.input.a; }
+    else if (Math.hypot(mx, my) > 0.2) {
+      let d = Math.atan2(my, mx) - f.a; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU;
+      const gmax = H.giro * dt; f.a += Math.max(-gmax, Math.min(gmax, d));
+    }
+    p.facing = f.a;
+    const ca = Math.cos(f.a), sa = Math.sin(f.a);
+    let obj = null, bt = H.alcance;
+    // Regla de muros (V10.7): el rayo no es de ulti, se corta en el muro de Maidas o Aldor
+    if (this.muroEntre(p.id, p.x, p.y, p.x + ca * H.alcance, p.y + sa * H.alcance)) { const w = this.puntoAntesMuro(p.id, p.x, p.y, ca * H.alcance, sa * H.alcance); bt = Math.max(0, Math.hypot(w.x - p.x, w.y - p.y) - 2); }
+    const corte = bt;
+    for (const e of this.enemigos(p.id, false)) {
+      if (!e.alive || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+      if ((e.hidden || (e.fx && e.fx.invisible)) && !(e.fx && e.fx.expuesto)) continue;
+      const rr = e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR, dx = e.x - p.x, dy = e.y - p.y, t = dx * ca + dy * sa;
+      if (t < 0 || t - rr > bt) continue;
+      if (Math.abs(-dx * sa + dy * ca) > rr + 4) continue;
+      const fin = Math.max(0, t - rr * 0.5); if (fin < bt) { bt = fin; obj = e; }
+    }
+    f.len = obj ? bt : corte;
+    f.acc += dt; f.chispa = (f.chispa || 0) + dt;
+    while (f.acc >= H.cada) { f.acc -= H.cada; if (obj && obj.alive) this.damage(obj, H.dano, p, { tipo: 'mag', desde: p }); }
+    if (obj && f.chispa >= 0.3) { f.chispa = 0; this.emit({ k: 'chispaRayoArgus', x: obj.x | 0, y: obj.y | 0 }); }   // descarga visible en el enemigo
+    p.argusMana = Math.max(0, this.manaArgus(p) - H.manaSeg * dt);   // Seba (26-11): el rayo gasta maná
+    if (p.argusMana <= 0) { delete p.fx.rayoArgus; this.emit({ k: 'rayoArgusFin', id: p.id }); this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'SIN MANA', id: p.id }); }
+  }
+  // Bola rúnica: viaja al punto gastando maná por distancia; daña a cada enemigo cada vez que lo atraviesa
+  bolaArgusTick(p, dt) {
+    const f = p.fx.bolaArgus, H = HABILIDADES.bolaArgus;
+    // Seba (26-11): la bola se dirige con el joystick de movimiento (gira a H.giro rad/s); sin joystick sigue derecho. Los bots usan input.a
+    const mx = p.input?.mx || 0, my = p.input?.my || 0;
+    const quiere = p.bot ? (Number.isFinite(p.input?.a) ? p.input.a : null) : Math.hypot(mx, my) > 0.2 ? Math.atan2(my, mx) : null;
+    if (quiere !== null) { let d = quiere - f.a; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; const gm = H.giro * dt; f.a += Math.max(-gm, Math.min(gm, d)); }
+    const paso = Math.min(H.vel * RITMO.movimiento * dt, this.manaArgus(p) * H.porDist);
+    p.x += Math.cos(f.a) * paso; p.y += Math.sin(f.a) * paso; this.clampWall(p); p.facing = f.a; f.vuelo = (f.vuelo || 0) + dt;
+    p.argusMana = Math.max(0, p.argusMana - paso / H.porDist); f.rec = (f.rec || 0) + paso;
+    for (const e of this.enemigos(p.id, false)) {
+      if (!e.alive || e.kind === 'muro' || (e.esUnidad && UNIDADES[e.kind]?.invulnerable)) continue;
+      const toca = dist(e, p) <= (e.esUnidad ? 10 : CONFIG.RADIO_JUGADOR) + 14;
+      if (toca && !f.toca.has(e)) { f.toca.add(e); f.golpes = (f.golpes || 0) + 1; const dn = H.danoBase + H.danoSuma * Math.floor((f.vuelo || 0) / H.danoCada + 1e-6); /* Seba (26-11 tarde): por tiempo de vuelo */ this.emit({ k: 'golpeBolaArgus', x: e.x | 0, y: e.y | 0, n: Math.round(dn) }); this.damage(e, dn, p, { tipo: 'mag', ulti: true, desde: p }); }   // Seba (26-11): crece con la distancia recorrida
+      else if (!toca) f.toca.delete(e);
+    }
+    if (p.argusMana <= 0.01) { delete p.fx.bolaArgus; this.emit({ k: 'bolaArgusFin', id: p.id, x: p.x | 0, y: p.y | 0 }); }
+  }
+  // Restos de maná (Seba 26-11): el héroe enemigo que muere deja una recarga de maná para cada Argus rival
+  dejaManaArgus(p) {
+    if (!p || p.esUnidad) return;
+    const P = PASIVAS.ecoArgus;
+    for (const q of this.players.values()) {
+      if (!this.esArgus(q) || q === p || this.teamOf(q.id) === this.teamOf(p.id)) continue;
+      this.zones.push({ id: this.nextId++, kind: 'manaArgus', x: p.x, y: p.y, r: 12, t: P.dura, total: P.dura, owner: q.id, mana: P.mana });
+    }
+  }
+  // Argus toma la recarga al pasar por encima (caminando, saltando o en la bola): se revisa el tramo recorrido desde el último cuadro
+  tomaManaArgus(p) {
+    const x0 = Number.isFinite(p._argX) ? p._argX : p.x, y0 = Number.isFinite(p._argY) ? p._argY : p.y;
+    p._argX = p.x; p._argY = p.y;
+    for (const z of this.zones) {
+      if (z.kind !== 'manaArgus' || z.owner !== p.id || z.t <= 0) continue;
+      const dx = p.x - x0, dy = p.y - y0, L2 = dx * dx + dy * dy, k = L2 > 0 ? Math.max(0, Math.min(1, ((z.x - x0) * dx + (z.y - y0) * dy) / L2)) : 0;
+      if (Math.hypot(z.x - (x0 + dx * k), z.y - (y0 + dy * k)) > CONFIG.RADIO_JUGADOR + 10) continue;
+      z.t = 0; p.argusMana = Math.min(HABILIDADES.bolaArgus.mana, this.manaArgus(p) + z.mana);
+      this.emit({ k: 'tomaManaArgus', x: z.x | 0, y: z.y | 0, id: p.id, n: z.mana });
+    }
+  }
   // ---- Kaio (Seba 23-11)
   // Pasiva: ciclo de 20 s — 5 s +5% vel, 5 s nada, 5 s +5% daño, 5 s nada. 0 = nada, 1 = velocidad, 2 = daño
   kaioPas(p) {
@@ -9354,6 +10354,9 @@ class Game {
       else if (k === 'chaos') si = !!f.canalChaos;
       else if (k === 'ojoVendaval') si = !!f.vendaval;
       else if (k === 'pozoMaldito') si = !!f.canalPozoM;
+      else if (k === 'sacrificioOm') si = !!f.sacrificioOm;   // Om: Sacrificio activo
+      else if (k === 'rayoArgus') si = !!f.rayoArgus;
+      else if (k === 'bolaArgus') si = !!f.bolaArgus;   // Argus: volver a apretar corta la bola   // Argus: volver a apretar corta el rayo
       else if (k === 'robotBipper') si = !!(p.bp && p.bp.mago && p.bp.n >= HABILIDADES.robotBipper.golpesVolver);   // Bipper: a pie con 9 golpes
       else if (k === 'lanzaErrante') si = this.units.some(u => u.alive && u.kind === 'lanza' && u.owner === p.id && u.estado === 'clavada');
       if (si) m |= 1 << i;
@@ -10072,7 +11075,7 @@ class Game {
     if (p.fx.enredado || p.fx.saltoAnn) return 0;   // Xerxius: enredado en las raíces   // Ann: en el aire la mueve el salto
     if (!p.fx.aturdido && p.fx.rafagaAnn) return this.velocidadBase(p) * (1 + HABILIDADES.rafagaAnn.prisa);   // Ann: +33% en la ráfaga
     if (p.fx.canalOcaso) return 0;
-    if (p.fx.saltoBipper || p.fx.ganchoKaio || p.fx.montaBipper) return 0;   // Bipper saltando del robot / Kaio en el gancho
+    if (p.fx.saltoBipper || p.fx.ganchoKaio || p.fx.montaBipper || p.fx.bolaArgus) return 0;   // Bipper saltando del robot / Kaio en el gancho
     if (p.fx.dashRin) return 0;   // Rin: la mueve el dash
     if (!p.fx.aturdido && p.fx.hundidoSmok) return this.velocidadBase(p) * (1 + HABILIDADES.hundidoSmok.vel);   // Smok hundido: +15%
     if (!p.fx.aturdido && p.fx.canalGolagore) return this.velocidadBase(p) * HABILIDADES.fortalezaGolagore.mueve;   // Golagore (Seba 13-11): camina al 50% en el Núcleo
@@ -10123,7 +11126,7 @@ class Game {
   }
 
   basicAttack(p, ang = null, dd = null) {
-    if (p.fx.canalBlast || p.fx.rafagaAnn || p.fx.saltoAnn || p.fx.paraguasAnn || p.fx.saltoBipper || p.fx.ganchoKaio || p.fx.montaBipper) return;   // Xerxius canalizando / Ann en la ráfaga o saltando: sin básicos
+    if (p.fx.canalBlast || p.fx.rafagaAnn || p.fx.saltoAnn || p.fx.paraguasAnn || p.fx.saltoBipper || p.fx.ganchoKaio || p.fx.montaBipper || p.fx.rayoArgus || p.fx.bolaArgus) return;   // Xerxius canalizando / Ann en la ráfaga o saltando: sin básicos
     if (p.esMuneco) return;
     if (p.fx.encantado || p.fx.polvo || p.fx.estocadaV || p.fx.danzaCarmesi || p.fx.vendaval || p.fx.dashKiro || p.fx.cargaGolagore || p.fx.canalGolagore || p.fx.saltoGol || p.fx.hundidoSmok || p.fx.dashRin) return;   // Lei: no ataca mientras levita   // Vatrius: no ataca mientras se lanza o danza   // Vario: encantado no ataca; con el polvo tampoco (Seba 02-11)   // Vario: encantado no ataca
     const at = p.st.ataque;
@@ -10214,7 +11217,9 @@ class Game {
       const { a } = this.aim(p, at.alcance);
       p.facing = a;
       const mr = p.fx.manosRayo;   // Rasho: Manos de rayo
-      this.spawnProj(p, a, { vel: at.vel, alcance: at.alcance, radio: at.radio, dmg: p.st.dano * (mr ? 1 + mr.n.dano : 1), tipo: 'fis', basico: true, spr: mr ? 'rayoBolaCargada' : at.proj,
+      if (this.esArgus(p)) this.emit({ k: 'trazoArgus', id: p.id, x: p.x | 0, y: p.y | 0, a: +a.toFixed(2) });   // Argus: traza la runa con la varita
+      const estE = this.esEliza(p) && p.elizaLista;   // Eliza: Noche estrellada (el 4.º básico se ve dorado; si acierta, cae una estrella)
+      this.spawnProj(p, a, { vel: at.vel, alcance: at.alcance, radio: at.radio, dmg: p.st.dano * (mr ? 1 + mr.n.dano : 1), tipo: 'fis', basico: true, spr: mr ? 'rayoBolaCargada' : estE ? 'estrellaEliza' : at.proj,
         efecto: mr ? 'manosRayo' : null, extra: mr ? mr.n : null });
     }
     this._apunte = null;
@@ -10565,7 +11570,12 @@ class Game {
       this.emit({ k: 'txt', x: hit.x | 0, y: hit.y | 0, s: 'MARCADO' });
     }
     const hizoPr = this.damage(hit, pr.dmg, src, { tipo: pr.tipo, desde: pr, basico: pr.basico });
-    if (pr.efecto === 'chispaBipper' && hizoPr > 0 && owner && !hit.esUnidad) this.golpeMagoBipper(owner);   // Seba (24-11): solo cuentan los héroes   // Bipper: golpes para recuperar el robot
+    if (pr.efecto === 'chispaBipper' && hizoPr > 0 && owner && !hit.esUnidad) this.golpeMagoBipper(owner);
+    if ((pr.spr === 'orbeEliza' || pr.spr === 'estrellaEliza') && hizoPr > 0 && owner && this.esEliza(owner)) {   // Eliza: Noche estrellada
+      if (owner.elizaLista) { owner.elizaLista = false; owner.elizaN = 0; this.estrellaPasivaEliza(owner, hit.x, hit.y); }   // el 4.º acierto: cae una estrella ahí 0,25 s después
+      else if (++owner.elizaN >= PASIVAS.estrelladaEliza.cada) { owner.elizaN = 0; owner.elizaLista = true; this.emit({ k: 'listaEliza', id: owner.id, x: owner.x | 0, y: owner.y | 0 }); }
+    }
+    if (pr.spr === 'runaArgus' && hizoPr > 0 && owner && this.esArgus(owner)) owner.argusMana = Math.min(HABILIDADES.bolaArgus.mana, this.manaArgus(owner) + PASIVAS.ecoArgus.porBasico);   // Argus: +5 de maná por básico que acierta   // Seba (24-11): solo cuentan los héroes   // Bipper: golpes para recuperar el robot
     if (pr.tipo !== 'fis' && !pr.sinEmpuje) this.knock(hit, pr.x - pr.vx * 0.05, pr.y - pr.vy * 0.05, 50);   // Seba (30-10): los ataques básicos no empujan
   }
 
@@ -10684,6 +11694,9 @@ class Game {
       else this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: `FALTAN ${h.golpesVolver - p.bp.n} GOLPES`, id: p.id });
       return;
     }
+    if (key === 'rayoArgus' && p.fx.rayoArgus) { delete p.fx.rayoArgus; this.emit({ k: 'rayoArgusFin', id: p.id }); return; }   // Argus: volver a apretar corta el rayo
+    if (key === 'bolaArgus' && p.fx.bolaArgus) { delete p.fx.bolaArgus; this.emit({ k: 'bolaArgusFin', id: p.id, x: p.x | 0, y: p.y | 0 }); return; }   // Argus: volver a apretar corta la bola
+    if (p.fx.bolaArgus) return;   // Argus: en la bola no lanza nada
     if (p.cd[slot + 1] > 0 || p.fx.silence || p.fx.aturdido || canalizando(p.fx) || p.fx.canalLluvia || p.fx.renacer || p.fx.canalBlast || p.fx.rafagaAnn || p.fx.saltoAnn || p.fx.paraguasAnn || p.fx.saltoBipper || p.fx.ganchoKaio) return;
     // Aracnida: la mordida necesita un héroe enemigo cerca (si no, no se gasta)
     if (key === 'mordida') {
@@ -10732,6 +11745,7 @@ class Game {
     }
     if ((key === 'escudoMusgo' || key === 'mantoLuz') && p.fx.silencioEscudo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'ESCUDO SILENCIADO', id: p.id }); return; }   // Siega de Tenebris
     if (key === 'escudoMusgo' && p.fx.sobre) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'NO MIENTRAS CRECE', id: p.id }); return; }   // Seba (28-10)
+    if ((key === 'bolaArgus' || key === 'rayoArgus') && this.manaArgus(p) < h.minimo) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'SIN MANA', id: p.id }); return; }   // Argus: necesita un mínimo de maná
     if (h.ulti && !h.sinCarga && p.ulti < 1) return;   // la ulti necesita la carga completa (Bipper: sin carga)
     if (key === 'trampasZinro' && this.trampaMuyCerca(p)) { this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'MUY CERCA DE OTRA TRAMPA', id: p.id }); return; }
     const n = numerosHab(key, p.build.niv[slot]);
@@ -11232,6 +12246,35 @@ class Game {
             this.emit({ k: 'naturaSale', x: p.x | 0, y: p.y | 0, a: +z.a.toFixed(2) });
           } };
         this.zones.push(z); this.aplicarEfecto(p, 'canalNatura', { t: h.canal + 0.05, zona: z });
+        break;
+      }
+      case 'sacrificioOm': {   // Om: Sacrificio (se activa y se desactiva)
+        if (p.fx.sacrificioOm) { delete p.fx.sacrificioOm; this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'SACRIFICIO OFF', id: p.id }); }
+        else { this.aplicarEfecto(p, 'sacrificioOm', { t: 1e6, acc: 0 }); this.emit({ k: 'txt', x: p.x | 0, y: p.y | 0, s: 'SACRIFICIO', id: p.id }); }
+        break;
+      }
+      case 'totemOm': { this.totemOm(p, h); break; }   // Om: Tótem de fuego
+      case 'murallaOm': { this.murallaOm(p, h); break; }   // Om: Muralla del templo
+      case 'estrellasEliza': { this.estrellasEliza(p, h); break; }   // Eliza: Lluvia de estrellas
+      case 'bumeranEliza': { this.bumeranEliza(p, h); break; }   // Eliza: Bumerán estelar
+      case 'nocheEliza': { this.nocheEliza(p, h); break; }   // Eliza: Manto de la noche
+      case 'saltoArgus': { this.saltoArgus(p, h); break; }   // Argus: Salto rúnico
+      case 'rayoArgus': {   // Argus: Rayo rúnico (canaliza quieto, se gira con el joystick)
+        // Seba (26-11 tarde): al lanzarlo apunta al héroe enemigo visible más cercano; si no hay, al apuntado
+        const cerca = this.jugadoresEnemigos(p.id).filter(e => e.alive && !((e.hidden || (e.fx && e.fx.invisible)) && !(e.fx && e.fx.expuesto))).sort((x, y) => dist(x, p) - dist(y, p))[0];
+        const a = cerca ? Math.atan2(cerca.y - p.y, cerca.x - p.x) : this._apunte ? this._apunte.a : this.aim(p, h.alcance).a;
+        p.facing = a;
+        this.aplicarEfecto(p, 'rayoArgus', { t: h.dur, a, acc: 0, len: h.alcance, zona: null });
+        this.emit({ k: 'rayoArgusIni', id: p.id, x: p.x | 0, y: p.y | 0 });
+        break;
+      }
+      case 'bolaArgus': {   // Argus: Bola rúnica (viaje a un punto)
+        // Seba (26-11): sale hacia el joystick de movimiento (si no, hacia donde apuntó o mira) y sigue hasta que vuelvas a apretar o se acabe el maná
+        const mx = p.input?.mx || 0, my = p.input?.my || 0;
+        const a = Math.hypot(mx, my) > 0.2 && !p.bot ? Math.atan2(my, mx) : this._apunte ? this._apunte.a : this.aim(p, h.alcance).a;
+        delete p.fx.rayoArgus;
+        this.aplicarEfecto(p, 'bolaArgus', { t: 999, a, rec: 0, toca: new Set() });
+        this.emit({ k: 'bolaArgusIni', id: p.id, x: p.x | 0, y: p.y | 0 });
         break;
       }
       case 'energiaKaio': {   // Kaio: Imbuir energía — 2 s más rápido y con mejor recarga; al final, descarga que frena
@@ -12787,6 +13830,7 @@ class Game {
           p.x = lado * CONFIG.RADIO_ARENA * (MAPA_ACTUAL === 'volcan' ? CONFIG.VOLCAN.reaparecer : 0.68); p.y = (Math.random() - 0.5) * 120;
           this.clampWall(p);
           if (p.bp) { p.st = statsDe(p.build); p.bp = null; this.metaDirty = true; }   // Bipper: reaparece con el robot
+          if (this.esArgus(p)) p.argusMana = HABILIDADES.bolaArgus.mana;   // Argus: reaparece con el maná lleno
           p.alive = true; p.hp = p.st.vidaMax; p.cargas = cargasMax(p); p.fx = { renacer: { t: CONFIG.INVULNERABLE_REAPARECER } }; p.kbx = p.kby = 0;
           p.disparo = null; p.seen = p.input.s.slice(); p.seenD = p.input.d;
           this.emit({ k: 'poof', x: p.x | 0, y: p.y | 0, c: 'magia' });
@@ -12855,7 +13899,7 @@ class Game {
           } });
         }
       }
-      const vuela = HEROES[p.build.heroe]?.pasiva === 'nubeVoladora' || !!p.fx.jetpack;   // Rasho flota; Biteroi vuela con el jetpack
+      const vuela = HEROES[p.build.heroe]?.pasiva === 'nubeVoladora' || !!p.fx.jetpack || !!p.fx.bolaArgus;   // Rasho flota; Biteroi vuela con el jetpack; Argus: la Bola cruza muros (Seba 26-11)
       if (!vuela) this.chocarMuros(p, p.id);
       if (!vuela && !p.fx.saltoLanza && !(p.fx.estocadaV && p.fx.estocadaV.lento)) this.chocarRocas(p, R);   // Seba (09-11): la estocada de vuelta de Vatrius cruza el muro de Aldor   // Fisura de Tek'Tal: bloquea a todos (Rasho y el Jetpack pasan por encima)
       if (this.modo === 'equipos' && !vuela) this.chocarCamara(p);
@@ -13072,6 +14116,14 @@ class Game {
             if (e.alive && e.fx) this.aplicarEfecto(e, 'slow', { t: n.lentoDur, mult: 1 - n.lento, k: 'mecha' });
           }
         }
+      }
+      if (p.fx.sacrificioOm && p.alive) this.sacrificioOmTick(p, dt);   // Om: Sacrificio
+      if (this.esArgus(p) && p.alive) {   // Argus: maná que se llena solo, rayo y bola
+        p.ulti = 1;   // la ulti no usa carga (usa maná)
+        if (!p.fx.bolaArgus && !p.fx.rayoArgus) p.argusMana = Math.min(HABILIDADES.bolaArgus.mana, this.manaArgus(p) + HABILIDADES.bolaArgus.regen * dt);
+        if (p.fx.rayoArgus) this.rayoArgusTick(p, dt);
+        if (p.fx.bolaArgus) this.bolaArgusTick(p, dt);
+        this.tomaManaArgus(p);
       }
       if (HEROES[p.build?.heroe]?.pasiva === 'ritmoKaio') p.kaioT = (p.kaioT || 0) + dt;   // Kaio: reloj de la pasiva
       if (p.fx.escudoKaio && p.alive) {   // Kaio: el escudo eléctrico quema a los enemigos cercanos (2,5 cada 0,25 s)
@@ -13386,6 +14438,7 @@ class Game {
       const a = alive[i], b = alive[j];
       if (!a.alive || !b.alive) continue;
       if ((a.fx && (a.fx.dashKiro || a.fx.tornadoKiro)) || (b.fx && (b.fx.dashKiro || b.fx.tornadoKiro))) continue;   // Kiro: el tajo atraviesa cuerpos; el tornado lleva a los atrapados juntos
+      if ((a.fx && a.fx.bolaArgus) || (b.fx && b.fx.bolaArgus)) continue;   // Argus: la bola atraviesa los cuerpos
       const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
       if (d > 0 && d < R * 2) {
         const push = (R * 2 - d) / 2;
@@ -13828,7 +14881,11 @@ class Game {
         (fx.energiaKaio ? 1 : 0) | (fx.golpesKaio ? 2 + 4 * fx.golpesKaio.n : 0) | (fx.canalKO ? 32 : 0) | (fx.ganchoKaio ? 64 : 0) | (this.kaioPas(p) === 1 ? 128 : this.kaioPas(p) === 2 ? 256 : 0) | (fx.chocadoKaio ? 512 : 0) | (fx.escudoKaio ? 1024 : 0),   // 71: Kaio
         (p.bp && p.bp.mago ? 1 : 0) | (p.bp && p.bp.mago && p.bp.n >= HABILIDADES.robotBipper.golpesVolver ? 2 : 0) | ((p.bp ? Math.min(31, p.bp.n) : 0) << 9) | (fx.antenaBuff ? 64 : 0) | (fx.vulnAntena ? 128 : 0) | (fx.saltoBipper ? 256 : 0) | (fx.montaBipper ? 4 : 0),   // 72: Bipper (4 = montando)
         fx.canalKO ? +(1 - fx.canalKO.t / HABILIDADES.koKaio.canal).toFixed(2) : fx.ganchoKaio ? +fx.ganchoKaio.a.toFixed(2) : 0,
-        fx.canalKO ? Math.round(fx.canalKO.d) : 0]);   // 74: distancia del punto del gancho K.O.   // 73: avance de la canalización K.O. / ángulo del gancho   // 70: ángulo del paraguas / avance del salto   // 68: habilidades que se pueden volver a apretar ahora (bit por slot) — el HUD no las muestra en recarga   // Zinro: 67 bits (visto por el halcón 1, atrapado 2, atado 4, halcón fuera 8, +10% de caza 16)   // Zizzer: 66 bits (golpe de sombra listo 1, confundido por Zizzer 2, vulnerable por espantapájaros 4)   // Rin: 65 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
+        fx.canalKO ? Math.round(fx.canalKO.d) : 0,
+        this.esArgus(p) ? ((fx.rayoArgus ? 1 : 0) | (fx.bolaArgus ? 2 : 0) | (Math.round(this.manaArgus(p)) << 2)) : 0,   // 76: Argus (1 rayo, 2 bola, maná <<2, 8 bits)
+        fx.rayoArgus ? Math.round(fx.rayoArgus.len) : 0,   // 77: largo del rayo de Argus
+        (this.esEliza(p) ? ((p.elizaLista ? 1 : 0) | ((p.elizaN || 0) << 1)) : 0) | (fx.buffEliza ? 16 : 0),
+        (fx.sacrificioOm ? 1 : 0) | (p.alive && this.desventajaOm(p) ? 2 : 0)]);   // 79: Om (1 Sacrificio activo, 2 −10% de la pasiva)   // 78: Eliza (1 estrella lista, cuenta <<1) · 16 = buff del Manto (cualquiera)   // 74: distancia del punto del gancho K.O.   // 73: avance de la canalización K.O. / ángulo del gancho   // 70: ángulo del paraguas / avance del salto   // 68: habilidades que se pueden volver a apretar ahora (bit por slot) — el HUD no las muestra en recarga   // Zinro: 67 bits (visto por el halcón 1, atrapado 2, atado 4, halcón fuera 8, +10% de caza 16)   // Zizzer: 66 bits (golpe de sombra listo 1, confundido por Zizzer 2, vulnerable por espantapájaros 4)   // Rin: 65 bits (dash 1, canalizando 2, marcado por Rin 4, salto largo 8)   // Smok: 64 bits (hundido 1, en el ocaso 2, canalizando 4, ocaso activo 8, confundido por Smok 16)   // Athena: 61 bits (escudo volando 1, cargando 2, grito 4, 8×golpes potenciados), 62 carga del escudo ×10, 63 cortes hechos   // Bambaa: 60 bits (confundido por el muñeco 1, prisa 2, canalizando 4, maldito por el vudú 8)   // Golagore: 56 bits (embiste 1, salto 2, núcleo 4, coraza 8, siguiente habilidad quema 16), 57 progreso del salto ×100, 58 núcleo ×10, 59 daño guardado   // 51 tajos que quedan, 52 acumulaciones de Kiro, 53 bits (confuso 1, tornado 2, dash 4, arena 8×nivel), 54 golpes de tormenta que quedan, 55 progreso del ocultamiento   // 46–48: marca de la ola de Ora (x, y), 49: acelerado por la ola / levantado por un géiser, 50: gotas de la pasiva   // 36: Zel en el aire (1–101), 37: Arrasar activo; 38: Zeal canalizando el Festín (2), 39: Festín restante ×10, 40: gota de Zeal (nivel×100 + progreso), 41: escudo de sangre de Zeal   // 35: Aldor — medidor del Temple (−1 = activo o en recarga)   // 34: Lei — impactos que quedan (+10 canalizando) o abanicos que quedan   // 31: gotas de Vatrius; 32–33: punto de regreso de la Estocada   // 30: mecha de Jürgen 0–1   // 27: carga del Castigo 0–1; 28: proyectiles de Chaos que quedan; 29: daño extra del Pozo (Fatum)   // 25: (Seba 05-11) golpes del Vacío recibidos; 26: acumulaciones de Resonancia rúnica (Æthar)   // 23: (Seba 02-11) f3 — 1 encantado, 2 polvo (Vario), 4 en el polvo, 8 en el armario, 16 acumulaciones de Vario, 32 canalizando el armario; 24: acumulaciones de Vario   // 22: (Seba 31-10) timers del Mayhem por enemigo [id, golpe 0–1, aturdir 0–1]   // 20: puños del fénix que quedan; 21: carga de la patada (Ash)   // 19: hacia dónde salen las dagas de Shai
     }
     return {
       t: 's', ph: this.phase, tm: +Math.max(0, this.timer).toFixed(1), ar: Math.round(this.arenaR),
@@ -14016,7 +15073,7 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
     if (s >= 0) { inp.sa = inp.sa || []; inp.sa[s] = null; inp.s[s] = (inp.s[s] || 0) + 1; }
   }
   habilidadesDe(p.build).forEach((h, s) => {
-    if (!h || p.build.niv[s] < 1 || (p.cd[s + 1] > 0 && !(h === 'robotBipper' && p.bp && p.bp.mago))) return;
+    if (!h || p.build.niv[s] < 1 || (p.cd[s + 1] > 0 && !(h === 'robotBipper' && p.bp && p.bp.mago) && !(h === 'rayoArgus' && p.fx.rayoArgus) && !(h === 'bolaArgus' && p.fx.bolaArgus))) return;
     if (HABILIDADES[h].ulti && p.ulti < 1) return;
     let si = false;
     switch (h) {
@@ -14092,6 +15149,15 @@ function usarHabilidadesBot(game, p, target, d, vida, ux = 0, uy = 0) {
       case 'enredoXerxius': si = d < 380 && !target.esUnidad; break;
       case 'naturaXerxius': si = d < 700 && !target.esUnidad; break;
       case 'rafagaAnn': si = d < 120; break;
+      case 'sacrificioOm': { const herido = [...game.players.values()].some(q => q !== p && q.alive && game.teamOf(q.id) === game.teamOf(p.id) && q.hp < q.st.vidaMax * 0.6 && dist(q, p) < HABILIDADES.sacrificioOm.radio); si = p.fx.sacrificioOm ? (!herido || vida < 0.35) : herido && vida > 0.5; break; }
+      case 'totemOm': si = d < 200; break;
+      case 'murallaOm': si = d < 240 && !target.esUnidad; break;
+      case 'estrellasEliza': si = d < 190; break;
+      case 'bumeranEliza': si = d < 600 && !target.esUnidad; break;
+      case 'nocheEliza': si = d < 300 && vida < 0.7; break;
+      case 'saltoArgus': si = d < 110; break;   // Argus: se escapa (o cruza) cuando lo alcanzan
+      case 'rayoArgus': si = p.fx.rayoArgus ? d < 110 || (p.argusMana || 0) < 25 : d > 150 && d < 290 && (p.argusMana || 0) >= 45; break;   // Argus: corta el rayo si se le acercan
+      case 'bolaArgus': si = p.fx.bolaArgus ? ((p.fx.bolaArgus.golpes || 0) > 0 && p.fx.bolaArgus.toca.size === 0) || p.fx.bolaArgus.rec > 500 || (p.argusMana || 0) < 15 : (p.argusMana || 0) >= 40 && d < 380 && !target.esUnidad; break;   // Argus: sale cuando ya cruzó al rival
       case 'energiaKaio': si = d < 160; break;
       case 'golpesKaio': si = d < 90; break;
       case 'koKaio': si = d < 120 && !target.esUnidad; break;
@@ -15692,7 +16758,7 @@ class StateBuffer {
     const pa = new Map(a.s.p.map(p => [p[0], p]));
     const players = b.s.p.map(pb => {
       const q = pa.get(pb[0]) || pb;
-      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, zn: pb[68] || 0, rc: pb[69] || 0, xa: pb[70] || 0, xa2: pb[71] || 0, kk: pb[72] || 0, bp: pb[73] || 0, k3: pb[74] || 0, k4: pb[75] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
+      return { id: pb[0], x: lerp(q[1], pb[1], k), y: lerp(q[2], pb[2], k), hp: pb[3], mh: pb[4], f: lerpAng(q[5], pb[5], k), flags: pb[6], cd: pb.slice(7, 12), ack: pb[12], cargas: pb[13], ulti: pb[14], esc: pb[15] || 0, salto: pb[17] || 0, f2: pb[18] || 0, ex: pb[20] || 0, cp: pb[21] || 0, f3: pb[23] || 0, av: pb[24] || 0, vn: pb[25] || 0, rs: pb[26] || 0, cc: pb[27] || 0, cq: pb[28] || 0, fp: pb[29] || 0, mc: pb[30] || 0, gv: pb[31] || 0, vx: pb[32] || 0, vy: pb[33] || 0, lq: pb[34] || 0, md: pb[35] || 0, f4: pb[36] || 0, mcuenta: pb[37] || 0, mseg: pb[38] || 0, mfin: (pb[39] ?? -1), zc: pb[40] || 0, zf: pb[41] || 0, zg: pb[42] || 0, ze: pb[43] || 0, sd: pb[44] || 0, sds: pb[45] || 0, lc: pb[46] || 0, lr: pb[47] || 0, la: pb[48] || 0, le: pb[49] || 0, ga: pb[50] || 0, om: pb[51] ? { x: pb[52], y: pb[53] } : null, oe: pb[54] || 0, og: pb[55] || 0, kp: pb[56] || 0, ka: pb[57] || 0, kb: pb[58] || 0, ku: pb[59] || 0, ko: pb[60] || 0, gb: pb[61] || 0, gh: pb[62] || 0, gu: pb[63] || 0, gr: pb[64] || 0, bb: pb[65] || 0, sm: pb[66] || 0, rn: pb[67] || 0, zn: pb[68] || 0, rc: pb[69] || 0, xa: pb[70] || 0, xa2: pb[71] || 0, kk: pb[72] || 0, bp: pb[73] || 0, k3: pb[74] || 0, k4: pb[75] || 0, ar: pb[76] || 0, ar2: pb[77] || 0, el: pb[78] || 0, omh: pb[79] || 0, my: pb[22] || 0, ua: lerpAng(q[19] || pb[19] || 0, pb[19] || 0, k) };   // ua suavizado entre fotos
     });
     const ua = new Map((a.s.u || []).map(u => [u[0], u]));
     const units = (b.s.u || []).map(ub => {
@@ -15968,7 +17034,7 @@ class Renderer {
       if (quien != null && this.ocultosRivales.has(quien)) return;
       if (ev.k === 'heal' && quien == null) for (const q of this.ocultosRivales.values()) if (Math.abs(q.x - ev.x) < 4 && Math.abs(q.y - ev.y) < 4) return;   // Seba (05-11): invisible o en un árbol: el rival no ve tus curaciones ni el daño que recibes
     }
-    const dur = { montaBipper: 0.22, shockBipper: 0.35, choqueKaio: 0.45, rayoKaio: 0.3, estallaKaio: 0.55, aturdeKaio: 0.3, energiaKaio: 0.35, golpesKaio: 0.35, ganchoKaio: 0.85, koKaio: 0.8, misilesBipper: 0.4, antenaBipper: 0.45, boomRobot: 0.75, boomPieza: 0.45, robotRoto: 0.8, vuelveRobot: 0.6, saltaBipper: 0.4, estallidoAnn: 0.3, blastXerxius: 0.9, brotanRaices: 0.5, enreda: 0.5, raicesEstallan: 0.9, naturaToca: 0.6, naturaEscudo: 0.7, naturaSale: 0.5, saviaXerxius: 0.6, giroAnn: 0.3, abreParaguas: 0.4, paraguasBloquea: 0.35, saltaAnn: 0.4, gotaAnn: 0.55, aterrizaAnn: 0.5, annGolpeFuerte: 0.4, boleaToca: 0.5, boleaAta: 0.5, lazoEstalla: 0.6, picadaHalcon: 0.7, chillido: 0.6, trampaZinro: 0.5, trampaSalta: 0.6, sueltaHalcon: 0.7, tiraBolea: 0.2, rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiserMagma: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
+    const dur = { fisuraOmGolpe: 0.5, buffElizaGolpe: 0.5, saltoArgusSale: 0.45, saltoArgusLlega: 0.45, rayoArgusIni: 0.3, bolaArgusIni: 0.35, bolaArgusFin: 0.35, bocaMurallaOm: 0.35, sacrificioOm: 0.6, curaOm: 0.6, totemOm: 0.4, martillazoOm: 0.6, murallaOm: 0.7, caeEstrellaEliza: 0.5, golpeBumeranEliza: 0.45, lanzaBumeranEliza: 0.3, nocheEliza: 0.8, mantoEliza: 0.6, listaEliza: 0.45, trazoArgus: 0.28, chispaRayoArgus: 0.3, tomaManaArgus: 0.6, golpeBolaArgus: 0.4, ecoArgus: 0.5, montaBipper: 0.22, shockBipper: 0.35, choqueKaio: 0.45, rayoKaio: 0.3, estallaKaio: 0.55, aturdeKaio: 0.3, energiaKaio: 0.35, golpesKaio: 0.35, ganchoKaio: 0.85, koKaio: 0.8, misilesBipper: 0.4, antenaBipper: 0.45, boomRobot: 0.75, boomPieza: 0.45, robotRoto: 0.8, vuelveRobot: 0.6, saltaBipper: 0.4, estallidoAnn: 0.3, blastXerxius: 0.9, brotanRaices: 0.5, enreda: 0.5, raicesEstallan: 0.9, naturaToca: 0.6, naturaEscudo: 0.7, naturaSale: 0.5, saviaXerxius: 0.6, giroAnn: 0.3, abreParaguas: 0.4, paraguasBloquea: 0.35, saltaAnn: 0.4, gotaAnn: 0.55, aterrizaAnn: 0.5, annGolpeFuerte: 0.4, boleaToca: 0.5, boleaAta: 0.5, lazoEstalla: 0.6, picadaHalcon: 0.7, chillido: 0.6, trampaZinro: 0.5, trampaSalta: 0.6, sueltaHalcon: 0.7, tiraBolea: 0.2, rachaRin: 0.7, espadaRinDeja: 0.4, danzaRinAbre: 0.5, lanzaTrapRin: 0.3, estocadaRin: 0.3, saltoRin: 0.4, marcaRin: 0.4, marcaRinGasta: 0.5, espadaRinToca: 0.4, trapRin: 0.6, danzaRin: 0.5, danzaRinCerca: 0.6, recargaRin: 0.5, clonPasivaSmok: 0.5, hundeSmok: 0.6, emergeSmok: 0.8, esferaSmok: 0.5, nubeSmokFin: 0.6, clonSmokSeVa: 0.6, ecoSmok: 0.5, canalOcaso: 0.5, ocasoCae: 1.2, munecoSale: 0.4, munecoMaldice: 0.7, munecoPlanta: 0.6, munecoActiva: 1.0, munecoSeVa: 0.5, calacaSale: 0.45, calacaGolpe: 0.8, calacaSeVa: 0.5, canalAncestro: 0.5, totemSube: 1.0, rayoTotem: 0.4, saltaGolagore: 0.5, cargaGolagore: 0.45, impactoGolagore: 0.75, chocaGolagore: 0.5, alzaHachazo: 0.4, hachazoGolagore: 0.85, nucleoGolagore: 0.7, explotaGolagore: 1.1, corazaMagma: 0.7, tajoKiro: 0.4, cortaKiro: 0.35, chocaKiro: 0.4, aturdeKiro: 0.6, pozoArena: 0.6, kiroSeOculta: 0.5, tormentaArena: 0.8, golpeTormenta: 0.5, arenaGolpe: 0.8, emboscadaKiro: 0.5, tornadoSale: 0.5, tornadoFin: 0.7, esquivaKiro: 0.7, olaMarca: 0.4, olaSale: 0.5, mojado: 0.35, burbujaSale: 0.6, burbujaRevienta: 0.7, geiserCampo: 0.6, geiser: 0.94, gotasOra: 0.6, empujeAldor: 0.3, choqueAldor: 0.6, espadaRey: 0.6, cargaLegios: 0.5, etapaLegios: 0.45, golpeLegios: 0.55, escudoLegios: 0.5, juramentoLegios: 0.7, porElRey: 1.0, juicioLegios: 0.9, manoZeal: 0.5, garraZeal: 0.4, pozoZeal: 0.6, gotaZeal: 0.55, festinZeal: 0.8, sedZeal: 0.7, esqTurno: 0.18, ascension: 0.8, rafagaElfica: 0.3, giroMartillo: 0.4, pisoton: 0.45, muroAldor: 0.55, martillazo: 0.6, ecoAldor: 0.65, templeAldor: 0.7, abanicos: 0.35, vendaval: 0.7, impactoLei: 0.6, banoLuz: 0.9, estocada: 0.4, golpeSangre: 0.6, sedSangre: 0.7, danzaGolpe: 0.45, escopetazo: 0.3, dinamita: 0.8, torretaCae: 0.5, chispaT: 0.09, chaosSale: 0.35, chaosInicio: 0.9, levantamiento: 0.9, fuegoHit: 0.6, ondaNat: 0.45, siega: 0.5, aliento: 0.55, blinkFalla: 0.45, blink: 0.35, gancho: 0.3, backstab: 0.5, daga: 0.25, dagaVuelta: 0.4, sello: 0.5, portal: 0.55, fisura: 0.7, geiserMagma: 0.7, meteoro: 0.55, mazazo: 0.45, raiz: 0.9, escudoRoto: 0.5, cono: 0.35, slash: 0.18, hit: 0.8, cura: 0.9, boom: 0.4, ring: 0.45, heal: 0.8, death: 0.9, block: 0.7, poof: 0.4, bolt: 0.32, tajo: 0.45, humo: 0.8, seda: 0.4, mordida: 0.5, txt: 0.9, trampa: 0.5, spin: 0.3 }[ev.k] || 0.5;
     const f = { ...ev, age: 0, dur: ev.k === 'slash' && (ev.h === 'tenebris' || ev.h === 'driiar') ? 0.42 : ev.k === 'slash' && (ev.h === 'nephilim' || ev.h === 'ash') ? 0.3 : ev.k === 'slash' && ev.h === 'ashFenix' ? 0.38 : ev.k === 'slash' && ev.h === 'trelgon' ? 0.32 : (ev.k === 'daga' || ev.k === 'dagaVuelta') && ev.d ? ev.d : dur };
     if (ev.k === 'death' || ev.k === 'heal' || ev.k === 'poof') {
       f.parts = Array.from({ length: ev.k === 'death' ? 16 : 7 }, (_, i) => ({ a: hash(i, ev.x | 0, ev.y | 0) * TAU, v: 20 + hash(i, 9, ev.x | 0) * (ev.k === 'death' ? 70 : 30) }));
@@ -15981,6 +17047,7 @@ class Renderer {
     if (ev.k === 'slash' && ev.h === 'ash') { this.ashCombo = (this.ashCombo || 0) + 1; f.patada = this.ashCombo % 3 === 0; }   // Ash: golpe, golpe, patada
     if (ev.k === 'slash' && ev.h === 'golagore') f.dur = 0.5;   // Golagore: hachazo pesado
     if (ev.k === 'ganchoKaio' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.5, T: 0.5, a: ev.a, d: ev.d, tipo: 'ko' });   // Kaio: gancho K.O.
+    if (ev.k === 'trazoArgus' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.22, T: 0.22, a: ev.a, tipo: 'trazo' });   // Argus: traza la runa al atacar
     if (ev.k === 'montaBipper' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.2, T: 0.2, a: 0, tipo: 'monta' });   // Bipper: montaje del robot (0,2 s)
     if ((ev.k === 'saltaBipper' || ev.k === 'robotRoto') && ev.id !== undefined) this.swing.set(ev.id, { t: 0.4, T: 0.4, a: ev.a || 0, tipo: 'salto' });   // Bipper: salta del robot
     if (ev.k === 'slash' && ev.h === 'ann' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.3, T: 0.3, a: ev.a });   // Ann: paraguazo
@@ -15989,6 +17056,7 @@ class Renderer {
     if (ev.k === 'slash' && ev.h === 'rin' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.28, T: 0.28, a: ev.a });   // Rin: estocada rápida
     if (ev.k === 'slash' && ev.id !== undefined && ev.h === 'golagore') this.swing.set(ev.id, { t: 0.42, T: 0.42, a: ev.a });
     else if (ev.k === 'slash' && ev.id !== undefined) this.swing.set(ev.id, { t: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, T: ev.h === 'tenebris' || ev.h === 'driiar' ? 0.3 : 0.18, a: ev.a });
+    if (ev.k === 'slash' && ev.h === 'om' && ev.id !== undefined) this.swing.set(ev.id, { t: 0.55, T: 0.55, a: ev.a, tipo: 'martilloOm' });   // Om: martillazo animado (Seba 26-11 r3)
     if (ev.k === 'golemGolpe') { (this.golpesGolem = this.golpesGolem || new Map()).set(ev.id, { t: this.time, x2: ev.x2, y2: ev.y2 }); return; }
     if (ev.k === 'bolt') f.seed = Math.floor(this.time * 1000);
     this.fx.push(f);
@@ -16613,6 +17681,23 @@ class Renderer {
     // Avisos en el suelo (golpes fuertes, bombas, miras)
     for (const z of view.zones) {
       const cx = this.gx(z.x), cy = this.gy(z.y), r = Math.round(z.r * ESC);
+      if (z.kind === 'manaArgus') {   // Argus: gota de maná (Seba 26-11) — cristal rúnico celeste y azul con halo dorado, para que se vea y no se confunda con agua
+        const g = this.g, T = this.time, fin = z.prog > 0.8 && Math.floor(T * 8) % 2, bob = Math.round(Math.sin(T * 3 + z.id) * 2), y = cy - 9 + bob;
+        g.globalAlpha = 0.35; this.bolaPixel(cx, cy + 2, 5, PALETA.tinta); g.globalAlpha = 1;   // sombra
+        if (!fin) {
+          g.globalAlpha = 0.3 + 0.15 * Math.sin(T * 5); this.discDither(cx, y, 11, PALETA.oro2, 2, Math.floor(T * 8)); g.globalAlpha = 1;   // halo dorado
+          this.ring(cx, y, 9, PALETA.oro1, 0.5, 1);
+          for (let i = 0; i < 4; i++) { const b = T * 2.5 + i * TAU / 4; g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * 9), Math.round(y + Math.sin(b) * 9), 1, 1); }
+          // gota-cristal: punta arriba, panza redonda abajo, facetas celestes y azules
+          const rows = [[0, 0], [-1, 1], [-1, 1], [-2, 2], [-2, 2], [-3, 3], [-3, 3], [-3, 3], [-3, 3], [-2, 2], [-1, 1]], y0 = y - 6;
+          g.fillStyle = PALETA.tinta; rows.forEach(([l, r], i) => g.fillRect(cx + l - 1, y0 + i - 1, r - l + 3, 3));
+          rows.forEach(([l, r], i) => { for (let x = l; x <= r; x++) { g.fillStyle = x < 0 ? (i > 6 ? PALETA.marea1 : PALETA.acero1) : x === 0 ? PALETA.acero2 : (i > 6 ? PALETA.marea0 : PALETA.marea1); g.fillRect(cx + x, y0 + i, 1, 1); } });
+          g.fillStyle = PALETA.pergamino2; g.fillRect(cx - 1, y0 + 3, 1, 2); g.fillRect(cx - 2, y0 + 6, 1, 1);   // brillo
+          g.fillStyle = PALETA.oro2; g.fillRect(cx, y0 + 6, 1, 1); g.fillRect(cx - 1, y0 + 7, 3, 1); g.fillRect(cx, y0 + 8, 1, 1);   // runa dorada adentro
+          if (Math.floor(T * 3 + z.id) % 4 === 0) { g.fillStyle = PALETA.pergamino2; g.fillRect(cx + 3, y0 - 1, 1, 3); g.fillRect(cx + 2, y0, 3, 1); }   // destello
+        }
+        continue;
+      }
       { const g = this.g, T = this.time;   // Bipper: la antena va en la capa del suelo (detrás de los héroes)
       if (z.kind === 'antenaBipper') {   // antena eléctrica (Seba 24-11: más robusta): base de piedra en tres escalones, trípode de hierro, poste con aisladores y bobinas de cobre, esfera que chisporrotea
         const R = Math.round(z.r * ESC), up = Math.min(1, z.prog * HABILIDADES.antenaBipper.dur / 0.35), hgt = Math.round(28 * up), fin = z.prog > 0.85 && Math.floor(T * 10) % 2;
@@ -17262,6 +18347,76 @@ class Renderer {
     // Bombas en parábola (Biteroi)
     for (const z of view.zones) {   // Bambaa: tótem y calaca (por encima del suelo)
       const cx = this.gx(z.x), cy = this.gy(z.y), g = this.g, T = this.time;
+      if (z.kind === 'fuegoMurallaOm') continue;
+      if (z.kind === 'totemOm') {   // Om (Seba 26-11 r4): una sola roca tallada que gira sobre dos maderas; las 4 caras están talladas en la roca y pasan por el frente al girar
+        const a = +z.a || 0, roca = rocaTotemOmSpr().der, cara = caraRocaOmSpr(), fin = z.prog > 0.85 && Math.floor(T * 8) % 2, top = cy + 4 - 22, R = 11;
+        g.globalAlpha = 0.4; this.bolaPixel(cx, cy + 5, 14, PALETA.tinta); g.globalAlpha = 1;   // sombra
+        for (const [dy, dx] of [[1, -1], [5, 1]]) { g.fillStyle = PALETA.tinta; g.fillRect(cx - 17 + dx, cy + dy - 1, 35, 4); g.fillStyle = PALETA.madera1; g.fillRect(cx - 16 + dx, cy + dy, 33, 2); g.fillStyle = PALETA.madera2; g.fillRect(cx - 16 + dx, cy + dy, 33, 1); g.fillStyle = PALETA.madera0; g.fillRect(cx - 16 + dx + 8, cy + dy + 1, 2, 1); g.fillRect(cx + dx + 9, cy + dy, 1, 1); }   // dos maderas
+        if (fin) g.globalAlpha = 0.6;
+        g.drawImage(roca, cx - 13, top);
+        const ox = cx - 12, cols = 24;
+        for (let x = 1; x < cols - 1; x++) {   // greca tallada que gira con la roca
+          const u = Math.max(-1, Math.min(1, (x - 11.5) / 11.5)), th = Math.acos(-u) + a, f = Math.floor(th / TAU * 24 + 1000) % 2;
+          g.fillStyle = PALETA.piedra0; g.fillRect(ox + x, top + 17 + f, 1, 1); if (x % 2) { g.fillStyle = PALETA.piedra3; g.fillRect(ox + x, top + 18 - f, 1, 1); }
+        }
+        for (let j = 0; j < 8; j++) {   // marcas de cincel y grietas que pasan por el frente
+          const b = a + j * TAU / 8 + 0.39, s = Math.sin(b); if (s < 0.15) continue;
+          const x = Math.round(cx + Math.cos(b) * R), h0 = 6 + (j % 3), h1 = 13 - (j % 2) * 2; g.fillStyle = PALETA.piedra0; g.fillRect(x, top + h0, 1, h1 - h0); if (j % 2) g.fillRect(x + 1, top + h1, 1, 2);
+        }
+        const caras = [0, 1, 2, 3].map(i => { const b = a + i * Math.PI / 2; return [Math.cos(b), Math.sin(b)]; }).filter(([, s]) => s > 0.08).sort((u, v) => u[1] - v[1]);
+        for (const [c, s] of caras) {
+          const w = Math.max(1, Math.round(11 * s)), x = Math.round(cx + c * (R - 2));
+          g.drawImage(cara, Math.round(x - w / 2 + 0.5), top + 6, w, 10);
+          if (s > 0.35) { const fl = (Math.floor(T * 10) % 2); g.globalAlpha = 0.6 * (fin ? 0.6 : 1); this.bolaPixel(x, top + 12, 2, fl ? PALETA.antorcha : PALETA.oro2); g.globalAlpha = fin ? 0.6 : 1; }   // brasa en la boca
+        }
+        g.globalAlpha = 1;
+        { const k = 0.5 + 0.5 * Math.sin(T * 5); g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, top - 1, 5, 3); g.fillStyle = PALETA.marea2; g.fillRect(cx - 1, top, 3, 1); g.globalAlpha = 0.3 + 0.4 * k; this.discDither(cx, top, 3, PALETA.marea2, 2, Math.floor(T * 8)); g.globalAlpha = 1; }   // turquesa en la cima
+        continue;
+      }
+      if (z.kind === 'grietaOm') {   // Om (Seba 26-11 tarde): fisura de TIERRA que avanza — surco quebrado con bordes levantados, terrones que saltan, polvo en el frente; luego aviso de las murallas
+        const H = HABILIDADES.murallaOm, el = z.prog * H.espera, ox = this.gx(z.ox), oy = this.gy(z.oy), ca = Math.cos(z.a), sa = Math.sin(z.a);
+        const dMax = (H.inicio + H.largo), d = Math.min(dMax, H.fisuraVel * el), Lp = d * ESC, N = Math.max(2, Math.round(Lp / 5)), nx = -sa, ny = ca;
+        const P = []; for (let i = 0; i <= N; i++) { const dd = Lp * i / N, j = (hash(z.id, i, 5) - 0.5) * 5; P.push([Math.round(ox + ca * dd + nx * j), Math.round(oy + (sa * dd + ny * j) * 0.85)]); }
+        g.globalAlpha = 0.7; for (let i = 0; i < N; i += 2) this.discDither(P[i][0], P[i][1], 8, PALETA.madera0, 2, i); g.globalAlpha = 1;   // tierra removida
+        for (let i = 0; i < N; i++) { this.linea(P[i][0], P[i][1] - 1, P[i + 1][0], P[i + 1][1] - 1, PALETA.madera1, 0, 0, 8); this.linea(P[i][0], P[i][1] - 3, P[i + 1][0], P[i + 1][1] - 3, PALETA.madera2, 0, 0, 2); }   // labios de tierra levantados
+        for (let i = 0; i < N; i++) { this.linea(P[i][0], P[i][1], P[i + 1][0], P[i + 1][1], PALETA.tinta, 0, 0, 4); }   // la quebrada (negra)
+        for (let i = 0; i < N; i += 3) { const b = hash(z.id, i, 9) > 0.5 ? 1 : -1, L2 = 4 + Math.round(hash(z.id, i, 11) * 5); this.linea(P[i][0], P[i][1], Math.round(P[i][0] + nx * b * L2 + ca * 2), Math.round(P[i][1] + (ny * b * L2) * 0.85), PALETA.tinta, 0, 0, 1); }   // grietas laterales
+        for (let i = 1; i < N; i += 4) { g.fillStyle = PALETA.piedra2; g.fillRect(P[i][0] - 2, P[i][1] - 3, 3, 2); g.fillStyle = PALETA.madera2; g.fillRect(P[i][0] + 2, P[i][1] - 2, 2, 2); }   // piedras en los bordes
+        if (d < dMax) {   // frente que avanza: polvo y terrones saltando
+          const [fx, fy] = P[N];
+          g.globalAlpha = 0.6; this.discDither(fx, fy - 2, 8, PALETA.madera1, 2, Math.floor(T * 14)); g.globalAlpha = 1;
+          for (let i = 0; i < 6; i++) { const ph = (T * 5 + i * 0.37) % 1, x = Math.round(fx + nx * (i - 2.5) * 3), y = Math.round(fy - Math.sin(Math.PI * ph) * 10); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 4, 4); g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.madera2; g.fillRect(x, y, 2, 2); }
+        }
+        if (z.prog > 0.45) {   // contorno donde van a salir las murallas
+          const W = H.ancho / 2 * ESC, a0 = H.inicio * ESC, a1 = dMax * ESC, on = Math.floor(T * 10) % 2;
+          g.globalAlpha = 0.35 + 0.55 * (z.prog - 0.45) / 0.55;
+          const seg = (x1, y1, x2, y2) => this.linea(Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2), on ? PALETA.oro2 : PALETA.madera2, 2, 0, 2);
+          for (const sgn of [-1, 1]) seg(ox + ca * a0 + nx * W * sgn, oy + (sa * a0 + ny * W * sgn) * 0.85, ox + ca * a1 + nx * W * sgn, oy + (sa * a1 + ny * W * sgn) * 0.85);
+          seg(ox + ca * a1 - nx * W, oy + (sa * a1 - ny * W) * 0.85, ox + ca * a1 + nx * W, oy + (sa * a1 + ny * W) * 0.85);
+          g.globalAlpha = 1;
+        }
+        continue;
+      }
+      if (z.kind === 'estrellaEliza') {   // Eliza: orbe que cae del cielo — aviso en el suelo que se cierra y el orbe bajando con estela
+        const k = z.prog, R = Math.round(z.r * ESC), fy = cy - 10 - Math.round((1 - k) * 70), fx = cx + Math.round((1 - k) * 18);
+        g.globalAlpha = 0.18 + 0.25 * k; this.discDither(cx, cy, R, PALETA.vacio1, 2, Math.floor(T * 8)); g.globalAlpha = 1;
+        this.ring(cx, cy, R, Math.floor(T * 10) % 2 ? PALETA.vacio2 : PALETA.marea2, 0.6, 1); this.ring(cx, cy, Math.max(2, Math.round(R * (1 - k))), PALETA.pergamino2, 0.6, 1);
+        for (let i = 1; i <= 5; i++) { g.globalAlpha = 0.6 - i * 0.1; this.bolaPixel(fx + Math.round(i * 3.5 * 0.26), fy - i * 5, Math.max(1, 4 - (i >> 1)), i % 2 ? PALETA.marea2 : PALETA.vacio2); } g.globalAlpha = 1;
+        this.orbeEliza(fx, fy, 5, T); this.estrellitaEliza(fx - 1, fy - 1, 2, PALETA.pergamino2);
+        continue;
+      }
+      if (z.kind === 'bumeranEliza') {   // Eliza: bumerán estelar que gira; más grande y brillante cuanto más lejos llega
+        const k = +z.w || 0, a = T * 14, R = Math.round(11 * (1 + HABILIDADES.bumeranEliza.crece * k)), y = cy - 8;   // Seba (26-11): crece a medida que viaja (mismo tamaño que su área)
+        for (let i = 1; i <= 5; i++) { const tx = Math.round(cx - Math.cos(z.a) * i * 6), ty = Math.round(y - Math.sin(z.a) * i * 6); g.globalAlpha = 0.5 - i * 0.08; this.discDither(tx, ty, Math.max(1, R - i), PALETA.vacio2, 2, i); } g.globalAlpha = 1;
+        g.globalAlpha = 0.3 + 0.4 * k; this.discDither(cx, y, R + 5, PALETA.marea2, 2, Math.floor(T * 16)); g.globalAlpha = 1;
+        for (let j = 0; j < 9; j++) {   // media luna que gira (arco de 220°)
+          const b = a + (j - 4) * 0.42, x = Math.round(cx + Math.cos(b) * R), yy = Math.round(y + Math.sin(b) * R * 0.8), w = j === 0 || j === 8 ? 1 : 2;
+          g.fillStyle = PALETA.tinta; g.fillRect(x - w, yy - w, 2 * w + 1, 2 * w + 1);
+        }
+        for (let j = 0; j < 9; j++) { const b = a + (j - 4) * 0.42, x = Math.round(cx + Math.cos(b) * R), yy = Math.round(y + Math.sin(b) * R * 0.8); g.fillStyle = j === 4 ? PALETA.pergamino2 : j % 2 ? PALETA.marea2 : PALETA.vacio2; g.fillRect(x - 1, yy - 1, 3, 3); }
+        this.estrellitaEliza(Math.round(cx + Math.cos(a) * R), Math.round(y + Math.sin(a) * R * 0.8), 2 + Math.round(k * 2), PALETA.pergamino2);
+        continue;
+      }
       if (z.kind === 'robotBipper') { this.robotSolo(z, cx, cy); continue; }
       if (z.kind === 'piezaBipper') {   // pieza del robot: sale volando, cae y titila antes de estallar
         const k = z.prog, x0 = this.gx(z.ox), y0 = this.gy(z.oy), e = Math.min(1, k * HABILIDADES.robotBipper.piezaRetraso / 0.35), x = Math.round(x0 + (cx - x0) * e), y = Math.round(y0 + (cy - y0) * e - Math.sin(Math.PI * e) * 14) - 3;
@@ -17622,8 +18777,9 @@ class Renderer {
     const esRin = meta.build.heroe === 'rin' && gigante === 1;   // Rin (Seba 17-11): modelo 18×21 con la rapiera aparte   // Smok (Seba 16-11): sombra de humo 22×21   // Athena (Seba 16-11): modelo 24×28 con espada y escudo aparte   // Bambaa (Seba 13-11): modelo grande (30×32)   // Golagore (Seba 13-11): modelo grande y pesado (lienzo 32×30); la barra sube con él   // Legios (Seba 11-11): modelo grande a caballo (lienzo 36×36); la barra de vida sube con él
     const esZin = meta.build.heroe === 'zinro' && gigante === 1;   // Zinro (Seba 22-11): 22×29 con el halcón aparte   // Zizzer (Seba 17-11): espantapájaros 26×29 con las garras aparte
     const esXer = meta.build.heroe === 'xerxius' && gigante === 1, esAnn = meta.build.heroe === 'ann' && gigante === 1;   // Xerxius / Ann (Seba 22-11)   // Zinro (Seba 22-11): 22×29 con el halcón aparte   // Zizzer (Seba 17-11): espantapájaros 26×29 con las garras aparte
+    const esArgus = meta.build.heroe === 'argus' && gigante === 1, esEliza = meta.build.heroe === 'eliza' && gigante === 1, esOm = meta.build.heroe === 'om' && gigante === 1;   // Argus / Eliza / Om (Seba 25 y 26-11)
     const esKaio = meta.build.heroe === 'kaio' && gigante === 1, esBip = meta.build.heroe === 'bipper' && gigante === 1; const esBit = meta.build.heroe === 'biteroi' && gigante === 1;   // Biteroi (Seba 24-11, V10.4): rediseño grande 20×24   // Kaio / Bipper (Seba 23-11)
-    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : esZin ? 5 : esXer ? 7 : esAnn ? 1 : esKaio ? 1 : esBip ? ((p.bp & 1) ? -8 : 11) : 0);
+    const sx = Math.round(cx - 11 * gigante), sy = Math.round(cy + 8 - 24 * gigante) + bob - (enAire ? 16 : 0) - alturaSalto - (esLegios ? 14 : esGol ? 13 : esBam ? 0 : esSmok ? 6 : esRin ? 0 : esZin ? 5 : esXer ? 7 : esAnn ? 1 : esOm ? 34 : esEliza ? 3 : esArgus ? ((p.ar & 2) ? -6 : 3) : esKaio ? 1 : esBip ? ((p.bp & 1) ? -8 : 11) : 0);
     if (enAire) {
       g.globalAlpha = 0.35; this.discDither(cx, cy + 6, 7, PALETA.tinta, 2, 0); g.globalAlpha = this.alphaPj || 1;
       const t = Math.floor(this.time * 20);
@@ -17833,7 +18989,7 @@ class Renderer {
     if (p.f2 & 16384) { ang = this.time * 26; verArma = true; }
     if (p.f2 & 32768) { const k = (this.time * 4) % 1; ang = p.f - (izq ? -1 : 1) * (1.6 - 2.2 * Math.min(1, k * 1.6)); verArma = true; }   // Gaia canalizando la Lluvia de estrellas: gira el brazo con su varita
     const esKazaro = meta.build.heroe === 'kazaro';
-    if (esLegios || esGol || esBam || esSmok || esRin || esZin || esXer || esAnn || esKaio || esBip || esBit) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
+    if (esLegios || esGol || esBam || esSmok || esRin || esZin || esXer || esAnn || esKaio || esBip || esBit || esArgus || esEliza || esOm) verArma = false;   // Legios y Golagore: el arma se dibuja aparte   // Legios: la lanza se dibuja aparte, en la mano del jinete
     if (esKazaro && this.lanzasFuera && this.lanzasFuera.has(p.id)) verArma = false;      // la lanza está lanzada
     const hx = sx + Math.round((izq ? 21 - (MANO.x + 1) : MANO.x + 1) * gigante), hy = sy + Math.round((MANO.y + 1) * gigante);
     const arma = verArma && !meta.muneco ? armaRotada(key, idxAng(ang)) : null;
@@ -17893,6 +19049,9 @@ class Renderer {
     else if (esXer) this.dibujaXerxius(p, cx, cy, izq, moviendo, sw, sube);
     else if (esBit) this.dibujaBiteroi(p, cx, cy, izq, moviendo, sw, sube);
     else if (esAnn) this.annChica(p, cx, cy, izq, moviendo, sw, sube);   // Seba (24-11, V10.3): 15% más chica
+    else if (esOm) this.dibujaOm(p, cx, cy, izq, moviendo, sw, sube);
+    else if (esEliza) this.dibujaEliza(p, cx, cy, izq, moviendo, sw, sube);
+    else if (esArgus) this.dibujaArgus(p, cx, cy, izq, moviendo, sw, sube);
     else if (esKaio) this.dibujaKaio(p, cx, cy, izq, moviendo, sw, sube);
     else if (esBip) this.dibujaBipper(p, cx, cy, izq, moviendo, sw, sube);
     else if (esSmok) { if (p.sm & 1) { const al = this.esAliadoDe(p.id); this.dibujaHundido(p, cx, cy, al); if (!al) return; } else this.dibujaSmok(p, cx, cy, izq, moviendo, sube, 1, p.sm); }   // hundido: el enemigo solo ve el círculo (sin nombre ni barra)
@@ -18018,6 +19177,8 @@ class Renderer {
       const T = this.time; for (const yy of [-6, -12]) { this.linea(cx - 8, cy + yy, cx + 8, cy + yy + 2, PALETA.tinta, 0, 0, 3); this.linea(cx - 8, cy + yy, cx + 8, cy + yy + 2, PALETA.madera2, 0, 0, 1); }
       for (let i = 0; i < 3; i++) { const b = T * 9 + i * 2.1; g.fillStyle = i % 2 ? PALETA.acero2 : PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * 10), Math.round(cy - 9 + Math.sin(b) * 5), 1, 2); }
     }
+    if (p.omh & 2) this.statusGuardianOm(cx, cy);   // Om: −10% de daño (pasiva en desventaja)
+    if (p.el & 16) this.statusMantoEliza(cx, cy);   // Eliza: +25 listo (Manto de la noche) — aliados y Eliza
     if (p.kk & 2) this.statusGolpesKaio(p, cx, cy);   // Kaio: golpes potenciados sobre la cabeza
     if (p.kk & 512) {   // frenado por la descarga de Kaio: chispas celestes que chisporrotean alrededor
       const T = this.time; for (let i = 0; i < 4; i++) { if ((Math.floor(T * 14) + i) % 3 === 0) continue; const b = i * TAU / 4 + Math.floor(T * 8) * 0.7, x = Math.round(cx + Math.cos(b) * 9), y = Math.round(cy - 8 + Math.sin(b) * 9); this.linea(x, y, x + (i % 2 ? 3 : -3), y + 3, PALETA.marea2, 0, 0, 1); g.fillStyle = PALETA.pergamino2; g.fillRect(x, y, 1, 1); }
@@ -18729,6 +19890,247 @@ class Renderer {
     if (xa & 1) { sube2 = 7; brillo = 1.3; }   // Estallido: báculo en alto y encendido
     if (xa & 2) { sube2 = 4; brillo = 1.5; }
     this.baculo(X(19), ly + 3 - sube2, ly + 26 - sube2, brillo, !!(xa & 3));
+  }
+  // ---- Om (Seba 26-11): dibujos propios, con nombre «Om», para no mezclarse con otros héroes
+  gemaOm(x, y, T, seed) { const g = this.g; g.fillStyle = (Math.floor(T * 3 + seed) % 4) ? PALETA.marea2 : PALETA.pergamino2; g.fillRect(x, y, 1, 1); }
+  dibujaOm(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, om = p.omh || 0;
+    const fr = moviendo ? [1, 0, 2, 0][Math.floor(T * 4.5) % 4] : 0, lx = cx - 13, ly = cy + 8 - 40 - sube, X = (x) => lx + 1 + (izq ? 24 - x : x);
+    if (om & 1) {   // Sacrificio activo: disco solar de sangre bajo Om (anillo con grecas que gira), llamas rojas y doradas que suben
+      const k = 0.5 + 0.5 * Math.sin(T * 6), R = 15;
+      g.globalAlpha = 0.3 + 0.15 * k; this.discDither(cx, cy + 2, R, PALETA.carmesi0, 2, Math.floor(T * 8)); g.globalAlpha = 1;
+      this.ring(cx, cy + 2, R, PALETA.carmesi2, 0.85, 1); this.ring(cx, cy + 2, R - 4, PALETA.oro2, 0.6, 1);
+      for (let i = 0; i < 8; i++) { const b = T * 1.5 + i * TAU / 8, x = Math.round(cx + Math.cos(b) * (R - 2)), y = Math.round(cy + 2 + Math.sin(b) * (R - 2) * 0.6); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 3, 3); g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.carmesi2; g.fillRect(x, y, 1, 1); }
+      for (let i = 0; i < 4; i++) this.llama(Math.round(cx - 12 + i * 8), cy + 4, 0.45 + 0.15 * Math.sin(T * 7 + i), 'rojo', i * 1.9);
+    }
+    if (moviendo && fr !== 0 && Math.floor(T * 9) % 2 === 0) { g.globalAlpha = 0.45; this.discDither(cx + (fr === 1 ? -6 : 6), cy + 7, 3, PALETA.piedra3, 2, 0); g.globalAlpha = 1; }   // polvo de los pasos
+    g.drawImage(omGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    OM_GEMAS.forEach(([x, y], i) => this.gemaOm(X(x), ly + 1 + y, T, i));   // turquesas que brillan
+    { const k = 0.5 + 0.5 * Math.sin(T * 3); g.globalAlpha = 0.35 + 0.4 * k; OM_OJOS.forEach(([x, y]) => this.bolaPixel(X(x), ly + 1 + y, 2, PALETA.oro2)); g.globalAlpha = 1; OM_OJOS.forEach(([x, y]) => { g.fillStyle = PALETA.pergamino2; g.fillRect(X(x), ly + 1 + y, 1, 1); }); }   // ojos dorados que brillan
+    this.martilloOm(X(22), ly + 1 + 25, izq, sw);
+    if (om & 1) this.statusSacrificioOm(cx, ly - 6);
+    if (om & 1) for (let i = 0; i < 5; i++) { const ph = (T * 1.3 + i / 5) % 1, x = Math.round(cx + Math.sin(i * 2.3 + T) * 12), y = Math.round(cy + 2 - ph * 38); g.globalAlpha = 1 - ph; g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 3, 4); g.fillStyle = i % 2 ? PALETA.carmesi2 : PALETA.oro2; g.fillRect(x, y, 1, 2); } g.globalAlpha = 1;
+  }
+  // Om (Seba 26-11 r3): martillo en la mano — en reposo con el mazo arriba; golpe: lo echa atrás, baja con fuerza (estela), impacto con polvo y piedras, y vuelve
+  martilloOm(hx, hy, izq, sw) {
+    const g = this.g, REP = -1.2, ATR = -2.45, GOL = 0.75;
+    let a = REP, t = -1;
+    if (sw && sw.t > 0 && sw.tipo === 'martilloOm') {
+      t = 1 - Math.max(0, sw.t) / sw.T;
+      const e = (k) => k * k * (3 - 2 * k);
+      a = t < 0.18 ? REP + (ATR - REP) * e(t / 0.18) : t < 0.38 ? ATR + (GOL - ATR) * Math.pow((t - 0.18) / 0.2, 1.6) : t < 0.62 ? GOL : GOL + (REP - GOL) * e((t - 0.62) / 0.38);
+    }
+    const m = (b) => izq ? Math.PI - b : b, R = 16;
+    if (t >= 0.18 && t < 0.55) {   // estela del mazo
+      const a1 = t < 0.38 ? a : GOL, f = t < 0.38 ? 1 : 1 - (t - 0.38) / 0.17, a0 = Math.max(ATR, a1 - 2.2);
+      const [b0, b1] = izq ? [m(a1), m(a0)] : [a0, a1];
+      g.globalAlpha = 0.35 * f; this.arc(hx, hy, R + 3, b0, b1, PALETA.piedra3, 5); g.globalAlpha = 0.7 * f; this.arc(hx, hy, R + 5, b0, b1, PALETA.pergamino2, 1); this.arc(hx, hy, R + 1, b0, b1, PALETA.oro2, 1); g.globalAlpha = 1;
+    }
+    const spr = martilloOmRot(m(a)); g.drawImage(spr, hx - 22, hy - 22);
+    if (t >= 0.36 && t < 0.75) {   // impacto contra el suelo
+      const k = (t - 0.36) / 0.39, px = Math.round(hx + Math.cos(m(GOL)) * R), py = Math.round(hy + Math.sin(m(GOL)) * R) + 3;
+      g.globalAlpha = 1 - k; this.ring(px, py, Math.round(3 + k * 11), PALETA.piedra2, 0.6, 2); this.ring(px, py, Math.round(2 + k * 7), PALETA.oro2, 0.6, 1);
+      if (k < 0.3) this.bolaPixel(px, py - 2, 4, PALETA.pergamino2);
+      for (let i = 0; i < 7; i++) { const b = -Math.PI / 2 + (i - 3) * 0.45, d = 3 + k * 10; g.fillStyle = PALETA.tinta; const x = Math.round(px + Math.cos(b) * d), y = Math.round(py + Math.sin(b) * d * 0.5 - Math.sin(Math.PI * k) * 6); g.fillRect(x - 1, y - 1, 3, 3); g.fillStyle = i % 3 === 0 ? PALETA.bosque1 : i % 2 ? PALETA.piedra3 : PALETA.piedra1; g.fillRect(x, y, 1, 1); }
+      g.globalAlpha = 1;
+    }
+  }
+  // Om (Seba 26-11 r4): status de Sacrificio sobre la cabeza — cruz verde de curación con brillo dorado (se distingue del pasto)
+  statusSacrificioOm(cx, y) {
+    const g = this.g, T = this.time, k = 0.5 + 0.5 * Math.sin(T * 5), yy = y + Math.round(Math.sin(T * 3));
+    g.globalAlpha = 0.55; this.bolaPixel(cx, yy, 8, PALETA.tinta); g.globalAlpha = 0.5 + 0.35 * k; this.discDither(cx, yy, 9, PALETA.oro2, 2, Math.floor(T * 8)); g.globalAlpha = 0.7 + 0.3 * k; this.ring(cx, yy, 8, PALETA.oro2, 1, 1); g.globalAlpha = 1;   // fondo oscuro + brillo dorado para que no se pierda en el pasto
+    g.fillStyle = PALETA.tinta; g.fillRect(cx - 2, yy - 6, 5, 13); g.fillRect(cx - 6, yy - 2, 13, 5);
+    g.fillStyle = PALETA.oro2; g.fillRect(cx - 1, yy - 5, 3, 11); g.fillRect(cx - 5, yy - 1, 11, 3);
+    g.fillStyle = PALETA.bosque1; g.fillRect(cx - 1, yy - 4, 3, 9); g.fillRect(cx - 4, yy - 1, 9, 3);
+    g.fillStyle = PALETA.bosque2; g.fillRect(cx, yy - 4, 1, 9); g.fillRect(cx - 4, yy, 9, 1);
+    g.fillStyle = PALETA.pergamino2; g.fillRect(cx, yy, 1, 1); if (k > 0.8) g.fillRect(cx - 4, yy - 1, 1, 1);
+  }
+  statusGuardianOm(cx, cy) {   // escudo de piedra con turquesa: −10% de daño recibido
+    const g = this.g, T = this.time, x = cx - 13, y = cy - 45 + (Math.floor(T * 3) % 2);
+    g.fillStyle = PALETA.tinta; g.fillRect(x - 4, y - 4, 9, 9); g.fillRect(x - 3, y + 5, 7, 1); g.fillRect(x - 2, y + 6, 5, 1);
+    g.fillStyle = PALETA.piedra2; g.fillRect(x - 3, y - 3, 7, 7); g.fillRect(x - 2, y + 4, 5, 1); g.fillStyle = PALETA.oro2; g.fillRect(x - 3, y - 3, 7, 1); g.fillStyle = PALETA.marea2; g.fillRect(x - 1, y - 1, 3, 3);
+  }
+  // muralla de Om (Muralla del templo, Seba 26-11 tarde): bloques tallados (máscara, grecas de oro, turquesa, musgo) que suben del suelo
+  // Om (Seba 26-11 r3): «más roca y musgo, como el muro de Aldor» — sillares apilados con mortero, luz y sombra, grietas,
+  // musgo en la cima que chorrea por los lados y una greca de turquesa cada tres bloques; suben del suelo
+  drawMuroOm(u) {
+    const g = this.g, T = this.time, L = (+u.tipo - 5000) / 2, ca = Math.cos(u.f), sa = Math.sin(u.f), n = Math.max(2, Math.round(L * 2 / 15));
+    const dur = HABILIDADES.murallaOm.dur, sube = Math.min(1, Math.max(0, (dur - (u.resta || 0)) / 0.3)), acaba = u.resta > 0 && u.resta < 1 && Math.floor(T * 8) % 2;
+    const piedras = [];
+    for (let i = 0; i <= n; i++) { const k = -L + (L * 2) * i / n; piedras.push([u.x + ca * k, u.y + sa * k, i]); }
+    piedras.sort((a, b) => a[1] - b[1]);
+    for (const [x, y, i] of piedras) {
+      const cx = this.gx(x), cy = this.gy(y) + 3, H2 = 17 + Math.round(hash(i, 3, u.id) * 4), W2 = 8, top = cy - H2 + Math.round(H2 * (1 - sube));
+      if (sube <= 0) continue;
+      g.save(); g.beginPath(); g.rect(cx - W2 - 3, cy - 40, W2 * 2 + 7, 42); g.clip();
+      if (acaba) g.globalAlpha = 0.6;
+      g.fillStyle = PALETA.tinta; g.fillRect(cx - W2 - 1, top - 1, W2 * 2 + 3, cy - top + 3);
+      g.fillStyle = PALETA.piedra0; g.fillRect(cx - W2, top, W2 * 2 + 1, cy - top + 1);   // mortero
+      for (let fila = 0, yy = top; yy < cy; fila++, yy += 5) {
+        const alto = Math.min(4, cy + 1 - yy), corte = (fila + i) % 2 ? 3 : -3;
+        for (const [x0, x1] of [[cx - W2, cx + corte - 1], [cx + corte + 1, cx + W2]]) {
+          if (x1 < x0) continue;
+          const sh = hash(i * 7 + fila, x0 & 7, u.id), osc = fila > 1 && sh < 0.3;
+          g.fillStyle = osc ? PALETA.piedra1 : sh > 0.6 ? PALETA.piedra2 : PALETA.piedra1; g.fillRect(x0, yy, x1 - x0 + 1, alto);
+          g.fillStyle = osc ? PALETA.piedra2 : PALETA.piedra3; g.fillRect(x0, yy, x1 - x0, 1); g.fillRect(x0, yy, 1, alto - 1);   // luz
+          g.fillStyle = PALETA.piedra0; g.fillRect(x0 + 1, yy + alto - 1, x1 - x0, 1); g.fillRect(x1, yy + 1, 1, alto - 1);   // sombra
+          if (sh > 0.75 && alto > 2 && x1 - x0 > 3) { g.fillRect(x0 + 2, yy + 1, 1, 1); g.fillRect(x0 + 3, yy + 2, 1, 1); }   // grieta
+          if (sh > 0.45 && sh < 0.55) { g.fillStyle = PALETA.bosque0; g.fillRect(x0 + 1, yy + alto - 2, 2, 1); }   // musgo en la junta
+        }
+      }
+      // musgo en la cima y chorreando por los costados
+      g.fillStyle = PALETA.bosque0; g.fillRect(cx - W2, top, W2 * 2 + 1, 2);
+      g.fillStyle = PALETA.bosque1; g.fillRect(cx - W2, top, W2 * 2 + 1, 1); g.fillRect(cx - W2 + 1 + (i % 3) * 3, top + 2, 4, 1);
+      g.fillStyle = PALETA.bosque2; g.fillRect(cx - W2 + 2 + (i % 4) * 3, top, 2, 1);
+      g.fillStyle = PALETA.bosque0; g.fillRect(cx - W2, top + 2, 1, 3 + (i % 3) * 2); g.fillRect(cx + W2, top + 2, 1, 2 + ((i + 1) % 3) * 2); g.fillRect(cx - 2 + (i % 2) * 4, top + 2, 1, 3);
+      g.fillStyle = PALETA.bosque1; g.fillRect(cx - W2, top + 2, 1, 2); g.fillRect(cx - W2 + 5, top + 7 + (i % 2) * 5, 2, 1);
+      if (i % 3 === 1) {   // greca tallada con turquesa
+        const yy = top + 8; g.fillStyle = PALETA.piedra0; g.fillRect(cx - 3, yy - 1, 7, 5);
+        g.fillStyle = PALETA.oro0; g.fillRect(cx - 2, yy, 5, 3); g.fillStyle = (Math.floor(T * 3) + i) % 4 ? PALETA.marea1 : PALETA.marea2; g.fillRect(cx - 1, yy + 1, 3, 1);
+      }
+      g.restore();
+      if (sube < 1) { g.globalAlpha = 0.6 * (1 - sube); this.discDither(cx, cy, 8, PALETA.madera1, 2, i); g.globalAlpha = 1; }   // tierra que se levanta
+    }
+  }
+  // ---- Eliza (Seba 26-11): dibujos propios, con nombre «Eliza», para no mezclarse con otros héroes
+  // destello de estrella de 4 puntas (blanco con halo de color)
+  estrellitaEliza(x, y, R, col) {
+    const g = this.g;
+    g.fillStyle = col; g.fillRect(x - R, y, 2 * R + 1, 1); g.fillRect(x, y - R, 1, 2 * R + 1);
+    if (R > 2) { g.fillRect(x - 1, y - 1, 3, 3); }
+    g.fillStyle = PALETA.pergamino2; g.fillRect(x - Math.max(1, R >> 1), y, 2 * Math.max(1, R >> 1) + 1, 1); g.fillRect(x, y - Math.max(1, R >> 1), 1, 2 * Math.max(1, R >> 1) + 1);
+  }
+  // orbe estelar (celeste, morado y blanco)
+  orbeEliza(x, y, R, T) {
+    const g = this.g;
+    g.globalAlpha = 0.45; this.discDither(x, y, R + 4, PALETA.vacio2, 2, Math.floor(T * 14)); g.globalAlpha = 1;
+    this.bolaPixel(x, y, R + 1, PALETA.tinta); this.bolaPixel(x, y, R, PALETA.vacio1); this.bolaPixel(x - 1, y - 1, Math.max(1, R - 1), PALETA.marea2); this.bolaPixel(x - 1, y - 1, Math.max(1, R - 3), PALETA.pergamino2);
+  }
+  dibujaEliza(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, el = p.el || 0;
+    let fr = 0; if (moviendo) fr = [1, 0, 2, 0][Math.floor(T * 7) % 4];
+    const lx = cx - 9, ly = cy + 8 - 23 - sube, X = (x) => lx + 1 + (izq ? 16 - x : x);
+    g.drawImage(elizaGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    if (Math.floor(T * 2.5) % 3 === 0) this.estrellitaEliza(X(7), ly + 1 + 3, 2, PALETA.oro2);   // la estrella del pelo titila
+    { const x = X(15), y = ly + 1 + 7, k = 0.5 + 0.5 * Math.sin(T * 4);   // luz de estrella en la mano alzada
+      g.globalAlpha = 0.35 + 0.3 * k; this.discDither(x, y, 4, PALETA.vacio2, 2, Math.floor(T * 10)); g.globalAlpha = 1;
+      this.estrellitaEliza(x, y, (el & 1) ? 3 : 1 + Math.round(k), (el & 1) ? PALETA.oro2 : PALETA.marea2);
+      for (let i = 0; i < 2; i++) { const ph = (T * 0.8 + i * 0.5) % 1; g.globalAlpha = 1 - ph; g.fillStyle = i ? PALETA.marea2 : PALETA.vacio2; g.fillRect(x + Math.round(Math.sin(T * 2 + i * 3) * 3), y - 2 - Math.round(ph * 8), 1, 1); } g.globalAlpha = 1;
+    }
+    // Noche estrellada: 3 puntitos de estrella sobre la cabeza que se llenan; con la estrella lista, una estrella dorada grande
+    const n = (el >> 1) & 7, ys = cy - 46;
+    if (el & 1) { g.globalAlpha = 0.4; this.discDither(cx, ys, 6, PALETA.oro2, 2, Math.floor(T * 10)); g.globalAlpha = 1; this.estrellitaEliza(cx, ys, 4 + (Math.floor(T * 6) % 2), PALETA.oro2); }
+    else for (let i = 0; i < PASIVAS.estrelladaEliza.cada; i++) { const x = cx - 6 + i * 6; g.fillStyle = PALETA.tinta; g.fillRect(x - 2, ys - 2, 5, 5); if (i < n) this.estrellitaEliza(x, ys, 1, PALETA.vacio2); else { g.fillStyle = PALETA.noche; g.fillRect(x - 1, ys - 1, 3, 3); } }
+  }
+  // status del Manto de la noche (+25 listo): media luna morada con estrellita, sobre la cabeza
+  statusMantoEliza(cx, cy) {
+    const g = this.g, T = this.time, x = cx + 12, y = cy - 44 + (Math.floor(T * 3) % 2);
+    this.bolaPixel(x, y, 5, PALETA.tinta); this.bolaPixel(x, y, 4, PALETA.vacio2); this.bolaPixel(x + 2, y - 1, 3, PALETA.tinta);
+    this.estrellitaEliza(x + 3, y + 2, 1, PALETA.oro2);
+  }
+  // ---- Argus (Seba 25-11): dibujos propios, con nombre «Argus», para no mezclarse con otros héroes
+  // runa chiquita (3×3) que cambia de forma según la semilla
+  runitaArgus(x, y, col, seed) {
+    const g = this.g, F = [[1, 0, 1, 0, 1, 0, 1, 0, 1], [0, 1, 0, 1, 1, 1, 0, 1, 0], [1, 1, 0, 0, 1, 0, 0, 1, 1], [1, 0, 0, 1, 1, 0, 1, 0, 1], [0, 1, 1, 1, 0, 0, 0, 1, 1]][Math.abs(seed | 0) % 5];
+    g.fillStyle = PALETA.tinta; g.fillRect(x - 2, y - 2, 5, 5);
+    g.fillStyle = col; for (let i = 0; i < 9; i++) if (F[i]) g.fillRect(x - 1 + (i % 3), y - 1 + ((i / 3) | 0), 1, 1);
+  }
+  // círculo rúnico en el suelo: anillo doble con runitas que giran
+  circuloArgus(cx, cy, R, rot, alfa = 1, n = 6) {
+    const g = this.g; g.globalAlpha = alfa;
+    this.ring(cx, cy, R, PALETA.acero1, 0.7, 1); this.ring(cx, cy, Math.max(2, R - 4), PALETA.acero2, 0.5, 1);
+    for (let i = 0; i < n; i++) { const b = rot + i * TAU / n; this.runitaArgus(Math.round(cx + Math.cos(b) * (R - 2)), Math.round(cy + Math.sin(b) * (R - 2) * 0.85), i % 2 ? PALETA.acero2 : PALETA.pergamino2, i + Math.floor(rot * 2)); }
+    g.globalAlpha = 1;
+  }
+  // rayo eléctrico propio de Argus: quiebres al azar, contorno oscuro, celeste y núcleo blanco
+  zigzagArgus(x1, y1, x2, y2, seed, amp = 4, grueso = 1) {
+    const L = Math.hypot(x2 - x1, y2 - y1) || 1, n = Math.max(2, Math.round(L / 9)), nx = -(y2 - y1) / L, ny = (x2 - x1) / L, P = [[x1, y1]];
+    for (let i = 1; i < n; i++) { const k = i / n, h = (hash(seed, i, 17) - 0.5) * 2 * amp; P.push([Math.round(x1 + (x2 - x1) * k + nx * h), Math.round(y1 + (y2 - y1) * k + ny * h)]); }
+    P.push([x2, y2]);
+    for (let i = 0; i < n; i++) this.linea(P[i][0], P[i][1], P[i + 1][0], P[i + 1][1], PALETA.acero0, 0, 0, grueso + 2);
+    for (let i = 0; i < n; i++) this.linea(P[i][0], P[i][1], P[i + 1][0], P[i + 1][1], PALETA.acero2, 0, 0, grueso);
+    for (let i = 0; i < n; i += 2) this.linea(P[i][0], P[i][1], P[i + 1][0], P[i + 1][1], PALETA.pergamino2, 0, 0, 1);
+    return P;
+  }
+  // estela de la Bola rúnica: guarda el trayecto (en coordenadas del mundo) y lo dibuja como una cola eléctrica con runas en el suelo
+  colaArgus(p, cx, cy, enBola) {
+    if (!this._colaArgus) this._colaArgus = new Map();
+    const g = this.g, T = this.time, ox = this.gx(0), oy = this.gy(0);
+    let c = this._colaArgus.get(p.id); if (!c) { c = []; this._colaArgus.set(p.id, c); }
+    if (enBola) { const u = c[c.length - 1], wx = cx - ox, wy = cy - oy; if (!u || Math.hypot(u.x - wx, u.y - wy) > 3) c.push({ x: wx, y: wy, t: T }); }
+    while (c.length && T - c[0].t > 1.1) c.shift();
+    if (c.length < 2) return;
+    for (let i = 1; i < c.length; i++) {   // runas que quedan en el suelo marcando el trayecto
+      const q = c[i], age = T - q.t; if (i % 4) continue;
+      g.globalAlpha = Math.max(0, 0.8 - age * 0.75); this.runitaArgus(Math.round(q.x + ox), Math.round(q.y + oy + 2), i % 8 ? PALETA.acero2 : PALETA.pergamino2, i);
+    }
+    for (let i = 1; i < c.length; i++) {   // cola eléctrica (los últimos 0,6 s)
+      const q0 = c[i - 1], q1 = c[i], age = T - q1.t; if (age > 0.6) continue;
+      g.globalAlpha = Math.max(0, 1 - age / 0.6);
+      const x0 = Math.round(q0.x + ox), y0 = Math.round(q0.y + oy - 8), x1 = Math.round(q1.x + ox), y1 = Math.round(q1.y + oy - 8), w = Math.max(1, Math.round(5 * (1 - age / 0.6)));
+      this.linea(x0, y0, x1, y1, PALETA.acero1, 0, 0, w + 2); this.linea(x0, y0, x1, y1, PALETA.acero2, 0, 0, w);
+      if ((i + Math.floor(T * 20)) % 3 === 0) this.zigzagArgus(x0, y0, x1 + Math.round((hash(i, 3, 5) - 0.5) * 10), y1 + Math.round((hash(i, 7, 5) - 0.5) * 10), i + Math.floor(T * 20), 3, 1);
+    }
+    g.globalAlpha = 1;
+  }
+  dibujaArgus(p, cx, cy, izq, moviendo, sw, sube) {
+    const g = this.g, T = this.time, ar = p.ar || 0, mana = (ar >> 2) & 255;
+    this.colaArgus(p, cx, cy, !!(ar & 2));
+    if (ar & 2) {   // Bola rúnica: esfera de energía celeste con anillo de runas, rayos y estela
+      const a = p.f || 0, y = cy - 8;
+      g.globalAlpha = 0.5; this.discDither(cx, y, 15, PALETA.acero2, 2, Math.floor(T * 16)); g.globalAlpha = 1;
+      this.bolaPixel(cx, y, 10, PALETA.tinta); this.bolaPixel(cx, y, 9, PALETA.acero0); this.bolaPixel(cx, y, 8, PALETA.acero1); this.bolaPixel(cx - 1, y - 1, 6, PALETA.acero2); this.bolaPixel(cx - 2, y - 2, 3, PALETA.pergamino2);
+      for (let i = 0; i < 5; i++) { const b = T * 5 + i * TAU / 5; this.runitaArgus(Math.round(cx + Math.cos(b) * 14), Math.round(y + Math.sin(b) * 11), i % 2 ? PALETA.acero2 : PALETA.pergamino2, i + Math.floor(T * 3)); }
+      for (let i = 0; i < 3; i++) { const b = Math.floor(T * 20) * 2.1 + i * 2.1; this.zigzagArgus(Math.round(cx + Math.cos(b) * 8), Math.round(y + Math.sin(b) * 8), Math.round(cx + Math.cos(b + 0.4) * 18), Math.round(y + Math.sin(b + 0.4) * 16), Math.floor(T * 20) + i, 2, 1); }
+      this.barraManaArgus(cx, cy - 46, mana);
+      return;
+    }
+    let fr = 0; if (moviendo && !(ar & 1)) fr = [1, 0, 2, 0][Math.floor(T * 7) % 4];
+    const lx = cx - 9, ly = cy + 8 - 23 - sube, X = (x) => lx + 1 + (izq ? 16 - x : x);
+    if (ar & 1) this.circuloArgus(cx, cy + 2, 14, T * 2.5, 0.95, 8);   // rayo: círculo rúnico a los pies
+    g.drawImage(argusGrande(fr)[izq ? 'izq' : 'der'], lx, ly);
+    const tx = X(14), ty = ly + 1 + 4;   // punta de la varita: luz que late y runa que flota siempre
+    { const k = 0.5 + 0.5 * Math.sin(T * 6); g.globalAlpha = 0.4 + 0.35 * k; this.discDither(tx, ty, 4, PALETA.acero2, 2, Math.floor(T * 10)); g.globalAlpha = 1; g.fillStyle = PALETA.pergamino2; g.fillRect(tx, ty, 1, 1); }
+    this.runitaArgus(tx + Math.round(Math.sin(T * 2.4) * 2), ty - 6 + Math.round(Math.sin(T * 3.1) * 1.5), Math.floor(T * 4) % 2 ? PALETA.acero2 : PALETA.pergamino2, Math.floor(T * 1.5));
+    if (sw && sw.tipo === 'trazo' && sw.t > 0) {   // básico: la varita traza una runa en el aire
+      const k = 1 - sw.t / sw.T, rx = tx + Math.round(Math.cos(sw.a) * 6), ry = ty + Math.round(Math.sin(sw.a) * 5);
+      g.globalAlpha = 1 - k; this.ring(rx, ry, 3 + Math.round(k * 5), PALETA.acero2, 1, 1); this.runitaArgus(rx, ry, PALETA.pergamino2, Math.floor(sw.a * 3)); g.globalAlpha = 1;
+    }
+    if (ar & 1) {   // Rayo rúnico: haz eléctrico desde la varita, con rayos que lo envuelven, ramas y runas que corren
+      const a = p.f || 0, L = Math.round((p.ar2 || HABILIDADES.rayoArgus.alcance) * ESC), ca = Math.cos(a), sa = Math.sin(a);
+      const ex = Math.round(cx + ca * L), ey = Math.round(cy - 10 + sa * L * 0.85), w = 3 + (Math.floor(T * 24) % 2);
+      g.globalAlpha = 0.35; for (let i = 0; i < 4; i++) { const k = i / 3; this.discDither(Math.round(tx + (ex - tx) * k), Math.round(ty + (ey - ty) * k), 5, PALETA.acero2, 2, Math.floor(T * 20) + i); } g.globalAlpha = 1;
+      this.linea(tx, ty, ex, ey, PALETA.acero0, 0, 0, w + 3); this.linea(tx, ty, ex, ey, PALETA.acero1, 0, 0, w + 1); this.linea(tx, ty, ex, ey, PALETA.acero2, 0, 0, w - 1); this.linea(tx, ty, ex, ey, PALETA.pergamino2, 0, 0, 1);
+      const sd = Math.floor(T * 22);
+      this.zigzagArgus(tx, ty, ex, ey, sd, 5, 1); this.zigzagArgus(tx, ty, ex, ey, sd + 31, 7, 1);   // rayos que envuelven el haz
+      for (let i = 0; i < 2; i++) {   // ramas que saltan del haz
+        const k = 0.3 + 0.5 * hash(sd, i, 3), bx = Math.round(tx + (ex - tx) * k), by = Math.round(ty + (ey - ty) * k), b = a + (hash(sd, i, 9) > 0.5 ? 1 : -1) * (0.7 + hash(sd, i, 11));
+        this.zigzagArgus(bx, by, bx + Math.round(Math.cos(b) * 12), by + Math.round(Math.sin(b) * 10), sd + i * 7, 2, 1);
+      }
+      const n = Math.max(2, Math.floor(L / 16));
+      for (let i = 0; i < n; i++) { const k = ((T * 1.8 + i / n) % 1), x = Math.round(tx + (ex - tx) * k), y = Math.round(ty + (ey - ty) * k); this.runitaArgus(x, y, i % 2 ? PALETA.pergamino2 : PALETA.acero2, i + Math.floor(T * 4)); }
+      g.globalAlpha = 0.7; this.discDither(ex, ey, 7, PALETA.acero2, 2, Math.floor(T * 24)); g.globalAlpha = 1;   // descarga en la punta
+      this.bolaPixel(ex, ey, 3, PALETA.pergamino2);
+      for (let i = 0; i < 4; i++) { const b = sd * 1.3 + i * TAU / 4; this.zigzagArgus(ex, ey, Math.round(ex + Math.cos(b) * 11), Math.round(ey + Math.sin(b) * 9), sd + i * 5, 2, 1); }
+    }
+    this.barraManaArgus(cx, cy - 46, mana);   // Seba (26-11): arriba, en la capa de estados
+  }
+  // barrita de maná de Argus (celeste), visible para todos
+  barraManaArgus(cx, y, mana) {
+    const g = this.g, W = 20, M = HABILIDADES.bolaArgus.mana, k = Math.max(0, Math.min(1, mana / M)), ok = mana >= HABILIDADES.bolaArgus.minimo;
+    g.fillStyle = PALETA.tinta; g.fillRect(cx - (W >> 1) - 1, y - 1, W + 2, 4); g.fillStyle = PALETA.acero0; g.fillRect(cx - (W >> 1), y, W, 2);
+    g.fillStyle = ok ? PALETA.acero2 : PALETA.acero1; g.fillRect(cx - (W >> 1), y, Math.round(W * k), 2); g.fillStyle = PALETA.pergamino2; if (k > 0) g.fillRect(cx - (W >> 1) + Math.max(0, Math.round(W * k) - 1), y, 1, 1);
+  }
+  // proyectil rúnico de Argus (Seba 26-11: más grande): básico = runa en rombo con halo; Salto rúnico = runa mayor con anillo y chispas
+  runaProjArgus(cx, cy, a, grande) {
+    const g = this.g, T = this.time, y = cy - 8, ca = Math.cos(a), sa = Math.sin(a), R = grande ? 5 : 4;
+    for (let i = 1; i <= 4; i++) { g.globalAlpha = 0.55 - i * 0.12; this.bolaPixel(Math.round(cx - ca * i * 4), Math.round(y - sa * i * 4), Math.max(1, R - i), PALETA.acero2); } g.globalAlpha = 1;
+    g.globalAlpha = 0.45; this.discDither(cx, y, R + 4, PALETA.acero2, 2, Math.floor(T * 12)); g.globalAlpha = 1;
+    g.fillStyle = PALETA.tinta; for (let r = -R - 1; r <= R + 1; r++) { const w = R + 1 - Math.abs(r); g.fillRect(cx - w, y + r, 2 * w + 1, 1); }   // rombo
+    g.fillStyle = PALETA.acero1; for (let r = -R; r <= R; r++) { const w = R - Math.abs(r); g.fillRect(cx - w, y + r, 2 * w + 1, 1); }
+    g.fillStyle = PALETA.acero2; for (let r = -R + 1; r <= R - 1; r++) { const w = R - 1 - Math.abs(r); g.fillRect(cx - w, y + r, 2 * w + 1, 1); }
+    g.fillStyle = Math.floor(T * 12) % 2 ? PALETA.pergamino2 : PALETA.oro2; g.fillRect(cx - 1, y, 3, 1); g.fillRect(cx, y - 1, 1, 3);   // marca rúnica
+    if (grande) { this.ring(cx, y, R + 3, PALETA.acero2, 0.8, 1); for (let i = 0; i < 2; i++) { const b = T * 14 + i * Math.PI; g.fillStyle = PALETA.pergamino2; g.fillRect(Math.round(cx + Math.cos(b) * (R + 3)), Math.round(y + Math.sin(b) * (R + 3)), 1, 1); } }
   }
   // rayo quebrado de (x1,y1) a (x2,y2): contorno oscuro, color y núcleo blanco
   rayoKaio(x1, y1, x2, y2, col, seed) {
@@ -19728,6 +21130,8 @@ class Renderer {
 
   // Muro de roca de la Fisura (Tek'Tal): piedras grises oscuras apiladas a lo largo de la grieta, con magma entre ellas
   drawMuroRoca(u) {
+    if (+u.tipo === 4999) return;   // Om: roca invisible del tótem (se dibuja con la zona totemOm)
+    if (+u.tipo >= 5000) { this.drawMuroOm(u); return; }   // Om: Muralla del templo (dibujo propio)
     const g = this.g, aldor = +u.tipo < 0, esquina = +u.tipo < -1000, L = (esquina ? -u.tipo - 1000 : Math.abs(+u.tipo || 300)) / 2, ca = Math.cos(u.f), sa = Math.sin(u.f);   // Aldor: tipo negativo (< -1000: roca de esquina)
     const n = Math.max(3, Math.round(L * 2 / 22));
     const piedras = [];
@@ -19860,6 +21264,22 @@ class Renderer {
       for (let i = 0; i < 4; i++) { const b = T * 9 + i * TAU / 4, x = Math.round(cx + Math.cos(b) * 7), yy = Math.round(y + Math.sin(b) * 5); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, yy - 1, 3, 3); g.fillStyle = i % 2 ? PALETA.bosque2 : PALETA.oro2; g.fillRect(x, yy, 1, 1); }
       return;
     }
+    if (p.spr === 'fuegoTotemOm' || p.spr === 'fuegoMurallaOm') {   // Om: bola de fuego (tótem: chica; muralla: grande con chispas turquesa)
+      const g = this.g, T = this.time, y = cy - 8, ca = Math.cos(p.a), sa = Math.sin(p.a), big = p.spr === 'fuegoMurallaOm', R = big ? 7 : 4;   // Seba (26-11 tarde): 40% más grandes
+      for (let i = 1; i <= 5; i++) { g.globalAlpha = 0.6 - i * 0.1; this.bolaPixel(Math.round(cx - ca * i * 5 + Math.sin(T * 14 + i) * 1.2), Math.round(y - sa * i * 5), Math.max(1, R - (i >> 1)), i % 2 ? PALETA.carmesi2 : PALETA.antorcha); } g.globalAlpha = 1;
+      g.globalAlpha = 0.4; this.discDither(cx, y, R + 4, PALETA.antorcha, 2, Math.floor(T * 16)); g.globalAlpha = 1;
+      this.bolaPixel(cx, y, R + 1, PALETA.tinta); this.bolaPixel(cx, y, R, PALETA.carmesi1); this.bolaPixel(cx, y, Math.max(1, R - 1), PALETA.antorcha); this.bolaPixel(cx, y, Math.max(1, R - 2), PALETA.oro2);
+      if (big && Math.floor(T * 12) % 2) { g.fillStyle = PALETA.marea2; g.fillRect(cx + 3, y - 3, 1, 1); g.fillRect(cx - 3, y + 2, 1, 1); }
+      return;
+    }
+    if (p.spr === 'orbeEliza' || p.spr === 'estrellaEliza') {   // Eliza: orbe estelar (básico) / estrella de Noche estrellada
+      const g = this.g, T = this.time, y = cy - 8, ca = Math.cos(p.a), sa = Math.sin(p.a), big = p.spr === 'estrellaEliza';
+      for (let i = 1; i <= 4; i++) { g.globalAlpha = 0.6 - i * 0.13; g.fillStyle = i % 2 ? PALETA.vacio2 : PALETA.marea2; g.fillRect(Math.round(cx - ca * i * 4 + Math.sin(T * 9 + i) * 1.5), Math.round(y - sa * i * 4), 2, 2); } g.globalAlpha = 1;
+      if (big) { g.globalAlpha = 0.5; this.discDither(cx, y, 8, PALETA.oro2, 2, Math.floor(T * 14)); g.globalAlpha = 1; this.estrellitaEliza(cx, y, 5 + (Math.floor(T * 12) % 2), PALETA.oro2); }
+      else { this.orbeEliza(cx, y, 4, T); if (Math.floor(T * 10) % 3 === 0) this.estrellitaEliza(cx + 4, y - 4, 1, PALETA.pergamino2); }   // Seba (26-11): 25% más grande
+      return;
+    }
+    if (p.spr === 'runaArgus' || p.spr === 'runaSaltoArgus') { this.runaProjArgus(cx, cy, p.a, p.spr === 'runaSaltoArgus'); return; }   // Argus
     if (p.spr === 'misilBipper') {   // Bipper (Seba 24-11: más detallado): cohete de hierro con aletas, banda oxidada, ojiva roja, llama que titila y humo
       const g = this.g, ca = Math.cos(p.a), sa = Math.sin(p.a), y = cy - 10, T = this.time, P = (d, o) => [Math.round(cx + ca * d - sa * o), Math.round(y + sa * d + ca * o)];
       for (let i = 1; i <= 7; i++) { const [x, yy] = P(-8 - i * 4, Math.sin(T * 9 + i) * 1.2); g.globalAlpha = 0.55 - i * 0.07; this.discDither(x, yy, 1 + (i >> 1), i < 3 ? PALETA.piedra2 : PALETA.piedra3, 2, 0); } g.globalAlpha = 1;
@@ -19975,6 +21395,12 @@ class Renderer {
             g.fillStyle = PALETA.pergamino2; g.fillRect(x0 + Math.round(ca * L) - 1, y0 + Math.round(sa * L * 0.8) - 1, 2, 2);
             g.globalAlpha = 1;
             break;
+          }
+          if (f.h === 'om') {   // Om: martillazo — onda de polvo, piedritas y destello dorado donde pega
+            const D = Math.round(f.r * ESC) + 2, x = cx + Math.round(Math.cos(f.a) * D), y = cy + Math.round(Math.sin(f.a) * D * 0.7);
+            g.globalAlpha = 1 - t; this.ring(x, y, Math.round(3 + t * 12), PALETA.piedra3, 1, 2); if (t < 0.4) { this.bolaPixel(x, y - 2, 4, PALETA.oro2); }
+            for (let i = 0; i < 6; i++) { const b = f.a + (i - 2.5) * 0.6, d = 4 + t * 12; g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.oro1; g.fillRect(Math.round(x + Math.cos(b) * d), Math.round(y - 3 + Math.sin(b) * d * 0.6 - Math.sin(Math.PI * t) * 5), 2, 2); }
+            g.globalAlpha = 1; break;
           }
           if (f.h === 'kaio' || f.h === 'bipper') {   // Kaio: impacto de energía al final del puño / Bipper: onda de polvo del puñetazo del robot
             const D = Math.round(f.r * ESC) + 2, x = cx + Math.round(Math.cos(f.a) * D), y = cy - 8 + Math.round(Math.sin(f.a) * D * 0.7), kio = f.h === 'kaio';
@@ -20603,6 +22029,65 @@ class Renderer {
         }
         case 'paraguasBloquea': {   // el paraguas frena un proyectil
           g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 2 + t * 9; g.fillStyle = i % 2 ? PALETA.pergamino2 : PALETA.acero2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 8 + Math.sin(b) * d), 1, 1); } this.ring(cx, cy - 8, Math.round(2 + t * 6), PALETA.pergamino2, 1, 1); g.globalAlpha = 1; break;
+        }
+        case 'fisuraOmGolpe': { g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = -Math.PI / 2 + (i - 2.5) * 0.45, v = 8 + (i % 3) * 3, x = Math.round(cx + Math.cos(b) * v * t * 1.6), y = Math.round(cy - 4 + Math.sin(b) * v * t + 20 * t * t); g.fillStyle = PALETA.tinta; g.fillRect(x - 1, y - 1, 4, 4); g.fillStyle = i % 2 ? PALETA.madera1 : PALETA.piedra2; g.fillRect(x, y, 2, 2); } this.ring(cx, cy, Math.round(5 + t * 12), PALETA.madera2, 0.8, 2); g.globalAlpha = 1; break; }
+        case 'bocaMurallaOm': { g.globalAlpha = 1 - t; this.discDither(cx, cy - 8, Math.round(4 + t * 6), PALETA.antorcha, 2, Math.floor(this.time * 20)); this.ring(cx, cy - 8, Math.round(3 + t * 8), PALETA.oro2, 1, 1); g.globalAlpha = 1; break; }
+        case 'sacrificioOm': { g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(6 + t * 16), PALETA.carmesi2, 1, 2); const s2 = texto('-' + f.n, PALETA.carmesi2); g.drawImage(s2, cx - (s2.width >> 1), cy - 36 - Math.round(t * 8)); g.globalAlpha = 1; break; }
+        case 'curaOm': {   // Sacrificio: hilo de energía roja y dorada de Om al aliado, y un sol de sangre que se abre sobre el aliado
+          const x2 = this.gx(f.x2), y2 = this.gy(f.y2) - 10; g.globalAlpha = 1 - t;
+          if (t > 0.4) { this.ring(cx, cy - 10, Math.round(4 + (t - 0.4) * 20), PALETA.oro2, 1, 1); for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 6 + (t - 0.4) * 14; g.fillStyle = i % 2 ? PALETA.carmesi2 : PALETA.oro2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 10 + Math.sin(b) * d), 2, 2); } }
+          for (let i = 0; i < 6; i++) { const k = Math.min(1, t * 1.8 + i * 0.07), x = Math.round(x2 + (cx - x2) * k), y = Math.round(y2 + (cy - 10 - y2) * k - Math.sin(Math.PI * k) * 8); g.fillStyle = i % 2 ? PALETA.oro2 : PALETA.carmesi2; g.fillRect(x, y, 2, 2); }
+          if (t > 0.45) { const s2 = texto('+' + f.n, PALETA.bosque2 || PALETA.oro2); g.drawImage(s2, cx - (s2.width >> 1), cy - 32 - Math.round(t * 6)); }
+          g.globalAlpha = 1; break;
+        }
+        case 'totemOm': case 'murallaOm': { g.globalAlpha = (1 - t) * 0.8; for (let i = 0; i < 8; i++) { const b = i * TAU / 8, d = 6 + t * 18; this.discDither(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.6 - t * 6), 3, PALETA.piedra3, 2, 0); } g.globalAlpha = 1; break; }
+        case 'martillazoOm': {   // Om golpea el piso para la ulti: onda dorada y piedras
+          g.globalAlpha = 1 - t; this.ring(cx, cy + 2, Math.round(8 + t * 26), PALETA.oro2, 1, 2); this.ring(cx, cy + 2, Math.round(5 + t * 16), PALETA.piedra3, 0.8, 2);
+          for (let i = 0; i < 8; i++) { const b = i * TAU / 8 + 0.2, d = 6 + t * 20; g.fillStyle = i % 2 ? PALETA.piedra2 : PALETA.oro1; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy + Math.sin(b) * d * 0.6 - Math.sin(Math.PI * t) * 10), 3, 3); }
+          g.globalAlpha = 1; break;
+        }
+        case 'caeEstrellaEliza': {   // impacto del orbe: destello, anillo y chispas estelares
+          const R = Math.round(f.r * ESC); g.globalAlpha = 1 - t;
+          this.discDither(cx, cy - 2, Math.round(R * (0.4 + t * 0.6)), PALETA.vacio2, 2, Math.floor(this.time * 20)); this.ring(cx, cy, Math.round(R * (0.5 + t * 0.6)), PALETA.marea2, 1, 2);
+          for (let i = 0; i < 6; i++) { const b = i * TAU / 6 + 0.3, d = 4 + t * R; this.estrellitaEliza(Math.round(cx + Math.cos(b) * d), Math.round(cy - 4 + Math.sin(b) * d * 0.7), t < 0.5 ? 2 : 1, i % 2 ? PALETA.marea2 : PALETA.vacio2); }
+          g.globalAlpha = 1; break;
+        }
+        case 'golpeBumeranEliza': { g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 14), PALETA.vacio2, 1, 2); this.estrellitaEliza(cx, cy - 10, Math.round(5 * (1 - t)) + 1, PALETA.pergamino2); g.globalAlpha = 1; break; }
+        case 'lanzaBumeranEliza': { g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 12), PALETA.marea2, 1, 1); g.globalAlpha = 1; break; }
+        case 'nocheEliza': {   // Manto de la noche: cúpula oscura que se abre con estrellas
+          const R = Math.round(f.r * ESC * (0.3 + t * 0.7)); g.globalAlpha = 0.5 * (1 - t); this.discDither(cx, cy, R, PALETA.noche, 2, 0); g.globalAlpha = 1 - t; this.ring(cx, cy, R, PALETA.vacio2, 0.8, 2);
+          for (let i = 0; i < 10; i++) { const b = i * TAU / 10 + 0.4, d = R * (0.4 + 0.6 * hash(i, 3, 7)); this.estrellitaEliza(Math.round(cx + Math.cos(b) * d), Math.round(cy - 6 + Math.sin(b) * d * 0.7), (i + Math.floor(t * 8)) % 3 ? 1 : 2, i % 2 ? PALETA.pergamino2 : PALETA.marea2); }
+          g.globalAlpha = 1; break;
+        }
+        case 'mantoEliza': { g.globalAlpha = 0.7 * (1 - t); this.discDither(cx, cy - 8, Math.round(8 + t * 6), PALETA.noche, 2, 1); g.globalAlpha = 1 - t; for (let i = 0; i < 4; i++) this.estrellitaEliza(cx - 6 + i * 4, cy - 14 - Math.round(t * 10) + (i % 2) * 4, 1, PALETA.vacio2); g.globalAlpha = 1; break; }
+        case 'buffElizaGolpe': { g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 12), PALETA.vacio2, 1, 2); this.estrellitaEliza(cx, cy - 10, 4, PALETA.oro2); const s2 = texto('+' + HABILIDADES.nocheEliza.extra, PALETA.vacio2); g.drawImage(s2, cx - (s2.width >> 1), cy - 30 - Math.round(t * 8)); g.globalAlpha = 1; break; }
+        case 'listaEliza': { g.globalAlpha = 1 - t; this.estrellitaEliza(cx, cy - 46, Math.round(2 + t * 6), PALETA.oro2); g.globalAlpha = 1; break; }
+        case 'chispaRayoArgus': {   // el rayo de Argus sacude al enemigo: descarga con ramas eléctricas y destello
+          const y = cy - 9, sd = Math.floor(this.time * 30); g.globalAlpha = 1 - t;
+          this.discDither(cx, y, Math.round(6 + t * 6), PALETA.acero2, 2, sd); this.ring(cx, y, Math.round(5 + t * 10), PALETA.pergamino2, 1, 1);
+          for (let i = 0; i < 5; i++) { const b = i * TAU / 5 + sd * 0.7; this.zigzagArgus(cx, y, Math.round(cx + Math.cos(b) * (10 + t * 8)), Math.round(y + Math.sin(b) * (9 + t * 6)), sd + i * 3, 3, 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'tomaManaArgus': {   // Argus toma una recarga de maná: destello celeste y «+30» de maná
+          g.globalAlpha = 1 - t; this.ring(cx, cy - 6, Math.round(4 + t * 16), PALETA.acero2, 1, 2);
+          const s2 = texto('+' + f.n, PALETA.acero2); g.drawImage(s2, cx - (s2.width >> 1), cy - 24 - Math.round(t * 10)); g.globalAlpha = 1; break;
+        }
+        case 'saltoArgusSale': {   // al salir del salto: silueta de Argus que se desvanece en runas
+          if (t < 0.6) { g.globalAlpha = 0.55 * (1 - t / 0.6); g.drawImage(argusGrande(0).der, cx - 9, cy + 8 - 23); g.globalAlpha = 1; } this.circuloArgus(cx, cy, Math.round(14 * (1 - t)) + 2, this.time * 4, 1 - t, 6); g.globalAlpha = 1 - t; for (let i = 0; i < 6; i++) { const b = i * TAU / 6, d = 4 + t * 10; g.fillStyle = PALETA.acero2; g.fillRect(Math.round(cx + Math.cos(b) * d), Math.round(cy - 8 - t * 10 + Math.sin(b) * d * 0.5), 1, 2); } g.globalAlpha = 1; break; }
+        case 'saltoArgusLlega': { this.circuloArgus(cx, cy, Math.round(6 + t * 18), -this.time * 4, 1 - t, 8); g.globalAlpha = (1 - t) * 0.6; this.discDither(cx, cy - 8, Math.round(8 * (1 - t)) + 2, PALETA.acero2, 2, Math.floor(this.time * 20)); g.globalAlpha = 1; break; }
+        case 'rayoArgusIni': { this.circuloArgus(cx, cy, Math.round(8 + t * 10), this.time * 3, 1 - t, 6); break; }
+        case 'bolaArgusIni': case 'bolaArgusFin': { g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 18), PALETA.acero2, 1, 2); this.ring(cx, cy - 8, Math.round(2 + t * 10), PALETA.pergamino2, 0.7, 1); g.globalAlpha = 1; this.circuloArgus(cx, cy, Math.round(10 + t * 6), this.time * 5, 1 - t, 6); break; }
+        case 'golpeBolaArgus': {   // la bola atraviesa a un enemigo: cruz de runas, anillo y descarga
+          g.globalAlpha = 1 - t; this.ring(cx, cy - 8, Math.round(4 + t * 14), PALETA.acero2, 1, 2);
+          for (let i = 0; i < 4; i++) { const b = i * TAU / 4 + 0.3; this.zigzagArgus(cx, cy - 8, Math.round(cx + Math.cos(b) * (8 + t * 12)), Math.round(cy - 8 + Math.sin(b) * (8 + t * 10)), i + 11, 3, 1); }
+          for (let i = 0; i < 4; i++) { const b = i * TAU / 4 + 0.785, d = 5 + t * 12; this.runitaArgus(Math.round(cx + Math.cos(b) * d), Math.round(cy - 8 + Math.sin(b) * d), PALETA.pergamino2, i + 1); }
+          g.globalAlpha = 1; break;
+        }
+        case 'ecoArgus': {   // Eco rúnico: hilo de runas desde el enemigo que lanzó la habilidad hasta Argus
+          const x2 = this.gx(f.x2), y2 = this.gy(f.y2) - 10; g.globalAlpha = 1 - t;
+          for (let i = 0; i < 5; i++) { const k = Math.min(1, t * 1.6 + i * 0.08), x = Math.round(x2 + (cx - x2) * k), y = Math.round(y2 + (cy - 10 - y2) * k); g.fillStyle = PALETA.acero2; g.fillRect(x, y, 2, 2); }
+          if (t > 0.5) { const s2 = texto('+' + PASIVAS.ecoArgus.cura, PALETA.acero2); g.drawImage(s2, cx - (s2.width >> 1), cy - 30 - Math.round(t * 6)); }
+          g.globalAlpha = 1; break;
         }
         case 'choqueKaio': {   // descarga al terminar Imbuir energía: doble anillo, fuego azul en el borde y muchos rayos
           const R = Math.round(f.r * ESC * (0.3 + t * 0.7)); g.globalAlpha = 1 - t * 0.8;
@@ -22704,6 +24189,16 @@ function updateHud(latest, now) {
     }
     const restante = me[8 + i];
     const cd = btn.querySelector('.cd'), cdn = btn.querySelector('.cdn');
+    // Argus (Seba 26-11): barrita de maná justo encima del botón de la ulti (mismo largo); el botón muestra solo su recarga real
+    if (i === 2) {
+      let mb = btn.querySelector('.manaArgus');
+      if (meta.build.heroe === 'argus') {
+        if (!mb) { mb = document.createElement('div'); mb.className = 'manaArgus'; mb.style.cssText = 'position:absolute;left:-3px;right:-3px;top:-11px;height:6px;z-index:5;background:#10131c;border:1px solid #000;border-radius:2px;overflow:hidden;pointer-events:none'; mb.innerHTML = '<div style="height:100%;width:0;background:linear-gradient(#bfefff,#3fa9e6);transition:width .1s"></div>'; if (getComputedStyle(btn).position === 'static') btn.style.position = 'relative'; btn.appendChild(mb); }
+        const mana = ((me[76] || 0) >> 2) & 255, Hm = HABILIDADES.bolaArgus;
+        mb.firstChild.style.width = Math.round(Math.min(1, mana / Hm.mana) * 100) + '%';
+        mb.firstChild.style.opacity = mana >= Hm.minimo ? '1' : '0.5';
+      } else if (mb) mb.remove();
+    }
     // Bipper (Seba 23-11): a pie, las habilidades 1 y 2 quedan bloqueadas y la ulti muestra los golpes que faltan para recuperar el robot (9)
     if (meta.build.heroe === 'bipper') {
       const mago = !!((me[73] || 0) & 1);
@@ -22890,6 +24385,11 @@ $('b-coleccion').onclick = abrirColeccion;
 // Seba (31-10): la descripción del héroe (HEROES.x.desc) se oculta en las fichas mientras la reescribe; queda en config.js
 const MOSTRAR_DESC_HEROE = false;
 const PATCH_NOTES = [
+  { v: 'V11.3', f: '26-11-2026', n: [
+    'Héroes nuevos: Argus (Aliados), mago de runas con maná; Eliza (Renegados), hechicera de la noche y las estrellas; Om (Aliados), guardián de piedra con tótem y murallas.',
+    'Argus: el Rayo rúnico se corta en los muros (no es de ulti); la Bola rúnica y el Salto los cruzan.',
+    'Tabla de matchups actualizada con los 3 héroes nuevos.',
+  ] },
   { v: 'V11.2', f: '25-11-2026', n: [
     'Zeal: el texto del Festín de sangre aclara que solo da el efecto a héroes aliados, no a invocaciones.',
   ] },
